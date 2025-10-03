@@ -1,38 +1,17 @@
 package fr.ufrst.m1info.gl.compgl.driver;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for simple App.
  */
-public class DriverTest
-        extends TestCase
-{
+public class DriverTest {
     /**
-     * Create the test case
-     *
-     * @param testName name of the test case
+     * Rigorous Test :-)
      */
-    public DriverTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( DriverTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    @Test
+    public void testApp() {
+        assertTrue(true);
     }
 }
