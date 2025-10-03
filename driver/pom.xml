@@ -37,27 +37,42 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.12</version>
+          <scope>test</scope>
+      </dependency>
 
-    <!--<dependency>
-      <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-      <artifactId>interpreter</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-      <artifactId>compiler</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-      <artifactId>ast</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-      <artifactId>memory</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>-->
+      <dependency>
+          <groupId>org.testfx</groupId>
+          <artifactId>testfx-junit5</artifactId>
+          <version>4.0.16-alpha</version>
+          <scope>test</scope>
+      </dependency>
+
+      <!--
+      <dependency>
+        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
+        <artifactId>interpreter</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
+        <artifactId>compiler</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
+        <artifactId>ast</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
+        <artifactId>memory</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      -->
   </dependencies>
 
   <build>
@@ -91,6 +106,16 @@
           </execution>
         </executions>
       </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M9</version>
+            <configuration>
+                <useModulePath>false</useModulePath>
+            </configuration>
+        </plugin>
+
     </plugins>
   </build>
 </project>
