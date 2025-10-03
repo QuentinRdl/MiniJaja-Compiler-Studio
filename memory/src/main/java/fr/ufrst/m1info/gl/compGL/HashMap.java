@@ -209,8 +209,41 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         return false;
     }
 
+    /**
+     * Returns a Set view of the keys contained in this map.
+     *
+     * @return a set view of the keys contained in this map
+     */
+    @Override
+    public Set<K> keySet(){
+        Set<K> res=new HashSet<>();
+        for (int i=0;i<capacity;i++){
+            for (EntryHashMap<K,V> e : buckets[i]){
+                res.add(e.getKey());
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Returns a Collection view of the values contained in this map.
+     *
+     * @return a view of the values contained in this map
+     */
+    @Override
+    public Collection<V> values(){
+        Collection<V> res = new ArrayList<>();
+        for (int i=0;i<capacity;i++){
+            for (EntryHashMap<K,V> e : buckets[i]){
+                res.add(e.getValue());
+            }
+        }
+        return res;
+    }
+
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return Set.of();
+        Set<Entry<K,V>> res = new HashSet<>();
+        return res;
     }
 }

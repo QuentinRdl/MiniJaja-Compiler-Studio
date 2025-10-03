@@ -4,7 +4,7 @@ public class EntryHashMap<K,V> {
     private K key;
     private V value;
 
-    public EntryHashMap(K key,V value){
+    public EntryHashMap(K key, V value){
         this.key=key;
         this.value=value;
     }
