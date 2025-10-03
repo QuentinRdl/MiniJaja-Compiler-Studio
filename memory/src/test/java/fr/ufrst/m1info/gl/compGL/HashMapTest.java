@@ -444,4 +444,78 @@ public class HashMapTest
         assertEquals(oldMap.containsKey("MS"),map.containsKey("MS"));
         assertEquals(oldMap.containsKey("AP"),map.containsKey("AP"));
     }
+
+    @Test
+    public void testClear()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",81);
+        oldMap.put("LN",4);
+        oldMap.put("CL",16);
+        oldMap.put("LH",44);
+        oldMap.put("GR",63);
+        oldMap.put("AKA",12);
+        oldMap.put("MV",33);
+        oldMap.put("YT",22);
+        oldMap.put("AA",23);
+        oldMap.put("CS",55);
+        oldMap.put("PG",10);
+        oldMap.put("FC",43);
+        oldMap.put("EO",31);
+        oldMap.put("OB",87);
+        oldMap.put("FA",14);
+        oldMap.put("LS",18);
+        oldMap.put("NH",27);
+        oldMap.put("GB",5);
+        oldMap.put("IH",6);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        map.clear();
+        oldMap.clear();
+        assertEquals(oldMap.size(),map.size());
+        assertEquals(oldMap.get("LN"),map.get("LN"));
+        assertEquals(oldMap.get("OP"),map.get("OP"));
+        assertEquals(oldMap.get("CL"),map.get("CL"));
+        assertEquals(oldMap.get("LH"),map.get("LH"));
+        assertEquals(oldMap.get("GR"),map.get("GR"));
+        assertEquals(oldMap.get("AKA"),map.get("AKA"));
+        assertEquals(oldMap.get("MV"),map.get("MV"));
+        assertEquals(oldMap.get("YT"),map.get("YT"));
+        assertEquals(oldMap.get("CS"),map.get("CS"));
+        assertEquals(oldMap.get("AA"),map.get("AA"));
+        assertEquals(oldMap.get("FA"),map.get("FA"));
+        assertEquals(oldMap.get("LS"),map.get("LS"));
+        assertEquals(oldMap.get("PG"),map.get("PG"));
+        assertEquals(oldMap.get("FC"),map.get("FC"));
+        assertEquals(oldMap.get("EO"),map.get("EO"));
+        assertEquals(oldMap.get("OB"),map.get("OB"));
+        assertEquals(oldMap.get("NH"),map.get("NH"));
+        assertEquals(oldMap.get("GB"),map.get("GB"));
+        assertEquals(oldMap.get("IH"),map.get("IH"));
+        assertEquals(oldMap.get("LL"),map.get("LL"));
+        assertEquals(oldMap.get("MS"),map.get("MS"));
+        assertEquals(oldMap.get("AP"),map.get("AP"));
+        assertEquals(oldMap.containsKey("LN"),map.containsKey("LN"));
+        assertEquals(oldMap.containsKey("OP"),map.containsKey("OP"));
+        assertEquals(oldMap.containsKey("CL"),map.containsKey("CL"));
+        assertEquals(oldMap.containsKey("LH"),map.containsKey("LH"));
+        assertEquals(oldMap.containsKey("GR"),map.containsKey("GR"));
+        assertEquals(oldMap.containsKey("AKA"),map.containsKey("AKA"));
+        assertEquals(oldMap.containsKey("MV"),map.containsKey("MV"));
+        assertEquals(oldMap.containsKey("YT"),map.containsKey("YT"));
+        assertEquals(oldMap.containsKey("CS"),map.containsKey("CS"));
+        assertEquals(oldMap.containsKey("AA"),map.containsKey("AA"));
+        assertEquals(oldMap.containsKey("FA"),map.containsKey("FA"));
+        assertEquals(oldMap.containsKey("LS"),map.containsKey("LS"));
+        assertEquals(oldMap.containsKey("PG"),map.containsKey("PG"));
+        assertEquals(oldMap.containsKey("FC"),map.containsKey("FC"));
+        assertEquals(oldMap.containsKey("EO"),map.containsKey("EO"));
+        assertEquals(oldMap.containsKey("OB"),map.containsKey("OB"));
+        assertEquals(oldMap.containsKey("NH"),map.containsKey("NH"));
+        assertEquals(oldMap.containsKey("GB"),map.containsKey("GB"));
+        assertEquals(oldMap.containsKey("IH"),map.containsKey("IH"));
+        assertEquals(oldMap.containsKey("LL"),map.containsKey("LL"));
+        assertEquals(oldMap.containsKey("MS"),map.containsKey("MS"));
+        assertEquals(oldMap.containsKey("AP"),map.containsKey("AP"));
+    }
 }

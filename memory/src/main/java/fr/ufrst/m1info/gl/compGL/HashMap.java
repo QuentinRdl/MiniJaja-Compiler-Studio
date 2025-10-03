@@ -179,6 +179,18 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         }
         return null;
     }
+
+    /**
+     * Removes all of the mappings from this map. The map will be empty after this call returns.
+     */
+    @Override
+    public void clear(){
+        for (int i=0;i<capacity;i++){
+            buckets[i]=new ArrayList<>();
+        }
+        sizeHashMap=0;
+    }
+
     @Override
     public Set<Entry<K, V>> entrySet() {
         return Set.of();
