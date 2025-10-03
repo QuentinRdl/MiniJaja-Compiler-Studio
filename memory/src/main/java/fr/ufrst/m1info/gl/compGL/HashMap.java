@@ -159,6 +159,26 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             put(key,m.get(key));
         }
     }
+
+    /**
+     * Removes the mapping for the specified key from this map if present.
+     *
+     * @param key key whose mapping is to be removed from the map
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     */
+    @Override
+    public V remove(Object key){
+        int index=key.hashCode() % capacity;
+        for (int i=0; i<buckets[index].size();i++){
+            if (key.equals(buckets[index].get(i).getKey())){
+                V value = buckets[index].get(i).getValue();
+                buckets[index].remove(i);
+                sizeHashMap--;
+                return value;
+            }
+        }
+        return null;
+    }
     @Override
     public Set<Entry<K, V>> entrySet() {
         return Set.of();
