@@ -50,7 +50,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     }
 
     /**
-     * TODO : Constructs a new HashMap with the same mappings as the specified Map.
+     * Constructs a new HashMap with the same mappings as the specified Map.
      * The HashMap is created with default load factor (0.75) and an initial capacity sufficient to hold the mappings in the specified Map.
      *
      * @param m the map whose mappings are to be placed in this map
@@ -66,6 +66,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             buckets[i]=new ArrayList<>();
         }
         sizeHashMap=0;
+        putAll(m);
     }
 
     /**
@@ -96,11 +97,10 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
      */
     @Override
     public V get(Object key){
-        for (int i=0;i<capacity;i++){
-            for (EntryHashMap<K,V> e : buckets[i]){
-                if (key.equals(e.getKey())){
-                    return e.getValue();
-                }
+        int index=key.hashCode() % capacity;
+        for (EntryHashMap<K,V> e : buckets[index]){
+            if (key.equals(e.getKey())){
+                return e.getValue();
             }
         }
         return null;
@@ -114,12 +114,12 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
      */
     @Override
     public boolean containsKey(Object key){
-        for (int i=0;i<capacity;i++){
-            for (EntryHashMap<K,V> e : buckets[i]){
-                if (key.equals(e.getKey())){
-                    return true;
-                }
+        int index=key.hashCode() % capacity;
+        for (EntryHashMap<K,V> e : buckets[index]){
+            if (key.equals(e.getKey())){
+                return true;
             }
+
         }
         return false;
     }
@@ -144,7 +144,20 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             }
         }
         buckets[index].add(new EntryHashMap<>(key,value));
+        sizeHashMap++;
         return old_value;
+    }
+
+    /**
+     * Copies all of the mappings from the specified map to this map. These mappings will replace any mappings that this map had for any of the keys currently in the specified map.
+     *
+     * @param m mappings to be stored in this map
+     */
+    @Override
+    public void putAll(Map<? extends K,? extends V> m){
+        for (K key : m.keySet()){
+            put(key,m.get(key));
+        }
     }
     @Override
     public Set<Entry<K, V>> entrySet() {
