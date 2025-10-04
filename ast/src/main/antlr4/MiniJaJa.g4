@@ -28,7 +28,11 @@ instrs returns [InstructionsNode node]
     : instr ';' (instrs)? {$node = new InstructionsNode($instr.node, $instrs.node);}
     ;
 
-instr returns [ASTNode node]
+instr returns [WhileNode node]
+    : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, $instrs.node);}
+    ;
+
+exp returns [ASTNode node]
     : . {$node = null;}
     ;
 

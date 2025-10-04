@@ -3,7 +3,7 @@ package fr.ufrst.m1info.gl.compGL;
 public class Value {
     public int valueInt;
     public boolean valueBool;
-    ValueType Type;
+    public ValueType Type;
 
     public Value(boolean valueBool){
         this.valueBool = valueBool;
