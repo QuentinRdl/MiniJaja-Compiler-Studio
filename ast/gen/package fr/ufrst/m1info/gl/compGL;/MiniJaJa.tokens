@@ -1,7 +1,9 @@
 T__0=1
 T__1=2
 T__2=3
-IDENTIFIER=4
+T__3=4
+IDENTIFIER=5
 'class'=1
 '{'=2
 '}'=3
+'main'=4

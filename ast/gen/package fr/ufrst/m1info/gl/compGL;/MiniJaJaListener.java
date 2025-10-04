@@ -50,4 +50,24 @@ public interface MiniJaJaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMethmain(MiniJaJaParser.MethmainContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#vars}.
+	 * @param ctx the parse tree
+	 */
+	void enterVars(MiniJaJaParser.VarsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#vars}.
+	 * @param ctx the parse tree
+	 */
+	void exitVars(MiniJaJaParser.VarsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#instrs}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstrs(MiniJaJaParser.InstrsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#instrs}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstrs(MiniJaJaParser.InstrsContext ctx);
 }
