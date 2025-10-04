@@ -18,13 +18,15 @@ public class InstructionsNode extends ASTNode{
     public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<>();
         JJCodes.addAll(instruction.compile(address));
-        JJCodes.addAll(otherInstructions.compile(address));
+        if(otherInstructions!=null)
+            JJCodes.addAll(otherInstructions.compile(address));
         return JJCodes;
     }
 
     @Override
     public void interpret(Memory m) throws Exception {
         instruction.interpret(m);
-        otherInstructions.interpret(m);
+        if(otherInstructions!=null)
+            otherInstructions.interpret(m);
     }
 }

@@ -18,17 +18,23 @@ public class MainNode extends ASTNode {
     @Override
     public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<String>();
-        JJCodes.addAll(vars.compile(address));
-        JJCodes.addAll(instrs.compile(address));
+        if(vars != null)
+            JJCodes.addAll(vars.compile(address));
+        if(instrs != null)
+            JJCodes.addAll(instrs.compile(address));
         JJCodes.add("push(0)");
-        JJCodes.addAll(((WithradawableNode)vars).WithdrawCompile());
+        if(vars != null)
+            JJCodes.addAll(((WithradawableNode)vars).WithdrawCompile());
         return JJCodes;
     }
 
     @Override
     public void interpret(Memory m) throws Exception {
-        vars.interpret(m);
-        instrs.interpret(m);
-        ((WithradawableNode)vars).WithradawInterpret(m);
+        if(vars != null)
+            vars.interpret(m);
+        if(instrs != null)
+            instrs.interpret(m);
+        if(vars != null)
+            ((WithradawableNode)vars).WithradawInterpret(m);
     }
 }

@@ -22,21 +22,22 @@ public class WhileNode extends ASTNode{
         List<String> JJCodes = new ArrayList<>();
         // Compiling sub-instructions
         List<String> pe = condition.compile(address);
-        List<String> piss = iss.compile(address);
+        List<String> piss = (iss == null)?List.of() : iss.compile(address);
         // Node compilation
         JJCodes.addAll(pe);
         JJCodes.add("not");
         JJCodes.add("if(" + address + pe.size() + piss.size() + 3 +")");
         JJCodes.addAll(piss);
         JJCodes.add("goto("+address+")");
-        return List.of();
+        return JJCodes;
     }
 
     @Override
     public void interpret(Memory m) throws Exception {
         Value e = ((EvaluableNode)condition).eval(m);
         if(e.valueBool){ // Rule [tantquevrai]
-            iss.interpret(m);
+            if(iss != null)
+                iss.interpret(m);
             interpret(m);
         }
     }

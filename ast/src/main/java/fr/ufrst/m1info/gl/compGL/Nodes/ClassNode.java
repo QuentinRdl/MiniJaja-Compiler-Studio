@@ -21,9 +21,11 @@ public class ClassNode extends ASTNode {
     public List<String> compile(int  address) {
         List<String> JJCodes = new ArrayList<String>();
         JJCodes.add("init");
-        JJCodes.addAll(decls.compile(address));
+        if(decls!=null)
+            JJCodes.addAll(decls.compile(address));
         JJCodes.addAll(main.compile(address));
-        JJCodes.addAll(((WithradawableNode)decls).WithdrawCompile());
+        if(decls!=null)
+            JJCodes.addAll(((WithradawableNode)decls).WithdrawCompile());
         JJCodes.add("pop");
         JJCodes.add("jcstop");
         return JJCodes;
@@ -32,9 +34,10 @@ public class ClassNode extends ASTNode {
     @Override
     public void interpret(Memory m) throws Exception {
         m.DeclVar();
-        decls.interpret(m);
+        if(decls!=null)
+            decls.interpret(m);
         main.interpret(m);
-        if(decls instanceof WithradawableNode){
+        if(decls != null && decls instanceof WithradawableNode){
             ((WithradawableNode) decls).WithradawInterpret(m);
         }
     }
