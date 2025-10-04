@@ -16,7 +16,17 @@ decls returns [ASTNode node]
     : . {$node = null;}
     ;
 
-methmain returns [ASTNode node]
+/* methmain    -> main "{" vars instrs "}" */
+
+methmain returns [MainNode node]
+    : 'main' '{' vars instrs '}' {$node = new MainNode($vars.node, $instrs.node);}
+    ;
+
+vars returns [ASTNode node]
+    : . {$node = null;}
+    ;
+
+instrs returns [ASTNode node]
     : . {$node = null;}
     ;
 
