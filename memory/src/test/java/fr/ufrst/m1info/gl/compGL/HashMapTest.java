@@ -782,7 +782,20 @@ public class HashMapTest
     }
 
     @Test
-    public void testComputeIfPresentExistingKeyNull()
+    public void testComputeIfPresentExistingKeyNullValue()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",null);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.computeIfPresent("OP",(k,v) -> k.length()*v),map.computeIfPresent("OP",(k,v) -> k.length()*v));
+        assertEquals(oldMap.get("OP"),map.get("OP"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testComputeIfPresentExistingKeyNullFunction()
     {
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
         oldMap.put("OP",81);
@@ -868,6 +881,71 @@ public class HashMapTest
         HashMap<String,Integer> map=new HashMap<>();
         map.putAll(oldMap);
         assertEquals(oldMap.compute("MV",(k,v) -> null),map.compute("MV",(k,v) -> null));
+        assertEquals(oldMap.get("MV"),map.get("MV"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testMergeExistingKey()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",81);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.merge("OP",33,(v1,v2) -> v1-v2),map.merge("OP",33,(v1,v2) -> v1-v2));
+        assertEquals(oldMap.get("OP"),map.get("OP"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testMergeExistingKeyNullValue()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",null);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.merge("OP",33,(v1,v2) -> v1-v2),map.merge("OP",33,(v1,v2) -> v1-v2));
+        assertEquals(oldMap.get("OP"),map.get("OP"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testMergeExistingKeyNullFunction()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",81);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.merge("OP",33,(v1,v2) -> null),map.merge("OP",33,(v1,v2) -> null));
+        assertEquals(oldMap.get("OP"),map.get("OP"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testMergeNotExistingKey()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",81);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.merge("MV",33,(v1,v2) -> v1-v2),map.merge("MV",33,(v1,v2) -> v1-v2));
+        assertEquals(oldMap.get("MV"),map.get("MV"));
+        assertEquals(oldMap.size(),map.size());
+    }
+
+    @Test
+    public void testMergeNotExistingKeyNull()
+    {
+        java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
+        oldMap.put("OP",81);
+        oldMap.put("LN",4);
+        HashMap<String,Integer> map=new HashMap<>();
+        map.putAll(oldMap);
+        assertEquals(oldMap.merge("MV",33,(v1,v2) -> null),map.merge("MV",33,(v1,v2) -> null));
         assertEquals(oldMap.get("MV"),map.get("MV"));
         assertEquals(oldMap.size(),map.size());
     }

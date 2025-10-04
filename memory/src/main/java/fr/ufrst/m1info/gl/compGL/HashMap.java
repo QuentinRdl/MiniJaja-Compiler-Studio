@@ -391,6 +391,9 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             EntryHashMap<K,V> e=buckets[index].get(i);
             if (key.equals(e.getKey())){
                 old_value=e.getValue();
+                if (old_value==null){
+                    return null;
+                }
                 V new_value = remappingFunction.apply(key,old_value);
                 if (new_value==null){
                     buckets[index].remove(i);
@@ -431,8 +434,35 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         }
         V new_value = remappingFunction.apply(key,old_value);
         if (new_value!=null){
-            put(key,new_value);
+            putIfAbsent(key,new_value);
         }
+        return new_value;
+    }
+
+    public V merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunction){
+        int index=key.hashCode() % capacity;
+        V old_value=null;
+        for (int i=0;i<buckets[index].size();i++){
+            EntryHashMap<K,V> e=buckets[index].get(i);
+            if (key.equals(e.getKey())){
+                old_value=e.getValue();
+                if (old_value==null){
+                    V new_value = value;
+                    putIfAbsent(key,new_value);
+                    return new_value;
+                }
+                V new_value = remappingFunction.apply(old_value,value);
+                if (new_value==null){
+                    buckets[index].remove(i);
+                    sizeHashMap--;
+                    return null;
+                }
+                buckets[index].get(i).setValue(new_value);
+                return new_value;
+            }
+        }
+        V new_value = value;
+        putIfAbsent(key,new_value);
         return new_value;
     }
 }
