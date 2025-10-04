@@ -15,10 +15,10 @@ public class InstructionsNode extends ASTNode{
     }
 
     @Override
-    public List<String> compile() {
+    public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(instruction.compile());
-        JJCodes.addAll(otherInstructions.compile());
+        JJCodes.addAll(instruction.compile(address));
+        JJCodes.addAll(otherInstructions.compile(address));
         return JJCodes;
     }
 

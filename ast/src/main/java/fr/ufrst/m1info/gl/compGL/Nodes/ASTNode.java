@@ -10,7 +10,7 @@ public abstract class ASTNode {
      * Compile the node and its descendants
      * @return List of JaJaCodes compiled from it
      */
-    public abstract List<String> compile();
+    public abstract List<String> compile(int address);
 
     /**
      * Interpret the node and it's descendants using a memory

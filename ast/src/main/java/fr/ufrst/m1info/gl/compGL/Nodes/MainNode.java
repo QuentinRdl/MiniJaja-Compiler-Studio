@@ -16,10 +16,10 @@ public class MainNode extends ASTNode {
     }
 
     @Override
-    public List<String> compile() {
+    public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<String>();
-        JJCodes.addAll(vars.compile());
-        JJCodes.addAll(instrs.compile());
+        JJCodes.addAll(vars.compile(address));
+        JJCodes.addAll(instrs.compile(address));
         JJCodes.add("push(0)");
         JJCodes.addAll(((WithradawableNode)vars).WithdrawCompile());
         return JJCodes;

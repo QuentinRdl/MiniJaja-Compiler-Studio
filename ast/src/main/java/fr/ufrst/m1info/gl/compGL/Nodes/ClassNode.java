@@ -18,11 +18,11 @@ public class ClassNode extends ASTNode {
     }
 
     @Override
-    public List<String> compile() {
+    public List<String> compile(int  address) {
         List<String> JJCodes = new ArrayList<String>();
         JJCodes.add("init");
-        JJCodes.addAll(decls.compile());
-        JJCodes.addAll(main.compile());
+        JJCodes.addAll(decls.compile(address));
+        JJCodes.addAll(main.compile(address));
         JJCodes.addAll(((WithradawableNode)decls).WithdrawCompile());
         JJCodes.add("pop");
         JJCodes.add("jcstop");
