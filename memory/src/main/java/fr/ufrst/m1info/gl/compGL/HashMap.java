@@ -2,6 +2,8 @@ package fr.ufrst.m1info.gl.compGL;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Hello world!
@@ -356,5 +358,81 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             }
         }
         return old_value;
+    }
+
+    /**
+     * If the specified key is not already associated with a value (or is mapped to null),
+     * attempts to compute its value using the given mapping function and enters it into this map unless null.
+     * If the function returns null no mapping is recorded.
+     *
+     * @param key key with which the specified value is to be associated
+     * @param mappingFunction the function to compute a value
+     * @return the current (existing or computed) value associated with the specified key
+     */
+    public V computeIfAbsent(K key, Function<? super K,? extends V> mappingFunction){
+        V value=mappingFunction.apply(key);
+        if (value!=null){
+            putIfAbsent(key,value);
+        }
+        return get(key);
+    }
+
+    /**
+     * If the value for the specified key is present and non-null, attempts to compute a new mapping given the key and its current mapped value
+     *
+     * @param key key with which the specified value is to be associated
+     * @param remappingFunction the function to compute a value
+     * @return the new value associated with the specified key, or null if none
+     */
+    public V computeIfPresent(K key, BiFunction<? super K,? super V,? extends V> remappingFunction){
+        int index=key.hashCode() % capacity;
+        V old_value=null;
+        for (int i=0;i<buckets[index].size();i++){
+            EntryHashMap<K,V> e=buckets[index].get(i);
+            if (key.equals(e.getKey())){
+                old_value=e.getValue();
+                V new_value = remappingFunction.apply(key,old_value);
+                if (new_value==null){
+                    buckets[index].remove(i);
+                    sizeHashMap--;
+                    return null;
+                }
+                buckets[index].get(i).setValue(new_value);
+                return new_value;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Attempts to compute a mapping for the specified key and its current mapped value (or null if there is no current mapping)
+     * If the function returns null, the mapping is removed (or remains absent if initially absent).
+     *
+     * @param key key with which the specified value is to be associated
+     * @param remappingFunction the function to compute a value
+     * @return the new value associated with the specified key, or null if none
+     */
+    public V compute(K key, BiFunction<? super K,? super V,? extends V> remappingFunction){
+        int index=key.hashCode() % capacity;
+        V old_value=null;
+        for (int i=0;i<buckets[index].size();i++){
+            EntryHashMap<K,V> e=buckets[index].get(i);
+            if (key.equals(e.getKey())){
+                old_value=e.getValue();
+                V new_value = remappingFunction.apply(key,old_value);
+                if (new_value==null){
+                    buckets[index].remove(i);
+                    sizeHashMap--;
+                    return null;
+                }
+                buckets[index].get(i).setValue(new_value);
+                return new_value;
+            }
+        }
+        V new_value = remappingFunction.apply(key,old_value);
+        if (new_value!=null){
+            put(key,new_value);
+        }
+        return new_value;
     }
 }
