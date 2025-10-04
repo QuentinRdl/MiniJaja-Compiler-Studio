@@ -16,7 +16,6 @@ decls returns [ASTNode node]
     : . {$node = null;}
     ;
 
-
 methmain returns [MainNode node]
     : 'main' '{' (vars)? (instrs)? '}' {$node = new MainNode($vars.node, $instrs.node);}
     ;
