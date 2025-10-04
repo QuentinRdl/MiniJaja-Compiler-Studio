@@ -19,6 +19,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         stage.setTitle(WINDOW_TITLE);
+        //stage.setFullScreen(true); //go full screen
         stage.setScene(scene);
         stage.show();
     }
