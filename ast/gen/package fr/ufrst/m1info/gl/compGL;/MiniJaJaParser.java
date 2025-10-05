@@ -20,26 +20,29 @@ public class MiniJaJaParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, IDENTIFIER=6;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
+		T__9=10, IDENTIFIER=11;
 	public static final int
 		RULE_classe = 0, RULE_ident = 1, RULE_decls = 2, RULE_methmain = 3, RULE_vars = 4, 
-		RULE_instrs = 5, RULE_instr = 6;
+		RULE_instrs = 5, RULE_instr = 6, RULE_exp = 7, RULE_andorexp = 8, RULE_exp1 = 9;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"classe", "ident", "decls", "methmain", "vars", "instrs", "instr"
+			"classe", "ident", "decls", "methmain", "vars", "instrs", "instr", "exp", 
+			"andorexp", "exp1"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'class'", "'{'", "'}'", "'main'", "';'"
+			null, "'class'", "'{'", "'}'", "'main'", "';'", "'while'", "'('", "')'", 
+			"'return'", "'!'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, "IDENTIFIER"
+			null, null, null, null, null, null, null, null, null, null, null, "IDENTIFIER"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -133,25 +136,25 @@ public class MiniJaJaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(14);
+			setState(20);
 			match(T__0);
-			setState(15);
+			setState(21);
 			((ClasseContext)_localctx).ident = ident();
-			setState(16);
+			setState(22);
 			match(T__1);
-			setState(18);
+			setState(24);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				{
-				setState(17);
+				setState(23);
 				((ClasseContext)_localctx).decls = decls();
 				}
 				break;
 			}
-			setState(20);
+			setState(26);
 			((ClasseContext)_localctx).methmain = methmain();
-			setState(21);
+			setState(27);
 			match(T__2);
 			((ClasseContext)_localctx).node =  new ClassNode(((ClasseContext)_localctx).ident.node, ((ClasseContext)_localctx).decls.node, ((ClasseContext)_localctx).methmain.node);
 			}
@@ -197,7 +200,7 @@ public class MiniJaJaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(30);
 			((IdentContext)_localctx).id = match(IDENTIFIER);
 			((IdentContext)_localctx).node =  new IdentNode((((IdentContext)_localctx).id!=null?((IdentContext)_localctx).id.getText():null));
 			}
@@ -241,7 +244,7 @@ public class MiniJaJaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(27);
+			setState(33);
 			matchWildcard();
 			((DeclsContext)_localctx).node =  null;
 			}
@@ -290,34 +293,35 @@ public class MiniJaJaParser extends Parser {
 	public final MethmainContext methmain() throws RecognitionException {
 		MethmainContext _localctx = new MethmainContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_methmain);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(30);
+			setState(36);
 			match(T__3);
-			setState(31);
+			setState(37);
 			match(T__1);
-			setState(33);
+			setState(39);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				{
-				setState(32);
+				setState(38);
 				((MethmainContext)_localctx).vars = vars();
 				}
 				break;
 			}
-			setState(36);
+			setState(42);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
-			case 1:
+			_la = _input.LA(1);
+			if (_la==T__5 || _la==T__8) {
 				{
-				setState(35);
+				setState(41);
 				((MethmainContext)_localctx).instrs = instrs();
 				}
-				break;
 			}
-			setState(38);
+
+			setState(44);
 			match(T__2);
 			((MethmainContext)_localctx).node =  new MainNode(((MethmainContext)_localctx).vars.node, ((MethmainContext)_localctx).instrs.node);
 			}
@@ -361,7 +365,7 @@ public class MiniJaJaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(41);
+			setState(47);
 			matchWildcard();
 			((VarsContext)_localctx).node =  null;
 			}
@@ -410,23 +414,24 @@ public class MiniJaJaParser extends Parser {
 	public final InstrsContext instrs() throws RecognitionException {
 		InstrsContext _localctx = new InstrsContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_instrs);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44);
+			setState(50);
 			((InstrsContext)_localctx).instr = instr();
-			setState(45);
+			setState(51);
 			match(T__4);
-			setState(47);
+			setState(53);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
-			case 1:
+			_la = _input.LA(1);
+			if (_la==T__5 || _la==T__8) {
 				{
-				setState(46);
+				setState(52);
 				((InstrsContext)_localctx).instrs = instrs();
 				}
-				break;
 			}
+
 			((InstrsContext)_localctx).node =  new InstructionsNode(((InstrsContext)_localctx).instr.node, ((InstrsContext)_localctx).instrs.node);
 			}
 		}
@@ -444,6 +449,14 @@ public class MiniJaJaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class InstrContext extends ParserRuleContext {
 		public ASTNode node;
+		public ExpContext exp;
+		public InstrsContext instrs;
+		public ExpContext exp() {
+			return getRuleContext(ExpContext.class,0);
+		}
+		public InstrsContext instrs() {
+			return getRuleContext(InstrsContext.class,0);
+		}
 		public InstrContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -466,12 +479,224 @@ public class MiniJaJaParser extends Parser {
 	public final InstrContext instr() throws RecognitionException {
 		InstrContext _localctx = new InstrContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_instr);
+		int _la;
+		try {
+			setState(72);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__5:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(57);
+				match(T__5);
+				setState(58);
+				match(T__6);
+				setState(59);
+				((InstrContext)_localctx).exp = exp();
+				setState(60);
+				match(T__7);
+				setState(61);
+				match(T__1);
+				setState(63);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==T__5 || _la==T__8) {
+					{
+					setState(62);
+					((InstrContext)_localctx).instrs = instrs();
+					}
+				}
+
+				setState(65);
+				match(T__2);
+				((InstrContext)_localctx).node =  new WhileNode(((InstrContext)_localctx).exp.node, ((InstrContext)_localctx).instrs.node);
+				}
+				break;
+			case T__8:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(68);
+				match(T__8);
+				setState(69);
+				((InstrContext)_localctx).exp = exp();
+				((InstrContext)_localctx).node =  new ReturnNode(((InstrContext)_localctx).exp.node);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class ExpContext extends ParserRuleContext {
+		public ASTNode node;
+		public Exp1Context exp1() {
+			return getRuleContext(Exp1Context.class,0);
+		}
+		public AndorexpContext andorexp() {
+			return getRuleContext(AndorexpContext.class,0);
+		}
+		public ExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_exp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).enterExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).exitExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniJaJaVisitor ) return ((MiniJaJaVisitor<? extends T>)visitor).visitExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final ExpContext exp() throws RecognitionException {
+		ExpContext _localctx = new ExpContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_exp);
+		try {
+			setState(85);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(74);
+				match(T__9);
+				setState(75);
+				exp1();
+				setState(77);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+				case 1:
+					{
+					setState(76);
+					andorexp();
+					}
+					break;
+				}
+				((ExpContext)_localctx).node =  null;
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(81);
+				exp1();
+				setState(83);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+				case 1:
+					{
+					setState(82);
+					andorexp();
+					}
+					break;
+				}
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class AndorexpContext extends ParserRuleContext {
+		public ASTNode node;
+		public AndorexpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_andorexp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).enterAndorexp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).exitAndorexp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniJaJaVisitor ) return ((MiniJaJaVisitor<? extends T>)visitor).visitAndorexp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final AndorexpContext andorexp() throws RecognitionException {
+		AndorexpContext _localctx = new AndorexpContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_andorexp);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
+			setState(87);
 			matchWildcard();
-			((InstrContext)_localctx).node =  null;
+			((AndorexpContext)_localctx).node =  null;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class Exp1Context extends ParserRuleContext {
+		public ASTNode node;
+		public Exp1Context(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_exp1; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).enterExp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MiniJaJaListener ) ((MiniJaJaListener)listener).exitExp1(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniJaJaVisitor ) return ((MiniJaJaVisitor<? extends T>)visitor).visitExp1(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Exp1Context exp1() throws RecognitionException {
+		Exp1Context _localctx = new Exp1Context(_ctx, getState());
+		enterRule(_localctx, 18, RULE_exp1);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(90);
+			matchWildcard();
+			((Exp1Context)_localctx).node =  null;
 			}
 		}
 		catch (RecognitionException re) {
@@ -486,39 +711,59 @@ public class MiniJaJaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u00067\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u000b^\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
-		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0001\u0000\u0001\u0000\u0001"+
-		"\u0000\u0001\u0000\u0003\u0000\u0013\b\u0000\u0001\u0000\u0001\u0000\u0001"+
-		"\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0002\u0001"+
-		"\u0002\u0001\u0002\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003\"\b"+
-		"\u0003\u0001\u0003\u0003\u0003%\b\u0003\u0001\u0003\u0001\u0003\u0001"+
-		"\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0001"+
-		"\u0005\u0003\u00050\b\u0005\u0001\u0005\u0001\u0005\u0001\u0006\u0001"+
-		"\u0006\u0001\u0006\u0001\u0006\u0000\u0000\u0007\u0000\u0002\u0004\u0006"+
-		"\b\n\f\u0000\u00003\u0000\u000e\u0001\u0000\u0000\u0000\u0002\u0018\u0001"+
-		"\u0000\u0000\u0000\u0004\u001b\u0001\u0000\u0000\u0000\u0006\u001e\u0001"+
-		"\u0000\u0000\u0000\b)\u0001\u0000\u0000\u0000\n,\u0001\u0000\u0000\u0000"+
-		"\f3\u0001\u0000\u0000\u0000\u000e\u000f\u0005\u0001\u0000\u0000\u000f"+
-		"\u0010\u0003\u0002\u0001\u0000\u0010\u0012\u0005\u0002\u0000\u0000\u0011"+
-		"\u0013\u0003\u0004\u0002\u0000\u0012\u0011\u0001\u0000\u0000\u0000\u0012"+
-		"\u0013\u0001\u0000\u0000\u0000\u0013\u0014\u0001\u0000\u0000\u0000\u0014"+
-		"\u0015\u0003\u0006\u0003\u0000\u0015\u0016\u0005\u0003\u0000\u0000\u0016"+
-		"\u0017\u0006\u0000\uffff\uffff\u0000\u0017\u0001\u0001\u0000\u0000\u0000"+
-		"\u0018\u0019\u0005\u0006\u0000\u0000\u0019\u001a\u0006\u0001\uffff\uffff"+
-		"\u0000\u001a\u0003\u0001\u0000\u0000\u0000\u001b\u001c\t\u0000\u0000\u0000"+
-		"\u001c\u001d\u0006\u0002\uffff\uffff\u0000\u001d\u0005\u0001\u0000\u0000"+
-		"\u0000\u001e\u001f\u0005\u0004\u0000\u0000\u001f!\u0005\u0002\u0000\u0000"+
-		" \"\u0003\b\u0004\u0000! \u0001\u0000\u0000\u0000!\"\u0001\u0000\u0000"+
-		"\u0000\"$\u0001\u0000\u0000\u0000#%\u0003\n\u0005\u0000$#\u0001\u0000"+
-		"\u0000\u0000$%\u0001\u0000\u0000\u0000%&\u0001\u0000\u0000\u0000&\'\u0005"+
-		"\u0003\u0000\u0000\'(\u0006\u0003\uffff\uffff\u0000(\u0007\u0001\u0000"+
-		"\u0000\u0000)*\t\u0000\u0000\u0000*+\u0006\u0004\uffff\uffff\u0000+\t"+
-		"\u0001\u0000\u0000\u0000,-\u0003\f\u0006\u0000-/\u0005\u0005\u0000\u0000"+
-		".0\u0003\n\u0005\u0000/.\u0001\u0000\u0000\u0000/0\u0001\u0000\u0000\u0000"+
-		"01\u0001\u0000\u0000\u000012\u0006\u0005\uffff\uffff\u00002\u000b\u0001"+
-		"\u0000\u0000\u000034\t\u0000\u0000\u000045\u0006\u0006\uffff\uffff\u0000"+
-		"5\r\u0001\u0000\u0000\u0000\u0004\u0012!$/";
+		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
+		"\b\u0007\b\u0002\t\u0007\t\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000"+
+		"\u0003\u0000\u0019\b\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003(\b\u0003\u0001\u0003"+
+		"\u0003\u0003+\b\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0004"+
+		"\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0003\u0005"+
+		"6\b\u0005\u0001\u0005\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0006"+
+		"\u0001\u0006\u0001\u0006\u0001\u0006\u0003\u0006@\b\u0006\u0001\u0006"+
+		"\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006"+
+		"\u0003\u0006I\b\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0003\u0007"+
+		"N\b\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0003\u0007"+
+		"T\b\u0007\u0003\u0007V\b\u0007\u0001\b\u0001\b\u0001\b\u0001\t\u0001\t"+
+		"\u0001\t\u0001\t\u0000\u0000\n\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010"+
+		"\u0012\u0000\u0000\\\u0000\u0014\u0001\u0000\u0000\u0000\u0002\u001e\u0001"+
+		"\u0000\u0000\u0000\u0004!\u0001\u0000\u0000\u0000\u0006$\u0001\u0000\u0000"+
+		"\u0000\b/\u0001\u0000\u0000\u0000\n2\u0001\u0000\u0000\u0000\fH\u0001"+
+		"\u0000\u0000\u0000\u000eU\u0001\u0000\u0000\u0000\u0010W\u0001\u0000\u0000"+
+		"\u0000\u0012Z\u0001\u0000\u0000\u0000\u0014\u0015\u0005\u0001\u0000\u0000"+
+		"\u0015\u0016\u0003\u0002\u0001\u0000\u0016\u0018\u0005\u0002\u0000\u0000"+
+		"\u0017\u0019\u0003\u0004\u0002\u0000\u0018\u0017\u0001\u0000\u0000\u0000"+
+		"\u0018\u0019\u0001\u0000\u0000\u0000\u0019\u001a\u0001\u0000\u0000\u0000"+
+		"\u001a\u001b\u0003\u0006\u0003\u0000\u001b\u001c\u0005\u0003\u0000\u0000"+
+		"\u001c\u001d\u0006\u0000\uffff\uffff\u0000\u001d\u0001\u0001\u0000\u0000"+
+		"\u0000\u001e\u001f\u0005\u000b\u0000\u0000\u001f \u0006\u0001\uffff\uffff"+
+		"\u0000 \u0003\u0001\u0000\u0000\u0000!\"\t\u0000\u0000\u0000\"#\u0006"+
+		"\u0002\uffff\uffff\u0000#\u0005\u0001\u0000\u0000\u0000$%\u0005\u0004"+
+		"\u0000\u0000%\'\u0005\u0002\u0000\u0000&(\u0003\b\u0004\u0000\'&\u0001"+
+		"\u0000\u0000\u0000\'(\u0001\u0000\u0000\u0000(*\u0001\u0000\u0000\u0000"+
+		")+\u0003\n\u0005\u0000*)\u0001\u0000\u0000\u0000*+\u0001\u0000\u0000\u0000"+
+		"+,\u0001\u0000\u0000\u0000,-\u0005\u0003\u0000\u0000-.\u0006\u0003\uffff"+
+		"\uffff\u0000.\u0007\u0001\u0000\u0000\u0000/0\t\u0000\u0000\u000001\u0006"+
+		"\u0004\uffff\uffff\u00001\t\u0001\u0000\u0000\u000023\u0003\f\u0006\u0000"+
+		"35\u0005\u0005\u0000\u000046\u0003\n\u0005\u000054\u0001\u0000\u0000\u0000"+
+		"56\u0001\u0000\u0000\u000067\u0001\u0000\u0000\u000078\u0006\u0005\uffff"+
+		"\uffff\u00008\u000b\u0001\u0000\u0000\u00009:\u0005\u0006\u0000\u0000"+
+		":;\u0005\u0007\u0000\u0000;<\u0003\u000e\u0007\u0000<=\u0005\b\u0000\u0000"+
+		"=?\u0005\u0002\u0000\u0000>@\u0003\n\u0005\u0000?>\u0001\u0000\u0000\u0000"+
+		"?@\u0001\u0000\u0000\u0000@A\u0001\u0000\u0000\u0000AB\u0005\u0003\u0000"+
+		"\u0000BC\u0006\u0006\uffff\uffff\u0000CI\u0001\u0000\u0000\u0000DE\u0005"+
+		"\t\u0000\u0000EF\u0003\u000e\u0007\u0000FG\u0006\u0006\uffff\uffff\u0000"+
+		"GI\u0001\u0000\u0000\u0000H9\u0001\u0000\u0000\u0000HD\u0001\u0000\u0000"+
+		"\u0000I\r\u0001\u0000\u0000\u0000JK\u0005\n\u0000\u0000KM\u0003\u0012"+
+		"\t\u0000LN\u0003\u0010\b\u0000ML\u0001\u0000\u0000\u0000MN\u0001\u0000"+
+		"\u0000\u0000NO\u0001\u0000\u0000\u0000OP\u0006\u0007\uffff\uffff\u0000"+
+		"PV\u0001\u0000\u0000\u0000QS\u0003\u0012\t\u0000RT\u0003\u0010\b\u0000"+
+		"SR\u0001\u0000\u0000\u0000ST\u0001\u0000\u0000\u0000TV\u0001\u0000\u0000"+
+		"\u0000UJ\u0001\u0000\u0000\u0000UQ\u0001\u0000\u0000\u0000V\u000f\u0001"+
+		"\u0000\u0000\u0000WX\t\u0000\u0000\u0000XY\u0006\b\uffff\uffff\u0000Y"+
+		"\u0011\u0001\u0000\u0000\u0000Z[\t\u0000\u0000\u0000[\\\u0006\t\uffff"+
+		"\uffff\u0000\\\u0013\u0001\u0000\u0000\u0000\t\u0018\'*5?HMSU";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

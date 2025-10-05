@@ -99,6 +99,42 @@ public class MiniJaJaBaseListener implements MiniJaJaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInstr(MiniJaJaParser.InstrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExp(MiniJaJaParser.ExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExp(MiniJaJaParser.ExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAndorexp(MiniJaJaParser.AndorexpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAndorexp(MiniJaJaParser.AndorexpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExp1(MiniJaJaParser.Exp1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExp1(MiniJaJaParser.Exp1Context ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -80,4 +80,34 @@ public interface MiniJaJaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInstr(MiniJaJaParser.InstrContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#exp}.
+	 * @param ctx the parse tree
+	 */
+	void enterExp(MiniJaJaParser.ExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#exp}.
+	 * @param ctx the parse tree
+	 */
+	void exitExp(MiniJaJaParser.ExpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#andorexp}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndorexp(MiniJaJaParser.AndorexpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#andorexp}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndorexp(MiniJaJaParser.AndorexpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#exp1}.
+	 * @param ctx the parse tree
+	 */
+	void enterExp1(MiniJaJaParser.Exp1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#exp1}.
+	 * @param ctx the parse tree
+	 */
+	void exitExp1(MiniJaJaParser.Exp1Context ctx);
 }
