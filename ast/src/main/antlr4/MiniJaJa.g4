@@ -13,15 +13,11 @@ ident returns [ASTNode node]
     ;
 
 decls returns [ASTNode node]
-    : . {$node = null;}
+    : decl ';' (decls)?  {$node = new DeclarationNode($decl.node, $decls.node);}
     ;
 
 methmain returns [MainNode node]
     : 'main' '{' (vars)? (instrs)? '}' {$node = new MainNode($vars.node, $instrs.node);}
-    ;
-
-vars returns [ASTNode node]
-    : . {$node = null;}
     ;
 
 instrs returns [InstructionsNode node]
@@ -44,13 +40,41 @@ exp returns [ASTNode node]
     )*
     ;
 
-andorexp returns [ASTNode node]
-    : '&&' exp1 (andorexp)* {$node = null;}
-    ;
 
 exp1 returns [ASTNode node]
     : . {$node = null;}
     ;
+
+decl returns [ASTNode node]
+    : var {$node = $var.node;}
+    ;
+
+vars returns [ASTNode node]
+    : var ';' (vars)? {$node = new VariablesNode($var.node, $vars.node);}
+    ;
+
+var returns [AST node]
+    : typemeth ident varPrime {$node = new VariableNode($typemeth.node, $ident.node, $varPrime.node);}
+    | 'final' type ident (vexp)? {$node = new FinalNode($type.node, $ident.node, $vexp.node);}
+    ;
+
+varPrime returns [ASTNode node]
+     : (vexp)? {$node = $vexp.node;}
+     ;
+
+typemeth returns [TypeNode node]
+     : type {$node = $type.node;}
+     | 'void' {$node = new TypeNode(ValueType.VOID);}
+     ;
+
+type returns [TypeNode node]
+     : 'int' {$node = new TypeNode(ValueType.INT);}
+     | 'boolean' {$node = new TypeNode(ValueType.BOOL);}
+     ;
+
+vexp returns [ASTNode node]
+     : '=' exp {$node = $exp.node;}
+     ;
 
 IDENTIFIER
     : ('_' | 'a'..'z' | 'A'..'Z')+ ('_' | 'a'..'z' | 'A'..'Z' | '0'..'9')*
