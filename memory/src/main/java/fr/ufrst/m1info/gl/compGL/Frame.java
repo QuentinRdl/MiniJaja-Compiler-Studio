@@ -27,4 +27,61 @@ public class Frame {
        this.localVariables = new HashMap<>();
     }
 
+    /**
+     * @param name Name of the Object
+     * @param value The actual Object
+     */
+    public void setVariable(String name, Object value) {
+        // TODO : Should we check the Object type ?
+       localVariables.put(name, value);
+    }
+
+    /**
+     * @param name Name of the Object
+     * @return Object if found, null otherwise
+     */
+    public Object getVariable(String name) {
+        // TODO : Should we check the Object type ?
+        if(localVariables.containsKey(name)) {
+           return localVariables.get(name);
+        }
+
+        // Checks the parent frame, to see if the Object is found there // TODO : Is it needed ? Check the name of what it is actually called
+        if(parent != null) {
+            return parent.getVariable(name);
+        }
+
+        return null; // No Object with the given name was found
+    }
+
+    // All the following funcs do not contain a set func, because they mustn't be changed after their creation
+
+    /**
+     * @return the parent of the current Frame (null if not any)
+     */
+   public Frame getParent()  {
+       return parent;
+   }
+
+    /**
+     * @return name of the current func name
+     */
+   public String getFuncName() {
+      return funcName;
+   }
+
+    /**
+     * @return line number where the frame was created
+     */
+   public int getCallLine() {
+      return callLine;
+   }
+
+    /**
+     * @return the map of the localVariables
+     */
+   public Map<String, Object> getLocalVariables() {
+       return new HashMap<>(localVariables); // TODO : Replace w/ the HashMap of Theo
+   }
+
 }
