@@ -36,9 +36,12 @@ instr returns [ASTNode node]
 exp returns [ASTNode node]
     : '!' exp1 {$node = new NotNode($exp1.node);}
     ( '&&' exp1 {$node = new AndNode($node, $exp1.node);}
-    | '||' exp1 {$node = null;}
+    | '||' exp1 {$node = new OrNode($node, $exp1.node);}
     )*
-    | exp1 (andorexp)? {$node = $exp1.node}
+    | exp1 {$node = $exp1.node;}
+    ( '&&' exp1 {$node = new AndNode($node, $exp1.node);}
+    | '||' exp1 {$node = new OrNode($node, $exp1.node);}
+    )*
     ;
 
 andorexp returns [ASTNode node]
