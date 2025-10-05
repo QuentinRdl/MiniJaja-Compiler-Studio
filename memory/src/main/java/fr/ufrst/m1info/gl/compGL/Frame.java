@@ -10,8 +10,8 @@ public class Frame {
     private Map<String, Object> localVariables; // Local variables on this scope
     private Frame parent; // Parent of the current frame
 
-    private String funcName; // Name of the func // TODO : Keep it ?
-    private int callLine; // Line of code that called the func // TODO : Keep it ?
+    private final String funcName; // Name of the func // TODO : Keep it ?
+    private final int callLine; // Line of code that called the func // TODO : Keep it ?
 
 
     /**
@@ -54,6 +54,22 @@ public class Frame {
         return null; // No Object with the given name was found
     }
 
+    public boolean hasVariable(String name) {
+        boolean ret = false;
+        ret = localVariables.containsKey(name);
+
+        if(!ret) {
+            // Child does not have it, check the parent
+            if(parent != null) ret = parent.hasVariable(name);
+        }
+
+        return ret;
+    }
+
+    public boolean hasLocalVariable(String name) {
+        return localVariables.containsKey(name);
+    }
+
     // All the following funcs do not contain a set func, because they mustn't be changed after their creation
 
     /**
@@ -84,4 +100,23 @@ public class Frame {
        return new HashMap<>(localVariables); // TODO : Replace w/ the HashMap of Theo
    }
 
+    /**
+     * @param name Name of the var
+     * @param value new value of the var
+     *
+     * @return true if var was found and updated, false otherwise
+     */
+    public boolean updateVariable(String name, Object value) {
+        if(localVariables.containsKey(name)) {
+            // Check in self
+            localVariables.put(name, value);
+            return true;
+        }
+
+        // Check in parent
+        if(parent != null) return parent.updateVariable(name, value);
+
+        // No var with the name 'name' found
+        return false;
+    }
 }
