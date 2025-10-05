@@ -1,7 +1,8 @@
-// Generated from /media/kilian/Data/Utilitaires/IDEA projects/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
-package package fr.ufrst.m1info.gl.compGL;;
+// Generated from /home/utilisateur/Documents/Master 1/M1 - Semestre 7/Projet COMP/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
+package fr.ufrst.m1info.gl.compGL;
 
 import fr.ufrst.m1info.gl.compGL.Nodes.*;
+import fr.ufrst.m1info.gl.compGL.ValueType;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -38,12 +39,6 @@ public interface MiniJaJaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethmain(MiniJaJaParser.MethmainContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MiniJaJaParser#vars}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVars(MiniJaJaParser.VarsContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MiniJaJaParser#instrs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -62,15 +57,51 @@ public interface MiniJaJaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp(MiniJaJaParser.ExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MiniJaJaParser#andorexp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAndorexp(MiniJaJaParser.AndorexpContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MiniJaJaParser#exp1}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExp1(MiniJaJaParser.Exp1Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecl(MiniJaJaParser.DeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#vars}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVars(MiniJaJaParser.VarsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#var}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVar(MiniJaJaParser.VarContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#varPrime}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarPrime(MiniJaJaParser.VarPrimeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#typemeth}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypemeth(MiniJaJaParser.TypemethContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitType(MiniJaJaParser.TypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#vexp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVexp(MiniJaJaParser.VexpContext ctx);
 }

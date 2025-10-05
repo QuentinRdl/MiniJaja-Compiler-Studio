@@ -2,6 +2,7 @@ grammar MiniJaJa;
 
 @header{
 import fr.ufrst.m1info.gl.compGL.Nodes.*;
+import fr.ufrst.m1info.gl.compGL.ValueType;
 }
 
 classe returns [ClassNode node]
@@ -13,7 +14,7 @@ ident returns [ASTNode node]
     ;
 
 decls returns [ASTNode node]
-    : decl ';' (decls)?  {$node = new DeclarationNode($decl.node, $decls.node);}
+    : decl ';' (decls)?  {$node = new DeclarationsNode($decl.node, $decls.node);}
     ;
 
 methmain returns [MainNode node]
@@ -42,6 +43,13 @@ exp returns [ASTNode node]
 
 
 exp1 returns [ASTNode node]
+    : exp2 {$node = exp2.node;}
+    ( '==' exp2 {$node = new EqualNode($node, $exp2.node);}
+    | '>' exp2 {$node = new SupNode($node, $exp2.node);}
+    )*
+    ;
+
+exp2 returns [ASTNode node]
     : . {$node = null;}
     ;
 
@@ -53,7 +61,7 @@ vars returns [ASTNode node]
     : var ';' (vars)? {$node = new VariablesNode($var.node, $vars.node);}
     ;
 
-var returns [AST node]
+var returns [ASTNode node]
     : typemeth ident varPrime {$node = new VariableNode($typemeth.node, $ident.node, $varPrime.node);}
     | 'final' type ident (vexp)? {$node = new FinalNode($type.node, $ident.node, $vexp.node);}
     ;

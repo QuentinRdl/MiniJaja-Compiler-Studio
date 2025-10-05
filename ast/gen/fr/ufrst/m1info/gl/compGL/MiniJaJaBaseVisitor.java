@@ -1,7 +1,8 @@
-// Generated from /media/kilian/Data/Utilitaires/IDEA projects/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
-package package fr.ufrst.m1info.gl.compGL;;
+// Generated from /home/utilisateur/Documents/Master 1/M1 - Semestre 7/Projet COMP/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
+package fr.ufrst.m1info.gl.compGL;
 
 import fr.ufrst.m1info.gl.compGL.Nodes.*;
+import fr.ufrst.m1info.gl.compGL.ValueType;
 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -49,13 +50,6 @@ public class MiniJaJaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVars(MiniJaJaParser.VarsContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitInstrs(MiniJaJaParser.InstrsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -77,12 +71,54 @@ public class MiniJaJaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAndorexp(MiniJaJaParser.AndorexpContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExp1(MiniJaJaParser.Exp1Context ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExp1(MiniJaJaParser.Exp1Context ctx) { return visitChildren(ctx); }
+	@Override public T visitDecl(MiniJaJaParser.DeclContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitVars(MiniJaJaParser.VarsContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitVar(MiniJaJaParser.VarContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitVarPrime(MiniJaJaParser.VarPrimeContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitTypemeth(MiniJaJaParser.TypemethContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitType(MiniJaJaParser.TypeContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitVexp(MiniJaJaParser.VexpContext ctx) { return visitChildren(ctx); }
 }
