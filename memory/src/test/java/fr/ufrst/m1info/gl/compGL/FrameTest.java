@@ -116,5 +116,4 @@ public class FrameTest {
         assertEquals(0, globalFrame.getCallLine());
         assertEquals(10, childFrame.getCallLine());
     }
-
 }

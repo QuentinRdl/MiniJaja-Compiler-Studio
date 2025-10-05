@@ -99,4 +99,41 @@ public class Stack {
     public boolean updateVariable(String name, Object value) {
         return top().updateVariable(name, value);
     }
+
+    /**
+     * Returns the current stack size
+     * @return int Size of the stack
+     */
+    public int size() {
+        return frames.size();
+    }
+
+    /**
+     * Checks if the stack is empty
+     * @return true is stack empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return frames.isEmpty();
+    }
+
+    /**
+     * Clears all the frames from the stack
+     */
+    public void clear() {
+        frames.clear();
+    }
+
+    /**
+     * Prints the current state of the stack
+     * @return String the current state of the Stack
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Stack Trace:\n");
+        int depth = 0;
+        for (Frame frame : frames) {
+            sb.append("  ").append(depth++).append(": ").append(frame).append("\n");
+        }
+        return sb.toString();
+    }
 }
