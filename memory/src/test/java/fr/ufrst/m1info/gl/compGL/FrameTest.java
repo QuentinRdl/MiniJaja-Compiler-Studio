@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit test for the Frame class
  */
-public class StackTest {
+public class FrameTest {
     private Frame globalFrame;
     private Frame childFrame;
 
@@ -83,6 +83,13 @@ public class StackTest {
     }
 
     @Test
+    public void updateVarKO() {
+        globalFrame.setVariable("x", 1234);
+
+        assertFalse(globalFrame.updateVariable("y", 4321));
+    }
+
+    @Test
     public void updateVarFromChildOK() {
         globalFrame.setVariable("x", 1234);
 
@@ -92,9 +99,22 @@ public class StackTest {
     }
 
     @Test
-    public void updateVarKO() {
-        globalFrame.setVariable("x", 1234);
-
-        assertFalse(globalFrame.updateVariable("y", 4321));
+    public void getParent() {
+        assertNull(globalFrame.getParent());
+        assertNotNull(childFrame.getParent());
+        assertEquals(globalFrame, childFrame.getParent());
     }
+
+    @Test
+    public void getFuncName() {
+        assertEquals("global", globalFrame.getFuncName());
+        assertEquals("func", childFrame.getFuncName());
+    }
+
+    @Test
+    public void getCallLine() {
+        assertEquals(0, globalFrame.getCallLine());
+        assertEquals(10, childFrame.getCallLine());
+    }
+
 }
