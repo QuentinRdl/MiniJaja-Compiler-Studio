@@ -14,11 +14,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StackTest {
     private Stack stack;
 
+    /**
+     * Before each test, we set up an empty stack
+     */
     @BeforeEach
     public void setUp() {
         stack = new Stack();
     }
 
+    /**
+     * Checks that the push and top method work as intended
+     */
     @Test
     public void pushAndTop() {
        stack.pushFrame("main", 1) ;
@@ -29,6 +35,10 @@ public class StackTest {
        assertEquals(1, stack.size());
     }
 
+
+    /**
+     * Checks that the push and pop method work as intended
+     */
     @Test
     public void pushAndPop() {
         stack.pushFrame("main",1);
@@ -45,16 +55,25 @@ public class StackTest {
         assertEquals(0, stack.size());
     }
 
+    /**
+     * Checks that calling the pop method on an empty stacks throws the right exception
+     */
     @Test
     public void popEmptyStackException() {
         assertThrows(EmptyStackException.class, () -> stack.pop());
     }
 
+    /**
+     * Checks that calling the top method on an empty stacks throws the right exception
+     */
     @Test
     public void topEmptyStackException() {
         assertThrows(EmptyStackException.class, () -> stack.top());
     }
 
+    /**
+     * Checks that the set and get Variable methods are working as intended
+     */
     @Test
     public void setAndGetVariable() {
        stack.pushFrame("main", 1) ;
@@ -63,6 +82,10 @@ public class StackTest {
        assertEquals(1234, stack.getVariable("x"));
     }
 
+    /**
+     * Checks that we can access variables across frames, that we are not limited to one on top of the stack
+     * TODO : Should this be working ? Or like only for parent frame ?
+     */
     @Test
     public void variableAccessAcrossFrames() {
         stack.pushFrame("main", 0);
@@ -75,6 +98,9 @@ public class StackTest {
         assertEquals(4321, stack.getVariable("y"));
     }
 
+    /**
+     * Checks that the updateVar method works as intended
+     */
     @Test
     public void updateVar() {
         stack.pushFrame("main", 0);
@@ -114,25 +140,47 @@ public class StackTest {
     }
 
 
+    /**
+     * Checks that calling the swap method with 0 frame throws the right exception
+     */
     @Test
     public void swapWith0Frame() {
         assertThrows(IllegalStateException.class, () -> stack.swap());
     }
 
+    /**
+     * Checks that calling the swap method with 0 frame throws the right exception
+     */
     @Test
     public void swapWith1Frame() {
         stack.pushFrame("main", 1);
         assertThrows(IllegalStateException.class, () -> stack.swap());
     }
 
+    /**
+     * Checks that calling the swap method with >= 2 frame works as intended
+     */
     @Test
     public void swapWith2Frame() {
         stack.pushFrame("main", 1);
         stack.pushFrame("second", 2);
         stack.swap(); // TODO : Is there a way to test that nothing is thrown ?
+        // TODO : Actually check that they were swapped
     }
 
+    /**
+     * Checks that calling the swap method with >= 2 frame works as intended
+     */
+    /*
+    @Test
+    public void swapWithMoreThan2Frame()
+    TODO : Implement
+     */
 
+
+    /**
+     * Checks that the isEmpty method works as intended
+     */
     @Test
     public void isEmpty() {
         assertTrue(stack.isEmpty());
@@ -144,6 +192,9 @@ public class StackTest {
         assertTrue(stack.isEmpty());
     }
 
+    /**
+     * Checks that the size method works as intended
+     */
     @Test
     public void testSize() {
         assertEquals(0, stack.size());
@@ -158,6 +209,10 @@ public class StackTest {
         assertEquals(1, stack.size());
     }
 
+
+    /**
+     * Checks that the clear method works as intended
+     */
     @Test
     public void testClear() {
         assertTrue(stack.isEmpty());

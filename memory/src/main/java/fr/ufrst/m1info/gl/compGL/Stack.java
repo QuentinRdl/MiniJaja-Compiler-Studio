@@ -78,7 +78,7 @@ public class Stack {
      * @param value value of the var
      */
     public void setVariable(String name, Object value) {
-        top().setVariable(name, value);
+        top().setVar(name, value);
     }
 
     /**
@@ -87,7 +87,7 @@ public class Stack {
      * @return Object the variable
      */
     public Object getVariable(String name) {
-       return top().getVariable(name);
+       return top().getVar(name);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Stack {
      * @return true if defined and changed, false otherwise
      */
     public boolean updateVariable(String name, Object value) {
-        return top().updateVariable(name, value);
+        return top().updateVar(name, value);
     }
 
     /**

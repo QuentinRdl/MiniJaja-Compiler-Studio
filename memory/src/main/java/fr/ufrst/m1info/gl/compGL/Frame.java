@@ -7,7 +7,7 @@ import java.util.*;
  */
 
 public class Frame {
-    private Map<String, Object> localVariables; // Local variables on this scope
+    private Map<String, Object> localVariables; // Local variables on this scope // TODO : Replace w/ theo's hashmap
     private Frame parent; // Parent of the current frame
 
     private final String funcName; // Name of the func // TODO : Keep it ?
@@ -31,7 +31,7 @@ public class Frame {
      * @param name Name of the Object
      * @param value The actual Object
      */
-    public void setVariable(String name, Object value) {
+    public void setVar(String name, Object value) {
         // TODO : Should we check the Object type ?
        localVariables.put(name, value);
     }
@@ -40,7 +40,7 @@ public class Frame {
      * @param name Name of the Object
      * @return Object if found, null otherwise
      */
-    public Object getVariable(String name) {
+    public Object getVar(String name) {
         // TODO : Should we check the Object type ?
         if(localVariables.containsKey(name)) {
            return localVariables.get(name);
@@ -48,25 +48,25 @@ public class Frame {
 
         // Checks the parent frame, to see if the Object is found there // TODO : Is it needed ? Check the name of what it is actually called
         if(parent != null) {
-            return parent.getVariable(name);
+            return parent.getVar(name);
         }
 
         return null; // No Object with the given name was found
     }
 
-    public boolean hasVariable(String name) {
+    public boolean hasVar(String name) {
         boolean ret = false;
         ret = localVariables.containsKey(name);
 
         if(!ret) {
             // Child does not have it, check the parent
-            if(parent != null) ret = parent.hasVariable(name);
+            if(parent != null) ret = parent.hasVar(name);
         }
 
         return ret;
     }
 
-    public boolean hasLocalVariable(String name) {
+    public boolean hasLocalVar(String name) {
         return localVariables.containsKey(name);
     }
 
@@ -106,7 +106,7 @@ public class Frame {
      *
      * @return true if var was found and updated, false otherwise
      */
-    public boolean updateVariable(String name, Object value) {
+    public boolean updateVar(String name, Object value) {
         if(localVariables.containsKey(name)) {
             // Check in self
             localVariables.put(name, value);
@@ -114,10 +114,11 @@ public class Frame {
         }
 
         // Check in parent
-        if(parent != null) return parent.updateVariable(name, value);
+        if(parent != null) return parent.updateVar(name, value);
 
         // No var with the name 'name' found
         return false;
     }
+
     // TODO : ToString func
 }
