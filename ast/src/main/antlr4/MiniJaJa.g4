@@ -50,7 +50,34 @@ exp1 returns [ASTNode node]
     ;
 
 exp2 returns [ASTNode node]
-    : . {$node = null;}
+    : '-' terme {$node = new UnMinusNode($node, $terme.node);}
+    ( '+' terme {$node = new AddNode($node, $terme.node);}
+    | '-' terme {$node = new BinMinusNode($node, $terme.node);}
+    )*
+    | terme {$node = $terme.node;}
+    ( '+' terme {$node = new AddNode($node, $terme.node);}
+    | '-' terme {$node = new BinMinusNode($node, $terme.node);}
+    )*
+    ;
+
+terme returns [ASTNode node]
+    : fact {$node = $fact.node}
+    ( '*' fact {$node = new MulNode($node, $fact.node);}
+    | '/' fact {$node = new DivNode($node, $fact.node);}
+    )*
+    ;
+
+
+fact returns [ASTNode node]
+    : ident1 {$node = $ident1.node;}
+    | 'true' {$node = new BooleanNode(true);}
+    | 'false' {$node = new BooleanNode(false);}
+    | n='nombre' {$node = new NumberNode(Integer.parse($n.text));}
+    | '(' exp ')' {$node = $exp.node;}
+    ;
+
+ident1 returns [ASTNode node]
+    : ident {$node = $ident.node;}
     ;
 
 decl returns [ASTNode node]
