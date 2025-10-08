@@ -15,80 +15,116 @@ import  org.junit.jupiter.api.BeforeEach;
  * Unit tests for {@link SymbolTable}.
  */
 public class SymbolTableTest extends TestCase {
-
-    private SymbolTable table;
+    private SymbolTable globalTable;
 
     /**
-     * Initializes a new SymbolTable before each test.
+     * Initializes a new global SymbolTable before each test.
      */
     @BeforeEach
     protected void setUp() {
-        table = new SymbolTable();
+        globalTable = new SymbolTable();
     }
 
     /**
-     * Tests adding and looking up a symbol in the table.
+     * Tests adding and looking up a symbol in the global scope.
      */
     @Test
-    public void testAddAndLookupEntry() {
+    public void testAddAndLookupInGlobalScope() {
         SymbolTableEntry entry = new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT);
-        table.addEntry(entry);
+        globalTable.addEntry(entry);
 
-        SymbolTableEntry result = table.lookup("x");
+        SymbolTableEntry result = globalTable.lookup("x");
         assertNotNull(result);
         assertEquals("x", result.getName());
         assertEquals(EntryKind.VARIABLE, result.getKind());
         assertEquals(DataType.INT, result.getDataType());
     }
 
-    /**
-     * Tests removing an entry from the table.
-     */
-    @Test
-    public void testRemoveEntry() {
-        SymbolTableEntry entry = new SymbolTableEntry("y", EntryKind.CONSTANTE, DataType.FLOAT);
-        table.addEntry(entry);
-        assertTrue(table.contains("y"));
-
-        table.removeEntry("y");
-        assertFalse(table.contains("y"));
-    }
 
     /**
-     * Tests that adding a duplicate symbol throws an exception.
+     * Tests that adding a duplicate symbol in the same scope throws an exception.
      */
     @Test
-    public void testAddDuplicateSymbolThrowsException() {
-        SymbolTableEntry entry = new SymbolTableEntry("z", EntryKind.VARIABLE, DataType.INT);
-        table.addEntry(entry);
+    public void testAddDuplicateSymbolInSameScopeThrowsException() {
+        SymbolTableEntry entry = new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT);
+        globalTable.addEntry(entry);
 
         try {
-            table.addEntry(entry); // same name
-            fail("Expected IllegalArgumentException for duplicate symbol");
+            globalTable.addEntry(entry);
+            fail("Expected IllegalArgumentException for duplicate symbol in the same scope");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains("Symbol already declared"));
         }
     }
 
     /**
-     * Tests that looking up a non-existing symbol throws an exception.
+     * Tests creating a child scope and adding a new symbol to it.
      */
     @Test
-    public void testLookupNonExistingSymbolThrowsException() {
+    public void testCreateChildScopeAndAddSymbol() {
+        SymbolTable childScope = globalTable.createChildScope();
+
+        SymbolTableEntry localVar = new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.BOOL);
+        childScope.addEntry(localVar);
+
+        assertNotNull(childScope.lookup("y"));
+        assertEquals(DataType.BOOL, childScope.lookup("y").getDataType());
+    }
+
+    /**
+     * Tests looking up a symbol from a parent scope (global variable visible in child).
+     */
+    @Test
+    public void testLookupSymbolFromParentScope() {
+        globalTable.addEntry(new SymbolTableEntry("a", EntryKind.VARIABLE, DataType.INT));
+        SymbolTable childScope = globalTable.createChildScope();
+
+        // "a" should be visible in the child scope via parent lookup
+        SymbolTableEntry found = childScope.lookup("a");
+        assertNotNull(found);
+        assertEquals("a", found.getName());
+    }
+
+    /**
+     * Tests that removing a symbol affects only the current scope.
+     */
+    @Test
+    public void testRemoveEntryAffectsOnlyCurrentScope() {
+        globalTable.addEntry(new SymbolTableEntry("g", EntryKind.VARIABLE, DataType.INT));
+        SymbolTable childScope = globalTable.createChildScope();
+
+        SymbolTableEntry local = new SymbolTableEntry("l", EntryKind.VARIABLE, DataType.BOOL);
+        childScope.addEntry(local);
+
+        // Remove only from child
+        childScope.removeEntry("l");
+        assertFalse(childScope.contains("l"));
+
+        // Parent still has its symbol
+        assertTrue(globalTable.contains("g"));
+    }
+
+    /**
+     * Tests that removing a non-existing symbol in a scope throws an exception.
+     */
+    @Test
+    public void testRemoveNonExistingSymbolThrowsException() {
         try {
-            table.lookup("notFound");
+            globalTable.removeEntry("missing");
             fail("Expected IllegalArgumentException for missing symbol");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains("Symbol not found"));
         }
     }
+
     /**
-     * Tests removing a non-existing entry throws an exception.
+     * Tests lookup of a non-existing symbol across all scopes.
      */
     @Test
-    public void testRemoveNonExistingEntryThrowsException() {
+    public void testLookupNonExistingSymbolInAllScopesThrowsException() {
+        SymbolTable childScope = globalTable.createChildScope();
         try {
-            table.removeEntry("missing");
+            childScope.lookup("ghost");
             fail("Expected IllegalArgumentException for missing symbol");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains("Symbol not found"));
@@ -96,90 +132,116 @@ public class SymbolTableTest extends TestCase {
     }
 
     /**
-     * Tests the contains() method for existing and non-existing entries.
+     * Tests that contains() only checks the current scope, not the parent.
      */
     @Test
-    public void testContainsMethod() {
-        SymbolTableEntry a = new SymbolTableEntry("a", EntryKind.VARIABLE, DataType.INT);
-        table.addEntry(a);
-        assertTrue(table.contains("a"));
-        assertFalse(table.contains("b"));
+    public void testContainsIsLocalOnly() {
+        globalTable.addEntry(new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT));
+        SymbolTable childScope = globalTable.createChildScope();
+
+        assertFalse(childScope.contains("x")); // present in parent, not local
+        assertTrue(globalTable.contains("x"));
     }
 
     /**
-     * Tests the size() method.
+     * Tests the size() and getScopeLevel() methods.
      */
     @Test
-    public void testSizeMethod() {
-        assertEquals(0, table.size());
-        table.addEntry(new SymbolTableEntry("a", EntryKind.VARIABLE, DataType.INT));
-        table.addEntry(new SymbolTableEntry("b", EntryKind.VARIABLE, DataType.BOOL));
-        assertEquals(2, table.size());
+    public void testSizeAndScopeLevel() {
+        assertEquals(0, globalTable.size());
+        assertEquals(0, globalTable.getScopeLevel());
+
+        SymbolTable child = globalTable.createChildScope();
+        assertEquals(1, child.getScopeLevel());
+
+        child.addEntry(new SymbolTableEntry("t", EntryKind.CONSTANTE, DataType.FLOAT));
+        assertEquals(1, child.size());
     }
 
     /**
-     * Tests printTable() when the table is empty.
+     * Tests printing tables with nested scopes.
      */
     @Test
-    public void testPrintTableEmpty() {
-        PrintStream originalOut = System.out; // save original
+    public void testPrintTableWithNestedScopes() {
+        globalTable.addEntry(new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT));
+        SymbolTable child = globalTable.createChildScope();
+        child.addEntry(new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.BOOL));
+
+        PrintStream originalOut = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
         System.setOut(ps);
         try {
-            // table is empty
-            table.printTable();
-            ps.flush(); // ensure all printed content is pushed to baos
-
-            String output = baos.toString().trim();
-            assertEquals("Symbol table is empty.", output);
-        } finally {
-            // restore original System.out even if assertion failed
-            System.setOut(originalOut);
-            ps.close();
-        }
-    }
-
-    /**
-     * Tests printTable() when the table contains entries.
-     */
-    @Test
-    public void testPrintTableWithEntries() {
-        SymbolTableEntry x = new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT);
-        SymbolTableEntry y = new SymbolTableEntry("y", EntryKind.CONSTANTE, DataType.FLOAT);
-        table.addEntry(x);
-        table.addEntry(y);
-
-        PrintStream originalOut = System.out; // save original
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        System.setOut(ps);
-        try {
-            table.printTable();
+            child.printTable();
             ps.flush();
 
-            String output = baos.toString().trim();
-            // We don't assume order (HashMap), so we only check that both names appear
-            assertTrue("output should contain x", output.contains("x"));
-            assertTrue("output should contain y", output.contains("y"));
-            assertTrue("output should contain SymbolTableEntry", output.contains("SymbolTableEntry"));
+            String output = baos.toString();
+            assertTrue(output.contains("Scope Level 1"));
+            assertTrue(output.contains("Scope Level 0"));
+            assertTrue(output.contains("x"));
+            assertTrue(output.contains("y"));
         } finally {
             System.setOut(originalOut);
             ps.close();
         }
     }
+
     /**
      * Tests getReference() and setReference() in SymbolTableEntry.
      */
     @Test
     public void testReferenceGetterSetter() {
-        SymbolTableEntry entry = new SymbolTableEntry("a", EntryKind.VARIABLE, DataType.INT);
-
-        // Initially null
+        SymbolTableEntry entry = new SymbolTableEntry("r", EntryKind.VARIABLE, DataType.INT);
         assertNull(entry.getReference());
 
-        // Set a reference (simulating a memory address or value)
-        entry.setReference(42);
-        assertEquals(42, entry.getReference());
+        entry.setReference(99);
+        assertEquals(99, entry.getReference());
     }
+    /**
+     * Tests getParentScope() to ensure the parent link is correctly assigned.
+     */
+    @Test
+    public void testGetParentScope() {
+        SymbolTable child = globalTable.createChildScope();
+        assertSame(globalTable, child.getParentScope());
+    }
+    /**
+     * Tests getScopeLevel() returns correct values for nested scopes.
+     */
+    @Test
+    public void testGetScopeLevel() {
+        // Global scope should have level 0
+        assertEquals(0, globalTable.getScopeLevel());
+
+        // Create child and grandchild scopes
+        SymbolTable child = globalTable.createChildScope();
+        SymbolTable grandChild = child.createChildScope();
+
+        // Verify levels
+        assertEquals(1, child.getScopeLevel());
+        assertEquals(2, grandChild.getScopeLevel());
+    }
+    /**
+     * Tests printTable() output when the scope is empty.
+     */
+    @Test
+    public void testPrintTableWhenEmpty() {
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        System.setOut(ps);
+        try {
+            globalTable.printTable();
+            ps.flush();
+            String output = baos.toString();
+
+            assertTrue(output.contains("---- Scope Level 0 ----"));
+            assertTrue(output.contains("No symbols in this scope."));
+        } finally {
+            System.setOut(originalOut);
+            ps.close();
+        }
+    }
+
 }
+

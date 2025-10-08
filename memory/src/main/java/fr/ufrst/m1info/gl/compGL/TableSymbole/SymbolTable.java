@@ -12,12 +12,28 @@ public class SymbolTable {
 
     /** The underlying map storing symbol names and their corresponding entries. */
     private final Map<String, SymbolTableEntry> table;
+    /** The parent scope (null if this is the global scope). */
+    private final SymbolTable parentScope;
+
+    /** The depth level of this scope (0 = global). */
+    private final int scopeLevel;
 
     /**
-     * Constructs an empty symbol table.
+     * Constructs a new global symbol table (no parent).
      */
     public SymbolTable() {
+        this(null);
+    }
+
+    /**
+     * Constructs a new symbol table with the specified parent scope.
+     *
+     * @param parentScope the parent scope (can be null for the global scope)
+     */
+    public SymbolTable(SymbolTable parentScope) {
         this.table = new HashMap<>();
+        this.parentScope = parentScope;
+        this.scopeLevel = (parentScope == null) ? 0 : parentScope.scopeLevel + 1;
     }
 
     /**
@@ -36,45 +52,80 @@ public class SymbolTable {
     }
 
     /**
-     * Searches for an entry in the table by its name.
+     * Looks up a symbol by name in the current scope and recursively in parent scopes.
      *
-     * @param name the name of the symbol to search for
-     * @return the corresponding {@link SymbolTableEntry}
-     * @throws IllegalArgumentException if the symbol does not exist in the table
+     * @param name the symbol name
+     * @return the found symbol table entry
+     * @throws IllegalArgumentException if the symbol is not found in any scope
      */
     public SymbolTableEntry lookup(String name) {
         SymbolTableEntry entry = table.get(name);
-        if (entry == null) {
-            throw new IllegalArgumentException("Symbol not found: " + name);
+        if (entry != null) {
+            return entry;
         }
-        return entry;
+        if (parentScope != null) {
+            return parentScope.lookup(name);
+        }
+        throw new IllegalArgumentException("Symbol not found: " + name);
     }
 
+
     /**
-     * Removes an entry from the symbol table by its name.
+     * Removes a symbol from the current scope only.
      *
-     * @param name the name of the symbol to remove
-     * @throws IllegalArgumentException if the symbol does not exist in the table
+     * @param name the symbol name to remove
+     * @throws IllegalArgumentException if the symbol does not exist in this scope
      */
     public void removeEntry(String name) {
         if (!table.containsKey(name)) {
-            throw new IllegalArgumentException("Symbol not found: " + name);
+            throw new IllegalArgumentException("Symbol not found in current scope: " + name);
         }
         table.remove(name);
     }
+    /**
+     * Creates and returns a new child scope that references this table as its parent.
+     *
+     * @return a new child symbol table
+     */
+    public SymbolTable createChildScope() {
+        return new SymbolTable(this);
+    }
 
     /**
-     * Prints all entries in the symbol table to the standard output.
-     * Each entry is displayed using its {@link SymbolTableEntry#toString()} method.
-     * If the table is empty, a message is displayed instead.
+     * Returns the parent scope of this symbol table.
+     *
+     * @return the parent symbol table, or null if this is the global scope
+     */
+    public SymbolTable getParentScope() {
+        return parentScope;
+    }
+
+    /**
+     * Returns the depth level of this scope.
+     * Global scope = 0, child scope = 1, etc.
+     *
+     * @return the scope level
+     */
+    public int getScopeLevel() {
+        return scopeLevel;
+    }
+
+
+    /**
+     * Prints all symbols of the current scope and its ancestors.
+     * Useful for debugging and visualization.
      */
     public void printTable() {
+        System.out.println("---- Scope Level " + scopeLevel + " ----");
         if (table.isEmpty()) {
-            System.out.println("Symbol table is empty.");
+            System.out.println("No symbols in this scope.");
         } else {
             for (SymbolTableEntry entry : table.values()) {
                 System.out.println(entry);
             }
+        }
+        if (parentScope != null) {
+            parentScope.printTable();
         }
     }
 
@@ -96,4 +147,5 @@ public class SymbolTable {
     public boolean contains(String name) {
         return table.containsKey(name);
     }
+
 }
