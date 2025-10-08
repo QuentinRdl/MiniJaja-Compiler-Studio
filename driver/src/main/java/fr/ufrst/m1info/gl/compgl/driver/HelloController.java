@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/*
+* Controller class for managing interactions in the main application interface.
+*/
 public class HelloController {
     @FXML
     private Label fileLabel;
@@ -25,6 +28,9 @@ public class HelloController {
     @FXML
     private SplitPane splitPane;
 
+    /**
+     * Initializes the controller components after the FXML has been loaded.
+     */
     @FXML
     public void initialize(){
         splitPane.setDividerPositions(0.75);
@@ -39,6 +45,11 @@ public class HelloController {
 
     }
 
+    /*
+    * This method is called when the user clicks the Open button.
+    * It opens a file chooser that allows the user to select a MiniJaja or JajaCode file, clears the previously displayed content,
+    * reads the selected file line by line, and updates the ListView to display each numbered line
+    * */
     @FXML
     protected void selectFileButton() {
         FileChooser fc = new FileChooser();

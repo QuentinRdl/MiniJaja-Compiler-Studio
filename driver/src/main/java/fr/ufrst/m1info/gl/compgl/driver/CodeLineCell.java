@@ -17,6 +17,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private Label lineNumberLabel;
     private TextField codeField;
 
+    /*
+    * Creates a new CodeLineCell and initializes its layout.
+    * The cell contains a label for the line number and a text field for the code.
+    */
     public CodeLineCell(){
         super();
 
@@ -36,6 +40,14 @@ public class CodeLineCell extends ListCell<CodeLine> {
         container.getChildren().addAll(lineNumberLabel, codeField);
     }
 
+    /**
+     * Updates the content of this cell to display a specific CodeLine.
+     * If the cell is empty or the provided item is null, the cell content is cleared.
+     * Otherwise, it displays the line number and the corresponding code text.
+     *
+     * @param  item  the CodeLine object to display in this cell
+     * @param empty true if the cell should be empty, false otherwise
+     */
     @Override
     protected void updateItem(CodeLine item, boolean empty){
         super.updateItem(item, empty);
@@ -48,6 +60,4 @@ public class CodeLineCell extends ListCell<CodeLine> {
             setGraphic(container);
         }
     }
-
-
 }

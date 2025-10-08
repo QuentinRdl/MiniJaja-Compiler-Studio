@@ -2,9 +2,6 @@
     /*-fx-background-color: #1b1b1c;*/
 }
 
-/*
-remove colour alternation
-*/
 .list-cell{
     -fx-padding: 0;
 }

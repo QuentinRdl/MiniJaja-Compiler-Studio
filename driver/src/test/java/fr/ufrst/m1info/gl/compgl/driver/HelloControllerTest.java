@@ -26,6 +26,9 @@ public class HelloControllerTest extends ApplicationTest {
         stage.show();
     }
 
+    /*
+     * Verifies that the label with id fileLabel displays "No files selected" when the application starts.
+     */
     @Test
     public void testLabelInitial(){
         verifyThat("#fileLabel", hasText("No files selected"));

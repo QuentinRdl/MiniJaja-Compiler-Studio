@@ -8,11 +8,21 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 
+/*
+* Main entry point of the JavaFX application.
+*/
 public class HelloApplication extends Application {
     private final int WINDOW_HEIGHT = 720;
     private final int WINDOW_WIDTH = 1280;
 
     private final String WINDOW_TITLE = "Projet COMP-GL groupe 5";
+
+    /**
+     * Starts the JavaFX application by loading the main interface and displaying the window.
+     *
+     * @param stage the primary stage for this application
+     * @throws IOException if the FXML file or stylesheet cannot be loaded
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -24,6 +34,11 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
+    /**
+     * Launches the JavaFX application.
+     *
+     * @param args the command-line arguments
+     */
     public static void main(String[] args) {
         launch();
     }
