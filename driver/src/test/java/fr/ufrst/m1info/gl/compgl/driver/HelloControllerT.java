@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
-public class HelloControllerTest extends ApplicationTest {
+public class HelloControllerT extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
