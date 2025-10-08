@@ -10,12 +10,16 @@ cache:
     - .m2/repository
 
 build-job:
+  tags:
+    - avm_groupe5
   stage: build
   image: maven:3.9.9-eclipse-temurin-22
   script:
     - mvn -B clean compile
 
 test-job:
+  tags:
+    - avm_groupe5
   stage: test
   image: maven:3.9.9-eclipse-temurin-22
   script:
