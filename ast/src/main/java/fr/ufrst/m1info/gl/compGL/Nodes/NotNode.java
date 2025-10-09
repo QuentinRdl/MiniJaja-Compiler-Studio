@@ -15,7 +15,7 @@ public class NotNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public Value eval(Memory m) {
+    public Value eval(Memory m) throws Exception{
         Value v = ((EvaluableNode)expr).eval(m);
         return new Value(!v.valueBool);
     }
