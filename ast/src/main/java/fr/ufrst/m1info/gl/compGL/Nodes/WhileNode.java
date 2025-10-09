@@ -2,8 +2,7 @@ package fr.ufrst.m1info.gl.compGL.Nodes;
 
 import fr.ufrst.m1info.gl.compGL.EvaluableNode;
 import fr.ufrst.m1info.gl.compGL.Value;
-import fr.ufrst.m1info.gl.compGL.Memory;
-import fr.ufrst.m1info.gl.compGL.ValueType;
+import fr.ufrst.m1info.gl.compGL.Memory.Memory;
 
 import java.util.ArrayList;
 import java.util.List;

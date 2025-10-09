@@ -1,12 +1,9 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.gl.compGL.Memory;
 
-import fr.ufrst.m1info.gl.compGL.TableSymbole.DataType;
-import fr.ufrst.m1info.gl.compGL.TableSymbole.EntryKind;
 
 /**
- * API class for the Memory interface
- * It is meant to serve as an extra interface between the memory and the other modules
- * All methods will be used by the abstract syntax tree for the interpretation/compilation
+ * Copy of the memory API class from the memory class
+ * Change the imports and remove this class once 
  */
 public class Memory {
 

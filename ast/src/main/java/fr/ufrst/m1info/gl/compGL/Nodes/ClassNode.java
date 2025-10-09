@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.gl.compGL.Nodes;
 
-import fr.ufrst.m1info.gl.compGL.Memory;
+import fr.ufrst.m1info.gl.compGL.Memory.Memory;
 import fr.ufrst.m1info.gl.compGL.WithradawableNode;
 
 import java.util.ArrayList;
