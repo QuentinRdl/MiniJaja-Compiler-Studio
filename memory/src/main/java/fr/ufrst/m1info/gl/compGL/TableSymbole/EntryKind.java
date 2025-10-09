@@ -10,14 +10,14 @@ public enum EntryKind {
     VARIABLE,
 
     /** A method entry */
-    METHODE,
+    METHOD,
 
     /** A constant entry */
-    CONSTANTE,
+    CONSTANT,
 
     /** A class entry */
-    CLASSE,
+    CLASS,
 
     /** Any other kind of symbol */
-    AUTRE
+    OTHER
 }
