@@ -1,0 +1,46 @@
+package fr.ufrst.m1info.gl.compGL.Nodes;
+
+import fr.ufrst.m1info.gl.compGL.EvaluableNode;
+import fr.ufrst.m1info.gl.compGL.Memory.Memory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class IfNode extends ASTNode{
+    ASTNode condition;
+    ASTNode instrThen;
+    ASTNode instrElse;
+
+    public IfNode(ASTNode condition, ASTNode instrThen, ASTNode instrElse) {
+        this.condition = condition;
+        this.instrThen = instrThen;
+        this.instrElse = instrElse;
+    }
+
+    @Override
+    public List<String> compile(int address) {
+        List<String> JJCodes = new ArrayList<>();
+        List<String> pe = condition.compile(address);
+        List<String> ps1 = instrElse.compile(address + pe.size() + 1);
+        List<String> ps = instrElse.compile(address + pe.size() + ps1.size() + 2);
+
+        JJCodes.addAll(pe);
+        JJCodes.add("if("+ address + pe.size() + ps1.size() + 2 + ")");
+        JJCodes.addAll(ps1);
+        JJCodes.add("goto("+ address + pe.size() + ps1.size() + ps.size() + 2 + ")");
+        JJCodes.addAll(ps);
+
+        return JJCodes;
+    }
+
+    @Override
+    public void interpret(Memory m) throws Exception {
+        boolean exp = ((EvaluableNode)condition).eval(m).valueBool;
+        if(exp && instrThen!=null){
+            instrThen.interpret(m);
+        }
+        else if(instrElse!=null){
+            instrElse.interpret(m);
+        }
+    }
+}

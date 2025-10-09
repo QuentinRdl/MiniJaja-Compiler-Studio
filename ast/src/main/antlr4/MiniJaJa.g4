@@ -28,6 +28,8 @@ instrs returns [InstructionsNode node]
     : instr ';' (instrs)? {$node = new InstructionsNode($instr.node, $instrs.node);}
     ;
 
+//if "(" exp ")" "{" instrs "}" [else "{" instrs "}"]
+
 instr returns [ASTNode node]
     : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, $instrs.node);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
@@ -36,6 +38,7 @@ instr returns [ASTNode node]
     | '+=' exp {$node = new SommeNode((IdentNode)$node, $exp.node);}
     | '++' {$node = new IncNode((IdentNode)$node);}
     )
+    | 'if' '(' exp ')' '{' (instrs)? '}' ( 'else' '{' (instrs)? '}')? {}
     ;
 
 ident1 returns [IdentNode node]
