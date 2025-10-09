@@ -43,14 +43,14 @@ exp returns [ASTNode node]
 
 
 exp1 returns [ASTNode node]
-    : exp2 {$node = exp2.node;}
+    : exp2 {$node = $exp2.node;}
     ( '==' exp2 {$node = new EqualNode($node, $exp2.node);}
     | '>' exp2 {$node = new SupNode($node, $exp2.node);}
     )*
     ;
 
 exp2 returns [ASTNode node]
-    : '-' terme {$node = new UnMinusNode($node, $terme.node);}
+    : '-' terme {$node = new UnMinusNode($terme.node);}
     ( '+' terme {$node = new AddNode($node, $terme.node);}
     | '-' terme {$node = new BinMinusNode($node, $terme.node);}
     )*
@@ -61,7 +61,7 @@ exp2 returns [ASTNode node]
     ;
 
 terme returns [ASTNode node]
-    : fact {$node = $fact.node}
+    : fact {$node = $fact.node;}
     ( '*' fact {$node = new MulNode($node, $fact.node);}
     | '/' fact {$node = new DivNode($node, $fact.node);}
     )*
@@ -72,7 +72,7 @@ fact returns [ASTNode node]
     : ident1 {$node = $ident1.node;}
     | 'true' {$node = new BooleanNode(true);}
     | 'false' {$node = new BooleanNode(false);}
-    | n='nombre' {$node = new NumberNode(Integer.parse($n.text));}
+    | n=NOMBRE {$node = new NumberNode(Integer.parseInt($n.text));}
     | '(' exp ')' {$node = $exp.node;}
     ;
 
@@ -113,4 +113,8 @@ vexp returns [ASTNode node]
 
 IDENTIFIER
     : ('_' | 'a'..'z' | 'A'..'Z')+ ('_' | 'a'..'z' | 'A'..'Z' | '0'..'9')*
+    ;
+
+NOMBRE
+    : ('0'..'9')+
     ;

@@ -92,6 +92,46 @@ public interface MiniJaJaListener extends ParseTreeListener {
 	 */
 	void exitExp1(MiniJaJaParser.Exp1Context ctx);
 	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#exp2}.
+	 * @param ctx the parse tree
+	 */
+	void enterExp2(MiniJaJaParser.Exp2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#exp2}.
+	 * @param ctx the parse tree
+	 */
+	void exitExp2(MiniJaJaParser.Exp2Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#terme}.
+	 * @param ctx the parse tree
+	 */
+	void enterTerme(MiniJaJaParser.TermeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#terme}.
+	 * @param ctx the parse tree
+	 */
+	void exitTerme(MiniJaJaParser.TermeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#fact}.
+	 * @param ctx the parse tree
+	 */
+	void enterFact(MiniJaJaParser.FactContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#fact}.
+	 * @param ctx the parse tree
+	 */
+	void exitFact(MiniJaJaParser.FactContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniJaJaParser#ident1}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdent1(MiniJaJaParser.Ident1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniJaJaParser#ident1}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdent1(MiniJaJaParser.Ident1Context ctx);
+	/**
 	 * Enter a parse tree produced by {@link MiniJaJaParser#decl}.
 	 * @param ctx the parse tree
 	 */

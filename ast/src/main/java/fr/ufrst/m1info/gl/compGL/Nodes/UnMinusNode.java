@@ -10,7 +10,7 @@ import java.util.List;
 public class UnMinusNode extends ASTNode implements EvaluableNode {
     ASTNode exp ;
 
-    UnMinusNode(ASTNode exp){
+    public UnMinusNode(ASTNode exp){
         this.exp = exp;
     }
 

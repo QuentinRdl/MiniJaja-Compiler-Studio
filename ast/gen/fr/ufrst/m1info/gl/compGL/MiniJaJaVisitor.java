@@ -63,6 +63,30 @@ public interface MiniJaJaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp1(MiniJaJaParser.Exp1Context ctx);
 	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#exp2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExp2(MiniJaJaParser.Exp2Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#terme}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerme(MiniJaJaParser.TermeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#fact}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFact(MiniJaJaParser.FactContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MiniJaJaParser#ident1}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdent1(MiniJaJaParser.Ident1Context ctx);
+	/**
 	 * Visit a parse tree produced by {@link MiniJaJaParser#decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
