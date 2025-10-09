@@ -9,6 +9,8 @@ import fr.ufrst.m1info.gl.compGL.TableSymbole.EntryKind;
  * All methods will be used by the abstract syntax tree for the interpretation/compilation
  */
 public class Memory {
+
+
     /**
      * Operations directly related to the stack
      */
