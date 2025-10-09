@@ -9,7 +9,7 @@ import java.util.List;
 public class IncNode extends ASTNode{
     IdentNode ident;
 
-    IncNode(IdentNode ident){
+    public IncNode(IdentNode ident){
         this.ident = ident;
     }
 
