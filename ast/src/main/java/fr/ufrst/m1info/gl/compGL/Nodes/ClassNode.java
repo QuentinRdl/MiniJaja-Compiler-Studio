@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.gl.compGL.Nodes;
 
+import fr.ufrst.m1info.gl.compGL.Memory.DataType;
 import fr.ufrst.m1info.gl.compGL.Memory.Memory;
 import fr.ufrst.m1info.gl.compGL.WithradawableNode;
 
@@ -7,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassNode extends ASTNode {
-    ASTNode ident;
+    IdentNode ident;
     ASTNode decls;
     ASTNode main;
 
-    public ClassNode(ASTNode ident, ASTNode decls, ASTNode main){
+    public ClassNode(IdentNode ident, ASTNode decls, ASTNode main){
         this.ident = ident;
         this.decls = decls;
         this.main = main;
@@ -33,7 +34,7 @@ public class ClassNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws Exception {
-        m.DeclVar();
+        m.declVarClass(ident.identifier);
         if(decls!=null)
             decls.interpret(m);
         main.interpret(m);

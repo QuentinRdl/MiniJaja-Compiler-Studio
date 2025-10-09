@@ -26,9 +26,9 @@ public class IdentNode extends ASTNode implements EvaluableNode {
         throw new Exception("Can not interpret ident node");
     }
 
-    // TODO : do this when we have access to memory
     @Override
     public Value eval(Memory m) {
-        return null;
+        Value v = (Value) m.val(identifier);
+        return v;
     }
 }

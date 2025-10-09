@@ -1,15 +1,17 @@
 package fr.ufrst.m1info.gl.compGL.Nodes;
 
+import fr.ufrst.m1info.gl.compGL.EvaluableNode;
 import fr.ufrst.m1info.gl.compGL.Memory.Memory;
+import fr.ufrst.m1info.gl.compGL.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SommeNode extends ASTNode{
-    ASTNode identifier;
+    IdentNode identifier;
     ASTNode expression;
 
-    SommeNode(ASTNode identifier, ASTNode expression){
+    public SommeNode(IdentNode identifier, ASTNode expression){
         this.identifier = identifier;
         this.expression = expression;
     }
@@ -24,6 +26,8 @@ public class SommeNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws Exception {
-        // TODO : do this when whe have access to the memory class
+        Value v = ((EvaluableNode)expression).eval(m);
+        int res = ((Value)m.val(identifier.identifier)).valueInt + v.valueInt;
+        m.affectValue(identifier.identifier, res);
     }
 }

@@ -51,6 +51,25 @@ public class Memory {
     }
 
     /**
+     * Declares the class variable
+     * The class variable starts with an unknown type, and null value
+     * It can be affected and withdrawn like any other variable, but it's identifier can be returned by the "identVarClass" method
+     * @param identifier identifier of the variable (and class), can't be null
+     */
+    public void declVarClass(String identifier){
+        // TODO
+    }
+
+    /**
+     * Returns the identifier of the class variable
+     * @return identifier of the class variable
+     */
+    public String identVarClass(){
+        // TODO
+        return null;
+    }
+
+    /**
      * Declares a named constant
      * @param identifer identifier of the constant, can't be null
      * @param value value of the constant. If it's null, the value of the constant will be assignable later
@@ -78,6 +97,11 @@ public class Memory {
      */
     public void affectValue(String identifier, Object value){
         // TODO
+    }
+
+    public Object val(String identifier){
+        // TODO
+        return null;
     }
 
     // Method related methods (context, etc..) will have to be added later

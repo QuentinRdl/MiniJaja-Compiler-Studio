@@ -24,6 +24,6 @@ public class ReturnNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws Exception {
         Value v = ((EvaluableNode)expr).eval(m);
-        // TODO : Add memory primitive to this
+        m.affectValue(m.identVarClass(), v);
     }
 }

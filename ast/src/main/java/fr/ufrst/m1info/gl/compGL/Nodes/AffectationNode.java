@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AffectationNode extends ASTNode{
-    ASTNode identifier;
+    IdentNode identifier;
     ASTNode expression;
 
-    public AffectationNode(ASTNode identifier, ASTNode expression) {
+    public AffectationNode(IdentNode identifier, ASTNode expression) {
         this.identifier = identifier;
         this.expression = expression;
     }
@@ -27,6 +27,6 @@ public class AffectationNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws Exception {
         Value v = ((EvaluableNode)expression).eval(m);
-        // TODO : do this when we can use memory
+        m.affectValue(identifier.identifier, v);
     }
 }

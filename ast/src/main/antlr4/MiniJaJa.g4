@@ -8,7 +8,7 @@ classe returns [ClassNode node]
     : 'class' ident '{' (decls)? methmain '}' {$node = new ClassNode($ident.node, $decls.node, $methmain.node);}
     ;
 
-ident returns [ASTNode node]
+ident returns [IdentNode node]
     : id=IDENTIFIER {$node = new IdentNode($id.text);}
     ;
 
@@ -31,14 +31,14 @@ instrs returns [InstructionsNode node]
 instr returns [ASTNode node]
     : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, $instrs.node);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
-    | ident1 {$node = $ident1.node}
-    ( '=' exp {$node = new AffectationNode($node, $exp.node);}
-    | '+=' exp {$node = new SommeNode($node, $exp.node);}
+    | ident1 {$node = $ident1.node;}
+    ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
+    | '+=' exp {$node = new SommeNode((IdentNode)$node, $exp.node);}
     )
     ;
 
-ident1 returns [ASTNode node]
-    : . {$node = null}
+ident1 returns [IdentNode node]
+    : . {$node = null;}
     ;
 
 exp returns [ASTNode node]

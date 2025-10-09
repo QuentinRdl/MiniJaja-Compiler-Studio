@@ -104,6 +104,18 @@ public class MiniJaJaBaseListener implements MiniJaJaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterIdent1(MiniJaJaParser.Ident1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIdent1(MiniJaJaParser.Ident1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExp(MiniJaJaParser.ExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
