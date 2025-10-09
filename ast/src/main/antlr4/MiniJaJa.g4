@@ -34,6 +34,7 @@ instr returns [ASTNode node]
     | ident1 {$node = $ident1.node;}
     ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
     | '+=' exp {$node = new SommeNode((IdentNode)$node, $exp.node);}
+    | '++' {$node = new IncNode((IdentNode)$node);}
     )
     ;
 
