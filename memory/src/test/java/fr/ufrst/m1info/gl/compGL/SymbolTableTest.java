@@ -154,36 +154,36 @@ public class SymbolTableTest extends TestCase {
         SymbolTable child = globalTable.createChildScope();
         assertEquals(1, child.getScopeLevel());
 
-        child.addEntry(new SymbolTableEntry("t", EntryKind.CONSTANTE, DataType.FLOAT));
+        child.addEntry(new SymbolTableEntry("t", EntryKind.CONSTANT, DataType.FLOAT));
         assertEquals(1, child.size());
     }
 
     /**
-     * Tests printing tables with nested scopes.
+     * Tests toString() output when the table contains nested scopes.
      */
     @Test
-    public void testPrintTableWithNestedScopes() {
+    public void testToStringWithNestedScopes() {
         globalTable.addEntry(new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT));
         SymbolTable child = globalTable.createChildScope();
         child.addEntry(new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.BOOL));
 
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        System.setOut(ps);
-        try {
-            child.printTable();
-            ps.flush();
+        String output = child.toString();
 
-            String output = baos.toString();
-            assertTrue(output.contains("Scope Level 1"));
-            assertTrue(output.contains("Scope Level 0"));
-            assertTrue(output.contains("x"));
-            assertTrue(output.contains("y"));
-        } finally {
-            System.setOut(originalOut);
-            ps.close();
-        }
+        assertTrue(output.contains("---- Scope Level 1 ----"));
+        assertTrue(output.contains("---- Scope Level 0 ----"));
+        assertTrue(output.contains("x"));
+        assertTrue(output.contains("y"));
+    }
+
+    /**
+     * Tests toString() output when the scope is empty.
+     */
+    @Test
+    public void testToStringWhenEmpty() {
+        String output = globalTable.toString();
+
+        assertTrue(output.contains("---- Scope Level 0 ----"));
+        assertTrue(output.contains("No symbols in this scope."));
     }
 
     /**
@@ -220,27 +220,6 @@ public class SymbolTableTest extends TestCase {
         // Verify levels
         assertEquals(1, child.getScopeLevel());
         assertEquals(2, grandChild.getScopeLevel());
-    }
-    /**
-     * Tests printTable() output when the scope is empty.
-     */
-    @Test
-    public void testPrintTableWhenEmpty() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        System.setOut(ps);
-        try {
-            globalTable.printTable();
-            ps.flush();
-            String output = baos.toString();
-
-            assertTrue(output.contains("---- Scope Level 0 ----"));
-            assertTrue(output.contains("No symbols in this scope."));
-        } finally {
-            System.setOut(originalOut);
-            ps.close();
-        }
     }
 
 }

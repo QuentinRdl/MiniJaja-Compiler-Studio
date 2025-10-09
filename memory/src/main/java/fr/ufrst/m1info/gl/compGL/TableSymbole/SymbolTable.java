@@ -111,22 +111,24 @@ public class SymbolTable {
     }
 
 
-    /**
-     * Prints all symbols of the current scope and its ancestors.
-     * Useful for debugging and visualization.
-     */
-    public void printTable() {
-        System.out.println("---- Scope Level " + scopeLevel + " ----");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("---- Scope Level ").append(scopeLevel).append(" ----\n");
+
         if (table.isEmpty()) {
-            System.out.println("No symbols in this scope.");
+            sb.append("No symbols in this scope.\n");
         } else {
             for (SymbolTableEntry entry : table.values()) {
-                System.out.println(entry);
+                sb.append(entry).append("\n");
             }
         }
+
         if (parentScope != null) {
-            parentScope.printTable();
+            sb.append(parentScope.toString());
         }
+
+        return sb.toString();
     }
 
     /**
