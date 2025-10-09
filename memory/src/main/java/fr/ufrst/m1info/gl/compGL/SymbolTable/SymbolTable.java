@@ -1,7 +1,7 @@
-package fr.ufrst.m1info.gl.compGL.TableSymbole;
+package fr.ufrst.m1info.gl.compGL.SymbolTable;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import fr.ufrst.m1info.gl.compGL.HashMap;
 
 /**
  * Represents a simple symbol table without scope management.
@@ -11,7 +11,7 @@ import java.util.Map;
 public class SymbolTable {
 
     /** The underlying map storing symbol names and their corresponding entries. */
-    private final Map<String, SymbolTableEntry> table;
+    private final HashMap<String, SymbolTableEntry> table;
     /** The parent scope (null if this is the global scope). */
     private final SymbolTable parentScope;
 

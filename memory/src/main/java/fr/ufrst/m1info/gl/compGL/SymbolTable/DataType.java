@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compGL.TableSymbole;
+package fr.ufrst.m1info.gl.compGL.SymbolTable;
 
 /**
  * Enumeration representing possible data types

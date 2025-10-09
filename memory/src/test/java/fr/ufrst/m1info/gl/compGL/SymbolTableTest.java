@@ -1,13 +1,11 @@
 package fr.ufrst.m1info.gl.compGL;
 
-import fr.ufrst.m1info.gl.compGL.TableSymbole.DataType;
-import fr.ufrst.m1info.gl.compGL.TableSymbole.EntryKind;
-import fr.ufrst.m1info.gl.compGL.TableSymbole.SymbolTable;
-import fr.ufrst.m1info.gl.compGL.TableSymbole.SymbolTableEntry;
+import fr.ufrst.m1info.gl.compGL.SymbolTable.DataType;
+import fr.ufrst.m1info.gl.compGL.SymbolTable.EntryKind;
+import fr.ufrst.m1info.gl.compGL.SymbolTable.SymbolTable;
+import fr.ufrst.m1info.gl.compGL.SymbolTable.SymbolTableEntry;
 import junit.framework.TestCase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import  org.junit.jupiter.api.Test;
 import  org.junit.jupiter.api.BeforeEach;
 

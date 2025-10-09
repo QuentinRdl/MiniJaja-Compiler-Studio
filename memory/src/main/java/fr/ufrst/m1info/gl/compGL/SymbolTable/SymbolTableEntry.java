@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compGL.TableSymbole;
+package fr.ufrst.m1info.gl.compGL.SymbolTable;
 
 /**
  * Represents a single entry (row) in the symbol table.
