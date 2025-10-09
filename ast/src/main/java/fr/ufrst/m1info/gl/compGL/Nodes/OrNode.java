@@ -15,7 +15,7 @@ public class OrNode extends BinaryOperator {
     }
 
     @Override
-    protected Value mainOperation(Value leftOperand, Value rightOperand) {
+    protected Value mainOperation(Value leftOperand, Value rightOperand) throws Exception{
         return new Value(leftOperand.valueBool || rightOperand.valueBool);
     }
 }

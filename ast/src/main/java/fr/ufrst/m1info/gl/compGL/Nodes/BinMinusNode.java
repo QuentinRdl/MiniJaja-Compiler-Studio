@@ -2,19 +2,18 @@ package fr.ufrst.m1info.gl.compGL.Nodes;
 
 import fr.ufrst.m1info.gl.compGL.Value;
 
-public class AndNode extends BinaryOperator{
-
-    public AndNode(ASTNode left, ASTNode right) {
+public class BinMinusNode extends BinaryOperator {
+    public BinMinusNode(ASTNode left, ASTNode right) {
         super(left, right);
     }
 
     @Override
     protected String getCompileName() {
-        return "and";
+        return "minus";
     }
 
     @Override
     protected Value mainOperation(Value leftOperand, Value rightOperand) throws Exception{
-        return new Value(leftOperand.valueBool && rightOperand.valueBool);
+        return new Value(leftOperand.valueInt - rightOperand.valueInt);
     }
 }
