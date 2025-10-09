@@ -42,4 +42,4 @@ build/
 .gitlab-ci-local/
 
 ### Maven ###
-.mvn/
+*.mvn/

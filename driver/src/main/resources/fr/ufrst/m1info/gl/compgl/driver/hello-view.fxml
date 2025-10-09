@@ -3,14 +3,54 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
 
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fr.ufrst.m1info.gl.compgl.driver.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.geometry.Orientation?>
+
+<?import javafx.scene.control.SplitPane.Divider?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.gl.compgl.driver.HelloController">
+
+  <top>
+    <ToolBar>
+      <Button text="Open" fx:id="btnSelectFile" onAction="#selectFileButton"/>
+      <Button text="Save" fx:id="btnSave"/>
+      <Button text="Run" fx:id="btnRun"/>
+      <Button text="Compile" fx:id="btnCompile"/>
+      <Button text="Compile and run" fx:id="btnRunCompile"/>
+    </ToolBar>
+  </top>
+
+  <center>
+    <VBox alignment="CENTER" spacing="20.0">
+      <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+      </padding>
+
+      <HBox alignment="CENTER" spacing="20.0">
+        <padding>
+          <Insets top="10.0"/>
+        </padding>
+
+        <Label text="No files selected" fx:id="fileLabel"/>
+      </HBox>
+
+      <SplitPane fx:id="splitPane">
+        <ListView fx:id="codeListView"/>
+        <TextArea fx:id="output" editable="false" prefHeight="150"/>
+      </SplitPane>
+
+    </VBox>
+  </center>
+
+</BorderPane>
+
