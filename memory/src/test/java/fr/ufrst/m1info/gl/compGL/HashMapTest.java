@@ -308,6 +308,18 @@ public class HashMapTest
     }
 
     @Test
+    public void testRemoveSameHashCode(){
+        HashMap<NegativeHashCode,Integer> map=new HashMap<>(8);
+        java.util.HashMap<NegativeHashCode, Integer> oldMap=new java.util.HashMap<>();
+        assertEquals(oldMap.put(new NegativeHashCode(81),81),map.put(new NegativeHashCode(81),81));
+        assertEquals(oldMap.put(new NegativeHashCode(-81),-81),map.put(new NegativeHashCode(-81),-81));
+        assertEquals(oldMap.remove(new NegativeHashCode(-81)),map.remove(new NegativeHashCode(-81)));
+        assertEquals(oldMap.get(new NegativeHashCode(81)),map.get(new NegativeHashCode(81)));
+        assertEquals(oldMap.get(new NegativeHashCode(-81)),map.get(new NegativeHashCode(-81)));
+
+    }
+
+    @Test
     public void testClear()
     {
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -418,6 +430,22 @@ public class HashMapTest
             assertTrue(colMap.contains(value));
         }
 
+    }
+
+    @Test
+    public void testNegativeHashCode(){
+        HashMap<NegativeHashCode,Integer> map=new HashMap<>(8);
+        java.util.HashMap<NegativeHashCode, Integer> oldMap=new java.util.HashMap<>();
+        assertEquals(oldMap.put(new NegativeHashCode(81),81),map.put(new NegativeHashCode(81),81));
+        assertEquals(oldMap.put(new NegativeHashCode(8),8),map.put(new NegativeHashCode(8),8));
+        assertEquals(oldMap.put(new NegativeHashCode(429),429),map.put(new NegativeHashCode(429),429));
+        assertEquals(oldMap.put(new NegativeHashCode(-81),-81),map.put(new NegativeHashCode(-81),-81));
+        assertEquals(oldMap.put(new NegativeHashCode(24),24),map.put(new NegativeHashCode(24),24));
+        assertEquals(oldMap.get(new NegativeHashCode(81)),map.get(new NegativeHashCode(81)));
+        assertEquals(oldMap.get(new NegativeHashCode(8)),map.get(new NegativeHashCode(8)));
+        assertEquals(oldMap.get(new NegativeHashCode(429)),map.get(new NegativeHashCode(429)));
+        assertEquals(oldMap.get(new NegativeHashCode(-81)),map.get(new NegativeHashCode(-81)));
+        assertEquals(oldMap.get(new NegativeHashCode(24)),map.get(new NegativeHashCode(24)));
     }
 
     @Test
