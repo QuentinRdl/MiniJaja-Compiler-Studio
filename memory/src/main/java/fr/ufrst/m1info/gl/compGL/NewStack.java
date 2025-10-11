@@ -11,7 +11,7 @@ import java.util.EmptyStackException;
 public class NewStack {
     private Deque<Stack_Variable> vars;
     private int scopeDepth;
-    private int size;
+    // private int size;
 
     public static class NoScopeException extends Exception {
         public NoScopeException(String msg) {
@@ -31,7 +31,7 @@ public class NewStack {
     public NewStack() {
         this.vars = new ArrayDeque<>();
         this.scopeDepth = 0;
-        this.size = 0;
+        // this.size = 0;
     }
 
     public void pushScope() {
@@ -59,17 +59,30 @@ public class NewStack {
     }
 
     /**
+     * Returns the top variable from the stack
+     * @return Variable the top variable
+     * @throws EmptyStackException if stack empty
+     */
+    public Stack_Variable top() {
+        if (vars.isEmpty()) throw new EmptyStackException();
+        return vars.peek();
+    }
+
+
+    /**
      * Removes and return the top var from the stack
      * @return Stack_Variable the var on top of the stack
      * @throws StackIsEmptyException if the stack is empty
      */
-    public Stack_Variable top() throws StackIsEmptyException {
+    public Stack_Variable pop() throws StackIsEmptyException {
         if(vars.isEmpty()) throw new StackIsEmptyException("The stack is empty, cannot pop");
         return vars.pop();
     }
 
 
-    /* TODO : Question -> Do we need the following func ? */
+    /* TODO : Question -> Do we need the following func ?
+    *   Or should we use a generic func to get the top var ?
+    */
     /**
      * @param name the name of the var we are looking for
      * @return Object, the var value if found, null otherwise
@@ -85,5 +98,60 @@ public class NewStack {
          return null;
      }
 
+    /* TODO : Question -> Do we need the following func ?
+     *   Or should we use a generic func to update the top var ?
+     */
 
+    /**
+     * Updates the top var that matches the given name (in current scope)
+     */
+    public boolean updateVar(String name, Object value) {
+        for(Stack_Variable var : vars) {
+            if(var.getName().equals(name) && var.getScope() == scopeDepth) {
+                var.setValue(value);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // TODO : Do a func to update the topVar
+
+    /**
+     * Checks if a var exists in the current scope
+     */
+    public boolean hasVar(String name) {
+        for(Stack_Variable var : vars) {
+            if(var.getName().equals(name) && var.getScope() == scopeDepth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the number of vars on the stack
+     * @return int nb of vars
+     */
+    public int size() {
+        return vars.size();
+    }
+
+    /**
+     * Check if the vars stack is empty
+     * @return true if no vars, false otherwise
+     */
+    public boolean isEmpty() {
+        return vars.isEmpty();
+    }
+
+    /**
+     * Clears all vars and reset the scope
+     */
+    public void clear() {
+        vars.clear();
+        scopeDepth = 0;
+    }
+
+    // TODO : Do a toString method
 }
