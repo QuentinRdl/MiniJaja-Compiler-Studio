@@ -1,7 +1,7 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
-import fr.ufrst.m1info.gl.compGL.SymbolTable.DataType;
-import fr.ufrst.m1info.gl.compGL.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 
 /**
  * API class for the Memory interface

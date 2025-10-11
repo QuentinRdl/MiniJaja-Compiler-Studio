@@ -1,5 +1,4 @@
-package fr.ufrst.m1info.gl.compGL;
-import java.util.*;
+package fr.ufrst.m1info.pvm.group5;
 
 /**
  * Represents a singleexecution frame in the interpreter.

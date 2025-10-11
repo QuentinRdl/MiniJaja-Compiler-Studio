@@ -1,12 +1,9 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 
 import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 

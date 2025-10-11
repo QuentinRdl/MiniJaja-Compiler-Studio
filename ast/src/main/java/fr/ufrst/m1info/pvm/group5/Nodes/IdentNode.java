@@ -1,8 +1,8 @@
-package fr.ufrst.m1info.gl.compGL.Nodes;
+package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.gl.compGL.EvaluableNode;
-import fr.ufrst.m1info.gl.compGL.Memory;
-import fr.ufrst.m1info.gl.compGL.Value;
+import fr.ufrst.m1info.pvm.group5.EvaluableNode;
+import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.Value;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,6 @@
 // Generated from /media/kilian/Data/Utilitaires/IDEA projects/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
 package package fr.ufrst.m1info.gl.compGL;;
 
-import fr.ufrst.m1info.gl.compGL.Nodes.*;
-
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

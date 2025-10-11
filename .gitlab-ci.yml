@@ -10,11 +10,6 @@ cache:
     - .m2/repository
 
 build-job:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == 'dev'
-    - if: $CI_COMMIT_BRANCH == 'main'
   tags:
     - avm_groupe5
   stage: build
@@ -23,11 +18,6 @@ build-job:
     - mvn -B clean compile
 
 test-job:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == 'dev'
-    - if: $CI_COMMIT_BRANCH == 'main'
   tags:
     - avm_groupe5
   stage: test

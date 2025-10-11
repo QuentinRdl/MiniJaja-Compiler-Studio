@@ -1,9 +1,9 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
-import fr.ufrst.m1info.gl.compGL.SymbolTable.DataType;
-import fr.ufrst.m1info.gl.compGL.SymbolTable.EntryKind;
-import fr.ufrst.m1info.gl.compGL.SymbolTable.SymbolTable;
-import fr.ufrst.m1info.gl.compGL.SymbolTable.SymbolTableEntry;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTable;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTableEntry;
 import junit.framework.TestCase;
 
 import  org.junit.jupiter.api.Test;

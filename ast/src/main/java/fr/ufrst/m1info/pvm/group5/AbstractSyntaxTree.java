@@ -1,6 +1,6 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
-import fr.ufrst.m1info.gl.compGL.Nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.Nodes.ASTNode;
 
 public class AbstractSyntaxTree {
     /**

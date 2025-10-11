@@ -1,7 +1,6 @@
 // Generated from /home/AD/kjelic/DossierPartage/Projet/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
 package package fr.ufrst.m1info.gl.compGL;
 
-import fr.ufrst.m1info.gl.compGL.Nodes.*;
 import fr.ufrst.m1info.gl.compGL.ValueType;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;

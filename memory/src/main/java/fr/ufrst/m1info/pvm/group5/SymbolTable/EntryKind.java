@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compGL.SymbolTable;
+package fr.ufrst.m1info.pvm.group5.SymbolTable;
 
 /**
  * Enumeration representing the kind of entry in the symbol table.

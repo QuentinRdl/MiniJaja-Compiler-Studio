@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compgl.driver;
+package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ public class HelloControllerT extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fr/ufrst/m1info/gl/compgl/driver/hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fr/ufrst/m1info/pvm/group5/driver/hello-view.fxml"));
         Parent root = fxmlLoader.load();
         if (root == null) {
             System.out.println("Root is null! FXML not loaded.");

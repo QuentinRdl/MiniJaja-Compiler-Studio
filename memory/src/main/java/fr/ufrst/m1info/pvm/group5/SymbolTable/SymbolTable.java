@@ -1,7 +1,7 @@
-package fr.ufrst.m1info.gl.compGL.SymbolTable;
+package fr.ufrst.m1info.pvm.group5.SymbolTable;
 
 
-import fr.ufrst.m1info.gl.compGL.HashMap;
+import fr.ufrst.m1info.pvm.group5.HashMap;
 
 /**
  * Represents a simple symbol table without scope management.

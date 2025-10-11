@@ -1,9 +1,6 @@
-package fr.ufrst.m1info.gl.compGL.Nodes;
+package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.gl.compGL.Memory;
-import fr.ufrst.m1info.gl.compGL.Value;
-
-import java.util.List;
+import fr.ufrst.m1info.pvm.group5.Value;
 
 public class AndNode extends BinaryOperator{
 

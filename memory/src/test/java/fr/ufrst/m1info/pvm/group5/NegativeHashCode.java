@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
 //Negative hashcode is just here to test the hashMap
 public class NegativeHashCode {

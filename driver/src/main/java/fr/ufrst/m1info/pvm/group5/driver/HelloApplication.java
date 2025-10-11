@@ -1,10 +1,9 @@
-package fr.ufrst.m1info.gl.compgl.driver;
+package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 
 import java.io.IOException;
 

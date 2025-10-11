@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.gl.compGL;
+package fr.ufrst.m1info.pvm.group5;
 
 public class Memory {
     // Replace with the API of the memory module once it's done
