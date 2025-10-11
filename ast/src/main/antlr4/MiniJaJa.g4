@@ -7,7 +7,11 @@ import fr.ufrst.m1info.gl.compGL.ValueType;
 }
 
 classe returns [ClassNode node]
-    : 'class' ident '{' (decls)? methmain '}' {$node = new ClassNode($ident.node, ($decls!=null)?$decls.node:null, $methmain.node);}
+    @init{boolean declsflag = false;}
+    : 'class' ident '{'
+    (decls {declsflag = true;}
+    )?
+    methmain '}' {$node = new ClassNode($ident.node, (declsflag)?$decls.node:null, $methmain.node);}
     ;
 
 ident returns [IdentNode node]
@@ -15,26 +19,48 @@ ident returns [IdentNode node]
     ;
 
 decls returns [ASTNode node]
-    : decl ';' (decls)?  {$node = new DeclarationsNode($decl.node, ($decls!=null)?$decls.node:null);}
+    : decl ';' {$node = new DeclarationsNode($decl.node, null);}
+    (decls {$node = new DeclarationsNode($decl.node, $decls.node);}
+    )?
     ;
 
 methmain returns [MainNode node]
-    : 'main' '{' (vars)? (instrs)? '}' {$node = new MainNode(($vars!=null)?$vars.node:null, ($instrs!=null)?$instrs.node:null);}
+    @init{boolean varsflag = false; boolean instrsflag = false;}
+    : 'main' '{'
+    (vars {varsflag = true;}
+    )?
+    (instrs {instrsflag = true;}
+    )?
+    '}' {$node = new MainNode((varsflag)?$vars.node:null, (instrsflag)?$instrs.node:null);}
     ;
 
 instrs returns [InstructionsNode node]
-    : instr ';' (instrs)? {$node = new InstructionsNode($instr.node, ($instrs!=null)?$instrs.node:null);}
+    : instr ';' {$node = new InstructionsNode($instr.node, null);}
+    (instrs {$node = new InstructionsNode($instr.node, $instrs.node);}
+    )?
     ;
 
 instr returns [ASTNode node]
-    : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, ($instrs!=null)?$instrs.node:null);}
+    @init{boolean instrsflag1 = false; boolean instrsflag2 = false;}
+    : 'while' '(' exp ')' '{'
+    (instrs {instrsflag1 = true;}
+    )?
+    '}' {$node = new WhileNode($exp.node, (instrsflag1)?$instrs.node:null);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
     | ident1 {$node = $ident1.node;}
     ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
     | '+=' exp {$node = new SommeNode((IdentNode)$node, $exp.node);}
     | '++' {$node = new IncNode((IdentNode)$node);}
     )
-    | 'if' '(' exp ')' '{' (i1=instrs)? '}' ( 'else' '{' (i2=instrs)? '}')? {$node = new IfNode(exp,($i1!=null)?$i1.node:null,($i2!=null)?$i2.node:null) }
+    | 'if' '(' exp ')' '{'
+    (i1=instrs {instrsflag1 = true;}
+    )?
+    '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,null);}
+    ('else' '{'
+     (i2=instrs {instrsflag2 = true;}
+     )?
+     '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,(instrsflag2)?$i2.node:null);}
+     )?
     ;
 
 exp returns [ASTNode node]
@@ -92,17 +118,19 @@ decl returns [ASTNode node]
     ;
 
 vars returns [ASTNode node]
-    : var ';' (vars)? {$node = new VariablesNode($var.node, ($vars!=null)?$vars.node:null);}
+    : var ';' {$node = new VariablesNode($var.node, null);}
+    (vars {$node = new VariablesNode($var.node, $vars.node);}
+    )?
     ;
 
 var returns [ASTNode node]
-    : typemeth ident varPrime {$node = new VariableNode($typemeth.node, $ident.node, $varPrime.node);}
-    | 'final' type ident (vexp)? {$node = new FinalNode($type.node, $ident.node, ($vexp!=null)?$vexp.node:null);}
+    : typemeth ident {$node = new VariableNode($typemeth.node, $ident.node, null);}
+    (vexp {$node = new VariableNode($typemeth.node, $ident.node, $vexp.node);}
+    )?
+    | 'final' type ident {$node = new FinalNode($type.node, $ident.node, null);}
+    (vexp {$node = new FinalNode($type.node, $ident.node, $vexp.node);}
+    )?
     ;
-
-varPrime returns [ASTNode node]
-     : (vexp)? {$node = ($vexp!=null)?$vexp.node:null;}
-     ;
 
 typemeth returns [TypeNode node]
      : type {$node = $type.node;}
