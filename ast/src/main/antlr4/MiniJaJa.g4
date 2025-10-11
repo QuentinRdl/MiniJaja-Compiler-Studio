@@ -7,7 +7,7 @@ import fr.ufrst.m1info.gl.compGL.ValueType;
 }
 
 classe returns [ClassNode node]
-    : 'class' ident '{' (decls)? methmain '}' {$node = new ClassNode($ident.node, $decls.node, $methmain.node);}
+    : 'class' ident '{' (decls)? methmain '}' {$node = new ClassNode($ident.node, ($decls!=null)?$decls.node:null, $methmain.node);}
     ;
 
 ident returns [IdentNode node]
@@ -15,28 +15,26 @@ ident returns [IdentNode node]
     ;
 
 decls returns [ASTNode node]
-    : decl ';' (decls)?  {$node = new DeclarationsNode($decl.node, $decls.node);}
+    : decl ';' (decls)?  {$node = new DeclarationsNode($decl.node, ($decls!=null)?$decls.node:null);}
     ;
 
 methmain returns [MainNode node]
-    : 'main' '{' (vars)? (instrs)? '}' {$node = new MainNode($vars.node, $instrs.node);}
+    : 'main' '{' (vars)? (instrs)? '}' {$node = new MainNode(($vars!=null)?$vars.node:null, ($instrs!=null)?$instrs.node:null);}
     ;
 
 instrs returns [InstructionsNode node]
-    : instr ';' (instrs)? {$node = new InstructionsNode($instr.node, $instrs.node);}
+    : instr ';' (instrs)? {$node = new InstructionsNode($instr.node, ($instrs!=null)?$instrs.node:null);}
     ;
 
-//if "(" exp ")" "{" instrs "}" [else "{" instrs "}"]
-
 instr returns [ASTNode node]
-    : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, $instrs.node);}
+    : 'while' '(' exp ')' '{' (instrs)? '}' {$node = new WhileNode($exp.node, ($instrs!=null)?$instrs.node:null);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
     | ident1 {$node = $ident1.node;}
     ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
     | '+=' exp {$node = new SommeNode((IdentNode)$node, $exp.node);}
     | '++' {$node = new IncNode((IdentNode)$node);}
     )
-    | 'if' '(' exp ')' '{' (instrs)? '}' ( 'else' '{' (instrs)? '}')? {}
+    | 'if' '(' exp ')' '{' (i1=instrs)? '}' ( 'else' '{' (i2=instrs)? '}')? {$node = new IfNode(exp,($i1!=null)?$i1.node:null,($i2!=null)?$i2.node:null) }
     ;
 
 exp returns [ASTNode node]
@@ -94,16 +92,16 @@ decl returns [ASTNode node]
     ;
 
 vars returns [ASTNode node]
-    : var ';' (vars)? {$node = new VariablesNode($var.node, $vars.node);}
+    : var ';' (vars)? {$node = new VariablesNode($var.node, ($vars!=null)?$vars.node:null);}
     ;
 
 var returns [ASTNode node]
     : typemeth ident varPrime {$node = new VariableNode($typemeth.node, $ident.node, $varPrime.node);}
-    | 'final' type ident (vexp)? {$node = new FinalNode($type.node, $ident.node, $vexp.node);}
+    | 'final' type ident (vexp)? {$node = new FinalNode($type.node, $ident.node, ($vexp!=null)?$vexp.node:null);}
     ;
 
 varPrime returns [ASTNode node]
-     : (vexp)? {$node = $vexp.node;}
+     : (vexp)? {$node = ($vexp!=null)?$vexp.node:null;}
      ;
 
 typemeth returns [TypeNode node]
@@ -126,4 +124,8 @@ IDENTIFIER
 
 NOMBRE
     : ('0'..'9')+
+    ;
+
+WS
+    :   (' ' | '\t' | '\r'| '\n') -> skip
     ;
