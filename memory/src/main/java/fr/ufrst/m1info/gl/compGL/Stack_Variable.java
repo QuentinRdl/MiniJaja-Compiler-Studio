@@ -3,8 +3,6 @@ package fr.ufrst.m1info.gl.compGL;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-// TODO : Do the integration tests w/ the Stack class
-
 /**
  * Represents an entry of a variable in the stack, with name that contains the actual
  * name of the variable and scope the scope it has as a suffix

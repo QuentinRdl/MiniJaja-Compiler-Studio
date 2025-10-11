@@ -4,9 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EmptyStackException;
 
-// TODO : Do the associated unit tests
-// TODO : Do the integration tests w/ the Stack_Variable class
-
 public class Stack {
     private Deque<Stack_Variable> vars;
     private int scopeDepth;
@@ -48,7 +45,7 @@ public class Stack {
 
     /**
      * Pops the current scope
-     * @throws NoScopeException
+     * @throws NoScopeException if no scope are present
      */
     public void popScope() throws NoScopeException {
         if(scopeDepth == 0) throw new NoScopeException("There are currently 0 scopes, cannot pop");
