@@ -27,6 +27,7 @@ public class DeclarationsNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws Exception {
         declaration.interpret(m);
-        declarations.interpret(m);
+        if(declarations != null)
+            declarations.interpret(m);
     }
 }

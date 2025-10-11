@@ -30,8 +30,13 @@ public class VariableNode extends ASTNode implements WithradawableNode {
 
     @Override
     public void interpret(Memory m) throws Exception {
-        Value v = ((EvaluableNode)vexp).eval(m);
-        m.declVar(ident.identifier, v, ValueType.toDataType(typemeth.valueType));
+        if(vexp == null){
+            m.declVar(ident.identifier, null, ValueType.toDataType(typemeth.valueType));
+        }
+        else {
+            Value v = ((EvaluableNode) vexp).eval(m);
+            m.declVar(ident.identifier, v, ValueType.toDataType(typemeth.valueType));
+        }
     }
 
     @Override
