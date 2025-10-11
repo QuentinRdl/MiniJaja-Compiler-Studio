@@ -21,6 +21,8 @@ sonarqube-job:
   stage: sonarqube
   image: maven:3.9.9-eclipse-temurin-22
   script:
+    - chmod +x ./settings.sh
+    - ./settings.sh
     - mvn clean jacoco:prepare-agent test jacoco:report install sonar:sonar deploy
       -Dsonar.projectKey=$PROJECT_KEY_AND_NAME
       -Dsonar.projectName=$PROJECT_KEY_AND_NAME
