@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 // TODO : Write the JavaDoc
-// TODO : Do the associated unit tests
 // TODO : Do the integration tests w/ the Stack class
 
 /**
