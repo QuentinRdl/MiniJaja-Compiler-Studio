@@ -37,14 +37,14 @@ public class FinalNode extends ASTNode implements WithradawableNode {
         Value v = ((EvaluableNode)expression).eval(m);
         m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType));
     }
-    
+
     @Override
-    public void WithradawInterpret(Memory m) {
+    public void withradawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 
     @Override
-    public List<String> WithdrawCompile(int address) {
+    public List<String> withdrawCompile(int address) {
         List<String> jajacodes = new ArrayList<String>();
         jajacodes.add("swap");
         jajacodes.add("pop");

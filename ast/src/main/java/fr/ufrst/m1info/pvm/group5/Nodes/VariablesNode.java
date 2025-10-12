@@ -43,16 +43,16 @@ public class VariablesNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
-    public void WithradawInterpret(Memory m) {
-        ((WithradawableNode)variables).WithradawInterpret(m);
-        ((WithradawableNode)variable).WithradawInterpret(m);
+    public void withradawInterpret(Memory m) {
+        ((WithradawableNode)variables).withradawInterpret(m);
+        ((WithradawableNode)variable).withradawInterpret(m);
     }
 
     @Override
-    public List<String> WithdrawCompile(int address) {
+    public List<String> withdrawCompile(int address) {
         List<String> jajacodes = new ArrayList<String>();
-        jajacodes.addAll(((WithradawableNode)variables).WithdrawCompile(address));
-        jajacodes.addAll(((WithradawableNode)variable).WithdrawCompile(address + jajacodes.size()));
+        jajacodes.addAll(((WithradawableNode)variables).withdrawCompile(address));
+        jajacodes.addAll(((WithradawableNode)variable).withdrawCompile(address + jajacodes.size()));
         return jajacodes;
     }
 }

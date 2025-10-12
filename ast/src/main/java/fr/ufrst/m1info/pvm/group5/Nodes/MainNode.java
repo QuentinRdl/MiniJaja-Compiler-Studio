@@ -26,7 +26,7 @@ public class MainNode extends ASTNode {
             JJCodes.addAll(instrs.compile(address + JJCodes.size()));
         JJCodes.add("push(0)");
         if(vars != null)
-            JJCodes.addAll(((WithradawableNode)vars).WithdrawCompile(address + JJCodes.size()));
+            JJCodes.addAll(((WithradawableNode)vars).withdrawCompile(address + JJCodes.size()));
         return JJCodes;
     }
 
@@ -37,6 +37,6 @@ public class MainNode extends ASTNode {
         if(instrs != null)
             instrs.interpret(m);
         if(vars != null)
-            ((WithradawableNode)vars).WithradawInterpret(m);
+            ((WithradawableNode)vars).withradawInterpret(m);
     }
 }

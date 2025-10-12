@@ -12,12 +12,12 @@ public interface WithradawableNode {
      * Make the interpretation to withdraw the declaration from the given memory
      * @param m memory to withdraw the declaration from
      */
-    public void WithradawInterpret(Memory m);
+    public void withradawInterpret(Memory m);
 
     /**
      * Generate the instructions to withdraw the declaration from the stack
      * @param address starting address of the instructions
      * @return generated instructions
      */
-    public List<String> WithdrawCompile(int address);
+    public List<String> withdrawCompile(int address);
 }

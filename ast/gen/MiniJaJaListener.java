@@ -1,4 +1,4 @@
-// Generated from /media/kilian/Data/Utilitaires/IDEA projects/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
+// Generated from /home/utilisateur/Documents/Master 1/M1 - Semestre 7/Projet COMP/groupe-5/ast/src/main/antlr4/MiniJaJa.g4 by ANTLR 4.13.2
 
 package fr.ufrst.m1info.pvm.group5;
 import fr.ufrst.m1info.pvm.group5.Nodes.*;

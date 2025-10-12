@@ -37,7 +37,7 @@ public class ClassNode extends ASTNode {
             JJCodes.addAll(decls.compile(address + JJCodes.size()));
         JJCodes.addAll(main.compile(address + JJCodes.size()));
         if(decls!=null)
-            JJCodes.addAll(((WithradawableNode)decls).WithdrawCompile(address + JJCodes.size()));
+            JJCodes.addAll(((WithradawableNode)decls).withdrawCompile(address + JJCodes.size()));
         JJCodes.add("pop");
         JJCodes.add("jcstop");
         return JJCodes;
@@ -50,7 +50,7 @@ public class ClassNode extends ASTNode {
             decls.interpret(m);
         main.interpret(m);
         if(decls != null){
-            ((WithradawableNode) decls).WithradawInterpret(m);
+            ((WithradawableNode) decls).withradawInterpret(m);
         }
     }
 }

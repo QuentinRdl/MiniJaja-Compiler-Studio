@@ -46,12 +46,12 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
-    public void WithradawInterpret(Memory m) {
+    public void withradawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 
     @Override
-    public List<String> WithdrawCompile(int address) {
+    public List<String> withdrawCompile(int address) {
         List<String> jajacodes = new ArrayList<String>();
         jajacodes.add("swap");
         jajacodes.add("pop");
