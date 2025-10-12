@@ -43,14 +43,16 @@ public class DeclarationsNode extends ASTNode implements WithradawableNode{
 
     @Override
     public void withradawInterpret(Memory m) {
-        ((WithradawableNode)declarations).withradawInterpret(m);
+        if(declarations != null)
+            ((WithradawableNode)declarations).withradawInterpret(m);
         ((WithradawableNode)declaration).withradawInterpret(m);
     }
 
     @Override
     public List<String> withdrawCompile(int address) {
         List<String> jajacodes = new ArrayList<String>();
-        jajacodes.addAll(((WithradawableNode)declarations).withdrawCompile(address));
+        if(declarations != null)
+            jajacodes.addAll(((WithradawableNode)declarations).withdrawCompile(address));
         jajacodes.addAll(((WithradawableNode)declaration).withdrawCompile(address + jajacodes.size()));
         return jajacodes;
     }

@@ -16,7 +16,7 @@ public class WhileNode extends ASTNode{
         if(this.condition == null){
             throw new ASTBuildException("While node must have a condition");
         }
-        if(!(condition instanceof WithradawableNode)){
+        if(!(condition instanceof EvaluableNode)){
             throw new ASTBuildException("While node condition must be evaluable");
         }
     }

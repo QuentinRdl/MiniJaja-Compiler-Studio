@@ -24,7 +24,7 @@ public class ClassNode extends ASTNode {
         if(main == null){
             throw new ASTBuildException("Class must contain a main method");
         }
-        if(!(decls instanceof WithradawableNode)){
+        if(decls != null && !(decls instanceof WithradawableNode)){
             throw new ASTBuildException("Class node declaration must be withradawable");
         }
     }
