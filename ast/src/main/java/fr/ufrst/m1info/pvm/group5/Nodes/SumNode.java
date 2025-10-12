@@ -36,7 +36,7 @@ public class SumNode extends ASTNode{
     public void interpret(Memory m) throws Exception {
         Value v = ((EvaluableNode)expression).eval(m);
         if(v == null){
-            throw  new ASTInvalidMemoryException(identifier.identifier + " is undefined");
+            throw  new ASTInvalidMemoryException("Variable" + identifier.identifier + " is undefined");
         }
         int res = ((Value)m.val(identifier.identifier)).valueInt + v.valueInt;
         m.affectValue(identifier.identifier, new Value(res));
