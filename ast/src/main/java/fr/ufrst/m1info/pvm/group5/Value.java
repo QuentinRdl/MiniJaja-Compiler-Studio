@@ -1,5 +1,8 @@
 package fr.ufrst.m1info.pvm.group5;
 
+/**
+ * Class defining a boolean or integer value within the AST
+ */
 public class Value {
     public int valueInt;
     public boolean valueBool;
@@ -14,8 +17,4 @@ public class Value {
         this.valueInt = valueInt;
         this.Type = ValueType.INT;
     }
-
-    /*
-    TODO : Add a constructor when we have access to the memory
-     */
 }

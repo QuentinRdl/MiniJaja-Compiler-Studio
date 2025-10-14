@@ -1,17 +1,27 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.Memory.Memory;
+import fr.ufrst.m1info.pvm.group5.WithradawableNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeclarationsNode extends ASTNode{
+public class DeclarationsNode extends ASTNode implements WithradawableNode{
     ASTNode declaration;
     ASTNode declarations;
 
     public DeclarationsNode(ASTNode declaration, ASTNode declarations){
         this.declaration=declaration;
         this.declarations=declarations;
+        if(declaration == null){
+            throw new ASTBuildException("Invalid declaration");
+        }
+        if(!(declaration instanceof WithradawableNode)){
+            throw new ASTBuildException("Declarations must be withdrawable");
+        }
     }
 
     @Override
@@ -25,8 +35,25 @@ public class DeclarationsNode extends ASTNode{
     }
 
     @Override
-    public void interpret(Memory m) throws Exception {
+    public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         declaration.interpret(m);
-        declarations.interpret(m);
+        if(declarations != null)
+            declarations.interpret(m);
+    }
+
+    @Override
+    public void withradawInterpret(Memory m) {
+        if(declarations != null)
+            ((WithradawableNode)declarations).withradawInterpret(m);
+        ((WithradawableNode)declaration).withradawInterpret(m);
+    }
+
+    @Override
+    public List<String> withdrawCompile(int address) {
+        List<String> jajacodes = new ArrayList<String>();
+        if(declarations != null)
+            jajacodes.addAll(((WithradawableNode)declarations).withdrawCompile(address));
+        jajacodes.addAll(((WithradawableNode)declaration).withdrawCompile(address + jajacodes.size()));
+        return jajacodes;
     }
 }

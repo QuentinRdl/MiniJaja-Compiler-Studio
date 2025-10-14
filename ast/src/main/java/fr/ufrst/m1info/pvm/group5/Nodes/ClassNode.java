@@ -1,20 +1,32 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.Memory.Memory;
 import fr.ufrst.m1info.pvm.group5.WithradawableNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClassNode extends ASTNode {
-    ASTNode ident;
+    IdentNode ident;
     ASTNode decls;
     ASTNode main;
 
-    public ClassNode(ASTNode ident, ASTNode decls, ASTNode main){
+    public ClassNode(IdentNode ident, ASTNode decls, ASTNode main){
         this.ident = ident;
         this.decls = decls;
         this.main = main;
+        if(ident == null){
+            throw new ASTBuildException("Class node cannot have null identifier");
+        }
+        if(main == null){
+            throw new ASTBuildException("Class must contain a main method");
+        }
+        if(decls != null && !(decls instanceof WithradawableNode)){
+            throw new ASTBuildException("Class node declaration must be withradawable");
+        }
     }
 
     @Override
@@ -25,20 +37,20 @@ public class ClassNode extends ASTNode {
             JJCodes.addAll(decls.compile(address + JJCodes.size()));
         JJCodes.addAll(main.compile(address + JJCodes.size()));
         if(decls!=null)
-            JJCodes.addAll(((WithradawableNode)decls).WithdrawCompile(address + JJCodes.size()));
+            JJCodes.addAll(((WithradawableNode)decls).withdrawCompile(address + JJCodes.size()));
         JJCodes.add("pop");
         JJCodes.add("jcstop");
         return JJCodes;
     }
 
     @Override
-    public void interpret(Memory m) throws Exception {
-        m.DeclVar();
+    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
+        m.declVarClass(ident.identifier);
         if(decls!=null)
             decls.interpret(m);
         main.interpret(m);
-        if(decls != null && decls instanceof WithradawableNode){
-            ((WithradawableNode) decls).WithradawInterpret(m);
+        if(decls != null){
+            ((WithradawableNode) decls).withradawInterpret(m);
         }
     }
 }

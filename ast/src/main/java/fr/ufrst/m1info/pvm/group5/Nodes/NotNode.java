@@ -1,8 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.EvaluableNode;
-import fr.ufrst.m1info.pvm.group5.Memory;
-import fr.ufrst.m1info.pvm.group5.Value;
+import fr.ufrst.m1info.pvm.group5.*;
+import fr.ufrst.m1info.pvm.group5.Memory.Memory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +10,15 @@ public class NotNode extends ASTNode implements EvaluableNode {
     ASTNode expr;
 
     public NotNode(ASTNode expr) {
+
         this.expr = expr;
+        if(expr==null){
+            throw new ASTBuildException("Not operator must have an operand");
+        }
     }
 
     @Override
-    public Value eval(Memory m) {
+    public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         Value v = ((EvaluableNode)expr).eval(m);
         return new Value(!v.valueBool);
     }
@@ -29,7 +32,7 @@ public class NotNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public void interpret(Memory m) throws Exception {
-        throw new Exception("Not node cannot be interpreted");
+    public void interpret(Memory m) throws ASTInvalidOperationException {
+        throw new ASTInvalidOperationException("Not node cannot be interpreted");
     }
 }
