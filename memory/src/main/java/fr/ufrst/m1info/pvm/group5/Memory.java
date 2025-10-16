@@ -84,5 +84,19 @@ public class Memory {
         // TODO
     }
 
+    public void declVarClass(String identifier) {
+        // TODO
+    }
+
+    public Object val(String identifier) {
+        // TODO
+        return null;
+    }
+
+    public String identVarClass() {
+        // TODO
+        return null;
+    }
+
     // Method related methods (context, etc..) will have to be added later
 }

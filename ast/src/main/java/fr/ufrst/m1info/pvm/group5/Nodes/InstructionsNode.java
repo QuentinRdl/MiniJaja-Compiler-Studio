@@ -3,7 +3,7 @@ package fr.ufrst.m1info.pvm.group5.Nodes;
 import fr.ufrst.m1info.pvm.group5.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
-import fr.ufrst.m1info.pvm.group5.Memory.Memory;
+import fr.ufrst.m1info.pvm.group5.Memory;
 
 import java.util.ArrayList;
 import java.util.List;

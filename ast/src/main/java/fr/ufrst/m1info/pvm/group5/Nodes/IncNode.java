@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.Memory.Memory;
+import fr.ufrst.m1info.pvm.group5.Memory;
 import fr.ufrst.m1info.pvm.group5.Value;
 
 import java.util.ArrayList;
