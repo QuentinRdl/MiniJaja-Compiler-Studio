@@ -60,6 +60,6 @@ test-job:
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
-      paths:
-        - target/surefire-reports/
+    paths:
+      - target/surefire-reports/
 
