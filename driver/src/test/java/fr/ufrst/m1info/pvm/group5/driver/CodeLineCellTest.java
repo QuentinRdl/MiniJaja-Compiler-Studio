@@ -11,13 +11,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;
+import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.ApplicationTest;
 
+/**
+ * Unit tests for the CodeLineCell class
+ */
+@ExtendWith(ApplicationExtension.class)
 public class CodeLineCellTest extends ApplicationTest {
 
     private ListView<CodeLine> listView;
 
+    /**
+     * Starts the JavaFX application before running the tests
+     *
+     * @param stage the primary JavaFX stage used for testing
+     * @throws Exception if the scene setup fails
+     */
     @Override
     public void start (Stage stage) throws Exception {
         listView = new ListView<>();
@@ -37,6 +49,11 @@ public class CodeLineCellTest extends ApplicationTest {
     /*
     * Verifies that a cell in the listView is correctly constructed with nodes
     * */
+
+    /**
+     * Verifies that a cell in the ListView is correctly constructed
+     * with the expected number of child nodes
+     */
     @Test
     public void testCellDisplaysCorrectContent(){
         CodeLineCell cell = (CodeLineCell) listView.lookup(".list-cell"); // Retrieves a cell from the listview

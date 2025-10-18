@@ -13,9 +13,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-/*
-* Controller class for managing interactions in the main application interface.
-*/
+
+/**
+ * Controller class for managing interactions in the main application interface
+ */
 public class MainController {
     @FXML
     private Label fileLabel;
@@ -48,11 +49,10 @@ public class MainController {
 
     }
 
-    /*
-    * This method is called when the user clicks the Open button.
-    * It opens a file chooser that allows the user to select a MiniJaja or JajaCode file, clears the previously displayed content,
-    * reads the selected file line by line, and updates the ListView to display each numbered line
-    * */
+    /**
+     * This method is called when the user clicks the Open button
+     * It opens a file chooser that allows the user to select a MiniJaja or JajaCode file
+     */
     @FXML
     protected void selectFileButton() {
         FileChooser fc = new FileChooser();
@@ -63,13 +63,14 @@ public class MainController {
         loadFile(selectedFile);
     }
 
-    /*
-    * Load, display the file code line by line,
-    * and update the ListView to display each numbered line
-    *
-    * @param selectedFile the file to be loaded
-    * @return true if the file was successfully loaded, false otherwise
-    */
+
+    /**
+     * Load, display the file code line by line,
+     * and update the ListView to display each numbered line
+     *
+     * @param selectedFile the file to be loaded
+     * @return true if the file was successfully loaded, false otherwise
+     */
     public boolean loadFile(File selectedFile){
         if(selectedFile == null){
             System.out.println("No file selected");
@@ -111,14 +112,28 @@ public class MainController {
         }
     }
 
+    /**
+     * Returns the label that displays the name of the currently loaded file
+     *
+     * @return the label showing the selected file name
+     */
     public Label getFileLabel(){
         return fileLabel;
     }
 
+    /**
+     * Returns the observable list containing all lines of code currently loaded
+     *
+     * @return an ObservableList of Codeline objects
+     */
     public ObservableList<CodeLine> getCodeLines(){
         return codeLines;
     }
 
+    /**
+     * Returns the ListView component that display the lines of code in the user interface
+     * @return the ListView showing CodeLine elements
+     */
     public ListView<CodeLine> getCodeListView(){
         return codeListView;
     }

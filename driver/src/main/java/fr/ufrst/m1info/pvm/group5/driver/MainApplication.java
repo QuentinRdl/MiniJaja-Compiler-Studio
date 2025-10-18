@@ -7,9 +7,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/*
-* Main entry point of the JavaFX application.
-*/
+
+/**
+ * Main entry point of the JavaFX application
+ */
 public class MainApplication extends Application {
     private final int WINDOW_HEIGHT = 720;
     private final int WINDOW_WIDTH = 1280;
