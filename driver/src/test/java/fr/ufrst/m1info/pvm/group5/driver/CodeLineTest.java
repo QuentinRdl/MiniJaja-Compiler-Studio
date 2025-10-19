@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the CodeLine class
+ */
 public class CodeLineTest {
     private CodeLine codeLine;
     private int lineNumber = 0;
