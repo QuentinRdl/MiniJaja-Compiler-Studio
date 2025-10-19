@@ -1,22 +1,27 @@
 package fr.ufrst.m1info.pvm.group5;
 
+import fr.ufrst.m1info.pvm.group5.Nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.Nodes.NumberNode;
+import org.mockito.Mockito;
+
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 
 /**
  * Static class to quickly create classes mocking Memory
  */
-public class MemoryMock {
+public class ASTMocks {
 
     /**
      * Creates a mock with no specific behaviour
      * @return mock created
      */
-    public static Memory createEmpty(){
+    public static Memory createEmptyMemory(){
         return mock();
     }
 
@@ -25,8 +30,8 @@ public class MemoryMock {
      * @param storage map used to store the mock data
      * @return mock created
      */
-    public static Memory createWithStorage(Map<String, Value> storage){
-        Memory result = createEmpty();
+    public static Memory createMemoryWithStorage(Map<String, Value> storage){
+        Memory result = createEmptyMemory();
         doAnswer(invocation -> {
                     String arg =  invocation.getArgument(0);
                     Value value = invocation.getArgument(1);
@@ -56,8 +61,8 @@ public class MemoryMock {
      * @param storage map using to store the mock data
      * @return mock created
      */
-    public static Memory createWithWithdraw(Map<String, Value> storage){
-        Memory result = createWithStorage(storage);
+    public static Memory createMemoryWithWithdraw(Map<String, Value> storage){
+        Memory result = createMemoryWithStorage(storage);
         doAnswer(invocation -> {
             storage.remove((String)invocation.getArgument(0));
            return null;

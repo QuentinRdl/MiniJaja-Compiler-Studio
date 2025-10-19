@@ -16,7 +16,7 @@ public class AbstractSyntaxTreeTest {
     @BeforeEach
     public void setup(){
         memoryStorage = new HashMap<>();
-        memory = MemoryMock.createWithStorage(memoryStorage);
+        memory = ASTMocks.createMemoryWithStorage(memoryStorage);
     }
 
     @Test
