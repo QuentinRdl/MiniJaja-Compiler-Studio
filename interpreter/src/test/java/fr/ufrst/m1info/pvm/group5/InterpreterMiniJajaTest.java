@@ -3,6 +3,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class InterpreterMiniJajaTest {
     public void InterpretNotExistingFile() {
         String errMessage=imj.interpretFile("src/test/resources/FileThatDoesntExist.mjj");
         Assertions.assertNotEquals(null,errMessage);
-        System.out.println(errMessage);
+        Assertions.assertEquals(NoSuchFileException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -49,9 +50,9 @@ public class InterpreterMiniJajaTest {
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     public void UndefinedVariableSum() {
-        String errMessage=imj.interpretCode("class C {int y = 10;main {x++}}");
+        String errMessage=imj.interpretCode("class C {int y = 10;main {x++;}}");
         Assertions.assertNotEquals(null,errMessage);
-        System.out.println(errMessage);
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 /*
     @Test
