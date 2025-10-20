@@ -1,5 +1,4 @@
 package fr.ufrst.m1info.pvm.group5;
-import fr.ufrst.m1info.pvm.group5.Memory;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
@@ -18,7 +17,7 @@ public class AbstractSyntaxTreeTest {
     @BeforeEach
     public void setup(){
         memoryStorage = new HashMap<>();
-        MemoryMock = mock();
+        MemoryMock = mock(Memory.class);
         doAnswer(invocation -> {
                     String arg =  invocation.getArgument(0);
                     Value value = invocation.getArgument(1);

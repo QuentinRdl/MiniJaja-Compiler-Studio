@@ -4,15 +4,16 @@ import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTable;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTableEntry;
-import junit.framework.TestCase;
 
-import  org.junit.jupiter.api.Test;
-import  org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Unit tests for {@link SymbolTable}.
  */
-public class SymbolTableTest extends TestCase {
+public class SymbolTableTest {
     private SymbolTable globalTable;
 
     /**
