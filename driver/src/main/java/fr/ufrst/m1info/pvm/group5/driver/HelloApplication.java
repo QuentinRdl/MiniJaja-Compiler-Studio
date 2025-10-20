@@ -7,15 +7,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
-/**
- * Main entry point of the JavaFX application
- */
-public class MainApplication extends Application {
+/*
+* Main entry point of the JavaFX application.
+*/
+public class HelloApplication extends Application {
     private final int WINDOW_HEIGHT = 720;
     private final int WINDOW_WIDTH = 1280;
 
-    private final String WINDOW_TITLE = "AVM Project - group 5";
+    private final String WINDOW_TITLE = "Projet COMP-GL groupe 5";
 
     /**
      * Starts the JavaFX application by loading the main interface and displaying the window.
@@ -25,7 +24,7 @@ public class MainApplication extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         stage.setTitle(WINDOW_TITLE);

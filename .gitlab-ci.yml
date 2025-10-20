@@ -42,24 +42,6 @@ test-job:
     - avm_groupe5
   stage: test
   image: maven:3.9.9-eclipse-temurin-22
-  variables:
-    DISPLAY: ":99"
-    MAVEN_OPTS: "-Djava.awt.headless=false"
-  before_script:
-    # Installing dependencies for JavaFX and Xvfb
-    - apt-get update -qq
-    - apt-get install -y -qq xvfb libgtk-3-0 libxtst6 libxrender1 libxi6 libx11-6 libxext6 libgl1
-    # Starting Xvfb (virtual X server)
-    - Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-    # Wait until Xvfb is ready
-    - sleep 3
   script:
-    - mvn -B clean test
-  artifacts:
-    when: always
-    reports:
-      junit:
-        - "**target/surefire-reports/TEST-*.xml"
-    paths:
-      - "**target/surefire-reports/"
+    - mvn -B test
 

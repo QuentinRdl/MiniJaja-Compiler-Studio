@@ -99,7 +99,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>fr.ufrst.m1info.gl.compgl.driver/fr.ufrst.m1info.pvm.group5.driver.MainApplication</mainClass>
+              <mainClass>fr.ufrst.m1info.gl.compgl.driver/fr.ufrst.m1info.pvm.group5.driver.HelloApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
@@ -114,13 +114,9 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
+            <version>3.0.0-M9</version>
             <configuration>
                 <useModulePath>false</useModulePath>
-                <!-- Only one test process at a time -->
-                <forkCount>1</forkCount>
-                <!-- Do not reuse processes between tests -->
-                <reuseForks>false</reuseForks>
             </configuration>
         </plugin>
 

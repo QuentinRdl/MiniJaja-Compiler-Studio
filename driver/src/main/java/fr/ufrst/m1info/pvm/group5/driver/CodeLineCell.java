@@ -7,22 +7,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 
-
-/**
- * The CodeLineCell class defines how each CodeLine is displayed inside the ListView.
- * It is responsible for creating and updating the visual cells that contain code lines.
- * Each cell allows the user to view and edit the code for a specific line in the program.
- */
+/*
+* The CodeLineCell class defines how each CodeLine is displayed inside the ListView.
+* It is responsible for creating and updating the visual cells that contain code lines.
+* Each cell allows the user to view and edit the code for a specific line in the program.
+* */
 public class CodeLineCell extends ListCell<CodeLine> {
     private HBox container;
     private Label lineNumberLabel;
     private TextField codeField;
 
-
-    /**
-     * Creates a new CodeLineCell and initializes its layout.
-     * The cell contains a label for the line number and a text field for the code.
-     */
+    /*
+    * Creates a new CodeLineCell and initializes its layout.
+    * The cell contains a label for the line number and a text field for the code.
+    */
     public CodeLineCell(){
         super();
 
