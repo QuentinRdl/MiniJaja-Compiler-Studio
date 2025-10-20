@@ -5,13 +5,15 @@ public interface Interpreter {
      * Interpret the given code
      *
      * @param code the code we want to interpret
+     * @return the error message
      */
-    void interpretCode(String code) throws Exception;
+    String interpretCode(String code);
 
     /**
      * Interpret the given file
      *
      * @param path the path of the file we want to interpret
+     * @return the error message
      */
-    void interpretFile(String path) throws Exception;
+    String interpretFile(String path);
 }
