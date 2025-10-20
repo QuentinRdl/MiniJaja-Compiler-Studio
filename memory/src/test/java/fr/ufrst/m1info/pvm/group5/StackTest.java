@@ -6,14 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 
 import java.lang.reflect.Field;
 import java.util.Deque;
 
-import static org.junit.Assert.*;
 
 /**
  * Unit test for the Stack class
