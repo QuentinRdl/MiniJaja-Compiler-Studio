@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the CodeLine class
+ */
 public class CodeLineTest {
     private CodeLine codeLine;
     private int lineNumber = 0;
@@ -12,6 +15,7 @@ public class CodeLineTest {
     public void setup(){
         codeLine = new CodeLine(++lineNumber, "var x = 10;");
     }
+
     @Test
     public void getLineNumber(){
         assertEquals(codeLine.getLineNumber(), 1);

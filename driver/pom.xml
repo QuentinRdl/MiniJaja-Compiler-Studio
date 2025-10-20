@@ -80,7 +80,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>fr.ufrst.m1info.gl.compgl.driver/fr.ufrst.m1info.pvm.group5.driver.HelloApplication</mainClass>
+              <mainClass>fr.ufrst.m1info.gl.compgl.driver/fr.ufrst.m1info.pvm.group5.driver.MainApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

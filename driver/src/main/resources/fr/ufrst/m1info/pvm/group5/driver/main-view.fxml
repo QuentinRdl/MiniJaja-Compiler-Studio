@@ -18,11 +18,11 @@
 <?import javafx.geometry.Orientation?>
 
 <?import javafx.scene.control.SplitPane.Divider?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.pvm.group5.driver.HelloController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.pvm.group5.driver.MainController">
 
   <top>
     <ToolBar>
-      <Button text="Open" fx:id="btnSelectFile" onAction="#selectFileButton"/>
+      <Button text="Open" fx:id="btnOpen" onAction="#selectFileButton"/>
       <Button text="Save" fx:id="btnSave"/>
       <Button text="Run" fx:id="btnRun"/>
       <Button text="Compile" fx:id="btnCompile"/>
@@ -41,7 +41,7 @@
           <Insets top="10.0"/>
         </padding>
 
-        <Label text="No files selected" fx:id="fileLabel"/>
+        <Label text="No file selected" fx:id="fileLabel"/>
       </HBox>
 
       <SplitPane fx:id="splitPane">
