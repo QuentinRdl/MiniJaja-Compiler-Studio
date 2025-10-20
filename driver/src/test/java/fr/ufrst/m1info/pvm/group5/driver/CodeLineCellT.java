@@ -3,7 +3,6 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -12,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -20,7 +18,7 @@ import org.testfx.framework.junit5.ApplicationTest;
  * Unit tests for the CodeLineCell class
  */
 @ExtendWith(ApplicationExtension.class)
-public class CodeLineCellTest extends ApplicationTest {
+public class CodeLineCellT extends ApplicationTest {
 
     private ListView<CodeLine> listView;
 

@@ -27,7 +27,7 @@ import org.testfx.framework.junit5.ApplicationTest;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-public class MainControllerTest extends ApplicationTest {
+public class MainControllerT extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
