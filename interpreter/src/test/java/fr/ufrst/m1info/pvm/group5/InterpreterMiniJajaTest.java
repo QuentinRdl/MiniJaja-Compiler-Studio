@@ -47,6 +47,12 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
     }
 
+    /*@Test
+    @DisplayName("Interpret File Complex")
+    public void Complex()  {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Complex.mjj"));
+    }*/
+
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     public void UndefinedVariableSum() {
