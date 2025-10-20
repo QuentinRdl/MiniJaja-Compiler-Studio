@@ -2,9 +2,8 @@ package fr.ufrst.m1info.pvm.group5;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 import org.mockito.Mock;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for the Stack class

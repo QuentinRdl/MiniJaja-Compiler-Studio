@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5;
 
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTable;
 
 /**
  * API class for the Memory interface
@@ -9,6 +10,8 @@ import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
  * All methods will be used by the abstract syntax tree for the interpretation/compilation
  */
 public class Memory {
+    Stack stack = new Stack();
+    SymbolTable symbolTable = new SymbolTable();
 
 
     /**
@@ -29,14 +32,14 @@ public class Memory {
     /**
      * Removes the top of the stack
      */
-    public void pop(){
+    public void pop() {
         // TODO
     }
 
     /**
      * Swap the two elements at the top of the stack
      */
-    public void swap(){
+    public void swap() {
         //TODO
     }
 
@@ -50,7 +53,7 @@ public class Memory {
      * @param value initial value of the variable. Can be null
      * @param type type of the variable to declare
      */
-    public void declVar(String identifier, Object value, DataType type){
+    public void declVar(String identifier, Object value, DataType type) {
         //TODO
     }
 
@@ -60,7 +63,7 @@ public class Memory {
      * @param value value of the constant. If it's null, the value of the constant will be assignable later
      * @param type tupe of the constant
      */
-    public void declCst(String identifer, Object value, DataType type){
+    public void declCst(String identifer, Object value, DataType type) {
         // TODO
     }
 
@@ -70,7 +73,7 @@ public class Memory {
      * Remove a declaration
      * @param identifier identifier of the declaration to remove
      */
-    public void withdrawDecl(String identifier){
+    public void withdrawDecl(String identifier) {
         // TODO
     }
 
@@ -80,7 +83,7 @@ public class Memory {
      * @param identifier identifier of the value to edit (cannot be null)
      * @param value value to affect (cannot be null)
      */
-    public void affectValue(String identifier, Object value){
+    public void affectValue(String identifier, Object value) {
         // TODO
     }
 
@@ -98,5 +101,5 @@ public class Memory {
         return null;
     }
 
-    // Method related methods (context, etc..) will have to be added later
+    // Method related methods (context, etc...) will have to be added later
 }
