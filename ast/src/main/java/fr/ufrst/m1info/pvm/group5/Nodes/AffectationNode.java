@@ -1,10 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
-import fr.ufrst.m1info.pvm.group5.EvaluableNode;
-import fr.ufrst.m1info.pvm.group5.Memory;
-import fr.ufrst.m1info.pvm.group5.Value;
+import fr.ufrst.m1info.pvm.group5.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +13,10 @@ public class AffectationNode extends ASTNode{
         this.identifier = identifier;
         this.expression = expression;
         if(identifier == null || expression == null){
-            throw new NullPointerException("AffectationNode cannot have null nodes");
+            throw new ASTBuildException("AffectationNode cannot have null nodes");
         }
         if(!(expression instanceof EvaluableNode)){
-            throw new NullPointerException("AffectationNode cannot have non-evaluable nodes");
+            throw new ASTBuildException("AffectationNode cannot have non-evaluable nodes");
         }
     }
 

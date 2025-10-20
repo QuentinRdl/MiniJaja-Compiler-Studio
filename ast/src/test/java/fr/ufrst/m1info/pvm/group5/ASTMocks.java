@@ -35,6 +35,9 @@ public class ASTMocks {
         doAnswer(invocation -> {
                     String arg =  invocation.getArgument(0);
                     Value value = invocation.getArgument(1);
+                    if(!storage.containsKey(arg)){
+                        throw new ASTInvalidMemoryException("Unknown variable "+arg);
+                    }
                     storage.put(arg, value);
                     return null;
                 }

@@ -8,6 +8,7 @@ import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 public enum ValueType {
     INT,
     BOOL,
+    EMPTY,
     VOID;
 
     /**

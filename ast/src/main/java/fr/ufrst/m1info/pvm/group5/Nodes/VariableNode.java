@@ -37,7 +37,7 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         if(vexp == null){
-            m.declVar(ident.identifier, null, ValueType.toDataType(typemeth.valueType));
+            m.declVar(ident.identifier, new Value(), ValueType.toDataType(typemeth.valueType));
         }
         else {
             Value v = ((EvaluableNode) vexp).eval(m);

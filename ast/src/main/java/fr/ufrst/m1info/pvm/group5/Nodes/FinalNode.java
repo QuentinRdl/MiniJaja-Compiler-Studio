@@ -21,19 +21,28 @@ public class FinalNode extends ASTNode implements WithradawableNode {
         if(this.ident == null){
             throw new ASTBuildException("Final nodes must have a identifier");
         }
+        if (expression != null && !(expression instanceof EvaluableNode)) {
+            throw new ASTBuildException("Final nodes expression must be evaluable");
+        }
     }
 
 
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<String>();
-        jajacodes.addAll(expression.compile(address));
+        if(expression != null) {
+            jajacodes.addAll(expression.compile(address));
+        }
         jajacodes.add("new(" + ident + "," + type + ",cst,0)");
         return jajacodes;
     }
 
     @Override
     public void interpret(Memory m) {
+        if(expression == null){
+            m.declCst(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
+            return;
+        }
         Value v = ((EvaluableNode)expression).eval(m);
         m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType));
     }

@@ -17,4 +17,8 @@ public class Value {
         this.valueInt = valueInt;
         this.Type = ValueType.INT;
     }
+
+    public Value(){
+        this.Type=ValueType.EMPTY;
+    }
 }

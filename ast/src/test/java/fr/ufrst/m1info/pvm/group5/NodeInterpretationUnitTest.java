@@ -26,26 +26,62 @@ public class NodeInterpretationUnitTest {
     }
 
     /**
+     * Binary operators common tests
+     */
+    @Test
+    public void BOPNode_MissingOperand(){
+        NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        assertThrows(ASTBuildException.class, () -> new AddNode(lop,null));
+    }
+
+    @Test
+    public void BOPNode_InvalidOperand(){
+        ASTNode lop = mock(ASTNode.class);
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
+        assertThrows(ASTBuildException.class, () -> new AddNode(lop,rop));
+    }
+
+    @Test
+    public void BOPNode_InvalidOperation(){
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        AddNode addNode = new AddNode(lop,rop);
+        assertThrows(ASTInvalidOperationException.class, () -> addNode.interpret(memory));
+    }
+
+    /**
      * ADD node
      */
     @Test
-    public void AddNodeOperationTest(){
+    public void AddNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
         AddNode tested = new AddNode(lop,rop);
         assertEquals(15, tested.eval(memory).valueInt);
     }
 
+    /**
+     * Affectation node
+     */
     @Test
-    public void AddNodeMissingOperand(){
-        NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
-        assertThrows(ASTBuildException.class, () -> new AddNode(lop,null));
+    public void AffectationNode_Default(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        memoryStorage.put("x", null);
+        AffectationNode tested = new AffectationNode(lop,rop);
+        tested.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
     }
 
     @Test
-    public void AddNodeInvalidOperand(){
-        ASTNode lop = mock(ASTNode.class);
-        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
-        assertThrows(ASTBuildException.class, () -> new AddNode(lop,rop));
+    public void AffectationNode_InvalidOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        assertThrows(ASTBuildException.class, () -> new AffectationNode(lop,null));
+        assertThrows(ASTBuildException.class, () -> new AffectationNode(null,rop));
+        ASTNode newrop =  mock(ASTNode.class);
+        assertThrows(ASTBuildException.class, () -> new AffectationNode(lop,null));
     }
+
+
 }
