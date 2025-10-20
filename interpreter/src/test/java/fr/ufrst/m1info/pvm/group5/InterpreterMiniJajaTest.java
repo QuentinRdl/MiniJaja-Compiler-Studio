@@ -1,15 +1,11 @@
 package fr.ufrst.m1info.pvm.group5;
 import org.junit.jupiter.api.*;
-import org.mockito.Mock;
 
-import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
+/*
+Commented tests doesn't work because API memory is not done yet
+ */
 public class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
 
