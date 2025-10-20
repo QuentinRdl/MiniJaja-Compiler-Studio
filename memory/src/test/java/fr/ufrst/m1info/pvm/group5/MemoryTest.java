@@ -45,7 +45,7 @@ public class MemoryTest {
         if (mocksCloser != null) mocksCloser.close();
     }
 
-    /* Test will fail right now, as it is TDD and the API is not implemented yet
+    // Test will fail right now, as it is TDD and the API is not implemented yet
 
     @Test
     public void constructor() {
@@ -125,5 +125,4 @@ public class MemoryTest {
         assertEquals(777, result);
         verify(symbolTableMocked, times(1)).lookup("y");
     }
-    */
 }

@@ -59,6 +59,7 @@ public class Stack {
     }
 
     /**
+     * // TODO : We should add a type as well right ?
      * Pushes a new var in the stack, w/ the current scope as suffix
      * @param name name of the var
      * @param value value of the var
