@@ -43,10 +43,11 @@ public class StackTest {
         assertTrue(stack.isEmpty());
     }
 
-    @Disabled
-    @Test//(expected = Stack.NoScopeException.class)
-    public void testPopScopeWhenNoScopes() throws Stack.NoScopeException {
-        stack.popScope();
+    @Test
+    public void testPopScopeWhenNoScopes() {
+        assertThrows(Stack.NoScopeException.class, () -> {
+            stack.popScope();
+        });
     }
 
     @Test
@@ -76,10 +77,11 @@ public class StackTest {
         assertEquals(100, top.getValue());
     }
 
-    @Disabled
-    @Test//(expected = java.util.EmptyStackException.class)
+    @Test
     public void testTopWhenEmpty() {
-        stack.top();
+        assertThrows(java.util.EmptyStackException.class, () -> {
+            stack.top();
+        });
     }
 
     @Test
@@ -92,10 +94,12 @@ public class StackTest {
         assertTrue(stack.isEmpty());
     }
 
-    @Disabled
-    @Test//(expected = Stack.StackIsEmptyException.class)
+    @Test
+    //(expected = Stack.StackIsEmptyException.class)
     public void popWhenEmpty() throws Stack.StackIsEmptyException {
-        stack.pop();
+        assertThrows(Stack.StackIsEmptyException.class, () -> {
+            stack.pop();
+        });
     }
 
     @Test
