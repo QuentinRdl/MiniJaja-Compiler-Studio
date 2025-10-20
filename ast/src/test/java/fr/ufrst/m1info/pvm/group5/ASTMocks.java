@@ -22,7 +22,7 @@ public class ASTMocks {
      * @return mock created
      */
     public static Memory createEmptyMemory(){
-        return mock();
+        return mock(Memory.class);
     }
 
     /**
@@ -67,6 +67,38 @@ public class ASTMocks {
             storage.remove((String)invocation.getArgument(0));
            return null;
         }).when(result).withdrawDecl(any(String.class));
+        return result;
+    }
+
+    public static<T extends ASTNode> T createNode(Class<T> type, Consumer<Memory> onInterpret, Function<Integer, Integer> onCompile){
+        T result = mock(type);
+        doAnswer(invocationOnMock ->{
+            if(onInterpret == null)
+                throw new Exception("Missing interpretation function for mock");
+            onInterpret.accept(invocationOnMock.getArgument(0));
+            return null;
+        }).when(result).interpret(any(Memory.class));
+        doAnswer(invocationOnMock -> {
+            if(onCompile == null)
+                throw new Exception("Missing compile function for mock");
+            return onCompile.apply(invocationOnMock.getArgument(0));
+        }).when(result).compile(any(Integer.class));
+
+        return result;
+    }
+
+    public static<T extends ASTNode & EvaluableNode> T createNode(
+            Class<T> type,
+            Consumer<Memory> onInterpret,
+            Function<Integer, Integer> onCompile,
+            Function<Memory, Value> onEval
+    ){
+        T result = createNode(type,  onInterpret, onCompile);
+        doAnswer(invocationOnMock ->  {
+            if(onEval == null)
+                throw new Exception("Missing evaluation function for mock");
+            return onEval.apply(invocationOnMock.getArgument(0));
+        }).when(result).eval(any(Memory.class));
         return result;
     }
 }

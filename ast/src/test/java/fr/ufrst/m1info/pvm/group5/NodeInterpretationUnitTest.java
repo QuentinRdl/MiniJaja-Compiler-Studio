@@ -30,26 +30,22 @@ public class NodeInterpretationUnitTest {
      */
     @Test
     public void AddNodeOperationTest(){
-        NumberNode lop = mock();
-        when(lop.eval(any(Memory.class))).thenReturn(new Value(5));
-        NumberNode rop = mock();
-        when(rop.eval(any(Memory.class))).thenReturn(new Value(10));
+        NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
         AddNode tested = new AddNode(lop,rop);
         assertEquals(15, tested.eval(memory).valueInt);
     }
 
     @Test
     public void AddNodeMissingOperand(){
-        NumberNode lop = mock();
-        when(lop.eval(any(Memory.class))).thenReturn(new Value(5));
-        AddNode tested = new AddNode(lop,null);
+        NumberNode lop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(5));
+        assertThrows(ASTBuildException.class, () -> new AddNode(lop,null));
     }
 
     @Test
     public void AddNodeInvalidOperand(){
-        ASTNode lop = mock();
-        NumberNode rop = mock();
-        when(rop.eval(any(Memory.class))).thenReturn(new Value(10));
-        AddNode tested = new AddNode(lop,rop);
+        ASTNode lop = mock(ASTNode.class);
+        NumberNode rop = ASTMocks.createNode(NumberNode.class, null,null, m -> new Value(10));
+        assertThrows(ASTBuildException.class, () -> new AddNode(lop,rop));
     }
 }
