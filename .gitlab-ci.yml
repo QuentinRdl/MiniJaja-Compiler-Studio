@@ -24,7 +24,7 @@ sonarqube-job:
   script:
     - chmod +x ./settings.sh
     - ./settings.sh
-    - mvn clean verify sonar:sonar deploy
+    - mvn clean jacoco:prepare-agent test jacoco:report install sonar:sonar deploy
       -Dsonar.projectKey=$PROJECT_KEY_AND_NAME
       -Dsonar.projectName=$PROJECT_KEY_AND_NAME
       -Dsonar.host.url=https://disc.univ-fcomte.fr/cr700-sonarqube
