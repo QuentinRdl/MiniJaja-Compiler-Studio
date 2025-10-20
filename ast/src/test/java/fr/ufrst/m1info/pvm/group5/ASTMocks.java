@@ -1,8 +1,6 @@
 package fr.ufrst.m1info.pvm.group5;
 
 import fr.ufrst.m1info.pvm.group5.Nodes.ASTNode;
-import fr.ufrst.m1info.pvm.group5.Nodes.NumberNode;
-import org.mockito.Mockito;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -51,6 +49,13 @@ public class ASTMocks {
                 }
         ).when(result).declVar(any(String.class), any(Value.class), any());
 
+        doAnswer( invocation -> {
+                    String ident = invocation.getArgument(0);
+                    storage.put(ident, new Value());
+                    return null;
+                }
+        ).when(result).declVarClass(any(String.class));
+
         doAnswer(invocation -> {
                     String identifier =  invocation.getArgument(0);
                     return storage.get(identifier);
@@ -90,7 +95,7 @@ public class ASTMocks {
         return result;
     }
 
-    public static<T extends ASTNode & EvaluableNode> T createNode(
+    public static<T extends ASTNode & EvaluableNode> T createEvalNode(
             Class<T> type,
             Consumer<Memory> onInterpret,
             Function<Integer, Integer> onCompile,
@@ -102,6 +107,22 @@ public class ASTMocks {
                 throw new Exception("Missing evaluation function for mock");
             return onEval.apply(invocationOnMock.getArgument(0));
         }).when(result).eval(any(Memory.class));
+        return result;
+    }
+
+    public static<T extends ASTNode & WithradawableNode> T createWithdrawNode(
+            Class<T> type,
+            Consumer<Memory> onInterpret,
+            Function<Integer, Integer> onCompile,
+            Consumer<Memory> onWithdraw
+    ){
+        T result = createNode(type,  onInterpret, onCompile);
+        doAnswer(invocationOnMock ->  {
+            if(onWithdraw == null)
+                throw new Exception("Missing withdraw function for mock");
+            onWithdraw.accept(invocationOnMock.getArgument(0));
+            return null;
+        }).when(result).withradawInterpret(any(Memory.class));
         return result;
     }
 }

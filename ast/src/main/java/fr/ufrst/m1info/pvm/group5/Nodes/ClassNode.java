@@ -48,5 +48,6 @@ public class ClassNode extends ASTNode {
         if(decls != null){
             ((WithradawableNode) decls).withradawInterpret(m);
         }
+        m.withdrawDecl(ident.identifier);
     }
 }
