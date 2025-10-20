@@ -1,14 +1,15 @@
 package fr.ufrst.m1info.pvm.group5;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.*;
 
 public class StackVariableTest {
     private Stack_Variable variable;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         variable = new Stack_Variable("x", 42, 0);
     }
