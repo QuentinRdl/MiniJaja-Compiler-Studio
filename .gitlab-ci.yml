@@ -17,6 +17,7 @@ sonarqube-job:
     - if: $CI_COMMIT_BRANCH == 'dev'
     - if: $CI_COMMIT_BRANCH == 'main'
 
+
   tags:
     - avm_groupe5
   stage: sonarqube
