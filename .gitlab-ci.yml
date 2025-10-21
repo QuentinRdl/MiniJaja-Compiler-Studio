@@ -21,6 +21,7 @@ sonarqube-job:
   script:
     - chmod +x ./settings.sh
     - ./settings.sh
+    - mvn compile -DskipTests
     - mvn sonar:sonar deploy
       -Dsonar.projectKey=$PROJECT_KEY_AND_NAME
       -Dsonar.projectName=$PROJECT_KEY_AND_NAME
