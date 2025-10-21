@@ -22,11 +22,12 @@ sonarqube-job:
     - chmod +x ./settings.sh
     - ./settings.sh
     - mvn compile -DskipTests
-    - mvn sonar:sonar deploy
+    - mvn sonar:sonar deploy -DskipTests 
       -Dsonar.projectKey=$PROJECT_KEY_AND_NAME
       -Dsonar.projectName=$PROJECT_KEY_AND_NAME
       -Dsonar.host.url=https://disc.univ-fcomte.fr/cr700-sonarqube
       -Dsonar.token=$SONAR_TOKEN
+      -Dsonar.coverage.jacoco.xmlReportPaths=**/target/site/jacoco/jacoco.xml
 
 build-job:
   tags:
