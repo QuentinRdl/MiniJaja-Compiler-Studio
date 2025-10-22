@@ -73,7 +73,7 @@ public class Stack {
     }
 
     /**
-     * Pushes a new object in the stack, w/ the current scope as suffix
+     * Pushes a new var in the stack, w/ the current scope as suffix
      * @param name name of the var
      * @param value value of the var
      */
@@ -84,6 +84,23 @@ public class Stack {
         Stack_Object var = new Stack_Object(name, value, scopeDepth, EntryKind.VARIABLE, type);
         stack_content.push(var);
     }
+
+
+    /**
+     * Pushes a new const in the stack, w/ the current scope as suffix
+     * @param name name of the const
+     * @param value value of the const
+     */
+    public void setConst(String name, Object value, DataType type) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidNameException("Constant name cannot be null or empty");
+        }
+        Stack_Object constant = new Stack_Object(name, value, scopeDepth, EntryKind.CONSTANT, type);
+        stack_content.push(constant);
+    }
+
+
+
 
     /**
      * Returns the top object from the stack
@@ -114,9 +131,7 @@ public class Stack {
      public Object getObject(String name) {
          for(Stack_Object obj : stack_content) {
              if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
-                 /* TODO : Do we return the var object of the value ? */
-                 /* return var; */
-                 return obj.getValue();
+                 return obj;
              }
          }
          return null;

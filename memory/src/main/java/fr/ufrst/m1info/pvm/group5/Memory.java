@@ -37,6 +37,10 @@ public class Memory {
             stack.setVar(identifier, value, type);
             symbolTable.addEntry(identifier, kind, type);
         }
+        if(kind == EntryKind.CONSTANT) {
+            stack.setConst(identifier, value, type);
+            symbolTable.addEntry(identifier, kind, type);
+        }
     }
 
     /**
@@ -65,8 +69,8 @@ public class Memory {
      */
     public void declVar(String identifier, Object value, DataType type) {
         // Adds to the table of symbols
-        // SymbolTableEntry entry = new SymbolTableEntry(identifier, );
-        // Adds to the stack TODO : Is it needed or is DeclVar only to declare in the Symbol table ??
+        SymbolTableEntry entry = new SymbolTableEntry(identifier, EntryKind.VARIABLE, type);
+        // Adds to the stack
         stack.setVar(identifier, value, type);
     }
 
@@ -77,7 +81,10 @@ public class Memory {
      * @param type type of the constant
      */
     public void declCst(String identifier, Object value, DataType type) {
-        // TODO
+        // Adds to the table of symbols
+        SymbolTableEntry entry = new SymbolTableEntry(identifier, EntryKind.CONSTANT, type);
+        // Adds to the stack
+        stack.setConst(identifier, value, type);
     }
 
     // DeclTab and DeclMeth will be done when we'll do methods and arrays
