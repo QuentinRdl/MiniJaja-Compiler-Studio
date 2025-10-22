@@ -1,15 +1,23 @@
 package fr.ufrst.m1info.pvm.group5;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 import org.mockito.Mock;
-import static org.junit.Assert.*;
+
+import java.lang.reflect.Field;
+import java.util.Deque;
+
 
 /**
  * Unit test for the Stack class
  */
 public class StackTest {
     private Stack stack;
+    private DataType integ;
 
     @Mock
     private Stack_Variable mockVariable;
@@ -17,9 +25,10 @@ public class StackTest {
     /**
      * Before each test, we set up an empty stack
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         stack = new Stack();
+        integ = DataType.INT;
     }
 
     @Test
@@ -42,83 +51,90 @@ public class StackTest {
         assertTrue(stack.isEmpty());
     }
 
-    @Test(expected = Stack.NoScopeException.class)
-    public void testPopScopeWhenNoScopes() throws Stack.NoScopeException {
-        stack.popScope();
+    @Test
+    public void testPopScopeWhenNoScopes() {
+        assertThrows(Stack.NoScopeException.class, () -> {
+            stack.popScope();
+        });
     }
 
     @Test
     public void setVar() {
         stack.pushScope();
         assertEquals(0, stack.size());
-        stack.setVar("x", 1234);
+        stack.setVar("x", 1234, integ);
         assertEquals(1, stack.size());
-        assertEquals(1234, stack.getVar("x"));
+        assertEquals(1234, stack.getObject("x"));
     }
 
     @Test
     public void setVarMultipleVariables() {
         stack.pushScope();
-        stack.setVar("x", 1234);
-        stack.setVar("y", 2345);
-        stack.setVar("z", 3456);
+        stack.setVar("x", 1234, integ);
+        stack.setVar("y", 2345, integ);
+        stack.setVar("z", 3456, integ);
         assertEquals(3, stack.size());
     }
 
     @Test
     public void testTop() {
         stack.pushScope();
-        stack.setVar("a", 100);
-        Stack_Variable top = stack.top();
+        stack.setVar("a", 100, integ);
+        Stack_Object top = stack.top();
         assertEquals("a", top.getName());
         assertEquals(100, top.getValue());
     }
 
-    @Test(expected = java.util.EmptyStackException.class)
+    @Test
     public void testTopWhenEmpty() {
-        stack.top();
+        assertThrows(java.util.EmptyStackException.class, () -> {
+            stack.top();
+        });
     }
 
     @Test
     public void testPop() throws Stack.StackIsEmptyException {
         stack.pushScope();
-        stack.setVar("x", 50);
-        Stack_Variable popped = stack.pop();
+        stack.setVar("x", 50, integ);
+        Stack_Object popped = stack.pop();
         assertEquals("x", popped.getName());
         assertEquals(50, popped.getValue());
         assertTrue(stack.isEmpty());
     }
 
-    @Test(expected = Stack.StackIsEmptyException.class)
+    @Test
+    //(expected = Stack.StackIsEmptyException.class)
     public void popWhenEmpty() throws Stack.StackIsEmptyException {
-        stack.pop();
+        assertThrows(Stack.StackIsEmptyException.class, () -> {
+            stack.pop();
+        });
     }
 
     @Test
     public void getVar() {
         stack.pushScope();
-        stack.setVar("x", 1234);
-        Object value = stack.getVar("x");
+        stack.setVar("x", 1234, integ);
+        Object value = stack.getObject("x");
         assertEquals(1234, value);
     }
 
     @Test
     public void getVarNotFound() {
         stack.pushScope();
-        stack.setVar("x", 1234);
-        Object value = stack.getVar("y");
+        stack.setVar("x", 1234, integ);
+        Object value = stack.getObject("y");
         assertNull(value);
     }
 
     @Test
     public void getVarDifferentScopes() {
         stack.pushScope();
-        stack.setVar("x", 1);
+        stack.setVar("x", 1, integ);
 
         stack.pushScope();
-        stack.setVar("x", 2);
+        stack.setVar("x", 2, integ);
         // Should only get the x from current scope (2)
-        assertEquals(2, stack.getVar("x"));
+        assertEquals(2, stack.getObject("x"));
 
         try {
             stack.popScope();
@@ -126,22 +142,22 @@ public class StackTest {
             fail("Should not throw exception");
         }
         // Now should get the x from previous scope (1)
-        assertEquals(1, stack.getVar("x"));
+        assertEquals(1, stack.getObject("x"));
     }
 
     @Test
     public void updateVar() {
         stack.pushScope();
-        stack.setVar("x", 1234);
+        stack.setVar("x", 1234, integ);
         boolean upd = stack.updateVar("x", 100);
         assertTrue(upd);
-        assertEquals(100, stack.getVar("x"));
+        assertEquals(100, stack.getObject("x"));
     }
 
     @Test
     public void updateVarNotFound() {
         stack.pushScope();
-        stack.setVar("x", 1234);
+        stack.setVar("x", 1234, integ);
         boolean updated = stack.updateVar("y", 100);
         assertFalse(updated);
     }
@@ -149,7 +165,7 @@ public class StackTest {
     @Test
     public void updateTopVar() {
         stack.pushScope();
-        stack.setVar("x", 1234);
+        stack.setVar("x", 1234, integ);
         boolean updated = stack.updateTopVar(99);
         assertTrue(updated);
         assertEquals(99, stack.top().getValue());
@@ -162,30 +178,30 @@ public class StackTest {
     }
 
     @Test
-    public void hasVar() {
+    public void hasObj() {
         stack.pushScope();
-        stack.setVar("x", 1234);
-        assertTrue(stack.hasVar("x"));
-        assertFalse(stack.hasVar("y"));
+        stack.setVar("x", 1234, integ);
+        assertTrue(stack.hasObj("x"));
+        assertFalse(stack.hasObj("y"));
     }
 
     @Test
-    public void hasVarDifferentScopes() {
+    public void hasObjDifferentScopes() {
         stack.pushScope();
-        stack.setVar("x", 1234);
+        stack.setVar("x", 1234, integ);
 
         stack.pushScope();
         // x exists in previous scope but not in current
-        assertFalse(stack.hasVar("x"));
+        assertFalse(stack.hasObj("x"));
     }
 
     @Test
     public void testSize() {
         assertEquals(0, stack.size());
         stack.pushScope();
-        stack.setVar("x", 10);
+        stack.setVar("x", 10, integ);
         assertEquals(1, stack.size());
-        stack.setVar("y", 20);
+        stack.setVar("y", 20, integ);
         assertEquals(2, stack.size());
     }
 
@@ -193,15 +209,15 @@ public class StackTest {
     public void isEmpty() {
         assertTrue(stack.isEmpty());
         stack.pushScope();
-        stack.setVar("x", 11234);
+        stack.setVar("x", 11234, integ);
         assertFalse(stack.isEmpty());
     }
 
     @Test
     public void testClear() {
         stack.pushScope();
-        stack.setVar("x", 10);
-        stack.setVar("y", 20);
+        stack.setVar("x", 10, integ);
+        stack.setVar("y", 20, integ);
         assertEquals(2, stack.size());
 
         stack.clear();
@@ -213,50 +229,50 @@ public class StackTest {
     public void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
         // Global scope
         stack.pushScope();
-        stack.setVar("x", 5);
-        stack.setVar("y", 10);
+        stack.setVar("x", 5, integ);
+        stack.setVar("y", 10, integ);
 
         // Enter function scope
         stack.pushScope();
-        stack.setVar("x", 50);
-        stack.setVar("z", 100);
+        stack.setVar("x", 50, integ);
+        stack.setVar("z", 100, integ);
 
-        assertEquals(50, stack.getVar("x"));
-        assertEquals(100, stack.getVar("z"));
-        assertNull(stack.getVar("y"));
+        assertEquals(50, stack.getObject("x"));
+        assertEquals(100, stack.getObject("z"));
+        assertNull(stack.getObject("y"));
         assertEquals(4, stack.size());
 
         // Update x in current scope
         stack.updateVar("x", 55);
-        assertEquals(55, stack.getVar("x"));
+        assertEquals(55, stack.getObject("x"));
 
         // Exit function scope
         stack.popScope();
-        assertEquals(5, stack.getVar("x"));
-        assertEquals(10, stack.getVar("y"));
-        assertNull(stack.getVar("z"));
+        assertEquals(5, stack.getObject("x"));
+        assertEquals(10, stack.getObject("y"));
+        assertNull(stack.getObject("z"));
         assertEquals(2, stack.size());
     }
 
     @Test
     public void multipleScopesWithSameVarName() throws Stack.NoScopeException {
         stack.pushScope();
-        stack.setVar("count", 0);
-        assertEquals(0, stack.getVar("count"));
+        stack.setVar("count", 0, integ);
+        assertEquals(0, stack.getObject("count"));
 
         stack.pushScope();
-        stack.setVar("count", 1);
-        assertEquals(1, stack.getVar("count"));
+        stack.setVar("count", 1, integ);
+        assertEquals(1, stack.getObject("count"));
 
         stack.pushScope();
-        stack.setVar("count", 2);
-        assertEquals(2, stack.getVar("count"));
+        stack.setVar("count", 2, integ);
+        assertEquals(2, stack.getObject("count"));
 
         stack.popScope();
-        assertEquals(1, stack.getVar("count"));
+        assertEquals(1, stack.getObject("count"));
 
         stack.popScope();
-        assertEquals(0, stack.getVar("count"));
+        assertEquals(0, stack.getObject("count"));
 
         stack.popScope();
         assertTrue(stack.isEmpty());
@@ -265,11 +281,11 @@ public class StackTest {
     @Test
     public void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
         stack.pushScope();
-        stack.setVar("global", "value");
+        stack.setVar("global", "value", integ);
 
         stack.pushScope();
-        stack.setVar("local1", "val1");
-        stack.setVar("local2", "val2");
+        stack.setVar("local1", "val1", integ);
+        stack.setVar("local2", "val2", integ);
 
         assertEquals(3, stack.size());
 
@@ -277,6 +293,58 @@ public class StackTest {
 
         // Only the global variable should remain
         assertEquals(1, stack.size());
-        assertEquals("value", stack.getVar("global"));
+        assertEquals("value", stack.getObject("global"));
     }
+
+    @Test
+    public void emptyStack_toString() {
+        Stack s = new Stack();
+        assertEquals("Stack{scopeDepth=0, contents=[]}", s.toString());
+    }
+
+    @Test
+    public void nonEmptyStack_toString() throws Exception {
+        Stack s = new Stack();
+
+        // Construct Stack_Object instances (use constructor that accepts DataType)
+        Stack_Object a = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        Stack_Object b = new Stack_Object("y", 2, 0, EntryKind.VARIABLE, DataType.INT);
+
+        // Use reflection to access the private deque and add elements in insertion order
+        Field f = Stack.class.getDeclaredField("stack_content");
+        f.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+
+        dq.addLast(a);
+        dq.addLast(b);
+
+        String expected = "Stack{scopeDepth=0, contents=[x_0=1, y_0=2]}";
+        assertEquals(expected, s.toString());
+    }
+
+    @Test
+    public void constructor_exception_test() {
+        String msg = "Invalid variable name";
+        Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
+
+        assertEquals(msg, ex.getMessage());
+    }
+
+
+    /* TODO : Replace with the correct format
+    @Test(expected = Stack.InvalidNameException.class)
+    public void setVar_nullName_throwsInvalidNameException() {
+        Stack s = new Stack();
+        s.pushScope();
+        s.setVar(null, 42, DataType.INT);
+    }
+
+    @Test(expected = Stack.InvalidNameException.class)
+    public void setVar_emptyName_throwsInvalidNameException() {
+        Stack s = new Stack();
+        s.pushScope();
+        s.setVar("", 42, DataType.INT);
+    }
+    */
 }

@@ -1,13 +1,15 @@
 package fr.ufrst.m1info.pvm.group5;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
@@ -31,7 +33,7 @@ public class MemoryTest {
     /**
      * Before each test, we set up an empty memory
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         mocksCloser = MockitoAnnotations.openMocks(this);
         memory = new Memory();
@@ -40,12 +42,12 @@ public class MemoryTest {
         memory.symbolTable = symbolTableMocked;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (mocksCloser != null) mocksCloser.close();
     }
 
-    /* Test will fail right now, as it is TDD and the API is not implemented yet
+    // Test will fail right now, as it is TDD and the API is not implemented yet
 
     @Test
     public void constructor() {
@@ -59,8 +61,9 @@ public class MemoryTest {
     public void pushDelegatesToStack() {
         // When we push in the Stack we must delegate it to the setVar method
         memory.push("x", 42, DataType.INT, EntryKind.VARIABLE);
-        verify(stackMocked, times(1)).setVar("x", 42);
+        verify(stackMocked, times(1)).setVar("x", 42, DataType.INT);
     }
+    /**
 
     @Test
     public void popDelegatesToStack() throws Exception {

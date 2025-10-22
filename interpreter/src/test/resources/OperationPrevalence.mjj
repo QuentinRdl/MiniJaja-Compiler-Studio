@@ -1,0 +1,14 @@
+class C {
+  int x;
+  int y;
+  int z;
+  boolean w;
+  boolean v;
+  main {
+ 	x = 3 * 4 + 5;
+ 	y = 5 + 3 * 4;
+ 	z = -3 + 2;
+ 	w = ! false && true;
+ 	v = true || false && true;
+   }
+}

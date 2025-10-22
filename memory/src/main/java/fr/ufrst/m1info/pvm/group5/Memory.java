@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTable;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTableEntry;
 
 /**
  * API class for the Memory interface
@@ -26,21 +27,30 @@ public class Memory {
      * @param kind kind of value (method, var, ...)
      */
     public void push(String identifier, Object value, DataType type, EntryKind kind) {
-        // TODO
+        if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT)
+        {
+            // TODO : Implement for different EntryKind
+            System.out.println(kind + " is not handled right yet");
+            return;
+        }
+        if(kind == EntryKind.VARIABLE) {
+            stack.setVar(identifier, value, type);
+            symbolTable.addEntry(identifier, kind, type);
+        }
     }
 
     /**
      * Removes the top of the stack
      */
-    public void pop() {
-        // TODO
+    public void pop() throws Stack.StackIsEmptyException {
+        stack.pop();
     }
 
     /**
      * Swap the two elements at the top of the stack
      */
     public void swap() {
-        //TODO
+        // TODO
     }
 
     /**
@@ -54,16 +64,19 @@ public class Memory {
      * @param type type of the variable to declare
      */
     public void declVar(String identifier, Object value, DataType type) {
-        //TODO
+        // Adds to the table of symbols
+        // SymbolTableEntry entry = new SymbolTableEntry(identifier, );
+        // Adds to the stack TODO : Is it needed or is DeclVar only to declare in the Symbol table ??
+        stack.setVar(identifier, value, type);
     }
 
     /**
      * Declares a named constant
-     * @param identifer identifier of the constant, can't be null
+     * @param identifier identifier of the constant, can't be null
      * @param value value of the constant. If it's null, the value of the constant will be assignable later
-     * @param type tupe of the constant
+     * @param type type of the constant
      */
-    public void declCst(String identifer, Object value, DataType type) {
+    public void declCst(String identifier, Object value, DataType type) {
         // TODO
     }
 
