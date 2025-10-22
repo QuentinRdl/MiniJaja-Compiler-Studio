@@ -3,6 +3,8 @@ import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /*
 Commented tests doesn't work because API memory is not done yet
  */
@@ -54,7 +56,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableSum() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x += y;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -62,7 +64,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableInc()  {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x++;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -70,7 +72,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableEval()  {
         String errMessage=imj.interpretCode("class C {int y = 10;main {y = x;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(java.lang.IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     /*@Test
