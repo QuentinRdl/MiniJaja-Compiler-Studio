@@ -497,6 +497,78 @@ public class StackTest {
         assertFalse(res);
     }
 
+    @Test
+    public void swapTop_successful() {
+        Stack s = new Stack();
+
+        // Create mocked stack objects to avoid depending on other classes/constructors
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(a.getScope()).thenReturn(0);
+        when(b.getScope()).thenReturn(0);
+        when(a.getValue()).thenReturn(1);
+        when(b.getValue()).thenReturn(2);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+
+            dq.addLast(b);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        // Check before swap func call
+        assertEquals("b", s.top().getName());
+        assertEquals(2, s.top().getValue());
+
+        s.swap();
+
+        Stack_Object top = s.top();
+        assertEquals("a", top.getName());
+        assertEquals(1, top.getValue());
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Object[] arr = dq.toArray();
+            assertEquals(a, arr[0]);
+            assertEquals(b, arr[1]);
+        } catch (Exception ex) {
+            fail("Reflection verification failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void swapTop_notEnoughElements() {
+        Stack s = new Stack();
+        assertThrows(IllegalStateException.class, s::swap);
+
+        // Calling w/ 1 element should throw exception
+        Stack_Object only = mock(Stack_Object.class);
+        when(only.getName()).thenReturn("only");
+        when(only.getScope()).thenReturn(0);
+        when(only.getValue()).thenReturn(10);
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(only);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        assertThrows(IllegalStateException.class, s::swap);
+    }
 
 
 

@@ -58,12 +58,10 @@ public class Memory {
      * Swap the two elements at the top of the stack
      */
     public void swap() {
-        // TODO
+        stack.swap();
     }
 
-    /**
-     * Higher level operations
-     */
+    /* Higher level operations */
 
     /**
      * Declares a named variable

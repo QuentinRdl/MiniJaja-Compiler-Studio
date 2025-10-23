@@ -347,6 +347,7 @@ public class Stack {
     }
 
     /**
+     * // TODO : Remove
      * Will swap Objects obj1 & obj2 in the stack
      * @param obj1 1st object
      * @param obj2 2nd Object
@@ -399,5 +400,21 @@ public class Stack {
         }
 
         return true;
+    }
+
+    /**
+     * Will swap the 2 top values of the stack
+     */
+    public void swap() {
+        // private Deque<Stack_Object> stack_content;
+        if(stack_content.size() < 2) {
+            throw new IllegalStateException("Not enough elements to swap (need at least 2)");
+        }
+
+        // Pop top two elements and push them back in reversed order
+        Stack_Object first = stack_content.pop();
+        Stack_Object second = stack_content.pop();
+        stack_content.push(first);
+        stack_content.push(second);
     }
 }
