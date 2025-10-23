@@ -14,10 +14,7 @@ public class Memory {
     Stack stack = new Stack();
     SymbolTable symbolTable = new SymbolTable();
 
-
-    /**
-     * Operations directly related to the stack
-     */
+    /* Operations directly related to the stack */
 
     /**
      * Put a value at the top of the stack
@@ -27,15 +24,26 @@ public class Memory {
      * @param kind kind of value (method, var, ...)
      */
     public void push(String identifier, Object value, DataType type, EntryKind kind) {
-        if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT)
-        {
-            // TODO : Implement for different EntryKind
-            System.out.println(kind + " is not handled right yet");
-            return;
+
+        if(kind == null || type == null || value == null || identifier == null) {
+            throw new IllegalArgumentException("One of the following arguments are not compatible with this function call : identifier = " + identifier + " value = " + value + " type = " + type + " kind = " + kind);
         }
+        if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT) {
+            // TODO : Implement for different EntryKind
+            throw new IllegalArgumentException("Pushing with " + kind + " as en EntryKind is invalid !");
+        }
+
         if(kind == EntryKind.VARIABLE) {
             stack.setVar(identifier, value, type);
-            symbolTable.addEntry(identifier, kind, type);
+            // Create an explicit SymbolTableEntry and add it so tests can capture it
+            SymbolTableEntry entry = new SymbolTableEntry(identifier, kind, type);
+            symbolTable.addEntry(entry);
+        }
+
+        if(kind == EntryKind.CONSTANT) {
+            stack.setConst(identifier, value, type);
+            SymbolTableEntry entry = new SymbolTableEntry(identifier, kind, type);
+            symbolTable.addEntry(entry);
         }
     }
 
@@ -65,8 +73,10 @@ public class Memory {
      */
     public void declVar(String identifier, Object value, DataType type) {
         // Adds to the table of symbols
-        // SymbolTableEntry entry = new SymbolTableEntry(identifier, );
-        // Adds to the stack TODO : Is it needed or is DeclVar only to declare in the Symbol table ??
+        // Use the SymbolTableEntry overload so tests can capture the object
+        SymbolTableEntry entry = new SymbolTableEntry(identifier, EntryKind.VARIABLE, type);
+        symbolTable.addEntry(entry);
+        // Adds to the stack
         stack.setVar(identifier, value, type);
     }
 
@@ -77,17 +87,24 @@ public class Memory {
      * @param type type of the constant
      */
     public void declCst(String identifier, Object value, DataType type) {
-        // TODO
+        // Adds to the table of symbols
+        SymbolTableEntry entry = new SymbolTableEntry(identifier, EntryKind.CONSTANT, type);
+        symbolTable.addEntry(entry);
+        // Adds to the stack
+        stack.setConst(identifier, value, type);
     }
 
-    // DeclTab and DeclMeth will be done when we'll do methods and arrays
+    // TODO : DeclTab and DeclMeth will be done when we'll do methods and arrays
 
     /**
      * Remove a declaration
      * @param identifier identifier of the declaration to remove
      */
     public void withdrawDecl(String identifier) {
-        // TODO
+        if(identifier == null || identifier.isEmpty()) {
+            throw new IllegalArgumentException("Cannot call 'withdrawDecl' with an empty/null identifier");
+        }
+        symbolTable.removeEntry(identifier);
     }
 
     /**
