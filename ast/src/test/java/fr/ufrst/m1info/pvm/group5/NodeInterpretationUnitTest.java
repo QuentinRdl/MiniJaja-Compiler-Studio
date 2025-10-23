@@ -240,7 +240,7 @@ public class NodeInterpretationUnitTest {
      */
     @Test
     public void DeclarationsNode_OneDeclaration(){
-        VariableNode decl = ASTMocks.createNode(VariableNode.class, m -> memoryStorage.put("x", new Value(1)), null);
+        VariableNode decl = ASTMocks.createNode(VariableNode.class, m -> m.declVar("x", new Value(1), DataType.INT), null);
         DeclarationsNode decls = new DeclarationsNode(decl, null);
         decls.interpret(memory);
         assertEquals(1, memoryStorage.get("x").valueInt);
@@ -256,5 +256,172 @@ public class NodeInterpretationUnitTest {
         ASTNode decl = ASTMocks.createNode(ASTNode.class, m -> {
         }, null);
         assertThrows(ASTBuildException.class, () -> new DeclarationsNode(decl, null));
+    }
+
+    @Test
+    public void DeclarationsNode_SeveralDeclarations() {
+        VariableNode decl = ASTMocks.createNode(VariableNode.class, m -> m.declVar("x", new Value(1), DataType.INT), null);
+        FinalNode decl1 = ASTMocks.createNode(FinalNode.class, m -> m.declVar("y", new Value(2), DataType.INT), null);
+        VariableNode decl2 = ASTMocks.createNode(VariableNode.class, m -> m.declVar("z", new Value(3), DataType.INT), null);
+        DeclarationsNode decls = new DeclarationsNode(decl,
+                new DeclarationsNode(
+                        decl1,
+                        new DeclarationsNode(decl2, null)));
+        decls.interpret(memory);
+        assertEquals(1, memoryStorage.get("x").valueInt);
+        assertEquals(2, memoryStorage.get("y").valueInt);
+        assertEquals(3, memoryStorage.get("z").valueInt);
+    }
+
+    @Test
+    public void DeclarationsNode_SeveralDeclarations_Order() {
+        VariableNode decl = ASTMocks.createNode(VariableNode.class, m -> m.declVar("x", new Value(1), DataType.INT), null);
+        FinalNode decl1 = ASTMocks.createNode(FinalNode.class, m -> {
+            int a = ((Value)m.val("x")).valueInt;
+            m.declVar("y", new Value(a + 1), DataType.INT);
+        }, null);
+        VariableNode decl2 = ASTMocks.createNode(VariableNode.class, m -> {
+            int a = ((Value)m.val("y")).valueInt;
+            m.declVar("z", new Value(a + 1), DataType.INT);
+        }, null);
+        DeclarationsNode decls = new DeclarationsNode(decl,
+                new DeclarationsNode(
+                        decl1,
+                        new DeclarationsNode(decl2, null)));
+        decls.interpret(memory);
+        assertEquals(1, memoryStorage.get("x").valueInt);
+        assertEquals(2, memoryStorage.get("y").valueInt);
+        assertEquals(3, memoryStorage.get("z").valueInt);
+    }
+
+    @Test
+    public void DeclarationsNode_OneDeclaration_EmptyMemory() {
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode decl = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("x", new Value(1), DataType.INT),
+                null,
+                m->m.withdrawDecl("x")
+                );
+        DeclarationsNode decls = new DeclarationsNode(decl, null);
+        decls.interpret(mem);
+        decls.withradawInterpret(mem);
+        assertFalse( memoryStorage.containsKey("x"));
+    }
+
+    @Test
+    public void DeclarationsNode_SeveralDeclarations_EmptyMemory() {
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode decl = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("x", new Value(1), DataType.INT),
+                null,
+                m->m.withdrawDecl("x")
+        );
+        VariableNode decl1 = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("y", new Value(2), DataType.INT),
+                null,
+                m->m.withdrawDecl("y")
+        );
+        VariableNode decl2 = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("z", new Value(3), DataType.INT),
+                null,
+                m->m.withdrawDecl("z")
+        );
+        DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
+        decls.interpret(mem);
+        decls.withradawInterpret(mem);
+        assertFalse( memoryStorage.containsKey("x"));
+        assertFalse( memoryStorage.containsKey("y"));
+        assertFalse( memoryStorage.containsKey("z"));
+    }
+
+    @Test
+    public void DeclarationsNode_WithdrawOrder(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode decl = ASTMocks.createWithdrawNode(VariableNode.class, // Declarations Withdrawals should be done in the inverse order of declarations
+                m -> m.declVar("x", new Value(1), DataType.INT),
+                null,
+                m->{
+                    assertFalse( memoryStorage.containsKey("y") || memoryStorage.containsKey("z"));
+                    m.withdrawDecl("x");
+                }
+        );
+        VariableNode decl1 = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("y", new Value(2), DataType.INT),
+                null,
+                m->{
+                    assertFalse(memoryStorage.containsKey("z"));
+                    m.withdrawDecl("y");
+                }
+        );
+        VariableNode decl2 = ASTMocks.createWithdrawNode(VariableNode.class,
+                m -> m.declVar("z", new Value(3), DataType.INT),
+                null,
+                m->m.withdrawDecl("z")
+        );
+        DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
+        decls.interpret(mem);
+        decls.withradawInterpret(mem);
+        assertFalse( memoryStorage.containsKey("x"));
+        assertFalse( memoryStorage.containsKey("y"));
+        assertFalse( memoryStorage.containsKey("z"));
+    }
+
+    /**
+     * DivNode
+     */
+    @Test
+    public void DivNode_Operation() {
+        NumberNode lop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        DivNode tested = new DivNode(lop,rop);
+        assertEquals(2, tested.eval(memory).valueInt);
+    }
+
+    @Test
+    public void DivNode_DivisionByZero(){
+        NumberNode lop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(0));
+        DivNode tested = new DivNode(lop,rop);
+        assertThrows(ASTInvalidOperationException.class, () -> tested.eval(memory));
+    }
+
+    @Test
+    public void DivNode_NumeratorAtZero(){
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode lop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(0));
+        DivNode tested = new DivNode(lop,rop);
+        assertEquals(0, tested.eval(memory).valueInt);
+    }
+
+    /**
+     * EqualNode
+     */
+    @Test
+    public void EqualNode_Operation_Numbers() {
+        NumberNode ten = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode five = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        NumberNode five2 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        EqualNode tested = new EqualNode(ten,five);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new EqualNode(five,ten);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new EqualNode(five,five2);
+        assertTrue(tested.eval(memory).valueBool);
+    }
+
+    @Test
+    public void EqualNode_Operation_Booleans() {
+        NumberNode t1 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(true));
+        NumberNode f1 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(false));
+        NumberNode t2 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(true));
+        NumberNode f2 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(false));
+        EqualNode tested = new EqualNode(t1,t2);
+        assertTrue(tested.eval(memory).valueBool);
+        tested = new EqualNode(t1,f1);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new EqualNode(f1,t2);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new EqualNode(f1,f2);
+        assertTrue(tested.eval(memory).valueBool);
     }
 }
