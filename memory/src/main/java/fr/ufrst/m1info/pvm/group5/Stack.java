@@ -343,4 +343,14 @@ public class Stack {
                 throw new IllegalArgumentException("Called with unvalid argument : " + value.getClass());
         }
     }
+
+    /**
+     * Will swap Objects obj1 & obj2 in the stack
+     * @param obj1 1st object
+     * @param obj2 2nd Object
+     * @return True if swapped, false otherwise
+     */
+    public boolean swap(Object obj1, Object obj2) {
+        return false;
+    }
 }

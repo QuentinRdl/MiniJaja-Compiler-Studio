@@ -1,13 +1,13 @@
 package fr.ufrst.m1info.pvm.group5;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
-import org.mockito.Mock;
 
 import java.lang.reflect.Field;
 import java.util.Deque;
@@ -19,9 +19,6 @@ import java.util.Deque;
 public class StackTest {
     private Stack stack;
     private DataType integ;
-
-    @Mock
-    private Stack_Variable mockVariable;
 
     /**
      * Before each test, we set up an empty stack
@@ -397,12 +394,106 @@ public class StackTest {
     }
 
     @Test
-    public void constructor_exception_test() {
+    public void constructorExceptionTest() {
         String msg = "Invalid variable name";
         Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
 
         assertEquals(msg, ex.getMessage());
     }
+
+
+    @Test
+    public void testSwap_sameIdentifier_noop_returnsTrue() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+        when(a.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap("a", "a");
+        assertTrue(res);
+    }
+
+
+    @Test
+    public void testSwap_successful() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+        Stack_Object c = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(c.getName()).thenReturn("c");
+
+        when(a.getScope()).thenReturn(0);
+        when(b.getScope()).thenReturn(0);
+        when(c.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+            dq.addLast(b);
+            dq.addLast(c);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap("a", "b");
+        assertTrue(res);
+
+        // Verify order is now [b, a, c]
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Object[] arr = dq.toArray();
+            assertEquals(b, arr[0]);
+            assertEquals(a, arr[1]);
+            assertEquals(c, arr[2]);
+        } catch (Exception ex) {
+            fail("Reflection verification failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testSwap_missingObject_returnsFalse() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+        when(a.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap("a", "b");
+        assertFalse(res);
+    }
+
+
 
 
     /* TODO : Replace with the correct format
@@ -419,5 +510,7 @@ public class StackTest {
         s.pushScope();
         s.setVar("", 42, DataType.INT);
     }
-    */
+
+     */
+
 }
