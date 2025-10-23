@@ -63,6 +63,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
         return lineNumberLabel;
     }
 
+    public StackPane getLineNumberContainer(){
+        return lineNumberContainer;
+    }
+
     private void handleBreakpointClick(){
         CodeLine item = getItem();
         if (item != null){
