@@ -6,6 +6,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 
 /**
@@ -15,8 +18,10 @@ import javafx.scene.layout.Priority;
  */
 public class CodeLineCell extends ListCell<CodeLine> {
     private HBox container;
+    private StackPane lineNumberContainer;
     private Label lineNumberLabel;
     private TextField codeField;
+    private Circle breakpointCircle;
 
 
     /**
@@ -28,8 +33,18 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         lineNumberLabel = new Label();
         lineNumberLabel.setPrefWidth(50);
-        lineNumberLabel.setAlignment(Pos.CENTER_LEFT);
+        lineNumberLabel.setAlignment(Pos.CENTER);
         lineNumberLabel.getStyleClass().add("line-number");
+
+        breakpointCircle = new Circle(6);
+        breakpointCircle.setFill(Color.web("#850606"));
+        breakpointCircle.setVisible(false);
+
+        lineNumberContainer = new StackPane();
+        lineNumberContainer.setPrefWidth(50);
+        lineNumberContainer.setAlignment(Pos.CENTER);
+        lineNumberContainer.getStyleClass().add("line-number-container");
+        lineNumberContainer.getChildren().addAll(breakpointCircle, lineNumberLabel);
 
         codeField = new TextField();
         codeField.getStyleClass().add("code-field");
@@ -39,7 +54,25 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         container = new HBox();
         container.getStyleClass().add("code-line");
-        container.getChildren().addAll(lineNumberLabel, codeField);
+        container.getChildren().addAll(lineNumberContainer, codeField);
+
+        lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
+    }
+
+    public Label getLineNumberLabel() {
+        return lineNumberLabel;
+    }
+
+    public StackPane getLineNumberContainer(){
+        return lineNumberContainer;
+    }
+
+    private void handleBreakpointClick(){
+        CodeLine item = getItem();
+        if (item != null){
+            item.setBreakpoint(!item.isBreakpoint());
+            updateItem(item, false);
+        }
     }
 
     /**
@@ -54,11 +87,22 @@ public class CodeLineCell extends ListCell<CodeLine> {
     protected void updateItem(CodeLine item, boolean empty){
         super.updateItem(item, empty);
 
-        if (empty | item == null){
+        if (empty || item == null){
             setGraphic(null);
         } else {
-            lineNumberLabel.setText(String.valueOf(item.getLineNumber()));
             codeField.setText(item.getCode());
+
+            // Display breakpoint
+            if (item.isBreakpoint()){
+                lineNumberLabel.setVisible(false);
+                breakpointCircle.setVisible(true);
+
+            } else {
+                lineNumberLabel.setText(String.valueOf(item.getLineNumber()));
+                lineNumberLabel.setVisible(true);
+                breakpointCircle.setVisible(false);
+            }
+
             setGraphic(container);
         }
     }
