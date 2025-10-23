@@ -49,4 +49,17 @@ public class ClassNode extends ASTNode {
             ((WithradawableNode) decls).withradawInterpret(m);
         }
     }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        if (decls != null) {
+            decls.checkType();
+        }
+        main.checkType();
+
+        return "void";
+    }
+
+
+
 }

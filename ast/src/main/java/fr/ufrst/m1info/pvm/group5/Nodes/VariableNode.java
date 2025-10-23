@@ -46,6 +46,22 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        if (vexp != null) {
+            String exprType = vexp.checkType();
+            String varType = typemeth.valueType.equals(ValueType.INT) ? "int" : "bool";
+
+            if (!exprType.equals(varType)) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Type of expression (" + exprType + ") incompatible with the type of the variable (" + varType + ")"
+                );
+            }
+        }
+        return "void";
+    }
+
+
+    @Override
     public void withradawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }

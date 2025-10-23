@@ -1,10 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
-import fr.ufrst.m1info.pvm.group5.Memory;
-import fr.ufrst.m1info.pvm.group5.WithradawableNode;
+import fr.ufrst.m1info.pvm.group5.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +35,16 @@ public class DeclarationsNode extends ASTNode implements WithradawableNode{
         declaration.interpret(m);
         if(declarations != null)
             declarations.interpret(m);
+    }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        ((ASTNode)declaration).checkType();
+
+        if (declarations != null) {
+            ((ASTNode)declarations).checkType();
+        }
+        return "void";
     }
 
     @Override

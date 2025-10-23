@@ -1,9 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
-import fr.ufrst.m1info.pvm.group5.EvaluableNode;
-import fr.ufrst.m1info.pvm.group5.Memory;
-import fr.ufrst.m1info.pvm.group5.Value;
+import fr.ufrst.m1info.pvm.group5.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,11 @@ public class NumberNode extends ASTNode implements EvaluableNode {
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException{
         throw new ASTInvalidOperationException("Cannot interpret number");
+    }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        return "int";
     }
 
     @Override

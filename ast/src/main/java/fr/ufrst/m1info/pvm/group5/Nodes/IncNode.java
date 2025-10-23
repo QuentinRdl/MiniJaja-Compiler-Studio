@@ -1,8 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.Memory;
-import fr.ufrst.m1info.pvm.group5.Value;
+import fr.ufrst.m1info.pvm.group5.*;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,4 +30,39 @@ public class IncNode extends ASTNode{
         Value res = new Value(v.valueInt + 1);
         m.affectValue(ident.identifier, res);
     }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        return checkType(new Memory());
+    }
+
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        try {
+            Value v = (Value) m.val(ident.identifier);
+
+            if (v == null) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Variable " + ident.identifier + " not defined for increment"
+                );
+            }
+            DataType dt = ValueType.toDataType(v.Type);
+            if (dt != DataType.INT) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Cannot increment : " + ident.identifier + " is not an integer"
+                );
+            }
+
+            return "int";
+
+        } catch (ASTInvalidMemoryException e) {
+            throw new ASTInvalidDynamicTypeException(
+                    "Error accessing variable " + ident.identifier + " : " + e.getMessage()
+            );
+        } catch (Exception e) {
+            throw new ASTInvalidDynamicTypeException(
+                    "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
+            );
+        }
+    }
+
 }

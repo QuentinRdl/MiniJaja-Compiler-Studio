@@ -45,4 +45,19 @@ public class WhileNode extends ASTNode{
             interpret(m);
         }
     }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        String condType = condition.checkType();
+        if (!condType.equals("bool")) {
+            throw new ASTInvalidDynamicTypeException(
+                    "While loop condition must be bool, found : " + condType
+            );
+        }
+        if (iss != null) {
+            iss.checkType();
+        }
+        return "void";
+    }
+
 }

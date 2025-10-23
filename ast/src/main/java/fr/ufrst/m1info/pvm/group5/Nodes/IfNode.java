@@ -1,10 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ASTInvalidOperationException;
-import fr.ufrst.m1info.pvm.group5.EvaluableNode;
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,4 +50,20 @@ public class IfNode extends ASTNode{
             instrElse.interpret(m);
         }
     }
+
+    @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        String condType = condition.checkType();
+        if (!condType.equals("bool")) {
+            throw new ASTInvalidDynamicTypeException("The condition of an if must be of type bool");
+        }
+        if (instrThen != null) {
+            instrThen.checkType();
+        }
+        if (instrElse != null) {
+            instrElse.checkType();
+        }
+        return "void";
+    }
+
 }

@@ -24,5 +24,5 @@ public enum DataType {
     VOID,
 
     /** Unknown type (default or error case) */
-    UNKNOWN
+    UNKNOWN;
 }

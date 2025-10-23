@@ -39,6 +39,31 @@ public class FinalNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        String exprType = expression.checkType();
+
+        String declaredType;
+        switch (type.valueType) {
+            case INT -> declaredType = "int";
+            case BOOL -> declaredType = "bool";
+            default -> throw new ASTInvalidDynamicTypeException(
+                    "Unsupported type for constant " + ident.identifier
+            );
+        }
+
+        if (!exprType.equals(declaredType)) {
+            throw new ASTInvalidDynamicTypeException(
+                    "Type of expression (" + exprType +
+                            ") does not match the declared type (" + declaredType +
+                            ") for the variable " + ident.identifier
+            );
+        }
+
+        return "void";
+    }
+
+
+    @Override
     public void withradawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }

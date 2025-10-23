@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.*;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 
 
 import java.util.ArrayList;
@@ -30,6 +31,47 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
+    public String checkType() throws ASTInvalidDynamicTypeException {
+        return checkType(new Memory());
+    }
+
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        try {
+            Value v = (Value) m.val(identifier);
+            if (v == null) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Variable " + identifier + " not defined"
+                );
+            }
+            DataType dataType = ValueType.toDataType(v.Type);
+
+            switch (dataType) {
+                case INT:
+                    return "int";
+                case BOOL:
+                    return "bool";
+                case VOID:
+                    throw new ASTInvalidDynamicTypeException(
+                            "Variable " + identifier + " cannot be of type void"
+                    );
+                default:
+                    throw new ASTInvalidDynamicTypeException(
+                            "Invalid type for variable " + identifier
+                    );
+            }
+
+        } catch (Exception e) {
+            throw new ASTInvalidDynamicTypeException(
+                    "Error accessing variable " + identifier + " : " + e.getMessage()
+            );
+        }
+    }
+
+
+
+
+
+    @Override
     public Value eval(Memory m) throws ASTInvalidMemoryException{
         Value v = (Value) m.val(identifier);
         if(v == null){
@@ -37,4 +79,5 @@ public class IdentNode extends ASTNode implements EvaluableNode {
         }
         return v;
     }
+
 }
