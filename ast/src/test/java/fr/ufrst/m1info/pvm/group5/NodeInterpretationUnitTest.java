@@ -234,4 +234,27 @@ public class NodeInterpretationUnitTest {
         MainNode main = ASTMocks.createNode(MainNode.class, m -> {}, null);
         assertThrows(ASTBuildException.class,() -> new ClassNode(ident, ASTMocks.createNode(ASTNode.class, null, null), main));
     }
+
+    /**
+     * DeclarationsNodes
+     */
+    @Test
+    public void DeclarationsNode_OneDeclaration(){
+        VariableNode decl = ASTMocks.createNode(VariableNode.class, m -> memoryStorage.put("x", new Value(1)), null);
+        DeclarationsNode decls = new DeclarationsNode(decl, null);
+        decls.interpret(memory);
+        assertEquals(1, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void DeclarationsNode_MissingDeclaration(){
+        assertThrows(ASTBuildException.class, () -> new DeclarationsNode(null, null));
+    }
+
+    @Test
+    public void DeclarationsNode_InvalidDeclaration() {
+        ASTNode decl = ASTMocks.createNode(ASTNode.class, m -> {
+        }, null);
+        assertThrows(ASTBuildException.class, () -> new DeclarationsNode(decl, null));
+    }
 }

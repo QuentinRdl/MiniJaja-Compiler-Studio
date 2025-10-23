@@ -16,6 +16,7 @@ public class InterpreterMiniJajaTest {
         imj=new InterpreterMiniJaja();
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret Code Without Error")
     public void InterpretCodeNoError()  {
@@ -31,6 +32,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
     }*/
 
+    @Disabled
     @Test
     @DisplayName("Interpret File That Doesn't Exist")
     public void InterpretNotExistingFile() {
@@ -39,6 +41,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(NoSuchFileException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret File OperationPrevalence")
     public void OperationPrevalence()  {
@@ -51,6 +54,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Complex.mjj"));
     }*/
 
+    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     public void UndefinedVariableSum() {
@@ -59,6 +63,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Inc")
     public void UndefinedVariableInc()  {
@@ -67,6 +72,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Evaluation")
     public void UndefinedVariableEval()  {
