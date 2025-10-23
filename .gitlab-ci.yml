@@ -10,13 +10,11 @@ cache:
   paths:
     - .m2/repository
 
-
 sonarqube-job:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: $CI_COMMIT_BRANCH == 'dev'
     - if: $CI_COMMIT_BRANCH == 'main'
-
 
   tags:
     - avm_groupe5
@@ -70,4 +68,3 @@ test-job:
       - "**/target/surefire-reports/"
       - "**/target/site/jacoco/"
       - "**/target/jacoco.exec"
-

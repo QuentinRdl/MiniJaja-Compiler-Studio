@@ -9,12 +9,5 @@ public class ConstantModificationException extends RuntimeException {
     public ConstantModificationException(String message) {
         super(message);
     }
-
-    /* TODO : Is it actually needed ??
-     public ConstantModificationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-     */
 }
 
