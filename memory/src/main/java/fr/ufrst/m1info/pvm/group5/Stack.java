@@ -73,7 +73,7 @@ public class Stack {
     }
 
     /**
-     * Pushes a new object in the stack, w/ the current scope as suffix
+     * Pushes a new var in the stack, w/ the current scope as suffix
      * @param name name of the var
      * @param value value of the var
      */
@@ -81,9 +81,39 @@ public class Stack {
         if (name == null || name.isEmpty()) {
             throw new InvalidNameException("Variable name cannot be null or empty");
         }
+
+        // Allow declarations without initial value: only validate when value is non-null
+        if (value != null) {
+            validateType(value, type);
+        }
+
         Stack_Object var = new Stack_Object(name, value, scopeDepth, EntryKind.VARIABLE, type);
         stack_content.push(var);
     }
+
+
+    /**
+     * Pushes a new const in the stack, w/ the current scope as suffix
+     * @param name name of the const
+     * @param value value of the const
+     */
+    public void setConst(String name, Object value, DataType type) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidNameException("Constant name cannot be null or empty");
+        }
+
+        // Constants may be declared without an initial value (value can be assigned later),
+        // so only validate when a non-null value is provided
+        if (value != null) {
+            validateType(value, type);
+        }
+
+        Stack_Object constant = new Stack_Object(name, value, scopeDepth, EntryKind.CONSTANT, type);
+        stack_content.push(constant);
+    }
+
+
+
 
     /**
      * Returns the top object from the stack
@@ -109,18 +139,30 @@ public class Stack {
 
     /**
      * @param name the name of the var we are looking for
-     * @return Object, the var value if found, null otherwise
+     * @return Object, the Object if found, null otherwise
      */
      public Object getObject(String name) {
          for(Stack_Object obj : stack_content) {
              if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
-                 /* TODO : Do we return the var object of the value ? */
-                 /* return var; */
-                 return obj.getValue();
+                 return obj;
              }
          }
          return null;
      }
+
+
+    /**
+     * @param name the name of the var we are looking for
+     * @return Object, the value if found, null otherwise
+     */
+    public Object getObjectValue(String name) {
+        for(Stack_Object obj : stack_content) {
+            if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
+                return obj.getValue();
+            }
+        }
+        return null;
+    }
 
     /**
      * Updates the top var that matches the given name (in current scope)
@@ -136,6 +178,8 @@ public class Stack {
                 return false;
             }
             if(var.getName().equals(name) && var.getScope() == scopeDepth) {
+                // validate value against the variable's declared type
+                validateType(value, var.getDataType());
                 var.setValue(value);
                 return true;
             }
@@ -160,6 +204,7 @@ public class Stack {
             return false; // Not a var
         }
 
+        validateType(value, topVar.getDataType());
         topVar.setValue(value);
         return true;
     }
@@ -254,5 +299,48 @@ public class Stack {
         // We put the object back on top of the stack
         stack_content.push(obj);
         return true;
+    }
+
+    /**
+     * Func to validate that a given value matches the declared DataType
+     * @param value we want to check the type of this value
+     * @param type we check that the object has this type
+     */
+    private void validateType(Object value, DataType type) {
+        if (value == null) {
+            throw new IllegalArgumentException("Called with null value for type " + type);
+        }
+
+        switch (type) {
+            case BOOL:
+                if (!(value instanceof Boolean)) {
+                    throw new IllegalArgumentException("Called with BOOL DataType, but object is of type " + value.getClass());
+                }
+                break;
+            case INT:
+                if (!(value instanceof Integer)) {
+                    throw new IllegalArgumentException("Called with INT DataType, but object is of type " + value.getClass());
+                }
+                break;
+            case FLOAT:
+                if (!(value instanceof Float)) {
+                    throw new IllegalArgumentException("Called with FLOAT DataType, but object is of type " + value.getClass());
+                }
+                break;
+            case DOUBLE:
+                if (!(value instanceof Double)) {
+                    throw new IllegalArgumentException("Called with DOUBLE DataType, but object is of type " + value.getClass());
+                }
+                break;
+            case STRING:
+                if (!(value instanceof String)) {
+                    throw new IllegalArgumentException("Called with STRING DataType, but object is of type " + value.getClass());
+                }
+                break;
+            case VOID:
+            case UNKNOWN:
+            default:
+                throw new IllegalArgumentException("Called with unvalid argument : " + value.getClass());
+        }
     }
 }

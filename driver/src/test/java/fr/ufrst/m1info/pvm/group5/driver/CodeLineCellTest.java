@@ -163,5 +163,4 @@ public class CodeLineCellTest extends ApplicationTest {
         FxAssert.verifyThat(lineNumberContainer.getChildren().get(0), isVisible()); //breakpoint
         FxAssert.verifyThat(lineNumberContainer.getChildren().get(1), isInvisible()); //lineNumber
     }
-
 }

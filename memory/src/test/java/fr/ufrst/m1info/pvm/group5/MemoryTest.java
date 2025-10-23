@@ -1,13 +1,18 @@
 package fr.ufrst.m1info.pvm.group5;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -58,16 +63,34 @@ public class MemoryTest {
     }
 
     @Test
-    public void pushDelegatesToStack() {
+    public void pushDelegatesToStackInt() {
         // When we push in the Stack we must delegate it to the setVar method
         memory.push("x", 42, DataType.INT, EntryKind.VARIABLE);
         verify(stackMocked, times(1)).setVar("x", 42, DataType.INT);
     }
-    /**
+
+    @Test
+    public void pushDelegatesToStackCst() {
+        // When we push in the Stack we must delegate it to the setVar method
+        memory.push("x", 42, DataType.INT, EntryKind.CONSTANT);
+        verify(stackMocked, times(1)).setConst("x", 42, DataType.INT);
+    }
+
+
+    @Test
+    public void pushWithIllegalArg() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            memory.push("x", 42, DataType.INT, null);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            memory.push("x", 42, null, EntryKind.VARIABLE);
+        });
+    }
 
     @Test
     public void popDelegatesToStack() throws Exception {
-        when(stackMocked.pop()).thenReturn(new Stack_Variable("x", 1, 0));
+        when(stackMocked.pop()).thenReturn(new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT));
         memory.pop();
         verify(stackMocked, times(1)).pop();
     }
@@ -75,7 +98,6 @@ public class MemoryTest {
     @Test
     public void declVarAddsSymbolTableEntry() {
         memory.declVar("a", 123, DataType.INT);
-
         ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
         verify(symbolTableMocked, times(1)).addEntry(captor.capture());
 
@@ -83,7 +105,7 @@ public class MemoryTest {
         assertEquals("a", entry.getName());
         assertEquals(EntryKind.VARIABLE, entry.getKind());
         assertEquals(DataType.INT, entry.getDataType());
-        assertEquals(123, entry.getReference());
+        assertNull(entry.getReference()); // Because the reference is not set
     }
 
     @Test
@@ -97,14 +119,30 @@ public class MemoryTest {
         assertEquals("PI", entry.getName());
         assertEquals(EntryKind.CONSTANT, entry.getKind());
         assertEquals(DataType.DOUBLE, entry.getDataType());
-        assertEquals(3.14, entry.getReference());
+        assertNull(entry.getReference()); // Because the ref is not set
     }
+
 
     @Test
     public void withdrawDeclRemovesEntry() {
         memory.withdrawDecl("tmp");
         verify(symbolTableMocked, times(1)).removeEntry("tmp");
     }
+
+
+    @Test
+    public void withdrawDeclThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            memory.withdrawDecl("");
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            memory.withdrawDecl(null);
+        });
+    }
+
+
+    /**
 
     @Test
     public void affectValueUpdatesSymbolTableEntry() {

@@ -5,6 +5,7 @@ import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 /**
  * Represents an entry of a variable in the stack, with name that contains the actual
@@ -101,6 +102,41 @@ public class Stack_Object {
             );
         }
         this.value = value;
+    }
+
+    /**
+     * Tests if the given object matches this one
+     * @param obj the reference object with which to compare.
+     * @return true if matched, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Stack_Object actualObj)) {
+            return false;
+        }
+
+        if (!Objects.equals(this.name, actualObj.name)) {
+            return false;
+        }
+
+        if (!Objects.equals(this.value, actualObj.value)) {
+            return false;
+        }
+
+        if (this.entryKind != actualObj.entryKind) {
+            return false;
+        }
+
+        if (this.dataType != actualObj.dataType) {
+            return false;
+        }
+
+        return this.scope == actualObj.scope;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, value, entryKind, dataType, scope);
     }
 
     /**

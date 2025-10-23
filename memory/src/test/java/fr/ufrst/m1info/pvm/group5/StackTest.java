@@ -1,4 +1,5 @@
 package fr.ufrst.m1info.pvm.group5;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -62,9 +63,80 @@ public class StackTest {
     public void setVar() {
         stack.pushScope();
         assertEquals(0, stack.size());
-        stack.setVar("x", 1234, integ);
+        stack.setVar("x", 1234, DataType.INT);
         assertEquals(1, stack.size());
-        assertEquals(1234, stack.getObject("x"));
+        assertEquals(1234, stack.getObjectValue("x"));
+    }
+
+    @Test
+    public void setConst() {
+        stack.pushScope();
+        assertEquals(0, stack.size());
+        stack.setConst("x", 1234, DataType.INT);
+        assertEquals(1, stack.size());
+        assertEquals(1234, stack.getObjectValue("x"));
+    }
+
+    @Test
+    public void getObject() {
+        stack.pushScope();
+        Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        assertEquals(0, stack.size());
+        stack.setConst("x", 1234, DataType.INT);
+        assertEquals(1, stack.size());
+        assertEquals(1234, stack.getObjectValue("x"));
+
+        Object constant2 = stack.getObject("x");
+        assertTrue(constant.equals(constant2));
+    }
+
+    @Test
+    public void isEqual() {
+        Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        Stack_Object constantTrue = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        assertTrue(constant.equals(constantTrue));
+
+        Stack_Object cstNotSameName = new Stack_Object("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        assertFalse(constant.equals(cstNotSameName));
+
+        Stack_Object cstNotSameVal = new Stack_Object("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
+        assertFalse(constant.equals(cstNotSameVal));
+
+        Stack_Object cstNotSameScope = new Stack_Object("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
+        assertFalse(constant.equals(cstNotSameScope));
+
+        Stack_Object cstNotSameType = new Stack_Object("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
+        assertFalse(constant.equals(cstNotSameType));
+
+        Stack_Object cstNotSameKind = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
+        assertFalse(constant.equals(cstNotSameKind));
+
+        int notSameObject = 3;
+        assertFalse(constant.equals(notSameObject));
+    }
+
+    @Test
+    public void hashCode_differsWhenFieldsDiffer() {
+        Stack_Object base = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        Stack_Object diffName = new Stack_Object("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        Stack_Object diffVal = new Stack_Object("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
+        Stack_Object diffScope = new Stack_Object("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
+        Stack_Object diffKind = new Stack_Object("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
+        Stack_Object diffType = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
+
+        // Ensure objects are not equal
+        assertNotEquals(base, diffName);
+        assertNotEquals(base, diffVal);
+        assertNotEquals(base, diffScope);
+        assertNotEquals(base, diffKind);
+        assertNotEquals(base, diffType);
+
+        // It's extremely unlikely these different objects will have colliding hash codes
+        assertNotEquals(base.hashCode(), diffName.hashCode());
+        assertNotEquals(base.hashCode(), diffVal.hashCode());
+        assertNotEquals(base.hashCode(), diffScope.hashCode());
+        assertNotEquals(base.hashCode(), diffKind.hashCode());
+        assertNotEquals(base.hashCode(), diffType.hashCode());
     }
 
     @Test
@@ -113,8 +185,8 @@ public class StackTest {
     @Test
     public void getVar() {
         stack.pushScope();
-        stack.setVar("x", 1234, integ);
-        Object value = stack.getObject("x");
+        stack.setVar("x", 1234, DataType.INT);
+        Object value = stack.getObjectValue("x");
         assertEquals(1234, value);
     }
 
@@ -134,7 +206,7 @@ public class StackTest {
         stack.pushScope();
         stack.setVar("x", 2, integ);
         // Should only get the x from current scope (2)
-        assertEquals(2, stack.getObject("x"));
+        assertEquals(2, stack.getObjectValue("x"));
 
         try {
             stack.popScope();
@@ -142,7 +214,7 @@ public class StackTest {
             fail("Should not throw exception");
         }
         // Now should get the x from previous scope (1)
-        assertEquals(1, stack.getObject("x"));
+        assertEquals(1, stack.getObjectValue("x"));
     }
 
     @Test
@@ -151,7 +223,7 @@ public class StackTest {
         stack.setVar("x", 1234, integ);
         boolean upd = stack.updateVar("x", 100);
         assertTrue(upd);
-        assertEquals(100, stack.getObject("x"));
+        assertEquals(100, stack.getObjectValue("x"));
     }
 
     @Test
@@ -237,19 +309,20 @@ public class StackTest {
         stack.setVar("x", 50, integ);
         stack.setVar("z", 100, integ);
 
-        assertEquals(50, stack.getObject("x"));
-        assertEquals(100, stack.getObject("z"));
+        assertEquals(50, stack.getObjectValue("x"));
+        assertEquals(100, stack.getObjectValue("z"));
         assertNull(stack.getObject("y"));
         assertEquals(4, stack.size());
 
         // Update x in current scope
         stack.updateVar("x", 55);
-        assertEquals(55, stack.getObject("x"));
+        assertEquals(55, stack.getObjectValue("x"));
 
         // Exit function scope
         stack.popScope();
-        assertEquals(5, stack.getObject("x"));
-        assertEquals(10, stack.getObject("y"));
+        assertEquals(5, stack.getObjectValue("x"));
+        assertEquals(10, stack.getObjectValue("y"));
+        assertNull(stack.getObjectValue("z"));
         assertNull(stack.getObject("z"));
         assertEquals(2, stack.size());
     }
@@ -258,21 +331,21 @@ public class StackTest {
     public void multipleScopesWithSameVarName() throws Stack.NoScopeException {
         stack.pushScope();
         stack.setVar("count", 0, integ);
-        assertEquals(0, stack.getObject("count"));
+        assertEquals(0, stack.getObjectValue("count"));
 
         stack.pushScope();
         stack.setVar("count", 1, integ);
-        assertEquals(1, stack.getObject("count"));
+        assertEquals(1, stack.getObjectValue("count"));
 
         stack.pushScope();
         stack.setVar("count", 2, integ);
-        assertEquals(2, stack.getObject("count"));
+        assertEquals(2, stack.getObjectValue("count"));
 
         stack.popScope();
-        assertEquals(1, stack.getObject("count"));
+        assertEquals(1, stack.getObjectValue("count"));
 
         stack.popScope();
-        assertEquals(0, stack.getObject("count"));
+        assertEquals(0, stack.getObjectValue("count"));
 
         stack.popScope();
         assertTrue(stack.isEmpty());
@@ -281,11 +354,11 @@ public class StackTest {
     @Test
     public void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
         stack.pushScope();
-        stack.setVar("global", "value", integ);
+        stack.setVar("global", 1, DataType.INT);
 
         stack.pushScope();
-        stack.setVar("local1", "val1", integ);
-        stack.setVar("local2", "val2", integ);
+        stack.setVar("local1", 2, DataType.INT);
+        stack.setVar("local2", 3, DataType.INT);
 
         assertEquals(3, stack.size());
 
@@ -293,7 +366,7 @@ public class StackTest {
 
         // Only the global variable should remain
         assertEquals(1, stack.size());
-        assertEquals("value", stack.getObject("global"));
+        assertEquals(1, stack.getObjectValue("global"));
     }
 
     @Test
