@@ -98,7 +98,7 @@ public class CodeLineCellTest extends ApplicationTest {
         assertEquals(2, container.getChildren().size());
 
         StackPane lineNumberContainer = (StackPane) container.getChildren().get(0);
-        Label lineNumber = (Label) lineNumberContainer.getChildren().get(1);
+        Label lineNumber = (Label) cell.getLineNumberLabel();
         TextField codeField = (TextField) container.getChildren().get(1);
 
         assertEquals("1", lineNumber.getText());
@@ -163,4 +163,38 @@ public class CodeLineCellTest extends ApplicationTest {
         FxAssert.verifyThat(lineNumberContainer.getChildren().get(0), isVisible()); //breakpoint
         FxAssert.verifyThat(lineNumberContainer.getChildren().get(1), isInvisible()); //lineNumber
     }
+
+    @Test
+    public void testRemoveBreakpointWhenLineNumberContainerIsClicked(){
+        CodeLineCell cell = new CodeLineCell();
+        CodeLine codeLine = new CodeLine(1, "int x = 10;");
+        codeLine.setBreakpoint(true);
+        assertTrue(codeLine.isBreakpoint());
+
+        Platform.runLater(() -> {
+            cell.updateItem(codeLine, false);
+
+            StackPane root = new StackPane(cell.getGraphic());
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, 400, 300));
+            stage.show();
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        StackPane lineNumberContainer = cell.getLineNumberContainer();
+
+        FxAssert.verifyThat(lineNumberContainer.getChildren().get(0), isVisible()); //breakpoint
+        FxAssert.verifyThat(lineNumberContainer.getChildren().get(1), isInvisible()); //lineNumber
+
+        clickOn(lineNumberContainer);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(codeLine.isBreakpoint());
+
+        FxAssert.verifyThat(lineNumberContainer.getChildren().get(0), isInvisible()); //breakpoint
+        FxAssert.verifyThat(lineNumberContainer.getChildren().get(1), isVisible()); //lineNumber
+    }
+
 }
