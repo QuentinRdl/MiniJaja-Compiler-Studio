@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 
+import java.io.Serial;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EmptyStackException;
@@ -30,6 +31,31 @@ public class Stack {
     public static class StackIsEmptyException extends Exception {
         public StackIsEmptyException(String msg) {
             super(msg);
+        }
+    }
+
+
+    /**
+     * Thrown when attempting to modify a Stack_Object whose entry kind is CONSTANT.
+     */
+    public static class ConstantModificationException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        public ConstantModificationException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Thrown when attempting to construct a Stack_Object using the generic constructor
+     * for kinds that require a specialized constructor (rn only vars and csts)
+     */
+    public static class InvalidStackObjectConstructionException extends RuntimeException {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public InvalidStackObjectConstructionException(String message) {
+            super(message);
         }
     }
 

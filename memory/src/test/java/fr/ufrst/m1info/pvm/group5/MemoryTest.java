@@ -142,8 +142,8 @@ public class MemoryTest {
     }
 
 
-    /**
 
+    /**
     @Test
     public void affectValueUpdatesSymbolTableEntry() {
         SymbolTableEntry mockedEntry = mock(SymbolTableEntry.class);

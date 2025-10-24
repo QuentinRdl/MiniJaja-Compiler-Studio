@@ -3,8 +3,6 @@ package fr.ufrst.m1info.pvm.group5;
 import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType; // TODO : We should not have to import
 import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Objects;
 
 /**
@@ -30,13 +28,13 @@ public class Stack_Object {
     public Stack_Object(String name, Object value, int scope, EntryKind kind, DataType dataType) {
         if (kind == EntryKind.VARIABLE || kind == EntryKind.CONSTANT) {
             if (dataType == null || dataType == DataType.UNKNOWN) {
-                throw new InvalidStackObjectConstructionException(
+                throw new Stack.InvalidStackObjectConstructionException(
                         "VARIABLE or CONSTANT must specify a valid DataType"
                 );
             }
         } else {
             if (dataType != null && dataType != DataType.UNKNOWN) {
-                throw new InvalidStackObjectConstructionException(
+                throw new Stack.InvalidStackObjectConstructionException(
                         "Non-variable/non-constant objects should not specify DataType"
                 );
             }
@@ -97,7 +95,7 @@ public class Stack_Object {
      */
     public void setValue(Object value) {
         if (this.entryKind == EntryKind.CONSTANT) {
-            throw new ConstantModificationException(
+            throw new Stack.ConstantModificationException(
                 "Cannot modify value of constant Stack_Object '" + this.name + "' (scope=" + this.scope + ")"
             );
         }
