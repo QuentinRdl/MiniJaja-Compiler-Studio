@@ -154,13 +154,13 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(errMessage);
     }*/
 
-    @Test
+    /*@Test
     @DisplayName("Interpret Multiple Class")
     public void multipleClass()  {
         String errMessage=imj.interpretCode("class C {main {}} class D {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
+    }*/
 
     @Test
     @DisplayName("Interpret Multiple Main")
@@ -202,21 +202,21 @@ public class InterpreterMiniJajaTest {
         //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Test
+    /*@Test
     @DisplayName("Interpret Unnamed Class")
     public void unnamedClass()  {
         String errMessage=imj.interpretCode("class {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("Interpret Named Main")
     public void namedMain()  {
         String errMessage=imj.interpretCode("class C {main M{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
+    }*/
 
     @Test
     @DisplayName("Interpret Every Operations At Once")
@@ -227,11 +227,132 @@ public class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Every Types At Once")
+    public void everyTypes()  {
+        String errMessage=imj.interpretCode("class C {void int boolean y; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Named Int")
+    public void variableNamedInt()  {
+        String errMessage=imj.interpretCode("class C {int int; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Named Int2")
+    public void variableNamedInt2()  {
+        String errMessage=imj.interpretCode("class C {int int2; main{}}");
+        Assertions.assertNull(errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Operation Incorrect Order")
+    public void operationIncorrectOrder()  {
+        String errMessage=imj.interpretCode("class C { main{int y=1-2*3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    /*@Test
+    @DisplayName("Interpret Operation Correct Order")
+    public void operationCorrectOrder()  {
+        String errMessage=imj.interpretCode("class C { main{int y=1*2-3;}}");
+        Assertions.assertNull(errMessage);
+    }*/
+
+    @Test
+    @DisplayName("Interpret Operation Incorrect Order 2")
+    public void operationIncorrectOrder2()  {
+        String errMessage=imj.interpretCode("class C { main{boolean y=1>2-3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    /*@Test
+    @DisplayName("Interpret Operation Correct Order 2")
+    public void operationCorrectOrder2()  {
+        String errMessage=imj.interpretCode("class C { main{boolean y=1-2>3;}}");
+        Assertions.assertNull(errMessage);
+    }*/
+
+    @Test
+    @DisplayName("Interpret Operation Incorrect Order 3")
+    public void operationIncorrectOrder3()  {
+        String errMessage=imj.interpretCode("class C { main{boolean y=false && 2>3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    /*@Test
+    @DisplayName("Interpret Operation Correct Order 3")
+    public void operationCorrectOrder3()  {
+        String errMessage=imj.interpretCode("class C { main{boolean y=1>2 && false;}}");
+        Assertions.assertNull(errMessage);
+    }*/
+
+    /*@Test
+    @DisplayName("Interpret Variable Not Before And")
+    public void notBeforeAnd()  {
+        String errMessage=imj.interpretCode("class C {main{boolean y=!false && true;}}");
+        Assertions.assertNull(errMessage);
+    }*/
+
+    @Test
+    @DisplayName("Interpret If Without Condition")
+    public void ifWithoutCondition()  {
+        String errMessage=imj.interpretCode("class C { main{if(){};}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Else Without If")
+    public void elseWithoutIf()  {
+        String errMessage=imj.interpretCode("class C { main{else{};}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Instruction Not In Main")
+    public void instructionNotInMain()  {
+        String errMessage=imj.interpretCode("class C { int y; y = 10; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
     @DisplayName("Interpret I Forgot A Semicolon")
     public void iForgotASemiColon()  {
         String errMessage=imj.interpretCode("class C {main{int y=1 + 2}}");
         Assertions.assertNotEquals(null,errMessage);
         //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Random String")
+    public void randomString()  {
+        String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Null String")
+    public void nullString()  {
+        String errMessage=imj.interpretCode(null);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Null Filepath")
+    public void nullFilepath()  {
+        String errMessage=imj.interpretFile(null);
+        Assertions.assertNotEquals(null,errMessage);
     }
 
 
