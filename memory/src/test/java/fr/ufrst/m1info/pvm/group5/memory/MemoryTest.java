@@ -1,28 +1,24 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
 // TODO : Import the following w/ the pom
-import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
-import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTable;
-import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTableEntry;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTable;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 
 public class MemoryTest {
     private Memory memory;

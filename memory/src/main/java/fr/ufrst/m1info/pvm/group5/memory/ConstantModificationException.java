@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 /**
  * Thrown when attempting to modify a Stack_Object whose entry kind is CONSTANT.

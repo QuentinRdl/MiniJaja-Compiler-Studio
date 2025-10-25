@@ -1,9 +1,8 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 
-import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.*;
 import fr.ufrst.m1info.pvm.group5.ast.*;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
 import java.util.ArrayList;
 import java.util.List;

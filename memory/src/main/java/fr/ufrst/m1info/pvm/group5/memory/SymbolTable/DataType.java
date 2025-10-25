@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5.SymbolTable;
+package fr.ufrst.m1info.pvm.group5.memory.SymbolTable;
 
 /**
  * Enumeration representing possible data types

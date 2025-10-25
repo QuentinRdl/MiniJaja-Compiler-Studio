@@ -1,7 +1,7 @@
-package fr.ufrst.m1info.pvm.group5.SymbolTable;
+package fr.ufrst.m1info.pvm.group5.memory.SymbolTable;
 
 
-import fr.ufrst.m1info.pvm.group5.HashMap;
+import fr.ufrst.m1info.pvm.group5.memory.HashMap;
 
 /**
  * Represents a simple symbol table without scope management.

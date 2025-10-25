@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 public class EntryHashMap<K,V> {
     private K key;

@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
 
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
 /**
  * Interface implemented by nodes that can be interpreted in the "eval" mode.

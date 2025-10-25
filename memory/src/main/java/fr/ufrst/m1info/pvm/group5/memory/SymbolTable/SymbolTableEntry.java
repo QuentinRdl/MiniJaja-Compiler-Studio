@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5.SymbolTable;
+package fr.ufrst.m1info.pvm.group5.memory.SymbolTable;
 
 /**
  * Represents a single entry (row) in the symbol table.

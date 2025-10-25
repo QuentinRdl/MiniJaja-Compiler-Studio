@@ -1,10 +1,10 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.*;
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.ast.WithradawableNode;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.ast;
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 

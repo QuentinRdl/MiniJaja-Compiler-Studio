@@ -1,12 +1,11 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 import org.mockito.Mock;
 
 import java.lang.reflect.Field;

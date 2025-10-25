@@ -1,10 +1,8 @@
-package fr.ufrst.m1info.pvm.group5;
+package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.SymbolTable.DataType; // TODO : We should not have to import
-import fr.ufrst.m1info.pvm.group5.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType; // TODO : We should not have to import
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Objects;
 
 /**

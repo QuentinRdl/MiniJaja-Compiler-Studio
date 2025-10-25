@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
 
-import fr.ufrst.m1info.pvm.group5.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 
 public class InterpreterMiniJaja implements Interpreter{
