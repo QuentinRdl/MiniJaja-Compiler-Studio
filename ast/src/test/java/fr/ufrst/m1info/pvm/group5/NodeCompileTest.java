@@ -82,5 +82,17 @@ public class NodeCompileTest {
         assertEquals(List.of("push(5)", "store(x)"), tested.compile(1));
     }
 
+    @Test
+    public void BooleanNodeTrue(){
+        BooleanNode tested = new BooleanNode(true);
+        assertEquals(List.of("push(jcvrai)"),tested.compile(1));
+    }
+
+    @Test
+    public void BooleanNodeFalse(){
+        BooleanNode tested = new BooleanNode(false);
+        assertEquals(List.of("push(jcfaux)"),tested.compile(1));
+    }
+
 
 }
