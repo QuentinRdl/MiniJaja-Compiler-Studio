@@ -74,7 +74,13 @@ public class NodeCompileTest {
         assertEquals(List.of("push(5)","push(5)", "sup"), tested.compile(1));
     }
 
-    
+    @Test
+    public void AffectationNode(){
+        IdentNode ident = new IdentNode("x");
+        NumberNode exp = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
+        AffectationNode tested = new AffectationNode(ident,exp);
+        assertEquals(List.of("push(5)", "store(x)"), tested.compile(1));
+    }
 
 
 }
