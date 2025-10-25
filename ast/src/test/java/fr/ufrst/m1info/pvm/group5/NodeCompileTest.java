@@ -118,5 +118,39 @@ public class NodeCompileTest {
         assertEquals(List.of("init","MAINTEST","pop","jcstop"),tested.compile(1));
     }
 
+    @Test
+    public void DeclarationsNode(){
+        VariableNode var1 = ASTMocks.createNode(VariableNode.class,
+                null,
+                i -> List.of("VARIABLETEST1"));
+        VariableNode var2 = ASTMocks.createNode(VariableNode.class,
+                null,
+                i -> List.of("VARIABLETEST2"));
+        DeclarationsNode decls = new DeclarationsNode(var2,null);
+        DeclarationsNode tested = new DeclarationsNode(var1,decls);
+        assertEquals(List.of("VARIABLETEST1","VARIABLETEST2"),tested.compile(1));
+    }
+
+    @Test
+    public void DeclarationsNodeWithdraw(){
+        VariableNode var1 = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                null,
+                i -> List.of("VARIABLETEST1")
+        );
+        VariableNode var2 = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                null,
+                i -> List.of("VARIABLETEST2")
+        );
+        DeclarationsNode decls = new DeclarationsNode(var2,null);
+        DeclarationsNode tested = new DeclarationsNode(var1,decls);
+        assertEquals(List.of("VARIABLETEST2","VARIABLETEST1"),tested.withdrawCompile(1));
+    }
+
 
 }
