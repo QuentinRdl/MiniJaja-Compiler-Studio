@@ -2,8 +2,10 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.Value;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WriteLineNode extends ASTNode{
@@ -22,11 +24,25 @@ public class WriteLineNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        return List.of();
+        List<String> JJCodes = new ArrayList<>();
+        if(text == null){
+            JJCodes.addAll(ident.compile(address));
+        }
+        else {
+            JJCodes.add("push(\""+text+"\")");
+        }
+        JJCodes.add("writeln");
+        return JJCodes;
     }
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-
+        if(text == null){
+            Value v = ident.eval(m);
+            m.writeLine(v.toString());
+        }
+        else{
+            m.writeLine(text);
+        }
     }
 }

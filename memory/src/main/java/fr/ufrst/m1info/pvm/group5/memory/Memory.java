@@ -148,7 +148,7 @@ public class Memory {
      * Writes text to the output
      * @param text text to write
      */
-    public void Write(String text){
+    public void write(String text){
         if(output != null){
             output.Write(text);
         }
@@ -158,7 +158,7 @@ public class Memory {
      * Writes a new line of text to the output
      * @param text new line of text to write
      */
-    public void WriteLine(String text){
+    public void writeLine(String text){
         if(output != null){
             output.WriteLine(text);
         }
