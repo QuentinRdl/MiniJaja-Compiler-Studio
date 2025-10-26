@@ -11,9 +11,14 @@ import fr.ufrst.m1info.pvm.group5.SymbolTable.SymbolTableEntry;
  * All methods will be used by the abstract syntax tree for the interpretation/compilation
  */
 public class Memory {
-    Stack stack = new Stack();
-    SymbolTable symbolTable = new SymbolTable();
+    public Stack stack;
+    public SymbolTable symbolTable;
 
+
+    public Memory() {
+        stack = new Stack();
+        symbolTable = new SymbolTable();
+    }
     /* Operations directly related to the stack */
 
     /**
@@ -52,10 +57,12 @@ public class Memory {
     /**
      * Removes the top of the stack
      */
-    public void pop() throws Stack.StackIsEmptyException {
-        Stack_Object top = stack.top();
-        symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
-        stack.pop();
+    public Stack_Object pop() throws Stack.StackIsEmptyException {
+        Stack_Object top = stack.pop();
+        if (top != null) {
+            symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
+        }
+        return top;
     }
 
     /**

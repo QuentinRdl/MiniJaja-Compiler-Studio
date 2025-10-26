@@ -96,6 +96,16 @@ public class MemoryTest {
     }
 
     @Test
+    public void popDelegatesToSymbolTable() throws Exception {
+        Stack_Object obj = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.pop()).thenReturn(obj);
+
+        memory.pop();
+
+        verify(symbolTableMocked, times(1)).removeEntry("x");
+    }
+
+    @Test
     public void declVarAddsSymbolTableEntry() {
         memory.declVar("a", 123, DataType.INT);
         ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
