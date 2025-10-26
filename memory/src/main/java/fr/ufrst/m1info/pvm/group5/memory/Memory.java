@@ -13,6 +13,19 @@ import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 public class Memory {
     Stack stack = new Stack();
     SymbolTable symbolTable = new SymbolTable();
+    /**
+     * Writer used for the "write" and "writeline" methods
+     * If left null, the said methods will have no effect
+     */
+    Writer output = null;
+
+    /* Constructors */
+
+    public Memory(){} // TODO : Set this constructor modifier to protected so the output can't be null
+
+    public Memory(Writer output){
+        this.output = output;
+    }
 
     /* Operations directly related to the stack */
 
@@ -129,6 +142,26 @@ public class Memory {
     public String identVarClass() {
         // TODO
         return null;
+    }
+
+    /**
+     * Writes text to the output
+     * @param text text to write
+     */
+    public void Write(String text){
+        if(output != null){
+            output.Write(text);
+        }
+    }
+
+    /**
+     * Writes a new line of text to the output
+     * @param text new line of text to write
+     */
+    public void WriteLine(String text){
+        if(output != null){
+            output.WriteLine(text);
+        }
     }
 
     // Method related methods (context, etc...) will have to be added later
