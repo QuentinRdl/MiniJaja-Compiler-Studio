@@ -90,7 +90,7 @@ public class WriterTest {
             assertEquals("world", e.diff());
             assertEquals(5, e.nbAdded());
             assertEquals("hello world", e.newText());
-            assertEquals("hello", e.oldText());
+            assertEquals("hello ", e.oldText());
         });
         future = writer.writeAsync("world");
         future.get();
@@ -123,6 +123,64 @@ public class WriterTest {
             assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
         });
         future = writer.writeAsync("world");
+        future.get();
+    }
+
+    @Test
+    @DisplayName("Event info - Writeline / Text added event")
+    public void EventInfo_WriteLine_Textadded() throws Exception{
+        writer.TextAddedEvent.subscribe(e -> {
+            assertEquals("hello world\n", e.diff());
+            assertEquals(12, e.nbAdded());
+            assertEquals("hello world\n", e.newText());
+            assertEquals("", e.oldText());
+        });
+        var future = writer.writeLineAsync("hello world");
+        future.get();
+    }
+
+    @Test
+    @DisplayName("Event info - WriteLine / Text added event / with text present")
+    public void EventInfo_WriteLine_Textadded2() throws Exception{
+        var future = writer.writeAsync("hello ");
+        future.get();
+        writer.TextAddedEvent.subscribe(e -> {
+            assertEquals("world\n", e.diff());
+            assertEquals(6, e.nbAdded());
+            assertEquals("hello world\n", e.newText());
+            assertEquals("hello ", e.oldText());
+        });
+        future = writer.writeLineAsync("world");
+        future.get();
+    }
+
+    @Test
+    @DisplayName("Event info - WriteLine / Text changed event")
+    public void EventInfo_WriteLine_TextChanged() throws Exception{
+        writer.TextChangedEvent.subscribe(e -> {
+            assertEquals("hello world\n", e.diff());
+            assertEquals(12, e.nbAdded());
+            assertEquals("hello world\n", e.newText());
+            assertEquals("", e.oldText());
+            assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
+        });
+        var future = writer.writeLineAsync("hello world");
+        future.get();
+    }
+
+    @Test
+    @DisplayName("Event info - Write / Text changed event / with text present")
+    public void EventInfo_WriteLine_TextChanged2() throws Exception{
+        var future = writer.writeAsync("hello ");
+        future.get();
+        writer.TextChangedEvent.subscribe(e -> {
+            assertEquals("world\n", e.diff());
+            assertEquals(6, e.nbAdded());
+            assertEquals("hello world\n", e.newText());
+            assertEquals("hello ", e.oldText());
+            assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
+        });
+        future = writer.writeLineAsync("world");
         future.get();
     }
 
