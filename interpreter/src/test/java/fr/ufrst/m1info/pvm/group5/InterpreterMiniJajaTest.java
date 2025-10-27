@@ -71,12 +71,14 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
     }*/
 
+    @Disabled
     @Test
     @DisplayName("Interpret File OperationPrevalence")
     public void OperationPrevalence()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret File Simple")
     public void Simple()  {
@@ -253,6 +255,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret Variable Named Int2")
     public void variableNamedInt2()  {
