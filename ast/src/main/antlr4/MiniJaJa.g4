@@ -2,8 +2,8 @@ grammar MiniJaJa;
 
 @header{
 package fr.ufrst.m1info.pvm.group5;
-import fr.ufrst.m1info.pvm.group5.Nodes.*;
-import fr.ufrst.m1info.pvm.group5.ValueType;
+import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
+import fr.ufrst.m1info.pvm.group5.ast.ValueType;
 }
 
 classe returns [ClassNode node]
