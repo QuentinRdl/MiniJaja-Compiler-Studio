@@ -161,7 +161,7 @@ public class Memory {
      */
     public void writeLine(String text){
         if(output != null){
-            output.WriteLine(text);
+            output.writeLineAsync(text);
         }
     }
 

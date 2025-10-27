@@ -36,7 +36,7 @@ public class WriterTest {
     @Test
     @DisplayName("Event trigger - Writeline")
     public void EventTrigger_Writeline() throws Exception{
-        var future = writer.WriteLine("a");
+        var future = writer.writeLineAsync("a");
         future.get();
         assertTrue(flags[0]);
         assertFalse(flags[1]);

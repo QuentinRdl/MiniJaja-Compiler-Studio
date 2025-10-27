@@ -116,17 +116,17 @@ public class Writer {
      * @param line line of text to append
      * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> WriteLine(String line){
+    public CompletableFuture<Void> writeLineAsync(String line){
         return writeAsync("\n"+line);
     }
 
     /**
-     * Erase a given number of characters at the end of the text
+     * eraseAsync a given number of characters at the end of the text
      *
      * @param nbChars number of characters to erase
      * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> Erase(int nbChars){
+    public CompletableFuture<Void> eraseAsync(int nbChars){
         String oldText = _innerText;
         int erased;
         if(nbChars>=_innerText.length()){ // Special case
@@ -146,11 +146,11 @@ public class Writer {
     }
 
     /**
-     * Erase the last line of the text
+     * eraseAsync the last line of the text
      *
      * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> EraseLine(){
+    public CompletableFuture<Void> eraseLineAsync(){
         String oldText = _innerText;
         int lineIndex = _innerText.lastIndexOf("\n");
         int removed = 0;
