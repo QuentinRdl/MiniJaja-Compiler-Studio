@@ -331,7 +331,6 @@ public class MemoryIntegrationTest {
 
     }
 
-
     @Test
     public void declVarClassThrowsWhenClassVarAlreadyDefined() {
         // First declaration should succeed
