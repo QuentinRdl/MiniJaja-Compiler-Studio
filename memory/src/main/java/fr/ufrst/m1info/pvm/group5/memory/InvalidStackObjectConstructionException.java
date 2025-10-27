@@ -13,12 +13,5 @@ public class InvalidStackObjectConstructionException extends RuntimeException {
     public InvalidStackObjectConstructionException(String message) {
         super(message);
     }
-
-    /*
-    public InvalidStackObjectConstructionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-    TODO : can we remove ?
-     */
 }
 

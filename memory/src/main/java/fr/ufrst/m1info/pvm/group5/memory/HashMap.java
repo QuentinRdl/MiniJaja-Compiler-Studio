@@ -1,13 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-
 import java.util.*;
 
-
-/**
- * Hello world!
- *
- */
 public class HashMap<K,V>
 {
     private int capacity;
@@ -231,5 +225,4 @@ public class HashMap<K,V>
         }
         return res;
     }
-
 }

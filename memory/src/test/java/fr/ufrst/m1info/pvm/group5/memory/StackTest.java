@@ -2,11 +2,12 @@ package fr.ufrst.m1info.pvm.group5.memory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
-import org.mockito.Mock;
 
 import java.lang.reflect.Field;
 import java.util.Deque;
@@ -18,9 +19,6 @@ import java.util.Deque;
 public class StackTest {
     private Stack stack;
     private DataType integ;
-
-    @Mock
-    private Stack_Variable mockVariable;
 
     /**
      * Before each test, we set up an empty stack
@@ -396,12 +394,182 @@ public class StackTest {
     }
 
     @Test
-    public void constructor_exception_test() {
+    public void constructorExceptionTest() {
         String msg = "Invalid variable name";
         Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
 
         assertEquals(msg, ex.getMessage());
     }
+
+
+    @Test
+    public void testSwap_sameIdentifier_noop_returnsTrue() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+        when(a.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap(a, a);
+        assertTrue(res);
+    }
+
+
+    @Test
+    public void testSwap_successful() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+        Stack_Object c = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(c.getName()).thenReturn("c");
+
+        when(a.getScope()).thenReturn(0);
+        when(b.getScope()).thenReturn(0);
+        when(c.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+            dq.addLast(b);
+            dq.addLast(c);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap(a, b);
+        assertTrue(res);
+
+        // Verify order is now [b, a, c]
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Object[] arr = dq.toArray();
+            assertEquals(b, arr[0]);
+            assertEquals(a, arr[1]);
+            assertEquals(c, arr[2]);
+        } catch (Exception ex) {
+            fail("Reflection verification failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testSwap_missingObject_returnsFalse() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+        when(a.getScope()).thenReturn(0);
+
+        Stack_Object b = mock(Stack_Object.class);
+        when(b.getName()).thenReturn("b");
+        when(b.getScope()).thenReturn(0);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        boolean res = s.swap(a, b);
+        assertFalse(res);
+    }
+
+    @Test
+    public void swapTop_successful() {
+        Stack s = new Stack();
+
+        // Create mocked stack objects to avoid depending on other classes/constructors
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(a.getScope()).thenReturn(0);
+        when(b.getScope()).thenReturn(0);
+        when(a.getValue()).thenReturn(1);
+        when(b.getValue()).thenReturn(2);
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+
+            dq.addLast(b);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        // Check before swap func call
+        assertEquals("b", s.top().getName());
+        assertEquals(2, s.top().getValue());
+
+        s.swap();
+
+        Stack_Object top = s.top();
+        assertEquals("a", top.getName());
+        assertEquals(1, top.getValue());
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Object[] arr = dq.toArray();
+            assertEquals(a, arr[0]);
+            assertEquals(b, arr[1]);
+        } catch (Exception ex) {
+            fail("Reflection verification failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void swapTop_notEnoughElements() {
+        Stack s = new Stack();
+        assertThrows(IllegalStateException.class, s::swap);
+
+        // Calling w/ 1 element should throw exception
+        Stack_Object only = mock(Stack_Object.class);
+        when(only.getName()).thenReturn("only");
+        when(only.getScope()).thenReturn(0);
+        when(only.getValue()).thenReturn(10);
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(only);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        assertThrows(IllegalStateException.class, s::swap);
+    }
+
 
 
     /* TODO : Replace with the correct format
@@ -418,5 +586,7 @@ public class StackTest {
         s.pushScope();
         s.setVar("", 42, DataType.INT);
     }
-    */
+
+     */
+
 }

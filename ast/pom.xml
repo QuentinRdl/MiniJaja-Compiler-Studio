@@ -4,7 +4,7 @@
     <parent>
         <groupId>fr.ufrst.m1info.pvm.group5</groupId>
         <artifactId>group5</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>ast</artifactId>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>fr.ufrst.m1info.pvm.group5</groupId>
             <artifactId>memory</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
