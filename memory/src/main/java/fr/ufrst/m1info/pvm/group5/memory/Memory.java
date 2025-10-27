@@ -13,11 +13,13 @@ import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 public class Memory {
     public Stack stack;
     public SymbolTable symbolTable;
+    private String identifierVarClass;
 
 
     public Memory() {
         stack = new Stack();
         symbolTable = new SymbolTable();
+        identifierVarClass = null;
     }
     /* Operations directly related to the stack */
 
@@ -177,7 +179,19 @@ public class Memory {
     }
 
     public void declVarClass(String identifier) {
-        // TODO
+        if(identifierVarClass != null) {
+            throw new IllegalStateException("The class variable is already defined, cannot create a new one");
+        }
+        // We check that nothing on the Symbol Table & the stack is defined w/ this name
+        if(symbolTable.contains(identifier)) {
+            throw new IllegalStateException("The class variable is already defined in the Symbol Table, cannot create a new one");
+        }
+        if(stack.hasObj(identifier)) {
+            throw new IllegalStateException("The class variable is already defined in the Stack, cannot create a new one");
+        }
+        // Everything checks out, we create the var, with null type, and null value
+        declVar(identifier, null, null);
+        identifierVarClass = identifier;
     }
 
     /**
@@ -197,8 +211,17 @@ public class Memory {
     }
 
     public String identVarClass() {
-        // TODO : La variable de classe est spécifique, pour dire que ca retourne la variable de classe,
-        return null;
+        return identifierVarClass;
+    }
+
+    public void affVarClass(Object value) {
+        if(identifierVarClass == null) {
+            throw new IllegalStateException("Cannot affect a value to the class var, it does not exist");
+        }
+        if(value == null) {
+            throw new IllegalArgumentException("Cannot call affVarClass with null object");
+        }
+        affectValue(identifierVarClass, value);
     }
 
     // Method related methods (context, etc...) will have to be added later
