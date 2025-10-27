@@ -570,6 +570,64 @@ public class StackTest {
         assertThrows(IllegalStateException.class, s::swap);
     }
 
+    @Test
+    public void updateTopValue_emptyStack_returnsFalse() {
+        Stack s = new Stack();
+        boolean res = s.updateTopValue(42);
+        assertFalse(res);
+    }
+
+    @Test
+    public void updateTopValue_variable_success() {
+        stack.pushScope();
+        stack.setVar("x", 1, DataType.INT);
+        boolean res = stack.updateTopValue(2);
+        assertTrue(res);
+        assertEquals(2, stack.top().getValue());
+    }
+
+    @Test
+    public void updateTopValue_typeMismatch_returnsFalse() {
+        stack.pushScope();
+        stack.setVar("x", 1, DataType.INT);
+        // Attempt to update with a Double while variable is INT
+        boolean res = stack.updateTopValue(2.5);
+        assertFalse(res);
+        // value should remain unchanged
+        assertEquals(1, stack.top().getValue());
+    }
+
+    @Test
+    public void updateTopValue_constantAlreadyAssigned_returnsFalse() {
+        stack.pushScope();
+        stack.setConst("c", 10, DataType.INT);
+        // constant already has a value -> updateTopValue should refuse
+        boolean res = stack.updateTopValue(20);
+        assertFalse(res);
+        assertEquals(10, stack.top().getValue());
+    }
+
+    @Test
+    public void updateTopValue_constantUninitialized_canInitialize() {
+        stack.pushScope();
+        // declare constant without initial value
+        stack.setConst("c", null, DataType.INT);
+        // now initialize it using updateTopValue
+        boolean res = stack.updateTopValue(99);
+        assertTrue(res);
+        assertEquals(99, stack.top().getValue());
+    }
+
+    @Test
+    public void updateTopValue_constantUninitialized_typeMismatch_returnsFalse() {
+        stack.pushScope();
+        stack.setConst("c", null, DataType.INT);
+        // attempt to initialize with wrong type
+        boolean res = stack.updateTopValue(3.14);
+        assertFalse(res);
+        assertNull(stack.top().getValue());
+    }
+
 
 
     /* TODO : Replace with the correct format
@@ -589,4 +647,428 @@ public class StackTest {
 
      */
 
+    @Test
+    public void searchObject_returnsObjectWhenPresent() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+        Stack_Object c = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(c.getName()).thenReturn("c");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+            dq.addLast(b);
+            dq.addLast(c);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        Stack_Object found = s.searchObject("b");
+        assertSame(b, found);
+    }
+
+    @Test
+    public void searchObject_notFound_returnsNull() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        Stack_Object found = s.searchObject("missing");
+        assertNull(found);
+    }
+
+    @Test
+    public void searchObject_multipleMatches_returnsFirstEncountered() {
+        Stack s = new Stack();
+
+        Stack_Object first = mock(Stack_Object.class);
+        Stack_Object second = mock(Stack_Object.class);
+
+        when(first.getName()).thenReturn("dup");
+        when(second.getName()).thenReturn("dup");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(first);
+            dq.addLast(second);
+        } catch (Exception ex) {
+            fail("Reflection setup failed: " + ex.getMessage());
+        }
+
+        Stack_Object found = s.searchObject("dup");
+        assertSame(first, found);
+    }
+
+    @Test
+    public void removeObject_removesGivenObject() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+        Stack_Object c = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(c.getName()).thenReturn("c");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+            dq.addLast(b);
+            dq.addLast(c);
+
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            m.setAccessible(true);
+            m.invoke(s, b);
+
+            Object[] arr = dq.toArray();
+            assertEquals(2, arr.length);
+            assertEquals(a, arr[0]);
+            assertEquals(c, arr[1]);
+        } catch (Exception ex) {
+            fail("Reflection invocation failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void removeObject_onlyRemovesSpecifiedInstanceWhenDuplicatesExist() {
+        Stack s = new Stack();
+
+        Stack_Object first = mock(Stack_Object.class);
+        Stack_Object second = mock(Stack_Object.class);
+
+        when(first.getName()).thenReturn("dup");
+        when(second.getName()).thenReturn("dup");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(first);
+            dq.addLast(second);
+
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            m.setAccessible(true);
+            m.invoke(s, second);
+
+            Object[] arr = dq.toArray();
+            assertEquals(1, arr.length);
+            assertEquals(first, arr[0]);
+        } catch (Exception ex) {
+            fail("Reflection invocation failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void removeObject_noopWhenObjectNotPresent() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object notPresent = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(notPresent.getName()).thenReturn("x");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            m.setAccessible(true);
+            m.invoke(s, notPresent);
+
+            // Stack should be unchanged
+            Object[] arr = dq.toArray();
+            assertEquals(1, arr.length);
+            assertEquals(a, arr[0]);
+        } catch (Exception ex) {
+            fail("Reflection invocation failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void putOnTop_existing_movesToTop_andReturnsTrue() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        Stack_Object b = mock(Stack_Object.class);
+        Stack_Object c = mock(Stack_Object.class);
+
+        when(a.getName()).thenReturn("a");
+        when(b.getName()).thenReturn("b");
+        when(c.getName()).thenReturn("c");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            // Initial order : [a, b, c]
+            dq.addLast(a);
+            dq.addLast(b);
+            dq.addLast(c);
+
+            boolean res = s.putOnTop("b");
+            assertTrue(res);
+
+            Object[] arr = dq.toArray();
+            // We want : [b, a, c]
+            assertEquals(3, arr.length);
+            assertEquals(b, arr[0]);
+            assertEquals(a, arr[1]);
+            assertEquals(c, arr[2]);
+        } catch (Exception ex) {
+            fail("Reflection/setup failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void putOnTop_notFound_returnsFalse_andLeavesStackUnchanged() {
+        Stack s = new Stack();
+
+        Stack_Object a = mock(Stack_Object.class);
+        when(a.getName()).thenReturn("a");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            dq.addLast(a);
+
+            boolean res = s.putOnTop("missing");
+            assertFalse(res);
+
+            Object[] arr = dq.toArray();
+            assertEquals(1, arr.length);
+            assertEquals(a, arr[0]);
+        } catch (Exception ex) {
+            fail("Reflection/setup failed: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void putOnTop_withDuplicates_movesFirstEncountered() {
+        Stack s = new Stack();
+
+        Stack_Object other = mock(Stack_Object.class);
+        Stack_Object firstDup = mock(Stack_Object.class);
+        Stack_Object secondDup = mock(Stack_Object.class);
+
+        when(other.getName()).thenReturn("x");
+        when(firstDup.getName()).thenReturn("dup");
+        when(secondDup.getName()).thenReturn("dup");
+
+        try {
+            Field f = Stack.class.getDeclaredField("stack_content");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            // Initial order : [x, firstDup, secondDup]
+            dq.addLast(other);
+            dq.addLast(firstDup);
+            dq.addLast(secondDup);
+
+            boolean res = s.putOnTop("dup");
+            assertTrue(res);
+
+            Object[] arr = dq.toArray();
+            // We want : [firstDup, x, secondDup]
+            assertEquals(3, arr.length);
+            assertEquals(firstDup, arr[0]);
+            assertEquals(other, arr[1]);
+            assertEquals(secondDup, arr[2]);
+        } catch (Exception ex) {
+            fail("Reflection/setup failed: " + ex.getMessage());
+        }
+    }
+
+
+    @Test
+    public void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
+        Stack s = new Stack();
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        m.setAccessible(true);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, null, DataType.INT);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void validateType_validTypes_doNotThrow() throws Exception {
+        Stack s = new Stack();
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, DataType.class);
+        m.setAccessible(true);
+
+        // BOOL
+        try {
+            m.invoke(s, Boolean.TRUE, DataType.BOOL);
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            fail("validateType threw for BOOL: " + ite.getCause());
+        }
+
+        // INT
+        try {
+            m.invoke(s, Integer.valueOf(42), DataType.INT);
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            fail("validateType threw for INT: " + ite.getCause());
+        }
+
+        // FLOAT
+        try {
+            m.invoke(s, Float.valueOf(3.14f), DataType.FLOAT);
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            fail("validateType threw for FLOAT: " + ite.getCause());
+        }
+
+        // DOUBLE
+        try {
+            m.invoke(s, Double.valueOf(2.718), DataType.DOUBLE);
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            fail("validateType threw for DOUBLE: " + ite.getCause());
+        }
+
+        // STRING
+        try {
+            m.invoke(s, "hello", DataType.STRING);
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            fail("validateType threw for STRING: " + ite.getCause());
+        }
+    }
+
+    @Test
+    public void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
+        Stack s = new Stack();
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        m.setAccessible(true);
+
+        // BOOL expected, but provide Integer
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, Integer.valueOf(1), DataType.BOOL);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // INT expected, but provide Double
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, Double.valueOf(1.2), DataType.INT);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // DOUBLE expected, but provide Float
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, Float.valueOf(1.2f), DataType.DOUBLE);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
+        Stack s = new Stack();
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        m.setAccessible(true);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, Integer.valueOf(5), DataType.VOID);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                m.invoke(s, "something", DataType.UNKNOWN);
+            } catch (java.lang.reflect.InvocationTargetException ite) {
+                throw (RuntimeException) ite.getCause();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void getDataTypeFromGenericObjectTest() {
+        DataType res;
+        // INT
+        int integer = 2;
+        res = stack.getDataTypeFromGenericObject(integer);
+        assertEquals(DataType.INT, res);
+
+        // BOOL
+        boolean bouleEtBill = true;
+        res = stack.getDataTypeFromGenericObject(bouleEtBill);
+        assertEquals(DataType.BOOL, res);
+
+        // STRING
+        String str = "chaine";
+        res = stack.getDataTypeFromGenericObject(str);
+        assertEquals(DataType.STRING, res);
+
+        // FLOAT
+        float flottant = 1.2F;
+        res = stack.getDataTypeFromGenericObject(flottant);
+        assertEquals(DataType.FLOAT, res);
+
+        // DOUBLE
+        double deux = 1.2;
+        res = stack.getDataTypeFromGenericObject(deux);
+        assertEquals(DataType.DOUBLE, res);
+
+        // UNKNOWN
+        res = stack.getDataTypeFromGenericObject(null);
+        assertEquals(DataType.UNKNOWN, res);
+    }
 }

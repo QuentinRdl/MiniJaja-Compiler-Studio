@@ -28,13 +28,13 @@ public class Stack_Object {
     public Stack_Object(String name, Object value, int scope, EntryKind kind, DataType dataType) {
         if (kind == EntryKind.VARIABLE || kind == EntryKind.CONSTANT) {
             if (dataType == null || dataType == DataType.UNKNOWN) {
-                throw new InvalidStackObjectConstructionException(
+                throw new Stack.InvalidStackObjectConstructionException(
                         "VARIABLE or CONSTANT must specify a valid DataType"
                 );
             }
         } else {
             if (dataType != null && dataType != DataType.UNKNOWN) {
-                throw new InvalidStackObjectConstructionException(
+                throw new Stack.InvalidStackObjectConstructionException(
                         "Non-variable/non-constant objects should not specify DataType"
                 );
             }
@@ -94,9 +94,9 @@ public class Stack_Object {
      * @param value new value for the var
      */
     public void setValue(Object value) {
-        if (this.entryKind == EntryKind.CONSTANT) {
-            throw new ConstantModificationException(
-                "Cannot modify value of constant Stack_Object '" + this.name + "' (scope=" + this.scope + ")"
+        if (this.entryKind == EntryKind.CONSTANT && this.value != null) {
+            throw new Stack.ConstantModificationException(
+                "Cannot modify value of constant Stack_Object '" + this.name + "' (scope=" + this.scope + ") if it already has a declared value"
             );
         }
         this.value = value;

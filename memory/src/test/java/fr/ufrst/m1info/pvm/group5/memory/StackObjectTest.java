@@ -30,7 +30,7 @@ public class StackObjectTest {
 
     @Test
     public void constructVariable_withoutDataType_throws() {
-        assertThrows(InvalidStackObjectConstructionException.class, () ->
+        assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
             new Stack_Object("x", 10, 0, EntryKind.VARIABLE)
         );
     }
@@ -46,7 +46,7 @@ public class StackObjectTest {
     @Test
     public void setValue_onConstant_throws() {
         Stack_Object cst = new Stack_Object("c", 1, 0, EntryKind.CONSTANT, DataType.INT);
-        assertThrows(ConstantModificationException.class, () -> cst.setValue(2));
+        assertThrows(Stack.ConstantModificationException.class, () -> cst.setValue(2));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class StackObjectTest {
 
     @Test
     public void constructNonVarWithDataType_throws() {
-        assertThrows(InvalidStackObjectConstructionException.class, () ->
+        assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
             new Stack_Object("m", "val", 1, EntryKind.METHOD, DataType.INT)
         );
     }
