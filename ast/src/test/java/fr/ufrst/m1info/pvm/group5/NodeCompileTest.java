@@ -344,4 +344,13 @@ public class NodeCompileTest {
         MainNode tested = new MainNode(null,null);
         assertEquals(List.of("push(0)"),tested.compile(1));
     }
+
+    @Test
+    public void NotNode(){
+        IdentNode ident = new IdentNode("x");
+        NotNode tested = new NotNode(ident);
+        assertEquals(List.of("load(x)","not"),tested.compile(1));
+    }
+
+    
 }
