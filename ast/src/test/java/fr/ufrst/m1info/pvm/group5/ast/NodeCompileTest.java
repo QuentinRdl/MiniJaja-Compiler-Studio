@@ -2,10 +2,11 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import org.junit.jupiter.api.*;
 
-import fr.ufrst.m1info.pvm.group5.Nodes.*;
+import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class NodeCompileTest {

@@ -160,7 +160,8 @@ public class NodeInterpretationUnitTest {
                 DeclarationsNode.class,
                 m->m.declVar("x", new Value(5), DataType.INT),
                 null,
-                m->{}
+                m->{},
+                null
                 );
         ClassNode c = new ClassNode(ident, d, main);
         c.interpret(memory);
@@ -177,7 +178,8 @@ public class NodeInterpretationUnitTest {
                 DeclarationsNode.class,
                 m->m.declVar("x", new Value(5), DataType.INT),
                 null,
-                m->m.withdrawDecl("x")
+                m->m.withdrawDecl("x"),
+                null
         );
         ClassNode c = new ClassNode(ident, d, main);
         c.interpret(mem);
@@ -192,7 +194,7 @@ public class NodeInterpretationUnitTest {
                 m->m.declVar("x", new Value(5), DataType.INT),
                 null
         );
-        DeclarationsNode d = ASTMocks.createWithdrawNode(DeclarationsNode.class, m -> {}, null, m->{});
+        DeclarationsNode d = ASTMocks.createWithdrawNode(DeclarationsNode.class, m -> {}, null, m->{},null);
         ClassNode c = new ClassNode(ident, d, main);
         c.interpret(memory);
         assertEquals(5, memoryStorage.get("x").valueInt);
@@ -210,7 +212,8 @@ public class NodeInterpretationUnitTest {
                 DeclarationsNode.class,
                 m->m.declVar("x", new Value(5), DataType.INT),
                 null,
-                m->m.withdrawDecl("x")
+                m->m.withdrawDecl("x"),
+                null
         );
         ClassNode c = new ClassNode(ident, d, main);
         c.interpret(memory);
@@ -301,7 +304,8 @@ public class NodeInterpretationUnitTest {
         VariableNode decl = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("x", new Value(1), DataType.INT),
                 null,
-                m->m.withdrawDecl("x")
+                m->m.withdrawDecl("x"),
+                null
                 );
         DeclarationsNode decls = new DeclarationsNode(decl, null);
         decls.interpret(mem);
@@ -315,17 +319,20 @@ public class NodeInterpretationUnitTest {
         VariableNode decl = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("x", new Value(1), DataType.INT),
                 null,
-                m->m.withdrawDecl("x")
+                m->m.withdrawDecl("x"),
+                null
         );
         VariableNode decl1 = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("y", new Value(2), DataType.INT),
                 null,
-                m->m.withdrawDecl("y")
+                m->m.withdrawDecl("y"),
+                null
         );
         VariableNode decl2 = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("z", new Value(3), DataType.INT),
                 null,
-                m->m.withdrawDecl("z")
+                m->m.withdrawDecl("z"),
+                null
         );
         DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
         decls.interpret(mem);
@@ -344,7 +351,8 @@ public class NodeInterpretationUnitTest {
                 m->{
                     assertFalse( memoryStorage.containsKey("y") || memoryStorage.containsKey("z"));
                     m.withdrawDecl("x");
-                }
+                },
+                null
         );
         VariableNode decl1 = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("y", new Value(2), DataType.INT),
@@ -352,12 +360,14 @@ public class NodeInterpretationUnitTest {
                 m->{
                     assertFalse(memoryStorage.containsKey("z"));
                     m.withdrawDecl("y");
-                }
+                },
+                null
         );
         VariableNode decl2 = ASTMocks.createWithdrawNode(VariableNode.class,
                 m -> m.declVar("z", new Value(3), DataType.INT),
                 null,
-                m->m.withdrawDecl("z")
+                m->m.withdrawDecl("z"),
+                null
         );
         DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
         decls.interpret(mem);
