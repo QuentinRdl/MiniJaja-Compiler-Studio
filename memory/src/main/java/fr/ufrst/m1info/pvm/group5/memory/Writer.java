@@ -129,18 +129,21 @@ public class Writer {
     public CompletableFuture<Void> eraseAsync(int nbChars){
         String oldText = _innerText;
         int erased;
+        String removedText;
         if(nbChars>=_innerText.length()){ // Special case
             _innerText = "";
+            removedText = _innerText;
             erased = oldText.length();
         }
         else {
             _innerText = _innerText.substring(0, oldText.length() - nbChars);
             erased = nbChars;
+            removedText = oldText.substring(erased+1);
         }
         return onTextRemovedAsync(new TextRemovedData(
                 oldText,
                 _innerText,
-                oldText.substring(0, oldText.length() - erased),
+                removedText,
                 erased
         ));
     }
@@ -154,18 +157,21 @@ public class Writer {
         String oldText = _innerText;
         int lineIndex = _innerText.lastIndexOf("\n");
         int removed = 0;
+        String removedText;
         if(lineIndex == -1){
             _innerText = "";
+            removedText = _innerText;
             removed = oldText.length();
         }
         else{
             _innerText = _innerText.substring(0, lineIndex);
             removed = oldText.length() - lineIndex;
+            removedText = _innerText.substring(removed+1);
         }
         return onTextRemovedAsync(new TextRemovedData(
                 oldText,
                 _innerText,
-                oldText.substring(0, oldText.length()-removed),
+                removedText,
                 removed
         ));
     }

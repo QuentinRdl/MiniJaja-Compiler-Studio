@@ -184,5 +184,45 @@ public class WriterTest {
         future.get();
     }
 
+    @Test
+    @DisplayName("Event info - Erase / no text")
+    public void EventInfo_Erase_NoText() throws Exception{
+        writer.TextRemovedEvent.subscribe(e -> {
+            assertEquals("", e.diff());
+            assertEquals("", e.oldText());
+            assertEquals("", e.newText());
+            assertEquals(0, e.nbRemoved());
+        });
+        var future = writer.eraseAsync(10);
+        future.get();
+    }
 
+    @Test
+    @DisplayName("Event info - Erase / Text removed event / more text than erased")
+    public void EventInfo_Erase_TextRemoved_tooMuch() throws Exception{
+        writer.writeAsync("Hello world").get();
+        writer.TextRemovedEvent.subscribe(e -> {
+            assertEquals("world", e.diff());
+            assertEquals("Hello world", e.oldText());
+            assertEquals("Hello ", e.newText());
+            assertEquals(5, e.nbRemoved());
+        });
+        var future = writer.eraseAsync(5);
+        future.get();
+    }
+
+    @Test
+    @DisplayName("Event info - Erase / Text removed event / more text than erased")
+    public void EventInfo_Erase_TextChanged_tooMuch() throws Exception{
+        writer.writeAsync("Hello world").get();
+        writer.TextChangedEvent.subscribe(e -> {
+            assertEquals("world", e.diff());
+            assertEquals("Hello world", e.oldText());
+            assertEquals("Hello ", e.newText());
+            assertEquals(-5, e.nbAdded());
+            assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
+        });
+        var future = writer.eraseAsync(5);
+        future.get();
+    }
 }
