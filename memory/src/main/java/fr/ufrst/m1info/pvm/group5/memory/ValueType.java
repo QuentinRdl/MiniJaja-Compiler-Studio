@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5.ast;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 

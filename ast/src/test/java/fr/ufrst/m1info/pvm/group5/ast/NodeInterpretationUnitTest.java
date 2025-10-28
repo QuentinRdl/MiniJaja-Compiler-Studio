@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
 import org.junit.jupiter.api.*;
 
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
