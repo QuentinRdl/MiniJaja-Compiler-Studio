@@ -106,10 +106,10 @@ public class CheckDynamicTypeTest {
     @DisplayName("BinaryOperator - checkType() valid with two int")
     public void testBinaryOperator_IntOk() throws Exception {
         ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(left.checkType()).thenReturn("int");
+        when(left.checkType(memoryMock)).thenReturn("int");
 
         ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(right.checkType()).thenReturn("int");
+        when(right.checkType(memoryMock)).thenReturn("int");
 
         BinaryOperator op = new BinaryOperator(left, right) {
             @Override
@@ -123,7 +123,7 @@ public class CheckDynamicTypeTest {
             }
         };
 
-        String result = op.checkType();
+        String result = op.checkType(memoryMock);
         assertEquals("int", result);
     }
 
@@ -131,10 +131,10 @@ public class CheckDynamicTypeTest {
     @DisplayName("BinaryOperator - checkType() fails if any operand is not int")
     public void testBinaryOperator_NonInt() {
         ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(left.checkType()).thenReturn("int");
+        when(left.checkType(memoryMock)).thenReturn("int");
 
         ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(right.checkType()).thenReturn("bool");
+        when(right.checkType(memoryMock)).thenReturn("bool");
 
         BinaryOperator op = new BinaryOperator(left, right) {
             @Override
@@ -148,7 +148,7 @@ public class CheckDynamicTypeTest {
             }
         };
 
-        assertThrows(ASTInvalidDynamicTypeException.class, op::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> op.checkType(memoryMock));
     }
 
     @Test
@@ -157,8 +157,8 @@ public class CheckDynamicTypeTest {
         BooleanNode trueNode = new BooleanNode(true);
         BooleanNode falseNode = new BooleanNode(false);
 
-        assertEquals("bool", trueNode.checkType());
-        assertEquals("bool", falseNode.checkType());
+        assertEquals("bool", trueNode.checkType(memoryMock));
+        assertEquals("bool", falseNode.checkType(memoryMock));
     }
 
     @Test
@@ -167,11 +167,11 @@ public class CheckDynamicTypeTest {
         DummyWithdrNode declsNode = new DummyWithdrNode();
         IdentNode classIdent = new IdentNode("C");
         ASTNode mainNode = mock(ASTNode.class);
-        when(mainNode.checkType()).thenReturn("void");
+        when(mainNode.checkType(memoryMock)).thenReturn("void");
 
         ClassNode classNode = new ClassNode(classIdent, declsNode, mainNode);
 
-        String result = classNode.checkType();
+        String result = classNode.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -181,7 +181,7 @@ public class CheckDynamicTypeTest {
         DummyWithdrNode decl = new DummyWithdrNode();
 
         DeclarationsNode node = new DeclarationsNode(decl, null);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
 
         assertEquals("void", result);
     }
@@ -193,7 +193,7 @@ public class CheckDynamicTypeTest {
         DummyWithdrNode decl2 = new DummyWithdrNode();
 
         DeclarationsNode node = new DeclarationsNode(decl1, decl2);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
 
         assertEquals("void", result);
     }
@@ -205,10 +205,10 @@ public class CheckDynamicTypeTest {
         IdentNode ident = new IdentNode("x");
 
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("int");
+        when(expr.checkType(memoryMock)).thenReturn("int");
 
         FinalNode finalNode = new FinalNode(typeNode, ident, expr);
-        String result = finalNode.checkType();
+        String result = finalNode.checkType(memoryMock);
 
         assertEquals("void", result);
     }
@@ -220,10 +220,10 @@ public class CheckDynamicTypeTest {
         IdentNode ident = new IdentNode("flag");
 
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("bool");
+        when(expr.checkType(memoryMock)).thenReturn("bool");
 
         FinalNode finalNode = new FinalNode(typeNode, ident, expr);
-        String result = finalNode.checkType();
+        String result = finalNode.checkType(memoryMock);
 
         assertEquals("void", result);
     }
@@ -235,11 +235,11 @@ public class CheckDynamicTypeTest {
         IdentNode ident = new IdentNode("x");
 
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("bool");
+        when(expr.checkType(memoryMock)).thenReturn("bool");
 
         FinalNode finalNode = new FinalNode(typeNode, ident, expr);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, finalNode::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> finalNode.checkType(memoryMock));
     }
 
 
@@ -249,11 +249,11 @@ public class CheckDynamicTypeTest {
         TypeNode typeNode = new TypeNode(ValueType.VOID);
         IdentNode ident = new IdentNode("x");
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("void");
+        when(expr.checkType(memoryMock)).thenReturn("void");
 
         FinalNode finalNode = new FinalNode(typeNode, ident, expr);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, finalNode::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> finalNode.checkType(memoryMock));
     }
 
 
@@ -261,61 +261,61 @@ public class CheckDynamicTypeTest {
     @DisplayName("IfNode - checkType() valid with condition bool")
     public void testIfNode_ValidCondition() throws Exception {
         ASTNode condition = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(condition.checkType()).thenReturn("bool");
+        when(condition.checkType(memoryMock)).thenReturn("bool");
 
         ASTNode instrThen = mock(ASTNode.class);
         ASTNode instrElse = mock(ASTNode.class);
 
         IfNode ifNode = new IfNode(condition, instrThen, instrElse);
-        String result = ifNode.checkType();
+        String result = ifNode.checkType(memoryMock);
 
         assertEquals("void", result);
-        verify(instrThen).checkType();
-        verify(instrElse).checkType();
+        verify(instrThen).checkType(memoryMock);
+        verify(instrElse).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("IfNode - checkType() fails if condition no bool")
     public void testIfNode_InvalidCondition() {
         ASTNode condition = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(condition.checkType()).thenReturn("int"); // mauvais type
+        when(condition.checkType(memoryMock)).thenReturn("int"); // mauvais type
 
         ASTNode instrThen = mock(ASTNode.class);
         ASTNode instrElse = mock(ASTNode.class);
 
         IfNode ifNode = new IfNode(condition, instrThen, instrElse);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, ifNode::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> ifNode.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("IfNode - checkType() valid if else null")
     public void testIfNode_NullElse() throws Exception {
         ASTNode condition = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(condition.checkType()).thenReturn("bool");
+        when(condition.checkType(memoryMock)).thenReturn("bool");
 
         ASTNode instrThen = mock(ASTNode.class);
 
         IfNode ifNode = new IfNode(condition, instrThen, null);
-        String result = ifNode.checkType();
+        String result = ifNode.checkType(memoryMock);
 
         assertEquals("void", result);
-        verify(instrThen).checkType();
+        verify(instrThen).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("IfNode - checkType() valid if then null")
     public void testIfNode_NullThen() throws Exception {
         ASTNode condition = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(condition.checkType()).thenReturn("bool");
+        when(condition.checkType(memoryMock)).thenReturn("bool");
 
         ASTNode instrElse = mock(ASTNode.class);
 
         IfNode ifNode = new IfNode(condition, null, instrElse);
-        String result = ifNode.checkType();
+        String result = ifNode.checkType(memoryMock);
 
         assertEquals("void", result);
-        verify(instrElse).checkType();
+        verify(instrElse).checkType(memoryMock);
     }
 
     @Test
@@ -353,12 +353,12 @@ public class CheckDynamicTypeTest {
     @DisplayName("InstructionsNode - checkType() with instruction only")
     public void testInstructionsNode_SingleInstruction() throws Exception {
         ASTNode instr = mock(ASTNode.class);
-        when(instr.checkType()).thenReturn("void");
+        when(instr.checkType(memoryMock)).thenReturn("void");
 
         InstructionsNode node = new InstructionsNode(instr, null);
 
-        assertEquals("void", node.checkType());
-        verify(instr, times(1)).checkType();
+        assertEquals("void", node.checkType(memoryMock));
+        verify(instr, times(1)).checkType(memoryMock);
     }
 
     @Test
@@ -367,25 +367,25 @@ public class CheckDynamicTypeTest {
         ASTNode instr1 = mock(ASTNode.class);
         ASTNode instr2 = mock(ASTNode.class);
 
-        when(instr1.checkType()).thenReturn("void");
-        when(instr2.checkType()).thenReturn("void");
+        when(instr1.checkType(memoryMock)).thenReturn("void");
+        when(instr2.checkType(memoryMock)).thenReturn("void");
 
         InstructionsNode node = new InstructionsNode(instr1, instr2);
 
-        assertEquals("void", node.checkType());
-        verify(instr1, times(1)).checkType();
-        verify(instr2, times(1)).checkType();
+        assertEquals("void", node.checkType(memoryMock));
+        verify(instr1, times(1)).checkType(memoryMock);
+        verify(instr2, times(1)).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("InstructionsNode - checkType() fails if statement fails")
     public void testInstructionsNode_FailingInstruction() throws Exception {
         ASTNode instr = mock(ASTNode.class);
-        when(instr.checkType()).thenThrow(new ASTInvalidDynamicTypeException("Error"));
+        when(instr.checkType(memoryMock)).thenThrow(new ASTInvalidDynamicTypeException("Error"));
 
         InstructionsNode node = new InstructionsNode(instr, null);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, node::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -394,85 +394,85 @@ public class CheckDynamicTypeTest {
         ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
         ASTNode instrs = mock(ASTNode.class);
 
-        when(vars.checkType()).thenReturn("void");
-        when(instrs.checkType()).thenReturn("void");
+        when(vars.checkType(memoryMock)).thenReturn("void");
+        when(instrs.checkType(memoryMock)).thenReturn("void");
 
         MainNode node = new MainNode(vars, instrs);
 
-        assertEquals("void", node.checkType());
-        verify(vars, times(1)).checkType();
-        verify(instrs, times(1)).checkType();
+        assertEquals("void", node.checkType(memoryMock));
+        verify(vars, times(1)).checkType(memoryMock);
+        verify(instrs, times(1)).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("MainNode - checkType() With vars null")
     public void testMainNode_VarsNull() throws Exception {
         ASTNode instrs = mock(ASTNode.class);
-        when(instrs.checkType()).thenReturn("void");
+        when(instrs.checkType(memoryMock)).thenReturn("void");
 
         MainNode node = new MainNode(null, instrs);
 
-        assertEquals("void", node.checkType());
-        verify(instrs, times(1)).checkType();
+        assertEquals("void", node.checkType(memoryMock));
+        verify(instrs, times(1)).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("MainNode - checkType() With instrs null")
     public void testMainNode_InstrsNull() throws Exception {
         ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
-        when(vars.checkType()).thenReturn("void");
+        when(vars.checkType(memoryMock)).thenReturn("void");
 
         MainNode node = new MainNode(vars, null);
 
-        assertEquals("void", node.checkType());
-        verify(vars, times(1)).checkType();
+        assertEquals("void", node.checkType(memoryMock));
+        verify(vars, times(1)).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("MainNode - checkType() fails if vars fails")
     public void testMainNode_VarsFail() throws Exception {
         ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
-        when(vars.checkType()).thenThrow(new ASTInvalidDynamicTypeException("Error"));
+        when(vars.checkType(memoryMock)).thenThrow(new ASTInvalidDynamicTypeException("Error"));
 
         MainNode node = new MainNode(vars, null);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, node::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("MainNode - checkType() fails if instrs fails")
     public void testMainNode_InstrsFail() throws Exception {
         ASTNode instrs = mock(ASTNode.class);
-        when(instrs.checkType()).thenThrow(new ASTInvalidDynamicTypeException("Error"));
+        when(instrs.checkType(memoryMock)).thenThrow(new ASTInvalidDynamicTypeException("Error"));
 
         MainNode node = new MainNode(null, instrs);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, node::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, ()->node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("NotNode - checkType() valid with bool")
     public void testNotNode_Bool() throws Exception {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("bool");
+        when(expr.checkType(memoryMock)).thenReturn("bool");
 
         NotNode node = new NotNode(expr);
 
-        assertEquals("bool", node.checkType());
-        verify(expr, times(1)).checkType();
+        assertEquals("bool", node.checkType(memoryMock));
+        verify(expr, times(1)).checkType(memoryMock);
     }
 
     @Test
     @DisplayName("NotNode - checkType() fails if non-bool")
     public void testNotNode_NonBool() {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("int");
+        when(expr.checkType(memoryMock)).thenReturn("int");
 
         NotNode node = new NotNode(expr);
 
         ASTInvalidDynamicTypeException exception = assertThrows(
                 ASTInvalidDynamicTypeException.class,
-                node::checkType
+                () -> node.checkType(memoryMock)
         );
         assertTrue(exception.getMessage().contains("non-bool"));
     }
@@ -487,7 +487,7 @@ public class CheckDynamicTypeTest {
     @DisplayName("NumberNode - checkType() return int")
     public void testNumberNode_CheckType() throws Exception {
         NumberNode node = new NumberNode(42);
-        assertEquals("int", node.checkType());
+        assertEquals("int", node.checkType(memoryMock));
     }
 
     @Test
@@ -504,7 +504,7 @@ public class CheckDynamicTypeTest {
         NumberNode numberExpr = new NumberNode(10);
         ReturnNode returnNode = new ReturnNode(numberExpr);
 
-        assertEquals("int", returnNode.checkType());
+        assertEquals("int", returnNode.checkType(memoryMock));
     }
 
     @Test
@@ -513,7 +513,7 @@ public class CheckDynamicTypeTest {
         BooleanNode boolExpr = new BooleanNode(true);
         ReturnNode returnNode = new ReturnNode(boolExpr);
 
-        assertEquals("bool", returnNode.checkType());
+        assertEquals("bool", returnNode.checkType(memoryMock));
     }
 
     @Test
@@ -521,7 +521,7 @@ public class CheckDynamicTypeTest {
     public void testReturnNode_CheckType_NullExpr() {
         ReturnNode returnNode = new ReturnNode(null);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, returnNode::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> returnNode.checkType(memoryMock));
     }
     @Test
     @DisplayName("SumNode - checkType() valid with int")
@@ -584,10 +584,10 @@ public class CheckDynamicTypeTest {
     @DisplayName("UnMinusNode - checkType() valid with int")
     public void testUnMinusNode_IntOk() throws Exception {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("int");
+        when(expr.checkType(memoryMock)).thenReturn("int");
 
         UnMinusNode node = new UnMinusNode(expr);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
         assertEquals("int", result);
     }
 
@@ -595,10 +595,10 @@ public class CheckDynamicTypeTest {
     @DisplayName("UnMinusNode - checkType() fails if expression not int")
     public void testUnMinusNode_NonInt() {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("bool");
+        when(expr.checkType(memoryMock)).thenReturn("bool");
 
         UnMinusNode node = new UnMinusNode(expr);
-        assertThrows(ASTInvalidDynamicTypeException.class, node::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -607,10 +607,10 @@ public class CheckDynamicTypeTest {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("x");
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("int");
+        when(expr.checkType(memoryMock)).thenReturn("int");
 
         VariableNode node = new VariableNode(typeNode, ident, expr);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -620,10 +620,10 @@ public class CheckDynamicTypeTest {
         TypeNode typeNode = new TypeNode(ValueType.BOOL);
         IdentNode ident = new IdentNode("flag");
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(expr.checkType()).thenReturn("int");
+        when(expr.checkType(memoryMock)).thenReturn("int");
 
         VariableNode node = new VariableNode(typeNode, ident, expr);
-        assertThrows(ASTInvalidDynamicTypeException.class, node::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -633,7 +633,7 @@ public class CheckDynamicTypeTest {
         IdentNode ident = new IdentNode("flag");
 
         VariableNode node = new VariableNode(typeNode, ident, null);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -643,7 +643,7 @@ public class CheckDynamicTypeTest {
         ASTNode var = new DummyWithdrNode();
 
         VariablesNode node = new VariablesNode(var, null);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -654,7 +654,7 @@ public class CheckDynamicTypeTest {
         ASTNode var2 = new DummyWithdrNode();
 
         VariablesNode node = new VariablesNode(var1, var2);
-        String result = node.checkType();
+        String result = node.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -669,12 +669,12 @@ public class CheckDynamicTypeTest {
     @DisplayName("WhileNode - checkType() with bool condition and instructions")
     public void testWhileNode_CheckType_Valid() throws Exception {
         ASTNode cond = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(cond.checkType()).thenReturn("bool");
+        when(cond.checkType(memoryMock)).thenReturn("bool");
         ASTNode instr = mock(ASTNode.class);
-        when(instr.checkType()).thenReturn("void");
+        when(instr.checkType(memoryMock)).thenReturn("void");
 
         WhileNode whileNode = new WhileNode(cond, instr);
-        String result = whileNode.checkType();
+        String result = whileNode.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -682,22 +682,22 @@ public class CheckDynamicTypeTest {
     @DisplayName("WhileNode - checkType() with non-bool condition")
     public void testWhileNode_CheckType_InvalidCondition() throws Exception {
         ASTNode cond = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(cond.checkType()).thenReturn("int");
+        when(cond.checkType(memoryMock)).thenReturn("int");
 
         ASTNode instr = mock(ASTNode.class);
 
         WhileNode whileNode = new WhileNode(cond, instr);
-        assertThrows(ASTInvalidDynamicTypeException.class, whileNode::checkType);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> whileNode.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("WhileNode - checkType() without instructions")
     public void testWhileNode_CheckType_NoInstructions() throws Exception {
         ASTNode cond = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
-        when(cond.checkType()).thenReturn("bool");
+        when(cond.checkType(memoryMock)).thenReturn("bool");
 
         WhileNode whileNode = new WhileNode(cond, null);
-        String result = whileNode.checkType();
+        String result = whileNode.checkType(memoryMock);
         assertEquals("void", result);
     }
 
@@ -711,7 +711,7 @@ public class CheckDynamicTypeTest {
         @Override
         public List<String> withdrawCompile(int address) { return List.of(); }
         @Override
-        public String checkType() { return "void"; }
+        public String checkType(Memory m) { return "void"; }
     }
 
 

@@ -37,8 +37,8 @@ public class NotNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        String exprType = expr.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        String exprType = expr.checkType(m);
         if (!exprType.equals("bool")) {
             throw new ASTInvalidDynamicTypeException(
                     "'not' operator applied to a non-bool type : " + exprType
