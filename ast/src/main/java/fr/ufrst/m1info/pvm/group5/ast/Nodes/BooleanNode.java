@@ -32,7 +32,7 @@ public class BooleanNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         return "bool";
     }
     @Override

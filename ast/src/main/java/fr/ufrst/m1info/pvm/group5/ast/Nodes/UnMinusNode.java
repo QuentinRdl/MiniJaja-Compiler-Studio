@@ -34,8 +34,8 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        String exprType = exp.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        String exprType = exp.checkType(m);
         if (!exprType.equals("int")) {
             throw new ASTInvalidDynamicTypeException(
                     "Minus operator applied to a non-int type : " + exprType

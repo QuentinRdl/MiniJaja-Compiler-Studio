@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.ast.Value;
@@ -44,5 +45,21 @@ public class WriteNode extends ASTNode{
         else{
             m.write(text);
         }
+    }
+
+    // TODO : create abstract class for Write nodes to avoid code duplication
+    @Override
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        if(text == null){
+            try {
+                Value v = (Value) m.val(ident.identifier);
+                if(v == null)
+                    throw new ASTInvalidDynamicTypeException("Variable " + ident.identifier +" is not defined");
+            }
+            catch (Exception e) {
+                throw new ASTInvalidDynamicTypeException("Variable " + ident.identifier +" is not defined");
+            }
+        }
+        return "void";
     }
 }

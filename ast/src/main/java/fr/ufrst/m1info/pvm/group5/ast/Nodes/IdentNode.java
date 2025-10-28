@@ -32,10 +32,6 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        return checkType(new Memory());
-    }
-
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         try {
             Value v = (Value) m.val(identifier);

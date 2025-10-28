@@ -53,11 +53,11 @@ public class ClassNode extends ASTNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (decls != null) {
-            decls.checkType();
+            decls.checkType(m);
         }
-        main.checkType();
+        main.checkType(m);
 
         return "void";
     }

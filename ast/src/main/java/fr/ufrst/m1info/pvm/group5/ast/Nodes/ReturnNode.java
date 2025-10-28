@@ -27,11 +27,11 @@ public class ReturnNode extends ASTNode{
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (expr == null) {
             throw new ASTInvalidDynamicTypeException("Return without expression");
         }
-        String exprType = expr.checkType();
+        String exprType = expr.checkType(m);
         return exprType;
     }
 

@@ -26,10 +26,5 @@ public abstract class ASTNode {
      * @return the evaluated type of the node (e.g., int, bool, string, void, etc.)
      * @throws ASTInvalidDynamicTypeException if the type is invalid
      */
-    public abstract String checkType() throws  ASTInvalidDynamicTypeException;
-    // New overloaded method
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        // By default, calls checkType() without memory
-        return checkType();
-    }
+    public abstract String checkType(Memory m) throws ASTInvalidDynamicTypeException;
 }

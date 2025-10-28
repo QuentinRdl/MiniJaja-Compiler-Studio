@@ -38,11 +38,11 @@ public class DeclarationsNode extends ASTNode implements WithradawableNode{
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        ((ASTNode)declaration).checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        declaration.checkType(m);
 
         if (declarations != null) {
-            ((ASTNode)declarations).checkType();
+            declarations.checkType(m);
         }
         return "void";
     }

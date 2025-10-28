@@ -46,9 +46,9 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (vexp != null) {
-            String exprType = vexp.checkType();
+            String exprType = vexp.checkType(m);
             String varType = typemeth.valueType.equals(ValueType.INT) ? "int" : "bool";
 
             if (!exprType.equals(varType)) {
@@ -57,6 +57,7 @@ public class VariableNode extends ASTNode implements WithradawableNode {
                 );
             }
         }
+        m.declVar(ident.identifier, new Value(), ValueType.toDataType(typemeth.valueType));
         return "void";
     }
 

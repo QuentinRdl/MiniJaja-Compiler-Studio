@@ -49,8 +49,8 @@ public class FinalNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        String exprType = expression.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        String exprType = expression.checkType(m);
 
         String declaredType;
         switch (type.valueType) {
@@ -68,7 +68,7 @@ public class FinalNode extends ASTNode implements WithradawableNode {
                             ") for the variable " + ident.identifier
             );
         }
-
+        m.declCst(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
         return "void";
     }
 

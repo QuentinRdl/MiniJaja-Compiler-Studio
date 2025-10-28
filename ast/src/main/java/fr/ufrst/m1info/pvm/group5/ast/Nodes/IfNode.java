@@ -53,16 +53,16 @@ public class IfNode extends ASTNode{
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        String condType = condition.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
             throw new ASTInvalidDynamicTypeException("The condition of an if must be of type bool");
         }
         if (instrThen != null) {
-            instrThen.checkType();
+            instrThen.checkType(m);
         }
         if (instrElse != null) {
-            instrElse.checkType();
+            instrElse.checkType(m);
         }
         return "void";
     }

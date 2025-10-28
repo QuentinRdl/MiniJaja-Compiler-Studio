@@ -38,11 +38,11 @@ public class InstructionsNode extends ASTNode{
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        instruction.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        instruction.checkType(m);
 
         if (otherInstructions != null) {
-            otherInstructions.checkType();
+            otherInstructions.checkType(m);
         }
         return "void";
     }

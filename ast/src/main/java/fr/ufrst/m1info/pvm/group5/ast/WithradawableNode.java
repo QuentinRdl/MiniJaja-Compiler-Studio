@@ -20,10 +20,4 @@ public interface WithradawableNode {
      * @return generated instructions
      */
     public List<String> withdrawCompile(int address);
-
-    List<String> compile(int address);
-
-    void interpret(Memory m);
-
-    String checkType() throws ASTInvalidDynamicTypeException;
 }

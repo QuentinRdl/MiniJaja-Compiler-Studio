@@ -36,10 +36,6 @@ public class IncNode extends ASTNode{
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        return checkType(new Memory());
-    }
-
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         try {
             Value v = (Value) m.val(ident.identifier);

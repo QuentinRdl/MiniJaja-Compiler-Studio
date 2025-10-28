@@ -42,12 +42,12 @@ public class MainNode extends ASTNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (vars != null) {
-            vars.checkType();
+            vars.checkType(m);
         }
         if (instrs != null) {
-            instrs.checkType();
+            instrs.checkType(m);
         }
         return "void";
     }

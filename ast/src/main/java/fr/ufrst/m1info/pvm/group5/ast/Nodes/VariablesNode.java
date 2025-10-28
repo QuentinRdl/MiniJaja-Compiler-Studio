@@ -40,10 +40,10 @@ public class VariablesNode extends ASTNode implements WithradawableNode {
     }
 
     @Override
-    public String checkType() throws ASTInvalidDynamicTypeException {
-        variable.checkType();
+    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        variable.checkType(m);
         if (variables != null) {
-            variables.checkType();
+            variables.checkType(m);
         }
         return "void";
     }
