@@ -25,9 +25,9 @@ public class InterpreterMiniJaja implements Interpreter{
     @Override
     public String interpretCode(String code) {
         Memory mem = new Memory();
-        AbstractSyntaxTree ast = AbstractSyntaxTree.fromString(code);
         String errMessage= null;
         try{
+            AbstractSyntaxTree ast = AbstractSyntaxTree.fromString(code);
             ast.interpret(mem);
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();

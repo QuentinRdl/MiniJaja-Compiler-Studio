@@ -82,6 +82,20 @@ public class SymbolTableEntry {
         this.reference = reference;
     }
 
+
+    /**
+     * Sets the DataType for this entry.
+     * Should only be used, when the DataType is UNKNOWN
+     * @param dataType the DataType to set
+     */
+    public void setDataType(DataType dataType) {
+        if(this.dataType != DataType.UNKNOWN) {
+            throw new IllegalStateException("Should not try to reaffect on types different than DataType.UNKNOWN");
+        }
+        this.dataType = dataType;
+    }
+
+
     /**
      * Returns a string representation of this entry for debugging purposes.
      *

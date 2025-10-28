@@ -92,6 +92,16 @@ public class MemoryTest {
     }
 
     @Test
+    public void popDelegatesToSymbolTable() throws Exception {
+        Stack_Object obj = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.pop()).thenReturn(obj);
+
+        memory.pop();
+
+        verify(symbolTableMocked, times(1)).removeEntry("x");
+    }
+
+    @Test
     public void declVarAddsSymbolTableEntry() {
         memory.declVar("a", 123, DataType.INT);
         ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
@@ -138,8 +148,8 @@ public class MemoryTest {
     }
 
 
-    /**
 
+    /**
     @Test
     public void affectValueUpdatesSymbolTableEntry() {
         SymbolTableEntry mockedEntry = mock(SymbolTableEntry.class);
@@ -163,4 +173,19 @@ public class MemoryTest {
         verify(symbolTableMocked, times(1)).lookup("y");
     }
     */
+
+    @Test
+    public void swapDelegatesToStack() {
+        // Call swap on memory and verify it calls the stack swap method
+        memory.swap();
+        verify(stackMocked, times(1)).swap();
+    }
+
+    @Test
+    public void swapPropagatesException() {
+        // Calling swap should throw error
+        doThrow(new RuntimeException("swap error")).when(stackMocked).swap();
+        assertThrows(RuntimeException.class, () -> memory.swap());
+        verify(stackMocked, times(1)).swap();
+    }
 }

@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
+import java.io.Serial;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EmptyStackException;
@@ -30,6 +31,30 @@ public class Stack {
     public static class StackIsEmptyException extends Exception {
         public StackIsEmptyException(String msg) {
             super(msg);
+        }
+    }
+
+    /**
+     * Thrown when attempting to modify a Stack_Object whose entry kind is CONSTANT.
+     */
+    public static class ConstantModificationException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        public ConstantModificationException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Thrown when attempting to construct a Stack_Object using the generic constructor
+     * for kinds that require a specialized constructor (rn only vars and csts)
+     */
+    public static class InvalidStackObjectConstructionException extends RuntimeException {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public InvalidStackObjectConstructionException(String message) {
+            super(message);
         }
     }
 
@@ -115,8 +140,6 @@ public class Stack {
     }
 
 
-
-
     /**
      * Returns the top object from the stack
      * @return Object the top object
@@ -140,10 +163,10 @@ public class Stack {
 
 
     /**
-     * @param name the name of the var we are looking for
+     * @param name the name of the object we are looking for
      * @return Object, the Object if found, null otherwise
      */
-     public Object getObject(String name) {
+     public Stack_Object getObject(String name) {
          for(Stack_Object obj : stack_content) {
              if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
                  return obj;
@@ -210,6 +233,31 @@ public class Stack {
         topVar.setValue(value);
         return true;
     }
+
+    /**
+     * Updates the top value of the stack w/ the given value
+     * @param value new value for the object on top of the stack
+     * @return true if object updated, false otherwise
+     */
+    public boolean updateTopValue(Object value) {
+        if (stack_content.isEmpty()) {
+            return false;
+        }
+
+        DataType valueDt = getDataTypeFromGenericObject(value);
+        Stack_Object topObj = stack_content.peek();
+        if(topObj == null) return false;
+        if(topObj.getEntryKind() == EntryKind.CONSTANT) {
+            // Can only reassign constant if value == null
+            if(topObj.getValue() != null) return false; // Cannot reassign constant
+        }
+        if(topObj.getDataType() != valueDt) return false;
+
+        // The object on top of the stack is of the same type as the object we were given, we can reaffect
+        topObj.setValue(value);
+        return true;
+    }
+
 
     /**
      * Checks if a var exists in the current scope
@@ -283,7 +331,7 @@ public class Stack {
      * Will remove the given Stack_Object given, MUST BE SURE IT EXISTS
      * @param object the Stack_Object to remove
      */
-    private void removeObject(Stack_Object object) {
+    public void removeObject(Stack_Object object) {
         stack_content.remove(object);
     }
 
@@ -416,5 +464,61 @@ public class Stack {
         Stack_Object second = stack_content.pop();
         stack_content.push(first);
         stack_content.push(second);
+    }
+
+    /**
+     * Returns the DataType for any given Object
+     * @param obj object to check type
+     * @return The DataType (UNKNOWN) if not in DataType enum
+     */
+    public DataType getDataTypeFromGenericObject(Object obj) {
+        if (obj instanceof Integer) {
+            return DataType.INT;
+        }
+        if (obj instanceof Boolean) {
+            return DataType.BOOL;
+        }
+        if (obj instanceof String) {
+            return DataType.STRING;
+        }
+        if (obj instanceof Float) {
+            return DataType.FLOAT;
+        }
+        if (obj instanceof Double) {
+            return DataType.DOUBLE;
+        }
+
+        /* TODO : How to handle null objects ??
+        if (obj == null) {
+            return DataType.VOID;
+        }
+         */
+
+        return DataType.UNKNOWN;
+    }
+
+    /**
+     * Puts a value on a const that has no affected value yet
+     * @param obj const object
+     * @param value value to assign the object
+     * @return true if value affected, false otherwise
+     */
+    public boolean initializeConst(Stack_Object obj, Object value) {
+        if(obj == null || value == null) return false;
+        if(obj.getEntryKind() != EntryKind.CONSTANT) {
+            throw new IllegalArgumentException("initializeConst must be called with a const !");
+        }
+
+        DataType dt = getDataTypeFromGenericObject(obj);
+        if(dt != obj.getDataType()) {
+            throw new IllegalArgumentException("Called intializeConst with incorrect data type");
+        }
+
+        if(obj.getValue() != null) {
+            throw new IllegalStateException("Called intializeConst with a const that is already affected");
+        }
+
+        obj.setValue(value);
+        return true;
     }
 }

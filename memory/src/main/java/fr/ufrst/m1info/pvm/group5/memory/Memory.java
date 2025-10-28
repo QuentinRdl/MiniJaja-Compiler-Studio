@@ -13,6 +13,7 @@ import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 public class Memory {
     Stack stack = new Stack();
     SymbolTable symbolTable = new SymbolTable();
+    private String identifierVarClass;
     /**
      * Writer used for the "write" and "writeline" methods
      * If left null, the said methods will have no effect
@@ -21,9 +22,14 @@ public class Memory {
 
     /* Constructors */
 
-    public Memory(){} // TODO : Set this constructor modifier to protected so the output can't be null
+    public Memory() {
+        stack = new Stack();
+        symbolTable = new SymbolTable();
+        identifierVarClass = null;
+    }
 
     public Memory(Writer output){
+        this();
         this.output = output;
     }
 
@@ -58,13 +64,19 @@ public class Memory {
             SymbolTableEntry entry = new SymbolTableEntry(identifier, kind, type);
             symbolTable.addEntry(entry);
         }
+
+        // TODO :
     }
 
     /**
      * Removes the top of the stack
      */
-    public void pop() throws Stack.StackIsEmptyException {
-        stack.pop();
+    public Stack_Object pop() throws Stack.StackIsEmptyException {
+        Stack_Object top = stack.pop();
+        if (top != null) {
+            symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
+        }
+        return top;
     }
 
     /**
@@ -116,6 +128,11 @@ public class Memory {
             throw new IllegalArgumentException("Cannot call 'withdrawDecl' with an empty/null identifier");
         }
         symbolTable.removeEntry(identifier);
+
+        // Find the object in the stack
+        Stack_Object obj = stack.getObject(identifier);
+        // If object present in the stack, remove it
+        if(obj != null) stack.removeObject(obj);
     }
 
     /**
@@ -125,24 +142,103 @@ public class Memory {
      * @param value value to affect (cannot be null)
      */
     public void affectValue(String identifier, Object value) {
-        if(value == null) {
+        if(identifier == null) {
+            throw new IllegalArgumentException("affectValue cannot be called with null identifier");
+        }
+        else if(value == null) {
             throw new IllegalArgumentException("affectValue cannot be called with null value");
         }
-        // TODO
+
+        // Check that it exists in the symbol table
+        SymbolTableEntry entry = symbolTable.lookup(identifier); // Can throw illegalArgumentException if identifier not found
+
+        // Check that types matches
+        DataType givenDataType = stack.getDataTypeFromGenericObject(value);
+
+        // Find the object in the stack
+        Stack_Object obj = stack.searchObject(identifier);
+        if (obj == null) {
+            throw new IllegalArgumentException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
+        }
+
+        // Ensure declared type matches given value type
+        DataType declared = entry.getDataType();
+        if (declared != givenDataType) {
+            if(declared == DataType.UNKNOWN) {
+                // This is the first declaration, we change the type, and continue
+                entry.setDataType(givenDataType);
+            } else {
+                throw new IllegalArgumentException("Type mismatch when affecting value to '" + identifier + "' : declared=" + declared + " given=" + givenDataType);
+            }
+        }
+
+        // Handle according to the kind
+        if (entry.getKind() == EntryKind.VARIABLE) {
+            // Variables can always be reassigned
+            obj.setValue(value);
+            // Update symbol table reference
+            entry.setReference(value);
+            return;
+        }
+
+        if (entry.getKind() == EntryKind.CONSTANT) {
+            // Constants can only be initialized once
+            if (obj.getValue() != null) {
+                throw new IllegalStateException("Cannot modify constant '" + identifier + "' once it has already been declared");
+            }
+            obj.setValue(value);
+            entry.setReference(value);
+            return;
+        }
+
+        // TODO : For other kinds, we don't support assignment yet
+        throw new IllegalArgumentException("affectValue is not supported YET for EntryKind: " + entry.getKind());
     }
 
     public void declVarClass(String identifier) {
-        // TODO
+        if(identifierVarClass != null) {
+            throw new IllegalStateException("The class variable is already defined, cannot create a new one");
+        }
+        // We check that nothing on the Symbol Table & the stack is defined w/ this name
+        if(symbolTable.contains(identifier)) {
+            throw new IllegalStateException("The class variable is already defined in the Symbol Table, cannot create a new one");
+        }
+        if(stack.hasObj(identifier)) {
+            throw new IllegalStateException("The class variable is already defined in the Stack, cannot create a new one");
+        }
+        // Everything checks out, we create the var, with null type, and null value
+        declVar(identifier, null, DataType.UNKNOWN);
+        identifierVarClass = identifier;
     }
 
+    /**
+     * Returns Object with the given identifier
+     * @param identifier identifier of the Object we are looking for
+     * @return Object if found, null otherwise
+     */
     public Object val(String identifier) {
-        // TODO
-        return null;
+        if(identifier == null || identifier.isEmpty()) {
+            throw new IllegalArgumentException("val cannot be called with an empty/null identifier");
+        }
+        // Lookup the symbol table entry
+        SymbolTableEntry entry = symbolTable.lookup(identifier);
+        String ref = entry.getName();
+
+        return stack.getObject(ref);
     }
 
     public String identVarClass() {
-        // TODO
-        return null;
+        return identifierVarClass;
+    }
+
+    public void affVarClass(Object value) {
+        if(identifierVarClass == null) {
+            throw new IllegalStateException("Cannot affect a value to the class var, it does not exist");
+        }
+        if(value == null) {
+            throw new IllegalArgumentException("Cannot call affVarClass with null object");
+        }
+        affectValue(identifierVarClass, value);
     }
 
     /**
