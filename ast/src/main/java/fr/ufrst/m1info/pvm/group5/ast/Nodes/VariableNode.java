@@ -6,7 +6,7 @@ import fr.ufrst.m1info.pvm.group5.ast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariableNode extends ASTNode implements WithradawableNode {
+public class VariableNode extends ASTNode implements WithdrawalNode {
     TypeNode typemeth;
     IdentNode ident;
     ASTNode vexp;
@@ -65,7 +65,7 @@ public class VariableNode extends ASTNode implements WithradawableNode {
 
 
     @Override
-    public void withradawInterpret(Memory m) {
+    public void withdrawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 

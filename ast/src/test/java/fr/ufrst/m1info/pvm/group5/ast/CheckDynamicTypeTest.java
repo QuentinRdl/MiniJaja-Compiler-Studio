@@ -391,7 +391,7 @@ public class CheckDynamicTypeTest {
     @Test
     @DisplayName("MainNode - checkType() with vars And instrs")
     public void testMainNode_WithVarsAndInstrs() throws Exception {
-        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
+        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithdrawalNode.class));
         ASTNode instrs = mock(ASTNode.class);
 
         when(vars.checkType(memoryMock)).thenReturn("void");
@@ -419,7 +419,7 @@ public class CheckDynamicTypeTest {
     @Test
     @DisplayName("MainNode - checkType() With instrs null")
     public void testMainNode_InstrsNull() throws Exception {
-        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
+        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithdrawalNode.class));
         when(vars.checkType(memoryMock)).thenReturn("void");
 
         MainNode node = new MainNode(vars, null);
@@ -431,7 +431,7 @@ public class CheckDynamicTypeTest {
     @Test
     @DisplayName("MainNode - checkType() fails if vars fails")
     public void testMainNode_VarsFail() throws Exception {
-        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithradawableNode.class));
+        ASTNode vars = mock(ASTNode.class, withSettings().extraInterfaces(WithdrawalNode.class));
         when(vars.checkType(memoryMock)).thenThrow(new ASTInvalidDynamicTypeException("Error"));
 
         MainNode node = new MainNode(vars, null);
@@ -701,13 +701,13 @@ public class CheckDynamicTypeTest {
         assertEquals("void", result);
     }
 
-    class DummyWithdrNode extends ASTNode implements WithradawableNode {
+    class DummyWithdrNode extends ASTNode implements WithdrawalNode {
         @Override
         public List<String> compile(int address) { return List.of(); }
         @Override
         public void interpret(Memory m) { }
         @Override
-        public void withradawInterpret(Memory m) { }
+        public void withdrawInterpret(Memory m) { }
         @Override
         public List<String> withdrawCompile(int address) { return List.of(); }
         @Override

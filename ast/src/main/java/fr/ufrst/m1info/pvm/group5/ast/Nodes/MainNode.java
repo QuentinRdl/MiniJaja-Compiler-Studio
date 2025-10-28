@@ -4,7 +4,7 @@ import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.WithradawableNode;
+import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class MainNode extends ASTNode {
             JJCodes.addAll(instrs.compile(address + JJCodes.size()));
         JJCodes.add("push(0)");
         if(vars != null)
-            JJCodes.addAll(((WithradawableNode)vars).withdrawCompile(address + JJCodes.size()));
+            JJCodes.addAll(((WithdrawalNode)vars).withdrawCompile(address + JJCodes.size()));
         return JJCodes;
     }
 
@@ -38,7 +38,7 @@ public class MainNode extends ASTNode {
         if(instrs != null)
             instrs.interpret(m);
         if(vars != null)
-            ((WithradawableNode)vars).withradawInterpret(m);
+            ((WithdrawalNode)vars).withdrawInterpret(m);
     }
 
     @Override

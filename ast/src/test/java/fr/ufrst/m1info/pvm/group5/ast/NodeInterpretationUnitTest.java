@@ -309,7 +309,7 @@ public class NodeInterpretationUnitTest {
                 );
         DeclarationsNode decls = new DeclarationsNode(decl, null);
         decls.interpret(mem);
-        decls.withradawInterpret(mem);
+        decls.withdrawInterpret(mem);
         assertFalse( memoryStorage.containsKey("x"));
     }
 
@@ -336,7 +336,7 @@ public class NodeInterpretationUnitTest {
         );
         DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
         decls.interpret(mem);
-        decls.withradawInterpret(mem);
+        decls.withdrawInterpret(mem);
         assertFalse( memoryStorage.containsKey("x"));
         assertFalse( memoryStorage.containsKey("y"));
         assertFalse( memoryStorage.containsKey("z"));
@@ -371,7 +371,7 @@ public class NodeInterpretationUnitTest {
         );
         DeclarationsNode decls = new DeclarationsNode(decl, new DeclarationsNode(decl1, new DeclarationsNode(decl2, null)));
         decls.interpret(mem);
-        decls.withradawInterpret(mem);
+        decls.withdrawInterpret(mem);
         assertFalse( memoryStorage.containsKey("x"));
         assertFalse( memoryStorage.containsKey("y"));
         assertFalse( memoryStorage.containsKey("z"));

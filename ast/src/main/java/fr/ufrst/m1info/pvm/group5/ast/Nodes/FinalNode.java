@@ -7,7 +7,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FinalNode extends ASTNode implements WithradawableNode {
+public class FinalNode extends ASTNode implements WithdrawalNode {
     TypeNode type;
     IdentNode ident;
     ASTNode expression;
@@ -74,7 +74,7 @@ public class FinalNode extends ASTNode implements WithradawableNode {
 
 
     @Override
-    public void withradawInterpret(Memory m) {
+    public void withdrawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 

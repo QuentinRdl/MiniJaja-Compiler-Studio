@@ -138,7 +138,7 @@ public class ASTMocks {
      * @return mock created
      * @param <T> class of node to create, defined by the [type] parameter
      */
-    public static<T extends ASTNode & WithradawableNode> T createWithdrawNode(
+    public static<T extends ASTNode & WithdrawalNode> T createWithdrawNode(
             Class<T> type,
             Consumer<Memory> onInterpret,
             Function<Integer, List<String>> onCompile,
@@ -151,7 +151,7 @@ public class ASTMocks {
                 throw new Exception("Missing withdraw function for mock");
             onWithdraw.accept(invocationOnMock.getArgument(0));
             return null;
-        }).when(result).withradawInterpret(any(Memory.class));
+        }).when(result).withdrawInterpret(any(Memory.class));
         doAnswer(invocationOnMock ->  {
             if(onWithdrawCompile == null)
                 throw new Exception("Missing withdraw function for mock");
