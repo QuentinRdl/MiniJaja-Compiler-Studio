@@ -28,13 +28,12 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretCode(input));
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret File BasicOperations")
     public void InterpretFileBasicOperations()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
-    }*/
+    }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File That Doesn't Exist")
     public void InterpretNotExistingFile() {
@@ -43,7 +42,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(NoSuchFileException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret File BasicOperations")
     public void BasicOperations()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
@@ -71,23 +70,20 @@ public class InterpreterMiniJajaTest {
     @DisplayName("Interpret File Loops")
     public void Loops()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
-    }*/
+    }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File OperationPrevalence")
     public void OperationPrevalence()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File Simple")
     public void Simple()  {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     public void UndefinedVariableSum() {
@@ -96,7 +92,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Inc")
     public void UndefinedVariableInc()  {
@@ -105,7 +100,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Evaluation")
     public void UndefinedVariableEval()  {
@@ -119,7 +113,7 @@ public class InterpreterMiniJajaTest {
     public void UnnamedVariable()  {
         String errMessage=imj.interpretCode("class C {int  = 10;main {}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -138,20 +132,20 @@ public class InterpreterMiniJajaTest {
         //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Declaration Without Value")
     public void declarationWithoutValue()  {
         String errMessage=imj.interpretCode("class C {int y = ;main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
     @Test
     @DisplayName("Interpret Affectation Without Value")
     public void affectationWithoutValue()  {
         String errMessage=imj.interpretCode("class C {int y; main {y= ;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -162,27 +156,27 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Increment")
     public void increment()  {
         String errMessage=imj.interpretCode("class C {int y; main {y++;}}");
         Assertions.assertNull(errMessage);
-    }*/
+    }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Multiple Class")
     public void multipleClass()  {
         String errMessage=imj.interpretCode("class C {main {}} class D {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
     @Test
     @DisplayName("Interpret Multiple Main")
     public void multipleMain()  {
         String errMessage=imj.interpretCode("class C {main {} main {}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -190,7 +184,7 @@ public class InterpreterMiniJajaTest {
     public void classIntoClass()  {
         String errMessage=imj.interpretCode("class C {class D {main {}}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -198,7 +192,7 @@ public class InterpreterMiniJajaTest {
     public void classIntoMain()  {
         String errMessage=imj.interpretCode("main {class C {}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -214,16 +208,16 @@ public class InterpreterMiniJajaTest {
     public void stringError()  {
         String errMessage=imj.interpretCode("ERROR");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Unnamed Class")
     public void unnamedClass()  {
         String errMessage=imj.interpretCode("class {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
     /*@Test
     @DisplayName("Interpret Named Main")
@@ -265,57 +259,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(errMessage);
     }
 
-    @Test
-    @DisplayName("Interpret Operation Incorrect Order")
-    public void operationIncorrectOrder()  {
-        String errMessage=imj.interpretCode("class C { main{int y=1-2*3;}}");
-        Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    /*@Test
-    @DisplayName("Interpret Operation Correct Order")
-    public void operationCorrectOrder()  {
-        String errMessage=imj.interpretCode("class C { main{int y=1*2-3;}}");
-        Assertions.assertNull(errMessage);
-    }*/
-
-    @Test
-    @DisplayName("Interpret Operation Incorrect Order 2")
-    public void operationIncorrectOrder2()  {
-        String errMessage=imj.interpretCode("class C { main{boolean y=1>2-3;}}");
-        Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    /*@Test
-    @DisplayName("Interpret Operation Correct Order 2")
-    public void operationCorrectOrder2()  {
-        String errMessage=imj.interpretCode("class C { main{boolean y=1-2>3;}}");
-        Assertions.assertNull(errMessage);
-    }*/
-
-    @Test
-    @DisplayName("Interpret Operation Incorrect Order 3")
-    public void operationIncorrectOrder3()  {
-        String errMessage=imj.interpretCode("class C { main{boolean y=false && 2>3;}}");
-        Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    /*@Test
-    @DisplayName("Interpret Operation Correct Order 3")
-    public void operationCorrectOrder3()  {
-        String errMessage=imj.interpretCode("class C { main{boolean y=1>2 && false;}}");
-        Assertions.assertNull(errMessage);
-    }*/
-
-    /*@Test
-    @DisplayName("Interpret Variable Not Before And")
-    public void notBeforeAnd()  {
-        String errMessage=imj.interpretCode("class C {main{boolean y=!false && true;}}");
-        Assertions.assertNull(errMessage);
-    }*/
 
     @Test
     @DisplayName("Interpret If Without Condition")
@@ -341,37 +284,37 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Declaration With 2 Equals")
     public void declarationWith2Equals()  {
         String errMessage=imj.interpretCode("class C { int y == 10; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
     @Test
     @DisplayName("Interpret Affectation With 2 Equals")
     public void affectationWith2Equals()  {
         String errMessage=imj.interpretCode("class C { int y; main{y == 10;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Double Declaration")
     public void doubleDeclaration()  {
         String errMessage=imj.interpretCode("class C { int y = 5 = 10; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Double Affectation")
     public void doubleAffectation()  {
         String errMessage=imj.interpretCode("class C { int y; main{y = 5 = 10;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
-    }*/
+    }
 
     @Test
     @DisplayName("Interpret Increment With 3 Plus")
@@ -386,7 +329,7 @@ public class InterpreterMiniJajaTest {
     public void incrementWithNumber()  {
         String errMessage=imj.interpretCode("class C { int y = 10; main{y ++ 5;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -394,7 +337,7 @@ public class InterpreterMiniJajaTest {
     public void incrementAffectation()  {
         String errMessage=imj.interpretCode("class C { int y = 10; main{y ++= 5;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -402,7 +345,7 @@ public class InterpreterMiniJajaTest {
     public void sumWithoutIdent()  {
         String errMessage=imj.interpretCode("class C { int y = 10; main{ += 5;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -410,7 +353,7 @@ public class InterpreterMiniJajaTest {
     public void affectationWithoutIdent()  {
         String errMessage=imj.interpretCode("class C { int y; main{ = 5;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -418,7 +361,7 @@ public class InterpreterMiniJajaTest {
     public void affectationOnANumber()  {
         String errMessage=imj.interpretCode("class C { int y; main{ 1 = 5;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -434,7 +377,7 @@ public class InterpreterMiniJajaTest {
     public void iForgotASemiColon()  {
         String errMessage=imj.interpretCode("class C {main{int y=1 + 2}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -442,7 +385,7 @@ public class InterpreterMiniJajaTest {
     public void randomString()  {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
         Assertions.assertNotEquals(null,errMessage);
-        //Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTBuildException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
