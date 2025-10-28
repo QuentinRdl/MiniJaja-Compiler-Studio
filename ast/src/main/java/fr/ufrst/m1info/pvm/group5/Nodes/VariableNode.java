@@ -29,7 +29,9 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<String>();
-        jajacodes.addAll(vexp.compile(address));
+        if (vexp != null) {
+            jajacodes.addAll(vexp.compile(address));
+        }
         jajacodes.add("new(" + ident.identifier + "," + typemeth + ",var,0)" );
         return jajacodes;
     }
