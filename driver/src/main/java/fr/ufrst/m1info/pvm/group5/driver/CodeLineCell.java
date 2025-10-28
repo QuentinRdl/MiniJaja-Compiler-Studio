@@ -19,6 +19,9 @@ import javafx.scene.shape.Circle;
  * The CodeLineCell class defines how each CodeLine is displayed inside the ListView.
  * It is responsible for creating and updating the visual cells that contain code lines.
  * Each cell allows the user to view and edit the code for a specific line in the program.
+ *
+ * This class also manages user input, such as adding or deleting lines using keyboard shortcuts,
+ * and toggling breakpoints by clicking on the line number area
  */
 public class CodeLineCell extends ListCell<CodeLine> {
     private HBox container;
@@ -27,12 +30,17 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private TextField codeField;
     private Circle breakpointCircle;
 
+    // Listener used to handle user interactions (Enter ou Delete key events)
     private CodeLineCellListener listener;
+
+    // Flag indicating whether the line was empty before the last Backspace press
     private boolean wasEmptyOnLastBackspace = false;
 
     /**
      * Creates a new CodeLineCell and initializes its layout.
-     * The cell contains a label for the line number and a text field for the code.
+     * The cell includes a line number label, an optional breakpoint indicator,
+     * and a text field for editing the code content. It also listens for key events
+     * to manage adding or deleting lines dynamically
      */
     public CodeLineCell(){
         super();
@@ -91,11 +99,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
                     wasEmptyOnLastBackspace = false;
                 }
 
-                /*
-                if(codeField.getText().isEmpty() && codeField.getCaretPosition() == 0){
-                    listener.onDeletePressed(getItem());
-                }
-                */
             }
         });
 
@@ -107,18 +110,47 @@ public class CodeLineCell extends ListCell<CodeLine> {
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
     }
 
+    /**
+     * Returns the label displaying the line number of this code line
+     *
+     * @return the Label showing the line number
+     */
     public Label getLineNumberLabel() {
         return lineNumberLabel;
     }
 
+    /**
+     * Returns the container that holds the line number and breakpoint indicator
+     *
+     * @return the StackPane used as the container for the line number
+     */
     public StackPane getLineNumberContainer(){
         return lineNumberContainer;
     }
 
+    /**
+     * Returns the text field where the code for this line is displayed and edited
+     *
+     * @return the TextField for editing the code
+     */
     public TextField getCodeField(){
         return codeField;
     }
 
+    /**
+     * Sets the listener used to handle user actions such as pressing Enter or Delete
+     *
+     * @param listener the CodeLineCellListener to associate with this cell
+     */
+    public void setListener(CodeLineCellListener listener){
+        this.listener = listener;
+    }
+
+    /**
+     * Handles a mouse click on the breakpoint area
+     * Toggles the breakpoint state of the current CodeLine
+     * If a breakpoint is set, it is removed, otherwise, it is added
+     */
     private void handleBreakpointClick(){
         CodeLine item = getItem();
         if (item != null){
@@ -127,15 +159,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
         }
     }
 
-    public void setListener(CodeLineCellListener listener){
-        this.listener = listener;
-    }
-
-
     /**
      * Updates the content of this cell to display a specific CodeLine.
      * If the cell is empty or the provided item is null, the cell content is cleared.
-     * Otherwise, it displays the line number and the corresponding code text.
+     * Otherwise, it displays the line number or breakpoint icon and the corresponding code text.
      *
      * @param  item  the CodeLine object to display in this cell
      * @param empty true if the cell should be empty, false otherwise
@@ -164,11 +191,16 @@ public class CodeLineCell extends ListCell<CodeLine> {
         }
     }
 
+    /**
+     * Gives focus to the text field of this cell and places the cursor at the end of the text
+     * It also updates the internal state used to detect Backspace deletions on empty lines
+     */
     public void focusTextField(){
         if (codeField != null){
             codeField.requestFocus();
             Platform.runLater(() -> {
                 codeField.end();
+
                 if (codeField.getText().isEmpty()){
                     wasEmptyOnLastBackspace = true;
                 }
@@ -176,6 +208,4 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         }
     }
-
-
 }

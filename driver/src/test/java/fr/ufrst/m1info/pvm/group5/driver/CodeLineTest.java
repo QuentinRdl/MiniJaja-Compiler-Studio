@@ -38,9 +38,17 @@ public class CodeLineTest {
         assertTrue(codeLine.isBreakpoint());
     }
 
-    @Test void setCode(){
+    @Test
+    public void setCode(){
         assertEquals(codeLine.getCode(), "var x = 10;");
         codeLine.setCode("String hello = 'Hello';");
         assertEquals(codeLine.getCode(), "String hello = 'Hello';");
+    }
+
+    @Test
+    public void setLineNumber(){
+        assertEquals(1, codeLine.getLineNumber());
+        codeLine.setLineNumber(2);
+        assertEquals(2, codeLine.getLineNumber());
     }
 }

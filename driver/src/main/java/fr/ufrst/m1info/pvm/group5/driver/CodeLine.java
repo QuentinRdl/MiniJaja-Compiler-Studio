@@ -50,6 +50,11 @@ public class CodeLine {
         return breakpoint;
     }
 
+    /**
+     * Sets the line number for this code line.
+     *
+     * @param lineNumber the new line number to assign to this code line
+     */
     public void setLineNumber(int lineNumber){
         this.lineNumber = lineNumber;
     }
