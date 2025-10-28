@@ -256,4 +256,11 @@ public class NodeCompileTest {
         assertEquals(List.of("ADD","if(5)","instr2","goto(5)"),tested.compile(1));
     }
 
+    @Test
+    public void IncNode(){
+        IdentNode ident = new IdentNode("x");
+        IncNode tested = new IncNode(ident);
+        assertEquals(List.of("push(1)","load(x)"),tested.compile(1));
+    }
+
 }
