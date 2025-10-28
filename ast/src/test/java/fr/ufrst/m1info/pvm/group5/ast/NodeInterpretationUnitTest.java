@@ -453,4 +453,86 @@ public class NodeInterpretationUnitTest {
         IdentNode id = new IdentNode("a");
         assertThrows(ASTInvalidMemoryException.class, () -> id.eval(memory));
     }
+
+    /**
+     * IfNode
+     */
+
+    @Test
+    public void IfNode_NoCondition(){
+        assertThrows(ASTBuildException.class, () -> new IfNode(null, null, null));
+    }
+
+    @Test
+    public void IfNode_NonEvaluableCondition(){
+        ASTNode expr = ASTMocks.createNode(ASTNode.class ,null, null);
+        assertThrows(ASTBuildException.class, () -> new IfNode(expr, null, null));
+    }
+
+    @Test
+    public void IfNode_NoInstructions(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null, m -> new Value(true));
+        IfNode node = new IfNode(expr, null, null);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyThen_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, then, null);
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_OnlyThen_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, then, null);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyElse_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, null, other);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyElse_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, null, other);
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_BothInstructions_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(5)), null);
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(6)), null);
+        IfNode node = new IfNode(expr, then, other);
+        memoryStorage.put("x", new Value());
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_BothInstructions_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(5)), null);
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(6)), null);
+        IfNode node = new IfNode(expr, then, other);
+        memoryStorage.put("x", new Value());
+        node.interpret(memory);
+        assertEquals(6, memoryStorage.get("x").valueInt);
+    }
+
 }
