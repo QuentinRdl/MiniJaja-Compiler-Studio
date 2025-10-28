@@ -427,4 +427,59 @@ public class NodeCompileTest {
         assertEquals(List.of("swap","pop"),tested.withdrawCompile(1));
     }
 
+    @Test
+    public void VariablesNode(){
+        VariableNode var = ASTMocks.createNode(
+                VariableNode.class,
+                null,
+                i-> List.of("VAR")
+        );
+        VariablesNode tested = new VariablesNode(var,null);
+        assertEquals(List.of("VAR"),tested.compile(1));
+    }
+
+    @Test
+    public void VariablesNodeManyVariables(){
+        VariableNode var1 = ASTMocks.createNode(
+                VariableNode.class,
+                null,
+                i-> List.of("VAR1")
+        );
+        VariableNode var2 = ASTMocks.createNode(
+                VariableNode.class,
+                null,
+                i-> List.of("VAR2")
+        );
+        VariableNode var3 = ASTMocks.createNode(
+                VariableNode.class,
+                null,
+                i-> List.of("VAR3")
+        );
+        VariablesNode vars3 = new VariablesNode(var3,null);
+        VariablesNode vars2 = new VariablesNode(var2,vars3);
+        VariablesNode tested = new VariablesNode(var1,vars2);
+        assertEquals(List.of("VAR1","VAR2","VAR3"),tested.compile(1));
+    }
+
+    @Test
+    public void VariablesNodeWithdraw(){
+        VariableNode var1 = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                null,
+                i -> List.of("VAR1")
+        );
+        VariableNode var2 = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                null,
+                i -> List.of("VAR2")
+        );
+        VariablesNode vars2 = new VariablesNode(var2,null);
+        VariablesNode tested = new VariablesNode(var1,vars2);
+        assertEquals(List.of("VAR2","VAR1"),tested.withdrawCompile(1));
+    }
+
 }
