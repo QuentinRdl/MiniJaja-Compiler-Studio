@@ -297,4 +297,51 @@ public class NodeCompileTest {
         assertEquals(List.of("INC1","INC2","INC3"),tested.compile(1));
     }
 
+    @Test
+    public void MainNodeWithVarsAndInstrs(){
+        VariablesNode vars = ASTMocks.createWithdrawNode(
+                VariablesNode.class,
+                null,
+                i -> List.of("VARS"),
+                null,
+                i -> List.of("WITHDRAWVARS")
+        );
+        InstructionsNode instrs = ASTMocks.createNode(
+                InstructionsNode.class,
+                null,
+                i-> List.of("INSTRS")
+        );
+        MainNode tested = new MainNode(vars,instrs);
+        assertEquals(List.of("VARS","INSTRS","push(0)","WITHDRAWVARS"),tested.compile(1));
+    }
+
+    @Test
+    public void MainNodeWithoutVars(){
+        InstructionsNode instrs = ASTMocks.createNode(
+                InstructionsNode.class,
+                null,
+                i-> List.of("INSTRS")
+        );
+        MainNode tested = new MainNode(null,instrs);
+        assertEquals(List.of("INSTRS","push(0)"),tested.compile(1));
+    }
+
+    @Test
+    public void MainNodeWithoutInstrs(){
+        VariablesNode vars = ASTMocks.createWithdrawNode(
+                VariablesNode.class,
+                null,
+                i -> List.of("VARS"),
+                null,
+                i -> List.of("WITHDRAWVARS")
+        );
+        MainNode tested = new MainNode(vars,null);
+        assertEquals(List.of("VARS","push(0)","WITHDRAWVARS"),tested.compile(1));
+    }
+
+    @Test
+    public void MainNodeWithoutVarsAndInstrs(){
+        MainNode tested = new MainNode(null,null);
+        assertEquals(List.of("push(0)"),tested.compile(1));
+    }
 }
