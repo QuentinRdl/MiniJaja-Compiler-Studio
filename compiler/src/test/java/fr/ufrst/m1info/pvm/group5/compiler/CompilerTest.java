@@ -183,15 +183,77 @@ public class CompilerTest {
     @DisplayName("Compile File Loops")
     public void CompileLoops()  {
         String res= comp.compileFile("src/test/resources/Loops.mjj");
-        Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
+        String expected = "init\n" +
+                "push(0)\n" +
+                "new(x,INT,var,0)\n" +
+                "push(100)\n" +
+                "load(x)\n" +
+                "sup\n" +
+                "not\n" +
+                "if(12)\n" +
+                "push(8)\n" +
+                "inc(x)\n" +
+                "goto(4)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
     }
 
-    @Disabled
     @Test
     @DisplayName("Compile File OperationPrevalence")
     public void CompileOperationPrevalence()  {
         String res= comp.compileFile("src/test/resources/OperationPrevalence.mjj");
-        Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
+        String expected = "init\n" +
+                "new(x,INT,var,0)\n" +
+                "new(y,INT,var,0)\n" +
+                "new(z,INT,var,0)\n" +
+                "new(w,BOOL,var,0)\n" +
+                "new(v,BOOL,var,0)\n" +
+                "push(3)\n" +
+                "push(4)\n" +
+                "mul\n" +
+                "push(5)\n" +
+                "add\n" +
+                "store(x)\n" +
+                "push(5)\n" +
+                "push(3)\n" +
+                "push(4)\n" +
+                "mul\n" +
+                "add\n" +
+                "store(y)\n" +
+                "push(3)\n" +
+                "neg\n" +
+                "push(2)\n" +
+                "add\n" +
+                "store(z)\n" +
+                "push(jcfaux)\n" +
+                "not\n" +
+                "push(jcvrai)\n" +
+                "and\n" +
+                "store(w)\n" +
+                "push(jcvrai)\n" +
+                "push(jcfaux)\n" +
+                "or\n" +
+                "push(jcvrai)\n" +
+                "and\n" +
+                "store(v)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
     }
 
     @Test
