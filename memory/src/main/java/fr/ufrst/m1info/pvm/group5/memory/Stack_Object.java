@@ -132,6 +132,60 @@ public class Stack_Object {
         return this.scope == actualObj.scope;
     }
 
+    /**
+     * Turns a Stack_Object into a Value
+     * Should be use where we would Cast
+     * @param obj object to cast into value
+     * @return Value value casted from the given Stack_Object
+     */
+    public static Value stackObjToValue(Stack_Object obj) {
+        if(obj == null) return null;
+
+        Object raw = obj.getValue();
+        // If the stored object is already a Value, return it, right now it will not be, but later on it will be
+        if (raw instanceof Value) {
+            return (Value) raw;
+        }
+
+        // If the stored object is null, return an empty Value
+        if (raw == null) {
+            return new Value();
+        }
+
+        // Convert primitives to Value
+        if (raw instanceof Integer) {
+            return new Value((Integer) raw);
+        }
+        if (raw instanceof Boolean) {
+            return new Value((Boolean) raw);
+        }
+
+        return null;
+    }
+
+    /**
+     * Turns a Value into a Stack_Object
+     * Should be use where we would Cast
+     * @param val Value to cast into Stack_Object
+     * @return Stack_Object casted from the given Stack_Object
+     */
+    public static Stack_Object valueToStackObj(Value val) {
+        if (val == null) return null;
+
+        final String objName = null;
+
+        if (val.Type == null) {
+            return new Stack_Object(null, null, 0, EntryKind.OTHER);
+        }
+
+        return switch (val.Type) {
+            case INT -> new Stack_Object(null, val.valueInt, 0, EntryKind.OTHER);
+            case BOOL -> new Stack_Object(null, val.valueBool, 0, EntryKind.OTHER);
+            case EMPTY, VOID -> new Stack_Object(null, null, 0, EntryKind.OTHER);
+            // TODO : DO MORE
+        };
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, value, entryKind, dataType, scope);
