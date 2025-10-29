@@ -11,8 +11,8 @@ class C {
 	} else {
 		x++;
 	};
-	x = y * z;
-	x = x / z;
+	x = y * VAL;
+	x = x / VAL;
 	x++;
    }
 }

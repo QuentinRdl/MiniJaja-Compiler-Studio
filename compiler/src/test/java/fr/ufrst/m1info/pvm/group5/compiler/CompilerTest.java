@@ -29,12 +29,60 @@ public class CompilerTest {
         Assertions.assertEquals("init\nnew(x,INT,var,0)\npush(3)\npush(4)\nadd\nstore(x)\npush(1)\ninc(x)\npush(0)\nswap\npop\npop\njcstop",res);
     }
 
-    @Disabled
     @Test
     @DisplayName("Compile File Complex")
     public void CompileComplex()  {
         String res= comp.compileFile("src/test/resources/Complex.mjj");
-        Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
+        String expected = "init\n" +
+                "new(x,INT,var,0)\n" +
+                "push(10)\n" +
+                "new(y,INT,var,0)\n" +
+                "push(5)\n" +
+                "new(VAL,INT,cst,0)\n" +
+                "push(jcvrai)\n" +
+                "new(b1,BOOL,var,0)\n" +
+                "push(jcfaux)\n" +
+                "new(b2,BOOL,var,0)\n" +
+                "load(b1)\n" +
+                "load(b1)\n" +
+                "load(b2)\n" +
+                "not\n" +
+                "or\n" +
+                "and\n" +
+                "if(21)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "goto(27)\n" +
+                "load(VAL)\n" +
+                "load(y)\n" +
+                "add\n" +
+                "push(0)\n" +
+                "sub\n" +
+                "store(x)\n" +
+                "load(y)\n" +
+                "load(VAL)\n" +
+                "mul\n" +
+                "store(x)\n" +
+                "load(x)\n" +
+                "load(VAL)\n" +
+                "div\n" +
+                "store(x)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
     }
 
     @Disabled
