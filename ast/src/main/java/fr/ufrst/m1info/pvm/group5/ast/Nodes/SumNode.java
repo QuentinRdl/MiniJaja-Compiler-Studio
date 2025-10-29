@@ -29,7 +29,7 @@ public class SumNode extends ASTNode{
         List<String> JJCodes = new ArrayList<>();
         JJCodes.addAll(expression.compile(address));
         JJCodes.add("inc(" + identifier + ")");
-        return List.of();
+        return JJCodes;
     }
 
     @Override
