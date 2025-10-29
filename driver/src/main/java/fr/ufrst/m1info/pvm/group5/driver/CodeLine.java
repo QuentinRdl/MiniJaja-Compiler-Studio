@@ -7,7 +7,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
  * This class is mainly used to model each line that appears in the code editor or ListView
  */
 public class CodeLine {
-    final private int lineNumber;
+    private int lineNumber;
     private String code;
     private boolean breakpoint;
 
@@ -48,6 +48,15 @@ public class CodeLine {
      */
     public boolean isBreakpoint(){
         return breakpoint;
+    }
+
+    /**
+     * Sets the line number for this code line.
+     *
+     * @param lineNumber the new line number to assign to this code line
+     */
+    public void setLineNumber(int lineNumber){
+        this.lineNumber = lineNumber;
     }
 
     /**
