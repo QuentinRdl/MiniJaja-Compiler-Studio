@@ -72,9 +72,28 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
         String leftType = left.checkType(m);
         String rightType = right.checkType(m);
 
+        String className = getClass().getSimpleName();
+        if (className.contains("Equal") || className.contains("NotEqual")) {
+
+            if (!(leftType.equals(rightType) &&
+                    (leftType.equals("int") || leftType.equals("bool")))) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Invalid operand types for comparison in " + className
+                );
+            }
+            return "bool";
+        }
+        if (className.contains("And") || className.contains("Or")) {
+            if (!leftType.equals("bool") || !rightType.equals("bool")) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Boolean operator " + className + " requires boolean operands"
+                );
+            }
+            return "bool";
+        }
         if (!leftType.equals("int") || !rightType.equals("int")) {
             throw new ASTInvalidDynamicTypeException(
-                    "The operands of " + getClass().getSimpleName() + "must be integers"
+                    "Arithmetic operator " + className + " requires integer operands"
             );
         }
         return "int";
