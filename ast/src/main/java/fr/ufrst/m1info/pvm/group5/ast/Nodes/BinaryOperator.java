@@ -96,6 +96,8 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
                     "Arithmetic operator " + className + " requires integer operands"
             );
         }
+        if(className.contains("Sup"))
+            return "bool";
         return "int";
     }
 }
