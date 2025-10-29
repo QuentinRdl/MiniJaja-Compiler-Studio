@@ -162,6 +162,7 @@ public class Memory {
         }
 
         // Ensure declared type matches given value type
+        /* TODO :
         DataType declared = entry.getDataType();
         if (declared != givenDataType) {
             if(declared == DataType.UNKNOWN) {
@@ -170,7 +171,7 @@ public class Memory {
             } else {
                 throw new IllegalArgumentException("Type mismatch when affecting value to '" + identifier + "' : declared=" + declared + " given=" + givenDataType);
             }
-        }
+        }*/
 
         // Handle according to the kind
         if (entry.getKind() == EntryKind.VARIABLE) {
@@ -224,7 +225,33 @@ public class Memory {
         SymbolTableEntry entry = symbolTable.lookup(identifier);
         String ref = entry.getName();
 
-        return stack.getObject(ref);
+        Stack_Object stackobj = stack.getObject(ref);
+        // We convert the stack object into a Value
+        if (stackobj == null) {
+            throw new IllegalArgumentException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
+        }
+
+        Object raw = stackobj.getValue();
+        // If the stored object is already a Value, return it, right now it will not be, but later on it will be
+        if (raw instanceof Value) {
+            return (Value) raw;
+        }
+
+        // If the stored object is null, return an empty Value
+        if (raw == null) {
+            return new Value();
+        }
+
+        // Convert primitives to Value
+        if (raw instanceof Integer) {
+            return new Value((Integer) raw);
+        }
+        if (raw instanceof Boolean) {
+            return new Value((Boolean) raw);
+        }
+
+        // For types we don't know how to convert (e.g., String, Float, Double), throw
+        throw new IllegalArgumentException("Cannot convert stored object of type " + raw.getClass() + " to Value");
     }
 
     public String identVarClass() {

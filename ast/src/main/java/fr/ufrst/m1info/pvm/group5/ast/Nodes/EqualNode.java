@@ -1,8 +1,8 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 
-import fr.ufrst.m1info.pvm.group5.ast.Value;
-import fr.ufrst.m1info.pvm.group5.ast.ValueType;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 public class EqualNode extends BinaryOperator{
     public EqualNode(ASTNode left, ASTNode right) {
