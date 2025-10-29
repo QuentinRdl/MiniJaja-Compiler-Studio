@@ -1,10 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ast.ValueType;
+import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.Value;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 
 import java.util.ArrayList;
@@ -14,6 +11,9 @@ public class IncNode extends ASTNode{
     IdentNode ident;
 
     public IncNode(IdentNode ident){
+        if(ident == null){
+            throw new ASTBuildException("IncNode cannot have a null identifier");
+        }
         this.ident = ident;
     }
 

@@ -535,4 +535,31 @@ public class NodeInterpretationUnitTest {
         assertEquals(6, memoryStorage.get("x").valueInt);
     }
 
+    /**
+     * IncNode
+     */
+    @Test
+    public void IncNode_NoIdentifier(){
+        assertThrows(ASTBuildException.class, () -> new IncNode(null));
+    }
+
+    @Test
+    public void IncNode_InvalidIdentifier(){
+        IdentNode ident = new IdentNode("x");
+        IncNode inc = new IncNode(ident);
+        assertThrows(ASTInvalidMemoryException.class, () -> inc.interpret(memory));
+    }
+
+    @Test
+    public void IncNode(){
+        IdentNode ident = new IdentNode("x");
+        IncNode inc = new IncNode(ident);
+        memoryStorage.put("x", new Value(5));
+        inc.interpret(memory);
+        assertEquals(6, memoryStorage.get("x").valueInt);
+    }
+
+    /**
+     * 
+     */
 }
