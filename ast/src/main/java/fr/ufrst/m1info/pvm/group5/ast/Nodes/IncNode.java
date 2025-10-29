@@ -23,7 +23,7 @@ public class IncNode extends ASTNode{
     public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<>();
         JJCodes.add("push(1)");
-        JJCodes.add("load("+ident+")");
+        JJCodes.add("load("+ident.identifier+")");
         return JJCodes;
     }
 

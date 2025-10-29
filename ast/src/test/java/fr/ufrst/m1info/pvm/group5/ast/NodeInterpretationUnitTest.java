@@ -619,4 +619,76 @@ public class NodeInterpretationUnitTest {
         instrs.interpret(memory);
         assertEquals(7, memoryStorage.get("x").valueInt);
     }
+
+    /**
+     * Main Node
+     */
+    @Test
+    public void MainNode_InvalidVariables(){
+        ASTNode vars = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new MainNode(vars, null));
+    }
+
+    @Test
+    public void MainNode_OnlyVariables(){
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> {},
+                null
+        );
+        MainNode main = new MainNode(vars, null);
+        main.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void MainNode_OnlyVariables_EmptyMemory(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> m.withdrawDecl("x"),
+                null
+        );
+        MainNode main = new MainNode(vars, null);
+        main.interpret(mem);
+        assertFalse(memoryStorage.containsKey("x"));
+    }
+
+    @Test
+    public void MainNode_OnlyInstrs(){
+        InstructionsNode instrs = ASTMocks.createNode(
+          InstructionsNode.class,
+          m -> m.affectValue("x", new Value(10)),
+          null
+        );
+        memoryStorage.put("x", new Value());
+        MainNode main = new MainNode(null, instrs);
+        main.interpret(memory);
+        assertEquals(10, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void MainNode_Complete(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        InstructionsNode instrs = ASTMocks.createNode(
+                InstructionsNode.class,
+                m -> m.declVar("y", m.val("x"),  DataType.INT),
+                null
+        );
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> m.withdrawDecl("x"),
+                null
+        );
+        MainNode main = new MainNode(vars, instrs);
+        main.interpret(mem);
+        assertFalse(memoryStorage.containsKey("x"));
+        assertEquals(5, memoryStorage.get("y").valueInt);
+    }
 }
