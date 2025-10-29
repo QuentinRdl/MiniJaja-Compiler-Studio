@@ -275,7 +275,7 @@ public class NodeCompileTest {
     public void IncNode(){
         IdentNode ident = new IdentNode("x");
         IncNode tested = new IncNode(ident);
-        assertEquals(List.of("push(1)","load(x)"),tested.compile(1));
+        assertEquals(List.of("push(1)","inc(x)"),tested.compile(1));
     }
 
     @Test
