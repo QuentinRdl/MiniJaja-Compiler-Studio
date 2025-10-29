@@ -264,7 +264,6 @@ public class MainController {
      */
     private void handleEnterPressed(CodeLine codeLine){
         int index = codeLines.indexOf(codeLine);
-        System.out.println("ENTER reçu sur ligne " + index);
         if (index >= 0 && index < codeLines.size()){
             // Add a new line of code
             CodeLine newLine = new CodeLine(index + 2, "");
@@ -284,7 +283,7 @@ public class MainController {
                 codeListView.scrollTo(firstCellVisibleIndex + 1);
 
                 // Give focus after updating the selection
-                Platform.runLater(() -> focusSelectedCell());
+                Platform.runLater(this::focusSelectedCell);
 
             });
         }
@@ -320,7 +319,7 @@ public class MainController {
                 codeListView.scrollTo(firstCellVisibleIndex - 1);
             }
 
-            Platform.runLater(() -> focusSelectedCell());
+            Platform.runLater(this::focusSelectedCell);
         });
     }
 

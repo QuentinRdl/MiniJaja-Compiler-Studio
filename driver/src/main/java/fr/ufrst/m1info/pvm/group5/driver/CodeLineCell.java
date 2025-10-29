@@ -64,10 +64,25 @@ public class CodeLineCell extends ListCell<CodeLine> {
         codeField.getStyleClass().add("code-field");
         HBox.setHgrow(codeField, Priority.ALWAYS);
 
+
+        // focus listener on the text field
+        codeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Platform.runLater(() -> {
+                    if (codeField.getText().isEmpty()){
+                        wasEmptyOnLastBackspace = true;
+                    }
+                });
+            }
+        });
+
         // listens for changes in the text field to synchronise the changes
         codeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(getItem() != null){
                 getItem().setCode(newValue);
+            }
+            if (newValue != null && !newValue.isEmpty()){
+                wasEmptyOnLastBackspace = false;
             }
         });
 
@@ -80,8 +95,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
             } else if(event.getCode() == KeyCode.BACK_SPACE && listener != null){
                 String currentText = codeField.getText();
                 int caretPos = codeField.getCaretPosition();
-
-                System.out.println("BACKSPACE index "+ getIndex() +"- texte actuel: '" + currentText + "' | caret: " + caretPos + " | wasEmpty: " + wasEmptyOnLastBackspace);
 
                 if (currentText.isEmpty() && caretPos == 0 && wasEmptyOnLastBackspace){
                     listener.onDeletePressed(getItem());
@@ -200,7 +213,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
             codeField.requestFocus();
             Platform.runLater(() -> {
                 codeField.end();
-
                 if (codeField.getText().isEmpty()){
                     wasEmptyOnLastBackspace = true;
                 }
