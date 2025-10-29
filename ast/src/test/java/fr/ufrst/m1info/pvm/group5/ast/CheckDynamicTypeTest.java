@@ -2,6 +2,8 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import java.util.HashMap;
