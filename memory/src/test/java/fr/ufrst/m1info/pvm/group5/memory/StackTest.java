@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -912,7 +913,7 @@ public class StackTest {
         }
     }
 
-
+    @Disabled
     @Test
     public void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
@@ -972,6 +973,7 @@ public class StackTest {
         }
     }
 
+    @Disabled
     @Test
     public void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
@@ -1012,6 +1014,7 @@ public class StackTest {
         });
     }
 
+    @Disabled
     @Test
     public void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();

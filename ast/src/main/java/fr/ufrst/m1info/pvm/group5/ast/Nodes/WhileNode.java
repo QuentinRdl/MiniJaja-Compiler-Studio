@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.ast.*;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class WhileNode extends ASTNode{
         // Node compilation
         JJCodes.addAll(pe);
         JJCodes.add("not");
-        JJCodes.add("if(" + address + pe.size() + piss.size() + 3 +")");
+        JJCodes.add("if(" + (address + pe.size() + piss.size() + 3) +")");
         JJCodes.addAll(piss);
         JJCodes.add("goto("+address+")");
         return JJCodes;

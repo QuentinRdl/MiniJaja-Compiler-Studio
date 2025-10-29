@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - sonarqube
+  - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
@@ -13,8 +14,10 @@ cache:
 sonarqube-job:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == 'dev'
     - if: $CI_COMMIT_BRANCH == 'main'
+    - when: manual
 
   tags:
     - avm_groupe5
@@ -34,6 +37,12 @@ sonarqube-job:
       -Dsonar.coverage.jacoco.xmlReportPaths=**/target/site/jacoco/jacoco.xml
 
 build-job:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == 'dev'
+    - if: $CI_COMMIT_BRANCH == 'main'
+    - when: manual
   tags:
     - avm_groupe5
   stage: build
@@ -42,6 +51,12 @@ build-job:
     - mvn -B clean compile
 
 test-job:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == 'dev'
+    - if: $CI_COMMIT_BRANCH == 'main'
+    - when: manual
   tags:
     - avm_groupe5
   stage: test
@@ -68,3 +83,21 @@ test-job:
       - "**/target/surefire-reports/"
       - "**/target/site/jacoco/"
       - "**/target/jacoco.exec"
+
+
+manual-deploy:
+  stage: deploy
+  tags:
+    - avm_groupe5
+  when: manual
+  only:
+    - main
+  needs:
+    - sonarqube-job
+  script:
+    - chmod +x ./settings.sh
+    - ./settings.sh
+    - echo "Starting manual Maven deploy..."
+    - mvn deploy -s ~/.m2/settings.xml
+  environment:
+    name: production

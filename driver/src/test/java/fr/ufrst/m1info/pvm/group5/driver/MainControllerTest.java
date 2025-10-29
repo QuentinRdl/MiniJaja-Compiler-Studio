@@ -1,5 +1,10 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -13,7 +18,10 @@ import javafx.scene.Scene;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.matcher.control.LabeledMatchers;
@@ -22,6 +30,7 @@ import static org.testfx.matcher.control.LabeledMatchers.hasText;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 /**
  * Unit tests for the MainController class
@@ -201,6 +210,567 @@ public class MainControllerTest extends ApplicationTest {
         assertEquals("second.mjj", controller.getFileLabel().getText());
         assertEquals(1,controller.getCodeLines().size());
         assertEquals("final int a = 2000;", controller.getCodeLines().getFirst().getCode());
+    }
+
+    @Test
+    public void testGetModifiedCode() throws Exception{
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+
+        interact(() -> {
+            boolean success = controller.loadFile(testFile);
+            assertTrue(success);
+        });
+
+        ObservableList<CodeLine> codeLines = controller.getCodeLines();
+        ListView<CodeLine> codeListView = controller.getCodeListView();
+        interact(() -> {
+            codeListView.scrollTo(0); // wait until the list view displays the first cell
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField codeField = (TextField) codeListView.lookup(".code-field");
+        assertNotNull(codeField);
+
+        clickOn(codeField).eraseText(codeLines.get(0).getCode().length()).write("int y = 12;");
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals("int y = 12;", codeLines.get(0).getCode());
+
+        assertEquals("int y = 12;\nx++;", controller.getModifiedCode());
+    }
+
+    @Test
+    public void testSingleEnterAddsLineBelow() throws Exception{
+        File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
+
+        interact(() -> {
+            boolean success = controller.loadFile(testFile);
+            assertTrue(success);
+        });
+
+        assertEquals(3, controller.getCodeLines().size());
+
+        // force the display of the first cell
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField firstField = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(firstField, "The first TextField should exist");
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.ENTER);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(4, controller.getCodeLines().size());
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex(), "Line 2 (index 1) should be selected");
+    }
+
+
+    @Test
+    public void testMultipleEnterPresses() throws Exception {
+        File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
+
+        interact(() -> {
+            boolean success = controller.loadFile(testFile);
+            assertTrue(success);
+        });
+        assertEquals(3, controller.getCodeLines().size());
+
+        // force the display of the first cell
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for (int i = 0; i < 10; i++){
+            type(KeyCode.ENTER);
+            WaitForAsyncUtils.waitForFxEvents();
+        }
+
+        assertEquals(13, controller.getCodeLines().size());
+        assertEquals(10, controller.getCodeListView().getSelectionModel().getSelectedIndex(), "Line 11 (index 10) should be selected");
+    }
+
+
+    @Test
+    public void testSaveButtonCurrentFileExisting() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++");
+
+        interact(() -> {
+            boolean success = controller.loadFile(testFile);
+            assertTrue(success);
+        });
+
+        assertEquals(testFile, controller.getCurrentFile());
+        assertEquals(2, controller.getCodeLines().size());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField firstField = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(firstField);
+
+        clickOn(firstField).eraseText(controller.getCodeLines().get(0).getCode().length()).write("boolean x = true;");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> {
+            controller.saveButton();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(testFile, controller.getCurrentFile());
+        List<String> savedLines = Files.readAllLines(testFile.toPath(), StandardCharsets.UTF_8);
+        assertEquals(2, controller.getCodeLines().size());
+        assertEquals("boolean x = true;", savedLines.get(0));
+        assertEquals("x++", savedLines.get(1));
+    }
+
+    @Test
+    public void testSavePreservesModifications() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
+
+        interact(() -> {
+            boolean success = controller.loadFile(testFile);
+            assertTrue(success);
+        });
+
+        assertEquals(testFile, controller.getCurrentFile());
+
+        controller.getCodeLines().get(0).setCode("modified line 1");
+        controller.getCodeLines().get(1).setCode("modified line 2");
+        controller.getCodeLines().get(2).setCode("modified line 3");
+
+        interact(() -> {
+            controller.saveButton();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+
+        assertEquals("modified line 1", controller.getCodeLines().get(0).getCode());
+        assertEquals("modified line 2", controller.getCodeLines().get(1).getCode());
+        assertEquals("modified line 3", controller.getCodeLines().get(2).getCode());
+    }
+
+    @Test
+    public void testSaveAfterAddingLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2");
+
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+
+        assertEquals(testFile, controller.getCurrentFile());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField firstField = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(firstField);
+
+        clickOn(firstField).type(KeyCode.ENTER);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> {
+            controller.saveButton();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(testFile, controller.getCurrentFile());
+        List<String> savedLines = Files.readAllLines(testFile.toPath(), StandardCharsets.UTF_8);
+        assertEquals(3, savedLines.size());
+        assertEquals("line 1", savedLines.get(0));
+        assertEquals("", savedLines.get(1));
+        assertEquals("line 2", savedLines.get(2));
+    }
+
+    @Test
+    public void testSaveEmptyFile() throws Exception {
+        File emptyFile = createTestFile("empty.mjj");
+
+        interact(() -> {
+            controller.loadFile(emptyFile);
+        });
+
+        assertEquals(emptyFile, controller.getCurrentFile());
+        assertTrue(controller.getCodeLines().isEmpty());
+
+        interact(() -> {
+            controller.saveButton();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(emptyFile, controller.getCurrentFile());
+        List<String> savedLines = Files.readAllLines(emptyFile.toPath(), StandardCharsets.UTF_8);
+        assertTrue(savedLines.isEmpty());
+    }
+
+    @Test
+    public void testSaveButtonWhenCurrentFileNull() throws Exception {
+        controller.getCodeLines().add(new CodeLine(1, "int x = 10;"));
+        controller.getCodeLines().add(new CodeLine(2, "x++;"));
+
+        assertNull(controller.getCurrentFile());
+
+        // We cannot test saveButton() directly because it opens a FileChooser
+        // But we can simulate the behaviour: saveAs with a file
+        File newFile = tempDir.resolve("newFile.mjj").toFile();
+
+        interact(() -> {
+            controller.saveAs(newFile);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(newFile, controller.getCurrentFile());
+        assertTrue(newFile.exists());
+
+        List<String> savedLines = Files.readAllLines(newFile.toPath(), StandardCharsets.UTF_8);
+        assertEquals(2, savedLines.size());
+        assertEquals("int x = 10;", savedLines.get(0));
+        assertEquals("x++;", savedLines.get(1));
+    }
+
+    @Test
+    public void testSaveAsWithNullFile() throws Exception {
+        File initialFile = createTestFile("initial.mjj", "line 1", "line 2");
+
+        interact(() -> {
+            controller.loadFile(initialFile);
+        });
+
+        assertEquals(initialFile, controller.getCurrentFile());
+        assertEquals("initial.mjj", controller.getFileLabel().getText());
+
+        interact(() -> {
+            controller.saveAs(null);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(initialFile, controller.getCurrentFile());
+        assertEquals("initial.mjj", controller.getFileLabel().getText());
+    }
+
+    @Test
+    public void testSaveAsWithNewFile() throws Exception {
+        File initialFile = createTestFile("initial.mjj", "line 1", "line 2");
+
+        interact(() -> {
+            controller.loadFile(initialFile);
+        });
+
+        assertEquals(initialFile, controller.getCurrentFile());
+        assertEquals("initial.mjj", controller.getFileLabel().getText());
+
+        controller.getCodeLines().get(0).setCode("modified line 1");
+
+        File newFile = tempDir.resolve("newFile.mjj").toFile();
+        assertFalse(newFile.exists());
+
+        interact(() -> {
+            controller.saveAs(newFile);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(newFile.exists());
+        assertEquals(newFile, controller.getCurrentFile());
+        assertEquals("newFile.mjj", controller.getFileLabel().getText());
+
+        List<String> savedLines = Files.readAllLines(newFile.toPath(), StandardCharsets.UTF_8);
+        assertEquals(2, savedLines.size());
+        assertEquals("modified line 1", savedLines.get(0));
+        assertEquals("line 2", savedLines.get(1));
+    }
+
+    //TODO: tests when the backspace key is pressed
+    @Test
+    public void testEnterThenBackspaceDeleteEmptyLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField firstField = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(firstField);
+
+        clickOn(firstField).type(KeyCode.ENTER);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals("int x = 10;", controller.getCodeLines().get(0).getCode());
+        assertEquals("", controller.getCodeLines().get(1).getCode());
+        assertEquals("x++;", controller.getCodeLines().get(2).getCode());
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+        assertEquals("int x = 10;", controller.getCodeLines().get(0).getCode());
+        assertEquals("x++;", controller.getCodeLines().get(1).getCode());
+    }
+
+    @Test
+    public void testDeleteTextThenBackspaceDeletesEmptyLines() throws Exception {
+        File testFile = createTestFile("test.mjj", "main () {", "abc", "}");
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(1);
+            controller.getCodeListView().getSelectionModel().select(1);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        // Find the TextField of the selected row
+        TextField field = null;
+        for (Object node : controller.getCodeListView().lookupAll(".code-field")) {
+            if (node instanceof TextField tf) {
+                // Check the content to ensure that you have the correct TextField
+                if ("abc".equals(tf.getText())) {
+                    field = tf;
+                    break;
+                }
+            }
+        }
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(field::end);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals("abc", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.BACK_SPACE); //c
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("ab", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.BACK_SPACE); //b
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("a", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.BACK_SPACE); //a
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("", controller.getCodeLines().get(1).getCode());
+        assertEquals(3, controller.getCodeLines().size());
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(2, controller.getCodeLines().size());
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+    }
+
+
+    @Test
+    public void testSelectEmptyLineThenBackspaceDeletesImmediately() throws Exception {
+        File testFile = createTestFile("test.mjj", "main () {", "", "}");
+        interact(() -> controller.loadFile(testFile));
+
+        assertTrue(controller.getCodeLines().get(1).getCode().isEmpty());
+        assertEquals(3, controller.getCodeLines().size());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(1);
+            controller.getCodeListView().getSelectionModel().select(1);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        // Find the TextField of the selected row
+        TextField field = null;
+        for (Object node : controller.getCodeListView().lookupAll(".code-field")) {
+            if (node instanceof TextField tf) {
+                // Check the content to ensure that you have the correct TextField
+                if ("".equals(tf.getText())) {
+                    field = tf;
+                    break;
+                }
+            }
+        }
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertEquals("main () {", controller.getCodeLines().get(0).getCode());
+        assertEquals("}", controller.getCodeLines().get(1).getCode());
+    }
+
+    @Test
+    public void testCannotDeleteLastLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "");
+        interact(() -> controller.loadFile(testFile));
+
+        assertEquals(1, controller.getCodeLines().size());
+        assertTrue(controller.getCodeLines().get(0).getCode().isEmpty());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(1, controller.getCodeLines().size());
+        assertTrue(controller.getCodeLines().get(0).getCode().isEmpty());
+    }
+
+    @Test
+    public void testBackspaceInMiddleOfTextDoesNotDeleteLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+        interact(() -> controller.loadFile(testFile));
+
+        assertEquals(2, controller.getCodeLines().size());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> field.positionCaret(2));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertEquals("it x = 10;", controller.getCodeLines().get(0).getCode());
+        assertEquals("x++;", controller.getCodeLines().get(1).getCode());
+    }
+
+    @Test
+    public void testTypingAfterEmptyingLineResetFlag() throws Exception {
+        File testFile = createTestFile("test.mjj", "main () {", "x", "}");
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals("x", controller.getCodeLines().get(1).getCode());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(1);
+            controller.getCodeListView().getSelectionModel().select(1);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        // Find the TextField of the selected row
+        TextField field = null;
+        for (Object node : controller.getCodeListView().lookupAll(".code-field")) {
+            if (node instanceof TextField tf) {
+                // Check the content to ensure that you have the correct TextField
+                if ("x".equals(tf.getText())) {
+                    field = tf;
+                    break;
+                }
+            }
+        }
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(field::end);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals("", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.Y);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals("y", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals("", controller.getCodeLines().get(1).getCode());
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(2, controller.getCodeLines().size());
+    }
+
+    @Test
+    public void testMultipleEmptyLinesCreationAndDeletion() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1");
+        interact(() -> controller.loadFile(testFile));
+
+        assertEquals(1, controller.getCodeLines().size());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for (int i = 0; i < 5; i++){
+            type(KeyCode.ENTER);
+            WaitForAsyncUtils.waitForFxEvents();
+        }
+
+        assertEquals(6, controller.getCodeLines().size());
+
+        for (int i = 0; i < 5; i++){
+            type(KeyCode.BACK_SPACE);
+            WaitForAsyncUtils.waitForFxEvents();
+        }
+
+        assertEquals(1, controller.getCodeLines().size());
     }
 
 }

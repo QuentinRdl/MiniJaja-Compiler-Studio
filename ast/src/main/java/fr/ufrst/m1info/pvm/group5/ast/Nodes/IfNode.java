@@ -27,13 +27,19 @@ public class IfNode extends ASTNode{
     public List<String> compile(int address) {
         List<String> JJCodes = new ArrayList<>();
         List<String> pe = condition.compile(address);
-        List<String> ps1 = instrElse.compile(address + pe.size() + 1);
-        List<String> ps = instrElse.compile(address + pe.size() + ps1.size() + 2);
+        List<String> ps1 = new ArrayList<>();
+        List<String> ps = new ArrayList<>();
+        if (instrElse != null){
+            ps1 = instrElse.compile(address + pe.size() + 1);
+        }
+        if (instrThen != null){
+            ps = instrThen.compile(address + pe.size() + ps1.size() + 2);
+        }
 
         JJCodes.addAll(pe);
-        JJCodes.add("if("+ address + pe.size() + ps1.size() + 2 + ")");
+        JJCodes.add("if("+ (address + pe.size() + ps1.size() + 2) + ")");
         JJCodes.addAll(ps1);
-        JJCodes.add("goto("+ address + pe.size() + ps1.size() + ps.size() + 2 + ")");
+        JJCodes.add("goto("+ (address + pe.size() + ps1.size() + ps.size() + 2) + ")");
         JJCodes.addAll(ps);
 
         return JJCodes;

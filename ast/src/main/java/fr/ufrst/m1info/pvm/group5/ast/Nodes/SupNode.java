@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.Value;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 public class SupNode extends BinaryOperator{
     public SupNode(ASTNode left, ASTNode right) {

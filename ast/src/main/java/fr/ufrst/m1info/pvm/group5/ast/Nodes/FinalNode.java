@@ -2,12 +2,14 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FinalNode extends ASTNode implements WithradawableNode {
+public class FinalNode extends ASTNode implements WithdrawalNode {
     TypeNode type;
     IdentNode ident;
     ASTNode expression;
@@ -34,7 +36,7 @@ public class FinalNode extends ASTNode implements WithradawableNode {
         if(expression != null) {
             jajacodes.addAll(expression.compile(address));
         }
-        jajacodes.add("new(" + ident + "," + type + ",cst,0)");
+        jajacodes.add("new(" + ident.identifier + "," + type + ",cst,0)");
         return jajacodes;
     }
 
@@ -74,7 +76,7 @@ public class FinalNode extends ASTNode implements WithradawableNode {
 
 
     @Override
-    public void withradawInterpret(Memory m) {
+    public void withdrawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 

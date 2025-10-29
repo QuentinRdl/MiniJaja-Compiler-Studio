@@ -7,12 +7,12 @@ import java.util.List;
 /**
  * Interface defining nodes or declaration that can be withdrawn from the memory
  */
-public interface WithradawableNode {
+public interface WithdrawalNode {
     /**
      * Make the interpretation to withdraw the declaration from the given memory
      * @param m memory to withdraw the declaration from
      */
-    public void withradawInterpret(Memory m);
+    public void withdrawInterpret(Memory m);
 
     /**
      * Generate the instructions to withdraw the declaration from the stack

@@ -6,7 +6,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariablesNode extends ASTNode implements WithradawableNode {
+public class VariablesNode extends ASTNode implements WithdrawalNode {
     ASTNode variable;
     ASTNode variables;
 
@@ -16,7 +16,7 @@ public class VariablesNode extends ASTNode implements WithradawableNode {
         if(this.variable==null){
             throw new ASTBuildException("Invalid variable declaration");
         }
-        if(!(this.variable instanceof WithradawableNode)){
+        if(!(this.variable instanceof WithdrawalNode)){
             throw new ASTBuildException("Variable declarations must be withdrawable");
         }
     }
@@ -50,18 +50,18 @@ public class VariablesNode extends ASTNode implements WithradawableNode {
 
 
     @Override
-    public void withradawInterpret(Memory m) {
+    public void withdrawInterpret(Memory m) {
         if(variables != null)
-            ((WithradawableNode)variables).withradawInterpret(m);
-        ((WithradawableNode)variable).withradawInterpret(m);
+            ((WithdrawalNode)variables).withdrawInterpret(m);
+        ((WithdrawalNode)variable).withdrawInterpret(m);
     }
 
     @Override
     public List<String> withdrawCompile(int address) {
         List<String> jajacodes = new ArrayList<String>();
         if(variables != null)
-            jajacodes.addAll(((WithradawableNode)variables).withdrawCompile(address));
-        jajacodes.addAll(((WithradawableNode)variable).withdrawCompile(address + jajacodes.size()));
+            jajacodes.addAll(((WithdrawalNode)variables).withdrawCompile(address));
+        jajacodes.addAll(((WithdrawalNode)variable).withdrawCompile(address + jajacodes.size()));
         return jajacodes;
     }
 }

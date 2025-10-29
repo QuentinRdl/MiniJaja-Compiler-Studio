@@ -2,7 +2,9 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -87,7 +89,7 @@ public class ASTMocks {
      * @return mock created
      * @param <T> class of node to create, defined by the [type] parameter
      */
-    public static<T extends ASTNode> T createNode(Class<T> type, Consumer<Memory> onInterpret, Function<Integer, Integer> onCompile){
+    public static<T extends ASTNode> T createNode(Class<T> type, Consumer<Memory> onInterpret, Function<Integer, List<String>> onCompile){
         T result = mock(type);
         doAnswer(invocationOnMock ->{
             if(onInterpret == null)
@@ -116,7 +118,7 @@ public class ASTMocks {
     public static<T extends ASTNode & EvaluableNode> T createEvalNode(
             Class<T> type,
             Consumer<Memory> onInterpret,
-            Function<Integer, Integer> onCompile,
+            Function<Integer, List<String>> onCompile,
             Function<Memory, Value> onEval
     ){
         T result = createNode(type,  onInterpret, onCompile);
@@ -137,11 +139,12 @@ public class ASTMocks {
      * @return mock created
      * @param <T> class of node to create, defined by the [type] parameter
      */
-    public static<T extends ASTNode & WithradawableNode> T createWithdrawNode(
+    public static<T extends ASTNode & WithdrawalNode> T createWithdrawNode(
             Class<T> type,
             Consumer<Memory> onInterpret,
-            Function<Integer, Integer> onCompile,
-            Consumer<Memory> onWithdraw
+            Function<Integer, List<String>> onCompile,
+            Consumer<Memory> onWithdraw,
+            Function<Integer, List<String>> onWithdrawCompile
     ){
         T result = createNode(type,  onInterpret, onCompile);
         doAnswer(invocationOnMock ->  {
@@ -149,7 +152,12 @@ public class ASTMocks {
                 throw new Exception("Missing withdraw function for mock");
             onWithdraw.accept(invocationOnMock.getArgument(0));
             return null;
-        }).when(result).withradawInterpret(any(Memory.class));
+        }).when(result).withdrawInterpret(any(Memory.class));
+        doAnswer(invocationOnMock ->  {
+            if(onWithdrawCompile == null)
+                throw new Exception("Missing withdraw function for mock");
+            return onWithdrawCompile.apply(invocationOnMock.getArgument(0));
+        }).when(result).withdrawCompile(any(Integer.class));
         return result;
     }
 }

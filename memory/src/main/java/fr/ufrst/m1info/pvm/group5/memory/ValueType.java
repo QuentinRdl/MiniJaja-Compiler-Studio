@@ -1,4 +1,4 @@
-package fr.ufrst.m1info.pvm.group5.ast;
+package fr.ufrst.m1info.pvm.group5.memory;
 
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 
@@ -26,5 +26,18 @@ public enum ValueType {
                 return DataType.VOID;
         }
         return DataType.UNKNOWN;
+    }
+
+    public String toString(){
+        switch(this){
+            case INT:
+                return "INT";
+            case BOOL:
+                return "BOOL";
+            case VOID:
+                return "VOID";
+            default:
+                return "UNKNOWN";
+        }
     }
 }

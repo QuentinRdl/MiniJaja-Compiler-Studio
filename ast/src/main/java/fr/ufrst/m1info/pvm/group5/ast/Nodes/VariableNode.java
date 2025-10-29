@@ -2,11 +2,13 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.ast.*;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariableNode extends ASTNode implements WithradawableNode {
+public class VariableNode extends ASTNode implements WithdrawalNode {
     TypeNode typemeth;
     IdentNode ident;
     ASTNode vexp;
@@ -29,7 +31,9 @@ public class VariableNode extends ASTNode implements WithradawableNode {
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<String>();
-        jajacodes.addAll(vexp.compile(address));
+        if (vexp != null) {
+            jajacodes.addAll(vexp.compile(address));
+        }
         jajacodes.add("new(" + ident.identifier + "," + typemeth + ",var,0)" );
         return jajacodes;
     }
@@ -63,7 +67,7 @@ public class VariableNode extends ASTNode implements WithradawableNode {
 
 
     @Override
-    public void withradawInterpret(Memory m) {
+    public void withdrawInterpret(Memory m) {
         m.withdrawDecl(ident.identifier);
     }
 
