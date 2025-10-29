@@ -68,6 +68,21 @@ public class ASTMocks {
     }
 
     /**
+     * Add a class variable identifier to a memory mock
+     * The class variable is expected to be already declared in the mock, as this function doesn't do any declaration
+     *
+     * @param mock MemoryMock, that must be a mock of Memory created earlier
+     * @param classVariableIdent identifier of the class variable.
+     * @return modified mock
+     */
+    public static Memory addClassVariableToMock(Memory mock, String classVariableIdent){
+        doAnswer(invocationOnMock -> {
+            return classVariableIdent;
+        }).when(mock).identVarClass();
+        return mock;
+    }
+
+    /**
      * Creates a mock that mimics memory storage and withdrawal using a map
      * @param storage map using to store the mock data
      * @return mock created

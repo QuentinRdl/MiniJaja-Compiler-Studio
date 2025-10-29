@@ -762,4 +762,28 @@ public class NodeInterpretationUnitTest {
         tested = new OrNode(FNode,TNode);
         assertEquals(true, tested.eval(memory).valueBool);
     }
+
+    /**
+     * ReturnNode
+     */
+    @Test
+    public void ReturnNode_MissingExpression(){
+        assertThrows(ASTBuildException.class, ()->new ReturnNode(null));
+    }
+
+    @Test
+    public void ReturnNode_InvalidOperand(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, ()->new ReturnNode(node));
+    }
+
+    @Test
+    public void ReturnNode_Valid(){
+        memory.declVarClass("C");
+        ASTMocks.addClassVariableToMock(memory, "C");
+        NumberNode n = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        ReturnNode tested = new ReturnNode(n);
+        tested.interpret(memory);
+        assertEquals(5, memoryStorage.get("C").valueInt);
+    }
 }
