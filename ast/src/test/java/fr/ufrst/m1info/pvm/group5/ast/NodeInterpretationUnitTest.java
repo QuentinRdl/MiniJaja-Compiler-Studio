@@ -799,4 +799,80 @@ public class NodeInterpretationUnitTest {
         tested.interpret(memory);
         assertEquals(5, memoryStorage.get("C").valueInt);
     }
+
+    /**
+     * SumNode
+     */
+
+    @Test
+    public void SumNode_Default(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        memoryStorage.put("x", new Value(10));
+        SumNode tested = new SumNode(lop,rop);
+        tested.interpret(memory);
+        assertEquals(15, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void SumNode_UndefinedOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        SumNode tested = new SumNode(lop,rop);
+        assertThrows(ASTInvalidMemoryException.class, ()->tested.interpret(memory));
+    }
+
+    @Test
+    public void SumNode_MissingOperand(){
+        assertThrows(ASTBuildException.class, () -> new SumNode(new IdentNode("x"),null));
+    }
+
+    @Test
+    public void SumNode_InvalidOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        assertThrows(ASTBuildException.class, () -> new SumNode(lop,null));
+        assertThrows(ASTBuildException.class, () -> new SumNode(null,rop));
+        ASTNode newrop = mock(ASTNode.class);
+        assertThrows(ASTBuildException.class, () -> new SumNode(lop,null));
+    }
+
+    /**
+     * SupNode
+     */
+    @Test
+    public void SupNode_Operation() {
+        NumberNode ten = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode five = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        NumberNode five2 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        SupNode tested = new SupNode(ten,five);
+        assertTrue(tested.eval(memory).valueBool);
+        tested = new SupNode(five,ten);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new SupNode(five,five2);
+        assertFalse(tested.eval(memory).valueBool);
+    }
+
+    /**
+     * Unary Minus Node
+     */
+    @Test
+    public void UnMinusNode_Operation() {
+        NumberNode t = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        UnMinusNode um = new UnMinusNode(t);
+        assertEquals(-5, um.eval(memory).valueInt);
+    }
+
+    @Test
+    public void UnMinusNode_InvalidOperation() {
+        NumberNode n = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        UnMinusNode um = new UnMinusNode(n);
+        assertThrows(ASTInvalidOperationException.class, ()->um.interpret(memory));
+    }
+
+    @Test
+    public void UnMinusNode_InvalidOperand(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new UnMinusNode(node));
+    }
 }
