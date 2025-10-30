@@ -94,11 +94,12 @@ public abstract class ASTNode {
         if(!prop.isEmpty()) {
             sb.append(prop);
         }
-        for(ASTNode node : children){
-            addTabDepth(sb,depth+1);
-            sb.append("\"").append(node.getClass().getSimpleName()).append("\" : ");
-            sb.append(node.dump(depth+1));
-        }
+        if(children != null)
+            for(ASTNode node : children){
+                addTabDepth(sb,depth+1);
+                sb.append("\"").append(node.getClass().getSimpleName()).append("\" : ");
+                sb.append(node.dump(depth+1));
+            }
         if(depth>0)
             addTabDepth(sb,depth);
         sb.append("}\n");

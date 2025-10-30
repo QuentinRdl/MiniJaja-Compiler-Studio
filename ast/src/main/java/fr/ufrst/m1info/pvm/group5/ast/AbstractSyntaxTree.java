@@ -138,7 +138,7 @@ public class AbstractSyntaxTree {
     public void dumpToFile(String filePath) throws IOException{
         BufferedWriter out = null;
         try {
-            FileWriter fstream = new FileWriter("out.txt", true);
+            FileWriter fstream = new FileWriter("out.txt", false);
             out = new BufferedWriter(fstream);
             out.write(dump());
             out.close();
