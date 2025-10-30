@@ -5,6 +5,7 @@ import fr.ufrst.m1info.pvm.group5.MiniJaJaLexer;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaParser;
 import org.antlr.v4.runtime.*;
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.ClassNode;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,12 +43,21 @@ public class AbstractSyntaxTree {
      * Generate a new AST from an antlr charstream
      * Used as an utility for fromFile and fromString
      * @param in input file stream
+     *
      * @return generated AST
+     *
+     * @throws ParseCancellationException throws exceptions if the input file is invalid
      */
-    private static AbstractSyntaxTree fromCharStream(CharStream in){
+    private static AbstractSyntaxTree fromCharStream(CharStream in) throws ParseCancellationException {
         MiniJaJaLexer lexer = new MiniJaJaLexer(in);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(ExceptionErrorListener.INSTANCE);
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJaJaParser parser = new MiniJaJaParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(ExceptionErrorListener.INSTANCE);
+
         AbstractSyntaxTree tree = new AbstractSyntaxTree();
         tree.root = parser.classe().node;
         return tree;

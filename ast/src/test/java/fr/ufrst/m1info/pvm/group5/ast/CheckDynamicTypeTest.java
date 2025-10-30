@@ -103,10 +103,9 @@ public class CheckDynamicTypeTest {
         String result = node.checkType(memoryMock);
         assertEquals("void", result);
     }
-
     @Test
-    @DisplayName("BinaryOperator - checkType() valid with two int")
-    public void testBinaryOperator_IntOk() throws Exception {
+    @DisplayName("BinaryOperator - arithmetic operator (AddNode) with two int → OK")
+    public void testArithmeticOperator_IntOperands_OK() throws Exception {
         ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(left.checkType(memoryMock)).thenReturn("int");
 
@@ -114,24 +113,16 @@ public class CheckDynamicTypeTest {
         when(right.checkType(memoryMock)).thenReturn("int");
 
         BinaryOperator op = new BinaryOperator(left, right) {
-            @Override
-            protected String getCompileName() {
-                return "add";
-            }
-
-            @Override
-            protected Value mainOperation(Value leftOperand, Value rightOperand) {
-                return new Value(leftOperand.valueInt + rightOperand.valueInt);
-            }
+            @Override protected String getCompileName() { return "AddNode"; }
+            @Override protected Value mainOperation(Value l, Value r) { return new Value(l.valueInt + r.valueInt); }
         };
 
-        String result = op.checkType(memoryMock);
-        assertEquals("int", result);
+        assertEquals("int", op.checkType(memoryMock));
     }
 
     @Test
-    @DisplayName("BinaryOperator - checkType() fails if any operand is not int")
-    public void testBinaryOperator_NonInt() {
+    @DisplayName("BinaryOperator - arithmetic operator with non-int operands → Exception")
+    public void testArithmeticOperator_WrongOperands_Fails() {
         ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(left.checkType(memoryMock)).thenReturn("int");
 
@@ -139,15 +130,71 @@ public class CheckDynamicTypeTest {
         when(right.checkType(memoryMock)).thenReturn("bool");
 
         BinaryOperator op = new BinaryOperator(left, right) {
-            @Override
-            protected String getCompileName() {
-                return "add";
-            }
+            @Override protected String getCompileName() { return "AddNode"; }
+            @Override protected Value mainOperation(Value l, Value r) { return new Value(l.valueInt + r.valueInt); }
+        };
 
-            @Override
-            protected Value mainOperation(Value leftOperand, Value rightOperand) {
-                return new Value(leftOperand.valueInt + rightOperand.valueInt);
-            }
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> op.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinaryOperator - logical operator (AndNode) with bool operands → OK")
+    public void testLogicalOperator_BoolOperands_OK() throws Exception {
+        ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(left.checkType(memoryMock)).thenReturn("bool");
+
+        ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(right.checkType(memoryMock)).thenReturn("bool");
+
+        BinaryOperator op = new AndNodeTest(left, right);
+
+        assertEquals("bool", op.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinaryOperator - logical operator (OrNode) with invalid operands → Exception")
+    public void testLogicalOperator_WrongOperands_Fails() {
+        ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(left.checkType(memoryMock)).thenReturn("int");
+
+        ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(right.checkType(memoryMock)).thenReturn("bool");
+
+        BinaryOperator op = new BinaryOperator(left, right) {
+            @Override protected String getCompileName() { return "OrNode"; }
+            @Override protected Value mainOperation(Value l, Value r) { return new Value(l.valueBool || r.valueBool); }
+        };
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> op.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinaryOperator - comparison operator (EqualNode) with two int → OK")
+    public void testComparisonOperator_IntOperands_OK() throws Exception {
+        ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(left.checkType(memoryMock)).thenReturn("int");
+
+        ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(right.checkType(memoryMock)).thenReturn("int");
+
+        BinaryOperator op = new EqualNodeTest(left, right);
+
+        assertEquals("bool", op.checkType(memoryMock));
+    }
+
+
+    @Test
+    @DisplayName("BinaryOperator - comparison operator (EqualNode) with mismatched types → Exception")
+    public void testComparisonOperator_Mismatch_Fails() {
+        ASTNode left = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(left.checkType(memoryMock)).thenReturn("int");
+
+        ASTNode right = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
+        when(right.checkType(memoryMock)).thenReturn("bool");
+
+        BinaryOperator op = new BinaryOperator(left, right) {
+            @Override protected String getCompileName() { return "EqualNode"; }
+            @Override protected Value mainOperation(Value l, Value r) { return new Value(l.valueInt == r.valueInt); }
         };
 
         assertThrows(ASTInvalidDynamicTypeException.class, () -> op.checkType(memoryMock));
@@ -701,6 +748,25 @@ public class CheckDynamicTypeTest {
         WhileNode whileNode = new WhileNode(cond, null);
         String result = whileNode.checkType(memoryMock);
         assertEquals("void", result);
+    }
+    class AndNodeTest extends BinaryOperator {
+        public AndNodeTest(ASTNode left, ASTNode right) { super(left, right); }
+
+        @Override
+        protected String getCompileName() { return "AndNode"; }
+
+        @Override
+        protected Value mainOperation(Value l, Value r) { return new Value(l.valueBool && r.valueBool); }
+    }
+
+    class EqualNodeTest extends BinaryOperator {
+        public EqualNodeTest(ASTNode left, ASTNode right) { super(left, right); }
+
+        @Override
+        protected String getCompileName() { return "EqualNode"; }
+
+        @Override
+        protected Value mainOperation(Value l, Value r) { return new Value(l.valueInt == r.valueInt); }
     }
 
     class DummyWithdrNode extends ASTNode implements WithdrawalNode {

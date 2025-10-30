@@ -237,21 +237,7 @@ public class Memory {
             return (Value) raw;
         }
 
-        // If the stored object is null, return an empty Value
-        if (raw == null) {
-            return new Value();
-        }
-
-        // Convert primitives to Value
-        if (raw instanceof Integer) {
-            return new Value((Integer) raw);
-        }
-        if (raw instanceof Boolean) {
-            return new Value((Boolean) raw);
-        }
-
-        // For types we don't know how to convert (e.g., String, Float, Double), throw
-        throw new IllegalArgumentException("Cannot convert stored object of type " + raw.getClass() + " to Value");
+        return Stack_Object.stackObjToValue(stackobj);
     }
 
     public String identVarClass() {

@@ -97,7 +97,6 @@ public class MemoryIntegrationTest {
         );
     }
 
-    /*
 
     @ParameterizedTest
     @MethodSource("typeOfVars")
@@ -135,11 +134,29 @@ public class MemoryIntegrationTest {
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
-        assertEquals(value, stack_ret.getValue());
+        assertInstanceOf(Value.class, ret);
+        Value ret_val = (Value) ret;
+        if(type == DataType.BOOL) {
+            assertEquals(value, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(value, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
         mem.affectValue(id, newValue);
-        assertEquals(newValue, stack_ret.getValue());
+
+        ret = mem.val(id);
+        ret_val = (Value) ret;
+
+        if(type == DataType.BOOL) {
+            assertEquals(newValue, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(newValue, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
     }
 
 
@@ -150,17 +167,58 @@ public class MemoryIntegrationTest {
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
-        assertEquals(value, stack_ret.getValue());
+        assertInstanceOf(Value.class, ret);
+        Value ret_val = (Value) ret;
+        if(type == DataType.BOOL) {
+            assertEquals(value, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(value, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
+
         mem.affectValue(id, newValue);
-        assertEquals(newValue, stack_ret.getValue());
+
+        ret = mem.val(id);
+        ret_val = (Value) ret;
+
+        if(type == DataType.BOOL) {
+            assertEquals(newValue, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(newValue, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
 
         mem.affectValue(id, newValue1);
-        assertEquals(newValue1, stack_ret.getValue());
+
+        ret = mem.val(id);
+        ret_val = (Value) ret;
+
+        if(type == DataType.BOOL) {
+            assertEquals(newValue1, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(newValue1, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
 
         mem.affectValue(id, newValue2);
-        assertEquals(newValue2, stack_ret.getValue());
+
+        ret = mem.val(id);
+        ret_val = (Value) ret;
+
+        if(type == DataType.BOOL) {
+            assertEquals(newValue2, ret_val.valueBool);
+        }
+        else if(type == DataType.INT) {
+            assertEquals(newValue2, ret_val.valueInt);
+        } else {
+            return; // TODO : Do other DataTypes
+        }
     }
 
     @ParameterizedTest
@@ -170,8 +228,9 @@ public class MemoryIntegrationTest {
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
+        assertInstanceOf(Value.class, ret);
+        Value val = (Value) ret;
+        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(java.lang.IllegalArgumentException.class, () -> {
             mem.affectValue(id, newValue);
@@ -185,8 +244,9 @@ public class MemoryIntegrationTest {
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
+        assertInstanceOf(Value.class, ret);
+        Value val = (Value) ret;
+        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(java.lang.IllegalArgumentException.class, () -> {
             mem.affectValue(null, newValue);
@@ -201,6 +261,9 @@ public class MemoryIntegrationTest {
         });
     }
 
+
+
+
     @ParameterizedTest
     @MethodSource("typeOfVarsNull")
     public void declVarWithNull(String id, Object value, DataType type, Object newValue) {
@@ -208,10 +271,12 @@ public class MemoryIntegrationTest {
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
+        assertInstanceOf(Value.class, ret);
+        Value val = (Value) ret;
+        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         mem.affectValue(id, newValue);
+        stack_ret = mem.stack.getObject(id);
         assertEquals(newValue, stack_ret.getValue());
     }
 
@@ -222,13 +287,14 @@ public class MemoryIntegrationTest {
         mem.declCst(id, null, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
+        assertInstanceOf(Value.class, ret);
+        Value val = (Value) ret;
+        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertNull(stack_ret.getValue());
         mem.affectValue(id, newValue);
+        stack_ret = mem.stack.getObject(id);
         assertEquals(newValue, stack_ret.getValue());
     }
-
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
@@ -237,13 +303,15 @@ public class MemoryIntegrationTest {
         mem.declCst(id, value, type);
         Object ret = mem.val(id);
 
-        assertInstanceOf(Stack_Object.class, ret);
-        Stack_Object stack_ret = (Stack_Object) ret;
+        assertInstanceOf(Value.class, ret);
+        Value val = (Value) ret;
+        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(java.lang.IllegalStateException.class, () -> {
             mem.affectValue(id, newValue);
         });
     }
+
 
     @Test
     public void declVarClassWorks() {
@@ -253,13 +321,10 @@ public class MemoryIntegrationTest {
     }
 
 
-     */
-
     /**
      * Using declVarClass should declare the var class with
      * a DataType set with UNKNOWN
      */
-    /*
     @Test
     public void declVarClassUsesUnknownDataType() {
         mem.declVarClass("val");
@@ -269,13 +334,11 @@ public class MemoryIntegrationTest {
         assertEquals(DataType.UNKNOWN, obj.getDataType());
     }
 
-     */
 
     /**
      * Using declVarClass should declare the var class with
      * data = null
      */
-    /*
     @Test
     public void declVarClassUsesValueEqualsNull() {
         mem.declVarClass("val");
@@ -302,6 +365,7 @@ public class MemoryIntegrationTest {
         assertEquals(4, obj.getValue());
     }
 
+    /* TODO : Put back later
     @Disabled
     @Test
     public void affVarClassReaffectDiffType() {
@@ -326,7 +390,6 @@ public class MemoryIntegrationTest {
     /**
      * We test with calling with no declared class var, and with null arg
      */
-    /*
     @ParameterizedTest
     @MethodSource("affVarNull")
     public void affVarClassCalledNull(Object arg) {
@@ -366,14 +429,12 @@ public class MemoryIntegrationTest {
         // Add an object directly to the stack without adding a symbol table entry
         mem.stack.setVar("idOnStackOnly", 2, DataType.INT);
 
-        // Sanity: symbol table should not contain this identifier
+        // Symbol table should not contain this identifier
         assertFalse(mem.symbolTable.contains("idOnStackOnly"));
 
         // Now declVarClass should throw because stack.hasObj(identifier) is true
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> mem.declVarClass("idOnStackOnly"));
         assertTrue(ex.getMessage().contains("Stack") || ex.getMessage().contains("Stack"));
     }
-
-     */
 }
 

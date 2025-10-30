@@ -79,7 +79,7 @@ public class AbstractSyntaxTreeTest {
     @Test
     @DisplayName("Evaluation - Undefined Variable / Inc")
     public void UndefinedVariableInc() throws Exception {
-        AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {x++}}");
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {x++;}}");
         boolean success = false;
         try {
             AST.interpret(memory);

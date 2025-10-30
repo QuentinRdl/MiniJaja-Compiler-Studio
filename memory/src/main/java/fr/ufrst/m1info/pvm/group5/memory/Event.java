@@ -53,10 +53,11 @@ public class Event<T> {
      * @param eventData data of the event
      */
     public CompletableFuture<Void> TriggerAsync(T eventData){
-        return CompletableFuture.runAsync(()-> {
+        return CompletableFuture.supplyAsync(()-> {
             for (Consumer<T> c : _subscribers) {
                 c.accept(eventData);
             }
+            return null;
         });
     }
 }
