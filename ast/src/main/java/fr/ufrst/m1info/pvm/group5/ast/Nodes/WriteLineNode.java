@@ -40,6 +40,8 @@ public class WriteLineNode extends ASTNode{
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         if(text == null){
             Value v = ident.eval(m);
+            if(v == null)
+                throw new ASTInvalidMemoryException("Unknown variable : " + ident.identifier);
             m.writeLine(v.toString());
         }
         else{

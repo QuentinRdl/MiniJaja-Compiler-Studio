@@ -3,11 +3,14 @@ package fr.ufrst.m1info.pvm.group5.ast;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import org.junit.jupiter.api.*;
 
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mockito.Mock;
@@ -74,6 +77,19 @@ public class NodeInterpretationUnitTest {
         AffectationNode tested = new AffectationNode(lop,rop);
         tested.interpret(memory);
         assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void AffectationNode_UndefinedOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        AffectationNode tested = new AffectationNode(lop,rop);
+        assertThrows(ASTInvalidMemoryException.class, ()->tested.interpret(memory));
+    }
+
+    @Test
+    public void AffectationNode_MissingOperand(){
+        assertThrows(ASTBuildException.class, () -> new AffectationNode(new IdentNode("x"),null));
     }
 
     @Test
@@ -463,5 +479,718 @@ public class NodeInterpretationUnitTest {
     public void IdentNode_Undeclared(){
         IdentNode id = new IdentNode("a");
         assertThrows(ASTInvalidMemoryException.class, () -> id.eval(memory));
+    }
+
+    /**
+     * IfNode
+     */
+
+    @Test
+    public void IfNode_NoCondition(){
+        assertThrows(ASTBuildException.class, () -> new IfNode(null, null, null));
+    }
+
+    @Test
+    public void IfNode_NonEvaluableCondition(){
+        ASTNode expr = ASTMocks.createNode(ASTNode.class ,null, null);
+        assertThrows(ASTBuildException.class, () -> new IfNode(expr, null, null));
+    }
+
+    @Test
+    public void IfNode_NoInstructions(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null, m -> new Value(true));
+        IfNode node = new IfNode(expr, null, null);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyThen_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, then, null);
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_OnlyThen_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, then, null);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyElse_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, null, other);
+        node.interpret(memory);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    @Test
+    public void IfNode_OnlyElse_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.declVar("x", new Value(5), DataType.INT), null);
+        IfNode node = new IfNode(expr, null, other);
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_BothInstructions_True(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(true));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(5)), null);
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(6)), null);
+        IfNode node = new IfNode(expr, then, other);
+        memoryStorage.put("x", new Value());
+        node.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void IfNode_BothInstructions_False(){
+        BooleanNode expr = ASTMocks.createEvalNode(BooleanNode.class ,null, null,  m -> new Value(false));
+        ASTNode then = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(5)), null);
+        ASTNode other = ASTMocks.createNode(ASTNode.class ,m -> m.affectValue("x", new Value(6)), null);
+        IfNode node = new IfNode(expr, then, other);
+        memoryStorage.put("x", new Value());
+        node.interpret(memory);
+        assertEquals(6, memoryStorage.get("x").valueInt);
+    }
+
+    /**
+     * IncNode
+     */
+    @Test
+    public void IncNode_NoIdentifier(){
+        assertThrows(ASTBuildException.class, () -> new IncNode(null));
+    }
+
+    @Test
+    public void IncNode_InvalidIdentifier(){
+        IdentNode ident = new IdentNode("x");
+        IncNode inc = new IncNode(ident);
+        assertThrows(ASTInvalidMemoryException.class, () -> inc.interpret(memory));
+    }
+
+    @Test
+    public void IncNode(){
+        IdentNode ident = new IdentNode("x");
+        IncNode inc = new IncNode(ident);
+        memoryStorage.put("x", new Value(5));
+        inc.interpret(memory);
+        assertEquals(6, memoryStorage.get("x").valueInt);
+    }
+
+    /**
+     * InstructionsNode
+     */
+    @Test
+    public void InstructionsNode_MissingInstruction(){
+        assertThrows(ASTBuildException.class, () -> new InstructionsNode(null, null));
+    }
+
+    @Test
+    public void InstructionsNode_OneInstruction(){
+        ASTNode node = ASTMocks.createNode(
+                ASTNode.class,
+                m -> m.affectValue("x", new Value(5)),
+                null
+        );
+        memoryStorage.put("x", new Value());
+        InstructionsNode instrs = new InstructionsNode(node, null);
+        instrs.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void InstructionsNode_MultipleInstructions(){
+        ASTNode first = ASTMocks.createNode(
+                ASTNode.class,
+                m -> m.affectValue("x", new Value(5)),
+                null
+        );
+        ASTNode second = ASTMocks.createNode(
+                ASTNode.class,
+                m -> {
+                    assertEquals(5, memoryStorage.get("x").valueInt);
+                    m.affectValue("x", new Value(6));
+                },
+                null
+        );
+        ASTNode third = ASTMocks.createNode(
+                ASTNode.class,
+                m -> {
+                    assertEquals(6, memoryStorage.get("x").valueInt);
+                    m.affectValue("x", new Value(7));
+                },
+                null
+        );
+        memoryStorage.put("x", new Value());
+        InstructionsNode instrs = new InstructionsNode(first, new InstructionsNode(second, new InstructionsNode(third, null)));
+        instrs.interpret(memory);
+        assertEquals(7, memoryStorage.get("x").valueInt);
+    }
+
+    /**
+     * Main Node
+     */
+    @Test
+    public void MainNode_InvalidVariables(){
+        ASTNode vars = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new MainNode(vars, null));
+    }
+
+    @Test
+    public void MainNode_OnlyVariables(){
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> {},
+                null
+        );
+        MainNode main = new MainNode(vars, null);
+        main.interpret(memory);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void MainNode_OnlyVariables_EmptyMemory(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> m.withdrawDecl("x"),
+                null
+        );
+        MainNode main = new MainNode(vars, null);
+        main.interpret(mem);
+        assertFalse(memoryStorage.containsKey("x"));
+    }
+
+    @Test
+    public void MainNode_OnlyInstrs(){
+        InstructionsNode instrs = ASTMocks.createNode(
+          InstructionsNode.class,
+          m -> m.affectValue("x", new Value(10)),
+          null
+        );
+        memoryStorage.put("x", new Value());
+        MainNode main = new MainNode(null, instrs);
+        main.interpret(memory);
+        assertEquals(10, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void MainNode_Complete(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        InstructionsNode instrs = ASTMocks.createNode(
+                InstructionsNode.class,
+                m -> m.declVar("y", m.val("x"),  DataType.INT),
+                null
+        );
+        VariableNode vars = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> m.withdrawDecl("x"),
+                null
+        );
+        MainNode main = new MainNode(vars, instrs);
+        main.interpret(mem);
+        assertFalse(memoryStorage.containsKey("x"));
+        assertEquals(5, memoryStorage.get("y").valueInt);
+    }
+
+    /**
+     * Mul node
+     */
+
+    @Test
+    public void MulNode_Operation(){
+        NumberNode lop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        MulNode tested = new MulNode(lop,rop);
+        assertEquals(50, tested.eval(memory).valueInt);
+    }
+
+    /**
+     * Not node
+     */
+
+    @Test
+    public void NotNode_Operation() {
+        NumberNode t = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(true));
+        NumberNode f = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(false));
+        NotNode not = new NotNode(t);
+        assertFalse(not.eval(memory).valueBool);
+        not = new NotNode(f);
+        assertTrue(not.eval(memory).valueBool);
+    }
+
+    @Test
+    public void NotNode_InvalidOperation() {
+        NumberNode t = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(true));
+        NotNode not = new NotNode(t);
+        assertThrows(ASTInvalidOperationException.class, ()->not.interpret(memory));
+    }
+
+    @Test
+    public void NotNode_InvalidOperand(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new NotNode(node));
+    }
+
+    /**
+     * NumberNode
+     */
+    @Test
+    public void NumberNode_Evaluation(){
+        NumberNode n = new NumberNode(5);
+        assertEquals(5, n.eval(memory).valueInt);
+    }
+
+    @Test
+    public void NumberNode_InvalidOperation(){
+        NumberNode n = new NumberNode(5);
+        assertThrows(ASTInvalidOperationException.class, ()->n.interpret(memory));
+    }
+
+    /**
+     * OrNode
+     */
+    @Test
+    public void OrNode_Operation(){
+        BooleanNode TNode = ASTMocks.createEvalNode(BooleanNode.class, null,null, m -> new Value(true));
+        BooleanNode FNode = ASTMocks.createEvalNode(BooleanNode.class, null,null, m -> new Value(false));
+        OrNode tested = new OrNode(TNode,FNode);
+        assertEquals(true, tested.eval(memory).valueBool);
+        tested = new OrNode(TNode,TNode);
+        assertEquals(true, tested.eval(memory).valueBool);
+        tested = new OrNode(FNode,FNode);
+        assertEquals(false, tested.eval(memory).valueBool);
+        tested = new OrNode(FNode,TNode);
+        assertEquals(true, tested.eval(memory).valueBool);
+    }
+
+    /**
+     * ReturnNode
+     */
+    @Test
+    public void ReturnNode_MissingExpression(){
+        assertThrows(ASTBuildException.class, ()->new ReturnNode(null));
+    }
+
+    @Test
+    public void ReturnNode_InvalidOperand(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, ()->new ReturnNode(node));
+    }
+
+    @Test
+    public void ReturnNode_Valid(){
+        memory.declVarClass("C");
+        ASTMocks.addClassVariableToMock(memory, "C");
+        NumberNode n = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        ReturnNode tested = new ReturnNode(n);
+        tested.interpret(memory);
+        assertEquals(5, memoryStorage.get("C").valueInt);
+    }
+
+    /**
+     * SumNode
+     */
+
+    @Test
+    public void SumNode_Default(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        memoryStorage.put("x", new Value(10));
+        SumNode tested = new SumNode(lop,rop);
+        tested.interpret(memory);
+        assertEquals(15, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void SumNode_UndefinedOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        SumNode tested = new SumNode(lop,rop);
+        assertThrows(ASTInvalidMemoryException.class, ()->tested.interpret(memory));
+    }
+
+    @Test
+    public void SumNode_MissingOperand(){
+        assertThrows(ASTBuildException.class, () -> new SumNode(new IdentNode("x"),null));
+    }
+
+    @Test
+    public void SumNode_InvalidOperand(){
+        IdentNode lop = new IdentNode("x");
+        NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        assertThrows(ASTBuildException.class, () -> new SumNode(lop,null));
+        assertThrows(ASTBuildException.class, () -> new SumNode(null,rop));
+        ASTNode newrop = mock(ASTNode.class);
+        assertThrows(ASTBuildException.class, () -> new SumNode(lop,null));
+    }
+
+    /**
+     * SupNode
+     */
+    @Test
+    public void SupNode_Operation() {
+        NumberNode ten = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(10));
+        NumberNode five = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        NumberNode five2 = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        SupNode tested = new SupNode(ten,five);
+        assertTrue(tested.eval(memory).valueBool);
+        tested = new SupNode(five,ten);
+        assertFalse(tested.eval(memory).valueBool);
+        tested = new SupNode(five,five2);
+        assertFalse(tested.eval(memory).valueBool);
+    }
+
+    /**
+     * Unary Minus Node
+     */
+    @Test
+    public void UnMinusNode_Operation() {
+        NumberNode t = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        UnMinusNode um = new UnMinusNode(t);
+        assertEquals(-5, um.eval(memory).valueInt);
+    }
+
+    @Test
+    public void UnMinusNode_InvalidOperation() {
+        NumberNode n = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        UnMinusNode um = new UnMinusNode(n);
+        assertThrows(ASTInvalidOperationException.class, ()->um.interpret(memory));
+    }
+
+    @Test
+    public void UnMinusNode_InvalidOperand(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new UnMinusNode(node));
+    }
+
+    /**
+     * VariableNode
+     */
+    @Test
+    public void VariableNode_MissingType(){
+        assertThrows(ASTBuildException.class, () -> new VariableNode(null, new IdentNode("x"), null));
+    }
+
+    @Test
+    public void VariableNode_MissingIdentifierType(){
+        assertThrows(ASTBuildException.class, () -> new VariableNode(new TypeNode(ValueType.BOOL), null, null));
+    }
+
+    @Test
+    public void VariableNode_InvalidExpression(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("a"), node));
+    }
+
+    @Test
+    public void VariableNode_Declaration_NoExpression(){
+        VariableNode var = new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("x"), null);
+        var.interpret(memory);
+        assertTrue(memoryStorage.containsKey("x"));
+        assertEquals(ValueType.EMPTY, memoryStorage.get("x").Type);
+    }
+
+    @Test
+    public void VariableNode_Declaration(){
+        NumberNode exp = ASTMocks.createEvalNode(NumberNode.class, null,null, m -> new Value(5));
+        VariableNode var = new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("x"), exp);
+        var.interpret(memory);
+        assertTrue(memoryStorage.containsKey("x"));
+        assertEquals(ValueType.INT, memoryStorage.get("x").Type);
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void VariableNode_Withdrawal(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode var = new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("x"), null);
+        var.interpret(mem);
+        var.withdrawInterpret(mem);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    /**
+     * VariablesNodes
+     */
+    @Test
+    public void VariablesNode_MissingVariable(){
+        assertThrows(ASTBuildException.class, () -> new VariablesNode(null, null));
+    }
+
+    @Test
+    public void VariablesNode_InvalidVariable(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new VariablesNode(node, null));
+    }
+
+    @Test
+    public void VariablesNode_Declaration_OneDeclaration(){
+        VariableNode var = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                null,
+                null
+        );
+        VariablesNode tested = new VariablesNode(var, null);
+        tested.interpret(memory);
+        assertTrue(memoryStorage.containsKey("x"));
+        assertEquals(5, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void VariablesNode_Withdraw_OneDeclaration(){
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode var = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                m -> m.withdrawDecl("x"),
+                null
+        );
+        VariablesNode tested = new VariablesNode(var, null);
+        tested.interpret(mem);
+        assertTrue(memoryStorage.containsKey("x"));
+        tested.withdrawInterpret(mem);
+        assertFalse(memoryStorage.containsKey("x"));
+    }
+
+    @Test
+    public void VariablesNode_Declaration_MultipleDeclarations(){
+        VariableNode x = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> m.declVar("x", new Value(5), DataType.INT),
+                null,
+                null,
+                null
+        );
+        VariableNode y = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> {
+                    assertTrue(memoryStorage.containsKey("x"));
+                    m.declVar("y", new Value(5), DataType.INT);
+                },
+                null,
+                null,
+                null
+        );
+        VariableNode z = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                m -> {
+                    assertTrue(memoryStorage.containsKey("y"));
+                    m.declVar("z", new Value(5), DataType.INT);
+                },
+                null,
+                null,
+                null
+        );
+        VariablesNode tested = new VariablesNode(x, new VariablesNode(y, new VariablesNode(z, null)));
+        tested.interpret(memory);
+        assertTrue(memoryStorage.containsKey("x"));
+        assertTrue(memoryStorage.containsKey("y"));
+        assertTrue(memoryStorage.containsKey("z"));
+    }
+
+    @Test
+    public void VariablesNode_Withdrawal_MultipleDeclarations(){
+        memoryStorage.put("x", new Value(5));
+        memoryStorage.put("y", new Value(5));
+        memoryStorage.put("z", new Value(5));
+        Memory mem = ASTMocks.createMemoryWithWithdraw(memoryStorage);
+        VariableNode z = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                m -> m.withdrawDecl("z"),
+                null
+        );
+        VariableNode y = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                m -> {
+                    assertFalse(memoryStorage.containsKey("z"));
+                    m.withdrawDecl("y");
+                },
+                null
+        );
+        VariableNode x = ASTMocks.createWithdrawNode(
+                VariableNode.class,
+                null,
+                null,
+                m -> {
+                    assertFalse(memoryStorage.containsKey("y"));
+                    m.withdrawDecl("x");
+                },
+                null
+        );
+        VariablesNode tested = new VariablesNode(x, new VariablesNode(y, new VariablesNode(z, null)));
+        tested.withdrawInterpret(mem);
+        assertTrue(memoryStorage.isEmpty());
+    }
+
+    /**
+     * WhileNode
+     */
+    @Test
+    public void WhileNode_MissingCondition(){
+        assertThrows(ASTBuildException.class, () -> new WhileNode(null, null));
+    }
+
+    @Test
+    public void WhileNode_InvalidCondition(){
+        ASTNode node = ASTMocks.createNode(ASTNode.class, null, null);
+        assertThrows(ASTBuildException.class, () -> new WhileNode(node, null));
+    }
+
+    @Test
+    public void WhileNode_NoIteration(){
+        memoryStorage.put("x", new Value(10));
+        BooleanNode node = ASTMocks.createEvalNode(
+                BooleanNode.class,
+                null,
+                null,
+                m -> new Value(false)
+        );
+        ASTNode instr = ASTMocks.createNode(ASTNode.class, m -> m.affectValue("x", new Value(5)), null);
+        WhileNode wn = new WhileNode(node, instr);
+        wn.interpret(memory);
+        assertEquals(10,  memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void WhileNode_OneIteration(){
+        memoryStorage.put("x", new Value(10));
+        BooleanNode node = ASTMocks.createEvalNode(
+                BooleanNode.class,
+                null,
+                null,
+                m -> new Value(memoryStorage.get("x").valueInt != 5)
+        );
+        ASTNode instr = ASTMocks.createNode(ASTNode.class, m -> m.affectValue("x", new Value(memoryStorage.get("x").valueInt - 5)), null);
+        WhileNode wn = new WhileNode(node, instr);
+        wn.interpret(memory);
+        assertEquals(5,  memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    public void WhileNode_Stressed(){
+        memoryStorage.put("x", new Value(100000));
+        BooleanNode node = ASTMocks.createEvalNode(
+                BooleanNode.class,
+                null,
+                null,
+                m -> new Value(memoryStorage.get("x").valueInt > 0)
+        );
+        ASTNode instr = ASTMocks.createNode(
+                ASTNode.class,
+                m -> m.affectValue("x", new Value(memoryStorage.get("x").valueInt - 1)),
+                null
+        );
+        WhileNode wn = new WhileNode(node, instr);
+        wn.interpret(memory);
+        assertEquals(0,  memoryStorage.get("x").valueInt);
+    }
+
+    /**
+     * WriteLineNode
+     */
+    @Test
+    public void WriteLineNode_String(){
+        List<String> ref = new ArrayList<String>();
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteLineNode wln = new WriteLineNode("abcd");
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("abcd\n", ref.get(0));
+    }
+
+    @Test
+    public void WriteLineNode_Ident_int(){
+        List<String> ref = new ArrayList<String>();
+        memoryStorage.put("x", new Value(5));
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteLineNode wln = new WriteLineNode(new IdentNode("x"));
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("5\n", ref.get(0));
+    }
+
+    @Test
+    public void WriteLineNode_Ident_bool(){
+        List<String> ref = new ArrayList<String>();
+        memoryStorage.put("x", new Value(true));
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteLineNode wln = new WriteLineNode(new IdentNode("x"));
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("true\n", ref.get(0));
+    }
+
+    @Test
+    public void WriteLineNode_InvalidIdentifier(){
+        List<String> ref = new ArrayList<String>();
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteLineNode wln = new WriteLineNode(new IdentNode("x"));
+        assertThrows(ASTInvalidMemoryException.class, ()->wln.interpret(memory));
+    }
+
+    /**
+     * WriteNode
+     */
+    @Test
+    public void WriteNode_String(){
+        List<String> ref = new ArrayList<String>();
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteNode wln = new WriteNode("abcd");
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("abcd", ref.get(0));
+    }
+
+    @Test
+    public void WriteNode_Ident_int(){
+        List<String> ref = new ArrayList<String>();
+        memoryStorage.put("x", new Value(5));
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteNode wln = new WriteNode(new IdentNode("x"));
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("5", ref.get(0));
+    }
+
+    @Test
+    public void WriteNode_Ident_bool(){
+        List<String> ref = new ArrayList<String>();
+        memoryStorage.put("x", new Value(true));
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteNode wln = new WriteNode(new IdentNode("x"));
+        wln.interpret(memory);
+        assertEquals(1, ref.size());
+        assertEquals("true", ref.get(0));
+    }
+
+    @Test
+    public void WriteNode_InvalidIdentifier(){
+        List<String> ref = new ArrayList<String>();
+        ASTMocks.addWriterToMock(memory, ref);
+        WriteNode wln = new WriteNode(new IdentNode("x"));
+        assertThrows(ASTInvalidMemoryException.class, ()->wln.interpret(memory));
     }
 }

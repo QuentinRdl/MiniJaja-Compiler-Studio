@@ -1,10 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,9 @@ public class MainNode extends ASTNode {
     public MainNode(ASTNode vars, ASTNode instrs) {
         this.vars = vars;
         this.instrs = instrs;
+        if(vars != null && !(vars instanceof WithdrawalNode)){
+            throw  new ASTBuildException("Declarations of a main method must be withdrawable");
+        }
     }
 
     @Override

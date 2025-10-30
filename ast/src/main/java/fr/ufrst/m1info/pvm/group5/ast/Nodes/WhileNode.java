@@ -40,10 +40,10 @@ public class WhileNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
         Value e = ((EvaluableNode)condition).eval(m);
-        if(e.valueBool){ // Rule [tantquevrai]
+        while(e.valueBool){ // Rule [tantquevrai]
             if(iss != null)
                 iss.interpret(m);
-            interpret(m);
+            e = ((EvaluableNode)condition).eval(m);
         }
     }
 

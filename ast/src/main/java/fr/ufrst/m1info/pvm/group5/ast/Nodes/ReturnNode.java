@@ -12,6 +12,10 @@ public class ReturnNode extends ASTNode{
 
     public ReturnNode(ASTNode expr){
         this.expr = expr;
+        if(expr == null)
+            throw new ASTBuildException("Return node must have a expression");
+        else if (!(expr instanceof EvaluableNode))
+            throw new ASTBuildException("Return node must have an evaluable expression");
     }
 
     @Override
@@ -29,9 +33,6 @@ public class ReturnNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        if (expr == null) {
-            throw new ASTInvalidDynamicTypeException("Return without expression");
-        }
         String exprType = expr.checkType(m);
         return exprType;
     }

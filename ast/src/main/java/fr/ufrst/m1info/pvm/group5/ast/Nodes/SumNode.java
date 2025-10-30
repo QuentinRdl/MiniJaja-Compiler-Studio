@@ -22,6 +22,9 @@ public class SumNode extends ASTNode{
         if(this.expression == null){
             throw new ASTBuildException("Sum operand cannot be null");
         }
+        else if(!(this.expression instanceof EvaluableNode)){
+            throw new ASTBuildException("Sum operand must be evaluable");
+        }
     }
 
     @Override
