@@ -105,7 +105,7 @@
 					"text" : "x (15) = "
 				}
 				"InstructionsNode" : {
-					"WriteNode" : {
+					"WriteLineNode" : {
 						"IdentNode" : {
 							"identifier" : x
 						}
@@ -149,7 +149,7 @@
 										"text" : "x (11) = "
 									}
 									"InstructionsNode" : {
-										"WriteNode" : {
+										"WriteLineNode" : {
 											"IdentNode" : {
 												"identifier" : x
 											}
