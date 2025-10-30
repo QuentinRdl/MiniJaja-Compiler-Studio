@@ -54,8 +54,7 @@ public class MainController {
      */
     @FXML
     public void initialize(){
-        console = new Console();
-        console.textArea = output;
+        console = new Console(output);
 
         splitPane.setDividerPositions(0.75);
         splitPane.setOrientation(Orientation.VERTICAL);

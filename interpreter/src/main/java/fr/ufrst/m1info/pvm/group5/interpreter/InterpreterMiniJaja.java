@@ -9,7 +9,7 @@ public class InterpreterMiniJaja implements Interpreter{
     Writer output;
 
     protected InterpreterMiniJaja(){
-        output = null;
+        output = new Writer();
     }
 
     public InterpreterMiniJaja(Writer output) {
@@ -24,9 +24,6 @@ public class InterpreterMiniJaja implements Interpreter{
      */
     @Override
     public String interpretCode(String code) {
-        System.out.println("[DEBUG] >>> interpretCode() appelé avec code = ");
-        System.out.println(code);
-        System.out.println("[DEBUG] Writer dans InterpreterMiniJaja : " + output);
         Memory mem = new Memory(output);
         String errMessage= null;
         try{
@@ -36,7 +33,6 @@ public class InterpreterMiniJaja implements Interpreter{
             errMessage=e.getClass()+" : "+e.getMessage();
             output.writeLineAsync(errMessage);
         }
-        System.out.println("[DEBUG] <<< interpretCode() terminé");
         return errMessage;
     }
 
@@ -55,7 +51,6 @@ public class InterpreterMiniJaja implements Interpreter{
             ast.interpret(mem);
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();
-            output.writeLineAsync(errMessage);
         }
         return errMessage;
     }

@@ -284,10 +284,7 @@ public class Memory {
      */
     public void writeLine(String text){
         if(output != null){
-            System.out.println("[DEBUG] Memory a bien un Writer !");
             output.writeLineAsync(text);
-        } else {
-            System.out.println("[DEBUG] Pas de writer dans Memory !");
         }
     }
 

@@ -21,6 +21,13 @@ public class Console {
         writer.TextAddedEvent.subscribe(e -> textArea.appendText(e.diff()));
     }
 
+    public Console(TextArea textArea){
+        this.textArea = textArea;
+        this.textArea.setEditable(false);
+        writer = new Writer();
+        writer.TextAddedEvent.subscribe(e -> Platform.runLater(() -> textArea.appendText(e.diff())));
+    }
+
     /**
      * Get a reference to the writer used by the console to be used somewhere else
      * @return writer used by the console.

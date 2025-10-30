@@ -117,7 +117,7 @@ public class Writer {
      * @return Completable future to when the task of running the event is over
      */
     public CompletableFuture<Void> writeLineAsync(String line){
-        return writeAsync(line+"\n");
+        return writeAsync(line + "\n");
     }
 
     /**
