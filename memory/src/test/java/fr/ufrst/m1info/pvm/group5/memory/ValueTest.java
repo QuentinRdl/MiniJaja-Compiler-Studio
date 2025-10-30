@@ -34,7 +34,6 @@ public class ValueTest {
     void toString_shouldFollowType() {
         Value v = new Value();
 
-        // set as INT
         v.valueInt = -7;
         v.Type = ValueType.INT;
         assertEquals("-7", v.toString());
