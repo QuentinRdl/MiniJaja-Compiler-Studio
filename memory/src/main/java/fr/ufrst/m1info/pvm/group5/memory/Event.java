@@ -46,18 +46,4 @@ public class Event<T> {
             c.accept(eventData);
         }
     }
-
-    /**
-     * Asynchronously Trigger the event with the event data
-     * /!\ This function should not be called by subscribers
-     * @param eventData data of the event
-     */
-    public CompletableFuture<Void> TriggerAsync(T eventData){
-        return CompletableFuture.supplyAsync(()-> {
-            for (Consumer<T> c : _subscribers) {
-                c.accept(eventData);
-            }
-            return null;
-        });
-    }
 }

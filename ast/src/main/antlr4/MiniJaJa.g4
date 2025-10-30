@@ -101,8 +101,8 @@ instr returns [ASTNode node]
     | e=STRING {$node = new WriteNode($e.text);}
     ) ')'
     | 'writeln' '('
-    ( ident {$node = new WriteNode($ident.node);}
-    | e=STRING {$node = new WriteNode($e.text);}
+    ( ident {$node = new WriteLineNode($ident.node);}
+    | e=STRING {$node = new WriteLineNode($e.text);}
     ) ')'
     ;
 

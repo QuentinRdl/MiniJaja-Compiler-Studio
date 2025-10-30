@@ -260,7 +260,7 @@ public class Memory {
      */
     public void write(String text){
         if(output != null){
-            output.writeAsync(text);
+            output.write(text);
         }
     }
 
@@ -270,7 +270,7 @@ public class Memory {
      */
     public void writeLine(String text){
         if(output != null){
-            output.writeLineAsync(text);
+            output.writeLine(text);
         }
     }
 

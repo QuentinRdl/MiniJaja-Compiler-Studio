@@ -1,5 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
+import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,8 +21,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 
 /**
  * Controller class for managing interactions in the main application interface
@@ -37,6 +37,8 @@ public class MainController {
     @FXML
     private TextArea output;
 
+    private Console console;
+
     private ObservableList<CodeLine> codeLines;
 
     @FXML
@@ -49,6 +51,8 @@ public class MainController {
      */
     @FXML
     public void initialize(){
+        console = new Console(output);
+
         splitPane.setDividerPositions(0.75);
         splitPane.setOrientation(Orientation.VERTICAL);
 
@@ -105,6 +109,7 @@ public class MainController {
         }
 
         if(!selectedFile.exists()){
+            console.getWriter().writeLine("[ERROR] File doesn't exist :" + selectedFile.getName());
             System.err.println("File doesn't exist : " + selectedFile.getName());
             return false;
         }
@@ -126,16 +131,12 @@ public class MainController {
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
 
-            if (output != null) {
-                output.appendText("File loaded : " + selectedFile.getName() + "\n");
-            }
+            console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
 
         } catch (IOException e){
             System.err.println("Error reading file : " + e.getMessage());
-            if (output != null) {
-                output.appendText("Error : " + e.getMessage() + "\n");
-            }
+            console.getWriter().writeLine("[ERROR] " + e.getMessage());
             return false;
         }
     }
@@ -244,15 +245,11 @@ public class MainController {
             List<String> lines = codeLines.stream().map(CodeLine::getCode).toList();
             Files.write(file.toPath(), lines , StandardCharsets.UTF_8);
 
-            if (output != null) {
-                output.appendText("File saved : " + file.getName() + "\n");
-            }
+            console.getWriter().writeLine("[INFO] File saved " + file.getName());
 
         } catch (IOException e){
             System.err.println("Error during saving : " + e.getMessage());
-            if (output != null) {
-                output.appendText("Error saving file\n");
-            }
+            console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
         }
     }
 
@@ -365,5 +362,29 @@ public class MainController {
             return virtualFlow.getFirstVisibleCell().getIndex();
         }
         return 0;
+    }
+
+    /**
+     * Executes the current code when the "Run" button is clicked
+     * Retrieves the code from the editor and passes it to the InterpreterMiniJaja for interpretation
+     * After interpretation, logs either a success message or an error message to the console
+     */
+    public void onRunClicked(){
+        String code = getModifiedCode();
+
+        if (code.isEmpty()){
+            return;
+        }
+
+        InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+
+        String err = interpreterMiniJaja.interpretCode(code);
+
+        if(err == null){
+            console.getWriter().writeLine("[INFO] Interpretation successfully completed");
+        } else {
+            console.getWriter().writeLine("[ERROR] " + err);
+        }
+
     }
 }

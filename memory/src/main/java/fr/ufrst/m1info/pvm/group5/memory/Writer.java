@@ -1,7 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Class interacting with memory allowing to have IO from the memory.
  * The class takes the role of publisher in a publish-subscribe like pattern.
@@ -63,46 +61,43 @@ public class Writer {
      * Triggers the events corresponding to when text is added
      *
      * @param data data of the added text
-     * @return Completable future to when the task of running the event is over
      */
-    private CompletableFuture<Void> onTextAddedAsync(TextAddedData data){
-        TextChangedEvent.TriggerAsync(new TextData(
+    private void onTextAdded(TextAddedData data){
+        TextChangedEvent.Trigger(new TextData(
                 data.oldText,
                 data.newText,
                 data.diff,
                 data.nbAdded,
                 TextChangeEvent.TEXT_ADDED
                 ));
-        return TextAddedEvent.TriggerAsync(data);
+        TextAddedEvent.Trigger(data);
     }
 
     /**
      * Triggers the events corresponding to when text is removed
      *
      * @param data data of the removed text
-     * @return Completable future to when the task of running the event is over
      */
-    private CompletableFuture<Void> onTextRemovedAsync(TextRemovedData data){
-        TextChangedEvent.TriggerAsync(new TextData(
+    private void onTextRemoved(TextRemovedData data){
+        TextChangedEvent.Trigger(new TextData(
                 data.oldText,
                 data.newText,
                 data.diff,
                 -data.nbRemoved,
                 TextChangeEvent.TEXT_REMOVED
         ));
-        return TextRemovedEvent.TriggerAsync(data);
+        TextRemovedEvent.Trigger(data);
     }
 
     /**
      * Append text at the end of the text
      *
      * @param text text to append
-     * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> writeAsync(String text){
+    public void write(String text){
         String oldText = _innerText;
         _innerText += text;
-        return onTextAddedAsync(new TextAddedData(
+        onTextAdded(new TextAddedData(
                 oldText,
                 _innerText,
                 text,
@@ -114,19 +109,17 @@ public class Writer {
      * Append a line of text at the end of the text
      *
      * @param line line of text to append
-     * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> writeLineAsync(String line){
-        return writeAsync(line+"\n");
+    public void writeLine(String line){
+        write(line + "\n");
     }
 
     /**
-     * eraseAsync a given number of characters at the end of the text
+     * erase a given number of characters at the end of the text
      *
      * @param nbChars number of characters to erase
-     * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> eraseAsync(int nbChars){
+    public void erase(int nbChars){
         String oldText = _innerText;
         int erased;
         String removedText;
@@ -140,7 +133,7 @@ public class Writer {
             erased = nbChars;
             removedText = oldText.substring(erased+1);
         }
-        return onTextRemovedAsync(new TextRemovedData(
+        onTextRemoved(new TextRemovedData(
                 oldText,
                 _innerText,
                 removedText,
@@ -149,11 +142,10 @@ public class Writer {
     }
 
     /**
-     * eraseAsync the last line of the text
+     * erase the last line of the text
      *
-     * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> eraseLineAsync(){
+    public void eraseLineAsync(){
         String oldText = _innerText;
         int lineIndex = _innerText.lastIndexOf("\n");
         int removed = 0;
@@ -168,7 +160,7 @@ public class Writer {
             removed = oldText.length() - lineIndex;
             removedText = oldText.substring(lineIndex);
         }
-        return onTextRemovedAsync(new TextRemovedData(
+        onTextRemoved(new TextRemovedData(
                 oldText,
                 _innerText,
                 removedText,
@@ -178,13 +170,11 @@ public class Writer {
 
     /**
      * Removes all the text of the writer
-     *
-     * @return Completable future to when the task of running the event is over
      */
-    public CompletableFuture<Void> clear(){
+    public void clear(){
         String oldText = _innerText;
         _innerText = "";
-        return onTextRemovedAsync(new TextRemovedData(
+        onTextRemoved(new TextRemovedData(
                 oldText,
                 "",
                 oldText,

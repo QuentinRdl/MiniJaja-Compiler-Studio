@@ -4,8 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WriterTest {
@@ -27,10 +25,10 @@ public class WriterTest {
      */
 
     @Test
-    @DisplayName("Event trigger - writeAsync")
+    @DisplayName("Event trigger - write")
     public void EventTrigger_Write() throws Exception{
-        var future = writer.writeAsync("a");
-        future.get();
+        writer.write("a");
+        
         assertTrue(flags[0]);
         assertFalse(flags[1]);
         assertTrue(flags[2]);
@@ -39,8 +37,7 @@ public class WriterTest {
     @Test
     @DisplayName("Event trigger - Writeline")
     public void EventTrigger_Writeline() throws Exception{
-        var future = writer.writeLineAsync("a");
-        future.get();
+        writer.writeLine("a");
         assertTrue(flags[0]);
         assertFalse(flags[1]);
         assertTrue(flags[2]);
@@ -49,8 +46,8 @@ public class WriterTest {
     @Test
     @DisplayName("Event trigger - Erase")
     public void EventTrigger_Erase() throws Exception{
-        var future = writer.eraseAsync(5);
-        future.get();
+        writer.erase(5);
+        
         assertFalse(flags[0]);
         assertTrue(flags[1]);
         assertTrue(flags[2]);
@@ -59,8 +56,8 @@ public class WriterTest {
     @Test
     @DisplayName("Event trigger - EraseLine")
     public void EventTrigger_EraseLine() throws Exception{
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
         assertFalse(flags[0]);
         assertTrue(flags[1]);
         assertTrue(flags[2]);
@@ -79,23 +76,23 @@ public class WriterTest {
             assertEquals("hello world", e.newText());
             assertEquals("", e.oldText());
         });
-        var future = writer.writeAsync("hello world");
-        future.get();
+        writer.write("hello world");
+        
     }
 
     @Test
     @DisplayName("Event info - Write / Text added event / with text present")
     public void EventInfo_Write_Textadded2() throws Exception{
-        var future = writer.writeAsync("hello ");
-        future.get();
+        writer.write("hello ");
+        
         writer.TextAddedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
             assertEquals(5, e.nbAdded());
             assertEquals("hello world", e.newText());
             assertEquals("hello ", e.oldText());
         });
-        future = writer.writeAsync("world");
-        future.get();
+        writer.write("world");
+        
     }
 
     @Test
@@ -108,24 +105,24 @@ public class WriterTest {
             assertEquals("", e.oldText());
             assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
         });
-        var future = writer.writeAsync("hello world");
-        future.get();
+        writer.write("hello world");
+        
     }
 
     @Test
     @DisplayName("Event info - Write / Text changed event / with text present")
     public void EventInfo_Write_TextChanged2() throws Exception{
-        var future = writer.writeAsync("hello ");
-        future.get();
+        writer.write("hello ");
+        
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
             assertEquals(5, e.nbAdded());
             assertEquals("hello world", e.newText());
-            assertEquals("hello", e.oldText());
+            assertEquals("hello ", e.oldText());
             assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
         });
-        future = writer.writeAsync("world");
-        future.get();
+        writer.write("world");
+        
     }
 
     @Test
@@ -137,23 +134,23 @@ public class WriterTest {
             assertEquals("hello world\n", e.newText());
             assertEquals("", e.oldText());
         });
-        var future = writer.writeLineAsync("hello world");
-        future.get();
+        writer.writeLine("hello world");
+        
     }
 
     @Test
     @DisplayName("Event info - WriteLine / Text added event / with text present")
     public void EventInfo_WriteLine_Textadded2() throws Exception{
-        var future = writer.writeAsync("hello ");
-        future.get();
+        writer.write("hello ");
+        
         writer.TextAddedEvent.subscribe(e -> {
             assertEquals("world\n", e.diff());
             assertEquals(6, e.nbAdded());
             assertEquals("hello world\n", e.newText());
             assertEquals("hello ", e.oldText());
         });
-        future = writer.writeLineAsync("world");
-        future.get();
+        writer.writeLine("world");
+        
     }
 
     @Test
@@ -166,15 +163,15 @@ public class WriterTest {
             assertEquals("", e.oldText());
             assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
         });
-        var future = writer.writeLineAsync("hello world");
-        future.get();
+        writer.writeLine("hello world");
+        
     }
 
     @Test
     @DisplayName("Event info - Write / Text changed event / with text present")
     public void EventInfo_WriteLine_TextChanged2() throws Exception{
-        var future = writer.writeAsync("hello ");
-        future.get();
+        writer.write("hello ");
+        
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("world\n", e.diff());
             assertEquals(6, e.nbAdded());
@@ -182,8 +179,8 @@ public class WriterTest {
             assertEquals("hello ", e.oldText());
             assertEquals(Writer.TextChangeEvent.TEXT_ADDED, e.change());
         });
-        future = writer.writeLineAsync("world");
-        future.get();
+        writer.writeLine("world");
+        
     }
 
     @Test
@@ -195,28 +192,28 @@ public class WriterTest {
             assertEquals("", e.newText());
             assertEquals(0, e.nbRemoved());
         });
-        var future = writer.eraseAsync(10);
-        future.get();
+        writer.erase(10);
+        
     }
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / more text than erased")
     public void EventInfo_Erase_TextRemoved_tooMuch() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
             assertEquals("Hello world", e.oldText());
             assertEquals("Hello ", e.newText());
             assertEquals(5, e.nbRemoved());
         });
-        var future = writer.eraseAsync(5);
-        future.get();
+        writer.erase(5);
+        
     }
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / more text than erased")
     public void EventInfo_Erase_TextChanged_tooMuch() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
             assertEquals("Hello world", e.oldText());
@@ -224,28 +221,28 @@ public class WriterTest {
             assertEquals(-5, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseAsync(5);
-        future.get();
+        writer.erase(5);
+        
     }
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / less text than erased")
     public void EventInfo_Erase_TextRemoved_notEnough() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
             assertEquals("Hello world", e.oldText());
             assertEquals("", e.newText());
             assertEquals(11, e.nbRemoved());
         });
-        var future = writer.eraseAsync(20);
-        future.get();
+        writer.erase(20);
+        
     }
 
     @Test
     @DisplayName("Event info - Erase / Text changed event / less text than erased")
     public void EventInfo_Erase_TextChanged_notEnough() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
             assertEquals("Hello world", e.oldText());
@@ -253,8 +250,8 @@ public class WriterTest {
             assertEquals(-11, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseAsync(20);
-        future.get();
+        writer.erase(20);
+        
     }
 
     @Test
@@ -266,28 +263,28 @@ public class WriterTest {
             assertEquals("", e.newText());
             assertEquals(0, e.nbRemoved());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / oneLine")
     public void EventInfo_Erase_TextRemoved_oneLine() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
             assertEquals("Hello world", e.oldText());
             assertEquals("", e.newText());
             assertEquals(11, e.nbRemoved());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / oneLine")
     public void EventInfo_Erase_TextChanged_oneLine() throws Exception{
-        writer.writeAsync("Hello world").get();
+        writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
             assertEquals("Hello world", e.oldText());
@@ -295,28 +292,28 @@ public class WriterTest {
             assertEquals(-11, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / multipleLines")
     public void EventInfo_Erase_TextRemoved_moreLines() throws Exception{
-        writer.writeAsync("Hello world\ndlrow olleH").get();
+        writer.write("Hello world\ndlrow olleH");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\ndlrow olleH", e.diff());
             assertEquals("Hello world\ndlrow olleH", e.oldText());
             assertEquals("Hello world", e.newText());
             assertEquals(12, e.nbRemoved());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / multipleLines")
     public void EventInfo_Erase_TextChanged_moreLines() throws Exception{
-        writer.writeAsync("Hello world\ndlrow olleH").get();
+        writer.write("Hello world\ndlrow olleH");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\ndlrow olleH", e.diff());
             assertEquals("Hello world\ndlrow olleH", e.oldText());
@@ -324,28 +321,28 @@ public class WriterTest {
             assertEquals(-12, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / emptyLastLine")
     public void EventInfo_Erase_TextRemoved_noLastLine() throws Exception{
-        writer.writeAsync("Hello world\n").get();
+        writer.write("Hello world\n");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
             assertEquals("Hello world\n", e.oldText());
             assertEquals("Hello world", e.newText());
             assertEquals(1, e.nbRemoved());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / emptyLastLine")
     public void EventInfo_Erase_TextChanged_noLastLine() throws Exception{
-        writer.writeAsync("Hello world\n").get();
+        writer.write("Hello world\n");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
             assertEquals("Hello world\n", e.oldText());
@@ -353,28 +350,28 @@ public class WriterTest {
             assertEquals(-1, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / onlyEmptyLastLine")
     public void EventInfo_Erase_TextRemoved_noLastLine2() throws Exception{
-        writer.writeAsync("\n").get();
+        writer.write("\n");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
             assertEquals("\n", e.oldText());
             assertEquals("", e.newText());
             assertEquals(1, e.nbRemoved());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / onlyEmptyLastLine")
     public void EventInfo_Erase_TextChanged_noLastLine2() throws Exception{
-        writer.writeAsync("\n").get();
+        writer.write("\n");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
             assertEquals("\n", e.oldText());
@@ -382,7 +379,7 @@ public class WriterTest {
             assertEquals(-1, e.nbAdded());
             assertEquals(Writer.TextChangeEvent.TEXT_REMOVED, e.change());
         });
-        var future = writer.eraseLineAsync();
-        future.get();
+        writer.eraseLineAsync();
+        
     }
 }
