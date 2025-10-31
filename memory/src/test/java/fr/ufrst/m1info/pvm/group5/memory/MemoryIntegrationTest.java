@@ -436,5 +436,34 @@ public class MemoryIntegrationTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> mem.declVarClass("idOnStackOnly"));
         assertTrue(ex.getMessage().contains("Stack") || ex.getMessage().contains("Stack"));
     }
-}
 
+    @Test
+    public void memoryConstructorAndWriteMethods() {
+        Writer writer = new Writer();
+        StringBuilder sb = new StringBuilder();
+
+        // subscribe to TextAddedEvent so we can capture written diffs
+        writer.TextAddedEvent.subscribe(data -> sb.append(data.diff()));
+
+        Memory memWithWriter = new Memory(writer);
+        memWithWriter.write("hello");
+        assertEquals("hello", sb.toString());
+
+        memWithWriter.writeLine("world");
+        assertEquals("hello" + "world\n", sb.toString());
+    }
+
+    @Test
+    public void write_and_writeLine_withNullOutput_doNotThrow() {
+        // Default constructor leaves output == null
+        Memory mem = new Memory();
+        assertNull(mem.output);
+
+        // Should not throw when no output is configured
+        mem.write("nope");
+        mem.writeLine("still nothing");
+
+        // output must remains null
+        assertNull(mem.output);
+    }
+}
