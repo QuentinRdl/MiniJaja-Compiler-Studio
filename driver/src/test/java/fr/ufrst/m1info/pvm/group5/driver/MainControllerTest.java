@@ -4,7 +4,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -31,6 +30,7 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
+import static org.testfx.matcher.base.NodeMatchers.*;
 
 /**
  * Unit tests for the MainController class
@@ -772,5 +772,217 @@ public class MainControllerTest extends ApplicationTest {
 
         assertEquals(1, controller.getCodeLines().size());
     }
+
+    @Test
+    public void getBaseFileNameNullFileReturnsNull(){
+        assertNull(controller.getBaseFileName(null));
+    }
+
+    @Test
+    public void getBaseFileNameReturnsNameWithoutExtension(){
+        assertEquals("test", controller.getBaseFileName("test.mjj"));
+    }
+
+    @Test
+    public void getBaseFileNameNoExtensionReturnsFullName(){
+        assertEquals("test", controller.getBaseFileName("test"));
+    }
+
+    @Test
+    public void getBaseFileNameMultipleExtensionsReturnsBeforeLastDot(){
+        assertEquals("test.jjc", controller.getBaseFileName("test.jjc.mjj"));
+    }
+
+    @Test
+    public void testNewFileCreatesEmptyDocument(){
+        assertTrue(controller.getCodeLines().isEmpty());
+
+        clickOn("#btnNew");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(1, controller.getCodeLines().size());
+        assertTrue(controller.getCodeLines().getFirst().getCode().isEmpty());
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+        assertNull(controller.getCurrentFile());
+        assertEquals("New file", controller.getFileLabel().getText());
+    }
+
+    @Test
+    public void testNewFileReplacesExistingLoadedFile() throws Exception {
+        File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
+        interact(() -> controller.loadFile(testFile));
+
+        assertEquals(3, controller.getCodeLines().size());
+        assertEquals(testFile, controller.getCurrentFile());
+        assertEquals("main () {", controller.getCodeLines().get(0).getCode());
+        assertEquals("test.mjj", controller.getFileLabel().getText());
+
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(1, controller.getCodeLines().size());
+        assertTrue(controller.getCodeLines().getFirst().getCode().isEmpty());
+        assertNull(controller.getCurrentFile());
+        assertEquals("New file", controller.getFileLabel().getText());
+    }
+
+    @Test
+    public void testArrowUpSelectsPreviousLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3", "line 4");
+        interact(() -> controller.loadFile(testFile));
+
+        assertEquals(4, controller.getCodeLines().size());
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(1);
+            controller.getCodeListView().getSelectionModel().select(1);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        // Find the TextField of the selected row
+        TextField field = null;
+        for (Object node : controller.getCodeListView().lookupAll(".code-field")) {
+            if (node instanceof TextField tf) {
+                // Check the content to ensure that you have the correct TextField
+                if ("line 2".equals(tf.getText())) {
+                    field = tf;
+                    break;
+                }
+            }
+        }
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.UP);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(4, controller.getCodeLines().size());
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+    }
+
+    @Test
+    public void testArrowUpOnFirstLineDoesNothing() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
+        interact(() -> controller.loadFile(testFile));
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+            controller.getCodeListView().getSelectionModel().select(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        type(KeyCode.UP);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(0, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+    }
+
+    @Test
+    public void testArrowDownSelectsNextLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
+        interact(() -> controller.loadFile(testFile));
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.DOWN);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+    }
+
+    @Test
+    public void testArrowDownOnLastLineDoesNothing() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
+        interact(() -> controller.loadFile(testFile));
+
+        interact(() -> {
+            controller.getCodeListView().scrollTo(2);
+            controller.getCodeListView().getSelectionModel().select(2);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(2, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+
+        // Find the TextField of the selected row
+        TextField field = null;
+        for (Object node : controller.getCodeListView().lookupAll(".code-field")) {
+            if (node instanceof TextField tf) {
+                // Check the content to ensure that you have the correct TextField
+                if ("line 3".equals(tf.getText())) {
+                    field = tf;
+                    break;
+                }
+            }
+        }
+        assertNotNull(field);
+
+        clickOn(field);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.DOWN);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeListView().getSelectionModel().getSelectedIndex());
+    }
+
+    @Test
+    public void testButtonsActivatedAfterClickNew(){
+        interact(() ->  controller.deactiveButtons());
+
+        verifyThat("#btnSave", isDisabled());
+        verifyThat("#btnSaveAs", isDisabled());
+        verifyThat("#btnRun", isDisabled());
+        verifyThat("#btnCompile", isDisabled());
+        verifyThat("#btnRunCompile", isDisabled());
+
+        clickOn("#btnNew");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verifyThat("#btnSave", isEnabled());
+        verifyThat("#btnSaveAs", isEnabled());
+        verifyThat("#btnRun", isEnabled());
+        verifyThat("#btnCompile", isEnabled());
+        verifyThat("#btnRunCompile", isEnabled());
+    }
+
+    @Test
+    public void testButtonsActivatedAfterLoadedFile() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2");
+
+        verifyThat("#btnSave", isDisabled());
+        verifyThat("#btnSaveAs", isDisabled());
+        verifyThat("#btnRun", isDisabled());
+        verifyThat("#btnCompile", isDisabled());
+        verifyThat("#btnRunCompile", isDisabled());
+
+        interact(() -> controller.loadFile(testFile));
+
+        verifyThat("#btnSave", isEnabled());
+        verifyThat("#btnSaveAs", isEnabled());
+        verifyThat("#btnRun", isEnabled());
+        verifyThat("#btnCompile", isEnabled());
+        verifyThat("#btnRunCompile", isEnabled());
+    }
+
+
 
 }

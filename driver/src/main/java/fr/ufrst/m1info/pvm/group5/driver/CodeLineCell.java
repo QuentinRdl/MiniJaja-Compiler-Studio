@@ -90,28 +90,35 @@ public class CodeLineCell extends ListCell<CodeLine> {
         // when Backspace is pressed, remove the line only if it's empty and was already empty before
         // this reproduces the typical IDE behavior when deleting empty lines
         codeField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER && listener != null){
-                listener.onEnterPressed(getItem());
-            } else if(event.getCode() == KeyCode.BACK_SPACE && listener != null){
-                String currentText = codeField.getText();
-                int caretPos = codeField.getCaretPosition();
+            KeyCode code = event.getCode();
 
-                if (currentText.isEmpty() && caretPos == 0 && wasEmptyOnLastBackspace){
-                    listener.onDeletePressed(getItem());
-                    event.consume();
-                    wasEmptyOnLastBackspace = false;
-                }
-                else if (currentText.isEmpty() && caretPos == 0){
-                    wasEmptyOnLastBackspace = true;
-                    event.consume();
-                }
-                else if (currentText.length() == 1 && caretPos == 1){
-                    wasEmptyOnLastBackspace = false;
-                }
-                else {
-                    wasEmptyOnLastBackspace = false;
-                }
+            if(listener == null) return;
 
+            switch (code) {
+                case KeyCode.ENTER -> listener.onEnterPressed(getItem());
+                case KeyCode.BACK_SPACE -> {
+                    String currentText = codeField.getText();
+                    int caretPos = codeField.getCaretPosition();
+
+                    if (currentText.isEmpty() && caretPos == 0 && wasEmptyOnLastBackspace){
+                        listener.onDeletePressed(getItem());
+                        event.consume();
+                        wasEmptyOnLastBackspace = false;
+                    }
+                    else if (currentText.isEmpty() && caretPos == 0){
+                        wasEmptyOnLastBackspace = true;
+                        event.consume();
+                    }
+                    else if (currentText.length() == 1 && caretPos == 1){
+                        wasEmptyOnLastBackspace = false;
+                    }
+                    else {
+                        wasEmptyOnLastBackspace = false;
+                    }
+                }
+                case KeyCode.UP -> listener.onUpPressed(getIndex());
+                case KeyCode.DOWN -> listener.onDownPressed(getIndex());
+                default -> {}
             }
         });
 
