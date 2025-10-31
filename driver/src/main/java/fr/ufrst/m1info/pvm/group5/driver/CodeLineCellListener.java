@@ -22,4 +22,18 @@ public interface CodeLineCellListener {
      */
     void onDeletePressed(CodeLine codeLine);
 
+    /**
+     * Called when the Up arrow key is pressed on a code line
+     *
+     * @param index the index of the currently selected line
+     */
+    void onUpPressed(int index);
+
+    /**
+     * Called when the Down arrow key is pressed on a code line
+     *
+     * @param index the index of the currently selected line
+     */
+    void onDownPressed(int index);
+
 }

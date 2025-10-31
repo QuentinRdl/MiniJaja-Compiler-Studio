@@ -17,27 +17,20 @@ public enum ValueType {
      * @return converted valuetype
      */
     public static DataType toDataType(ValueType vt){
-        switch(vt){
-            case INT:
-                return DataType.INT;
-            case BOOL:
-                return DataType.BOOL;
-            case VOID:
-                return DataType.VOID;
-        }
-        return DataType.UNKNOWN;
+        return switch (vt) {
+            case INT -> DataType.INT;
+            case BOOL -> DataType.BOOL;
+            case VOID -> DataType.VOID;
+            default -> DataType.UNKNOWN;
+        };
     }
 
     public String toString(){
-        switch(this){
-            case INT:
-                return "INT";
-            case BOOL:
-                return "BOOL";
-            case VOID:
-                return "VOID";
-            default:
-                return "UNKNOWN";
-        }
+        return switch (this) {
+            case INT -> "INT";
+            case BOOL -> "BOOL";
+            case VOID -> "VOID";
+            default -> "UNKNOWN";
+        };
     }
 }

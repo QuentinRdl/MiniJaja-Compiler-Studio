@@ -19,7 +19,6 @@ public class InterpreterMiniJajaTest {
         imj=new InterpreterMiniJaja();
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Code Without Error")
     public void InterpretCodeNoError() {
@@ -29,13 +28,12 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretCode(input));
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret File BasicOperations")
     public void InterpretFileBasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
-    }*/
+    }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File That Doesn't Exist")
     public void InterpretNotExistingFile() {
@@ -44,7 +42,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(NoSuchFileException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret File BasicOperations")
     public void BasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
@@ -72,23 +70,20 @@ public class InterpreterMiniJajaTest {
     @DisplayName("Interpret File Loops")
     public void Loops() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
-    }*/
+    }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File OperationPrevalence")
     public void OperationPrevalence() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File Simple")
     public void Simple() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     public void UndefinedVariableSum() {
@@ -97,7 +92,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Inc")
     public void UndefinedVariableInc() {
@@ -106,7 +100,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Undefined Variable / Evaluation")
     public void UndefinedVariableEval() {
@@ -163,12 +156,12 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Interpret Increment")
     public void increment() {
         String errMessage=imj.interpretCode("class C {int y; main {y++;}}");
         Assertions.assertNull(errMessage);
-    }*/
+    }
 
     @Disabled // TODO : Re-enable this test when the issue is fixed
     @Test
@@ -259,7 +252,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Variable Named Int2")
     public void variableNamedInt2() {
@@ -384,6 +376,185 @@ public class InterpreterMiniJajaTest {
     @DisplayName("Interpret I Forgot A Semicolon")
     public void iForgotASemiColon() {
         String errMessage=imj.interpretCode("class C {main{int y=1 + 2}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Declaration Wrong Type")
+    public void declarationWrongType() {
+        String errMessage=imj.interpretCode("class C {int y=false; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Declaration Wrong Type 2")
+    public void declarationWrongType2() {
+        String errMessage=imj.interpretCode("class C {boolean y=0; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Declaration Void")
+    public void declarationVoid() {
+        String errMessage=imj.interpretCode("class C {void y; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Wrong Type")
+    public void affectationWrongType() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Wrong Type 2")
+    public void affectationWrongType2() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=0;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Boolean Add")
+    public void affectationBooleanAdd() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=1+5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Boolean Minus")
+    public void affectationBooleanMinus() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=1-5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Boolean Mul")
+    public void affectationBooleanMul() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=1*5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Boolean Div")
+    public void affectationBooleanDiv() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=1/5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Affectation Boolean Neg")
+    public void affectationBooleanNeg() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=-5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Add Boolean")
+    public void addBoolean() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=true+false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Minus Boolean")
+    public void minusBoolean() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=true-false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Mul Boolean")
+    public void mulBoolean() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=true*false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Div Boolean")
+    public void divBoolean() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=true/false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Sup Boolean")
+    public void supBoolean() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=true>false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Neg Boolean")
+    public void negBoolean() {
+        String errMessage=imj.interpretCode("class C {int y; main{y=-false;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Not Int")
+    public void notInt() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=!4;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret And Int")
+    public void andInt() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=81 && 1;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("Interpret Or Int")
+    public void orInt() {
+        String errMessage=imj.interpretCode("class C {boolean y; main{y=4 || 81;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Writeln Int")
+    public void WritelnInt() {
+        String errMessage=imj.interpretCode("class C {int y; main{writeln(2);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
     }

@@ -46,6 +46,18 @@ public class MainController {
 
     private File currentFile;
 
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnSaveAs;
+    @FXML
+    private Button btnRun;
+    @FXML
+    private Button btnCompile;
+    @FXML
+    private Button btnRunCompile;
+
+
     /**
      * Initializes the controller components after the FXML has been loaded.
      */
@@ -73,10 +85,17 @@ public class MainController {
                 public void onDeletePressed(CodeLine codeLine) {
                     handleDeleteEmptyLine(codeLine);
                 }
+
+                @Override
+                public void onUpPressed(int index) { handleUpPressed(index);}
+
+                @Override
+                public void onDownPressed(int index) { handleDownPressed(index);}
             });
             return cell;
         });
 
+        deactiveButtons();
     }
 
     /**
@@ -130,6 +149,7 @@ public class MainController {
 
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
+            activeButtons();
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -212,7 +232,7 @@ public class MainController {
 
         // Default name if file exists
         if (currentFile != null){
-            fc.setInitialFileName(currentFile.getName());
+            fc.setInitialFileName(getBaseFileName(currentFile.getName()));
             fc.setInitialDirectory(currentFile.getParentFile());
         }
 
@@ -365,6 +385,20 @@ public class MainController {
     }
 
     /**
+     * Returns the index of the last visible cell in the ListView
+     * Used to maintain proper scrolling behavior during edits
+     *
+     * @return the index of the last visible cell, or the last item index if unavailable
+     */
+    private int getLastVisibleIndex(){
+        VirtualFlow<?> virtualFlow = (VirtualFlow<?>) codeListView.lookup(".virtual-flow");
+        if(virtualFlow != null && virtualFlow.getLastVisibleCell() != null) {
+            return virtualFlow.getLastVisibleCell().getIndex();
+        }
+        return codeListView.getItems().size() - 1;
+    }
+
+    /**
      * Executes the current code when the "Run" button is clicked
      * Retrieves the code from the editor and passes it to the InterpreterMiniJaja for interpretation
      * After interpretation, logs either a success message or an error message to the console
@@ -386,5 +420,100 @@ public class MainController {
             console.getWriter().writeLine("[ERROR] " + err);
         }
 
+    }
+
+    /**
+     * Handles the "Up" arrow key press event
+     * Moves the selection to the previous line in the ListView if it exists,
+     * updates scrolling to keep the selected line visible, and focuses the text field
+     *
+     * @param index the index of the currently selected line
+     */
+    private void handleUpPressed(int index){
+        if (index > 0){
+
+            codeListView.getSelectionModel().clearAndSelect(index - 1);
+
+            int firstCellVisibleIndex = getFirstVisibleIndex();
+            if (index <= firstCellVisibleIndex){
+                codeListView.scrollTo(Math.max(0, firstCellVisibleIndex - 1));
+            }
+
+            Platform.runLater(this::focusSelectedCell);
+
+        }
+    }
+
+    /**
+     * Handles the "Down" arrow key press event
+     * Moves the selection to the next line in the ListView if it exists,
+     * updates scrolling to keep the selected line visible, and focuses the text field
+     *
+     * @param index the index of the currently selected line
+     */
+    private void handleDownPressed(int index){
+        if (index < codeLines.size() -1 ){
+            codeListView.getSelectionModel().clearAndSelect(index + 1);
+
+            int lastCellVisibleIndex = getLastVisibleIndex();
+            int firstCellVisibleIndex = getFirstVisibleIndex();
+            if (index + 1 > lastCellVisibleIndex){
+                codeListView.scrollTo(Math.min(codeLines.size() - 1, firstCellVisibleIndex + 1));
+            }
+
+            Platform.runLater(this::focusSelectedCell);
+        }
+    }
+
+    /**
+     * Extracts the base name of a file (without its extension)
+     * Used to suggest a default name when saving files with "Save As"
+     *
+     * @param fileName the complete file name
+     * @return the file name without extension, null if input is null
+     */
+    public String getBaseFileName(String fileName){
+        if (fileName == null) return null;
+
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == - 1) ? fileName : fileName.substring(0, dotIndex);
+    }
+
+    /**
+     * Creates a new empty file in the editor
+     * Clears the current content, adds a first blank line,
+     * activates the buttons, and updates the label to indicate a new file
+     */
+    public void createNewFile(){
+        codeLines.clear();
+        codeLines.add(new CodeLine(1, ""));
+        codeListView.getSelectionModel().select(0);
+        activeButtons();
+        currentFile = null;
+        fileLabel.setText("New file");
+    }
+
+    /**
+     * Enables all main buttons in the interface (Save, Run, Compile...)
+     * Typically called after loading or creating a file
+     */
+    private void activeButtons(){
+        btnSave.setDisable(false);
+        btnSaveAs.setDisable(false);
+        btnRun.setDisable(false);
+        btnCompile.setDisable(false);
+        btnRunCompile.setDisable(false);
+    }
+
+    /**
+     * Disables all main buttons in the interface (Save, Run, Compile...)
+     * Typically called when no file is loaded or available
+     */
+    public void deactiveButtons(){
+        btnSave.setDisable(true);
+        btnSaveAs.setDisable(true);
+        btnRun.setDisable(true);
+        btnCompile.setDisable(true);
+        btnRunCompile.setDisable(true);
     }
 }
