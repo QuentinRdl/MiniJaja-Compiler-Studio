@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import org.junit.jupiter.api.Test;
 import org.testfx.util.WaitForAsyncUtils;
 import fr.ufrst.m1info.pvm.group5.driver.MainControllerTest;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 
@@ -46,6 +47,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InterpreterIntegrationTest extends ApplicationTest {
 
     private MainController controller;
+
+    @BeforeAll
+    public static void initTempDir(@TempDir Path td) {
+        MainControllerTest.tempDir = td;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
