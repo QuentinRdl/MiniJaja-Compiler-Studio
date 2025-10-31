@@ -83,7 +83,6 @@ public class AbstractSyntaxTree {
      * @return memory after the interpretation
      */
     public Memory interpret(Memory m) throws Exception{
-        root.checkType(m);
         root.interpret(m);
         return m;
     }
