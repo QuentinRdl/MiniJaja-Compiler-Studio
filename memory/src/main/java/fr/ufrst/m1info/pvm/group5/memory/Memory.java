@@ -20,6 +20,10 @@ public class Memory {
      */
     Writer output = null;
 
+    // This flag is here so we can tell we want to keep the items of the memory, not withdraw them
+    // This way we can test stuff on the memory
+    private boolean preserveAfterInterpret = false;
+
     /* Constructors */
 
     public Memory() {
@@ -31,6 +35,14 @@ public class Memory {
     public Memory(Writer output){
         this();
         this.output = output;
+    }
+
+    public void setPreserveAfterInterpret(boolean preserve) {
+        this.preserveAfterInterpret = preserve;
+    }
+
+    public boolean isPreserveAfterInterpret() {
+        return this.preserveAfterInterpret;
     }
 
     /* Operations directly related to the stack */
@@ -126,6 +138,10 @@ public class Memory {
     public void withdrawDecl(String identifier) {
         if(identifier == null || identifier.isEmpty()) {
             throw new IllegalArgumentException("Cannot call 'withdrawDecl' with an empty/null identifier");
+        }
+        if(this.preserveAfterInterpret) {
+            // This way we can keep the values, and test them
+            return;
         }
         symbolTable.removeEntry(identifier);
 
