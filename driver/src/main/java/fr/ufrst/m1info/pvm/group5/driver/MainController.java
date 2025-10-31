@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
+import fr.ufrst.m1info.pvm.group5.compiler.Compiler;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -406,6 +407,7 @@ public class MainController {
     public void onRunClicked(){
         String code = getModifiedCode();
 
+        //find another solution to better intercept empty code (with multiple lines)
         if (code.isEmpty()){
             return;
         }
@@ -515,5 +517,38 @@ public class MainController {
         btnRun.setDisable(true);
         btnCompile.setDisable(true);
         btnRunCompile.setDisable(true);
+    }
+
+    public void onCompileClicked(){
+        if(!isMinijajaFile()){
+            console.getWriter().writeLine("[ERROR] Compilation is only available for MiniJaja files (.mjj)");
+            return;
+        }
+
+        String code = getModifiedCode();
+
+        //TODO: find another solution to better intercept empty code (with multiple lines)
+        if(code.isEmpty()){
+            console.getWriter().writeLine("[ERROR] No code to compile !");
+            return;
+        }
+
+        Compiler compiler = new Compiler(console.getWriter());
+        String res = compiler.compileCode(getModifiedCode());
+
+        if (res != null){
+            console.getWriter().writeLine("[INFO] Compilation successful!");
+            console.getWriter().writeLine("=== Compiled JajaCode ===");
+            console.getWriter().writeLine(res);
+            console.getWriter().writeLine("=== End of compiled code ===");
+        }
+    }
+
+    private boolean isMinijajaFile(){
+        if(currentFile == null){
+            return false;
+        }
+        String fileName = currentFile.getName().toLowerCase();
+        return fileName.endsWith(".mjj");
     }
 }

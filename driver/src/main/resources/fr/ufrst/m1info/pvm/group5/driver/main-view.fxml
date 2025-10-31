@@ -27,7 +27,7 @@
       <Button text="Save" fx:id="btnSave" onAction="#saveButton"/>
       <Button text="Save As" fx:id="btnSaveAs" onAction="#saveAsButton"/>
       <Button text="Run" fx:id="btnRun" onAction="#onRunClicked"/>
-      <Button text="Compile" fx:id="btnCompile"/>
+      <Button text="Compile" fx:id="btnCompile" onAction="#onCompileClicked"/>
       <Button text="Compile and run" fx:id="btnRunCompile"/>
     </ToolBar>
   </top>

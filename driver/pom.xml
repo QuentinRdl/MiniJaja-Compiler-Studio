@@ -48,6 +48,12 @@
           <artifactId>interpreter</artifactId>
           <version>1.1-SNAPSHOT</version>
       </dependency>
+
+      <dependency>
+          <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+          <artifactId>compiler</artifactId>
+          <version>1.1-SNAPSHOT</version>
+      </dependency>
   </dependencies>
 
   <build>
