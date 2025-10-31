@@ -1,6 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTable;

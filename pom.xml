@@ -15,6 +15,7 @@
         <module>interpreter</module>
         <module>compiler</module>
         <module>driver</module>
+        <module>integration_tests</module>
     </modules>
 
     <properties>
