@@ -256,4 +256,31 @@ public class CompilerTest {
         String res= comp.compileFile("src/test/resources/Simple.mjj");
         Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
     }
+
+    @Test
+    @DisplayName("Compile File Write")
+    public void CompileWrite()  {
+        String res= comp.compileFile("src/test/resources/Write.mjj");
+        String expected = "init\n" +
+                "push(3)\n" +
+                "new(x,INT,var,0)\n" +
+                "push(jcfaux)\n" +
+                "new(b,BOOL,var,0)\n" +
+                "push(\"Hello \")\n" +
+                "write\n" +
+                "push(\"World\")\n" +
+                "writeln\n" +
+                "load(x)\n" +
+                "write\n" +
+                "load(b)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
+    }
 }
