@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ public class MainControllerTest extends ApplicationTest {
      * Creates a temporary test file in the temporary directory
      *
      * The file will contain the given lines of text, each followed by a newline character.
-     * This method is typicaaly used to simulate MiniJaja or JajaCode source files for testing file-loading features.
+     * This method is typically used to simulate MiniJaja or JajaCode source files for testing file-loading features.
      *
      * @param filename the name of the file to create
      * @param lines the lines of text to write into the file
@@ -983,6 +984,79 @@ public class MainControllerTest extends ApplicationTest {
         verifyThat("#btnRunCompile", isEnabled());
     }
 
+    @Test
+    public void interpreterWorks() throws Exception{
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }",
+                "}"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsole("test.mjj", content);
+        assertTrue(consoleText.contains("[INFO] Interpretation successfully completed"));
+    }
+
+    @Test
+    public void interpreterDoesNotWork() throws Exception{
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsole("test.mjj", content);
+        assertTrue(consoleText.contains("[ERROR]"));
+        assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
+    }
+
+
+    /**
+     * This automates a good part of the Interpreter -> IDE tests
+     *
+     * @param filename name of the file to create in the test temp directory
+     * @param content full file content
+     * @return the text currently present in the controller's output TextArea
+     * @throws Exception if fails
+     */
+    private String createFileLoadRunAndGetConsole(String filename, String content) throws Exception{
+        String[] lines;
+        if (content == null || content.isEmpty()){
+            lines = new String[0];
+        } else {
+            // split on any newline sequence and preserve trailing empty lines
+            lines = content.split("\\R", -1);
+        }
+
+        File testFile = createTestFile(filename, lines);
+
+        // Load the file on the JavaFX application thread
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Trigger the run action (interpretation)
+        interact(() -> {
+            controller.onRunClicked();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Give a small additional delay to ensure Platform.runLater from Console appends are processed
+        Thread.sleep(50);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // The output TextArea is package-private in MainController, tests are in the same package so we can access it
+        return controller.output.getText();
+    }
+
+    // Click on #BtnRun
 
 
 }
