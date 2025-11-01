@@ -26,6 +26,7 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.matcher.control.LabeledMatchers;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.LabeledMatchers.hasText;
+
 import static org.testfx.util.NodeQueryUtils.isVisible;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -40,7 +41,7 @@ public class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
-    Path tempDir;
+    static Path tempDir;
 
     private MainController controller;
 
@@ -66,14 +67,14 @@ public class MainControllerTest extends ApplicationTest {
      * Creates a temporary test file in the temporary directory
      *
      * The file will contain the given lines of text, each followed by a newline character.
-     * This method is typicaaly used to simulate MiniJaja or JajaCode source files for testing file-loading features.
+     * This method is typically used to simulate MiniJaja or JajaCode source files for testing file-loading features.
      *
      * @param filename the name of the file to create
      * @param lines the lines of text to write into the file
      * @return the created File object
      * @throws IOException if an error occurs while writing to the file
      */
-    private File createTestFile(String filename, String... lines) throws IOException {
+    public static File createTestFile(String filename, String... lines) throws IOException {
         File testFile = tempDir.resolve(filename).toFile();
 
         try (FileWriter writer = new FileWriter(testFile)){
@@ -431,7 +432,7 @@ public class MainControllerTest extends ApplicationTest {
 
         // We cannot test saveButton() directly because it opens a FileChooser
         // But we can simulate the behaviour: saveAs with a file
-        File newFile = tempDir.resolve("newFile.mjj").toFile();
+        File newFile = tempDir.resolve("newFile1.mjj").toFile();
 
         interact(() -> {
             controller.saveAs(newFile);
@@ -480,7 +481,7 @@ public class MainControllerTest extends ApplicationTest {
 
         controller.getCodeLines().get(0).setCode("modified line 1");
 
-        File newFile = tempDir.resolve("newFile.mjj").toFile();
+        File newFile = tempDir.resolve("newFile2.mjj").toFile();
         assertFalse(newFile.exists());
 
         interact(() -> {
@@ -490,7 +491,7 @@ public class MainControllerTest extends ApplicationTest {
 
         assertTrue(newFile.exists());
         assertEquals(newFile, controller.getCurrentFile());
-        assertEquals("newFile.mjj", controller.getFileLabel().getText());
+        assertEquals("newFile2.mjj", controller.getFileLabel().getText());
 
         List<String> savedLines = Files.readAllLines(newFile.toPath(), StandardCharsets.UTF_8);
         assertEquals(2, savedLines.size());

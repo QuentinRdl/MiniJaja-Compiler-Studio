@@ -38,7 +38,7 @@ public class MainController {
     private ListView<CodeLine> codeListView;
 
     @FXML
-    private TextArea output;
+    TextArea output;
 
     private Console console;
 
