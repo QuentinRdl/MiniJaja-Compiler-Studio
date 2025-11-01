@@ -12,6 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ContextMenu;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,6 +99,7 @@ public class MainController {
         });
 
         deactiveButtons();
+        setupOutputContextMenu();
     }
 
     /**
@@ -519,6 +522,14 @@ public class MainController {
         btnRunCompile.setDisable(true);
     }
 
+    /**
+     * Handles the action triggered when the user clicks the "Compile" button
+     *
+     * This method werifies that the currently loaded file is a MiniJaja file,
+     * then retrieves the modified code from the editor and, if not empty, sends it
+     * to the Compiler for compilation.
+     * Upon success, the complied JajaCode is printed in the console along with a confirmation message.
+     */
     public void onCompileClicked(){
         if(!isMinijajaFile()){
             console.getWriter().writeLine("[ERROR] Compilation is only available for MiniJaja files (.mjj)");
@@ -544,11 +555,37 @@ public class MainController {
         }
     }
 
-    private boolean isMinijajaFile(){
+    /**
+     * Checks whether the currently opened file is a MiniJaja source file
+     *
+     * @return true if the file exists and its name ends with ".mjj", false otherwise
+     */
+    public boolean isMinijajaFile(){
         if(currentFile == null){
             return false;
         }
         String fileName = currentFile.getName().toLowerCase();
         return fileName.endsWith(".mjj");
+    }
+
+    /**
+     * Initializes a context menu for the output console
+     *
+     * This menu currently provides a single option, "Clear All", allowing
+     * the user to clear the console output area.
+     */
+    private void setupOutputContextMenu(){
+        if (output == null){
+            return;
+        }
+
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem clearOutput = new MenuItem("Clear All");
+        clearOutput.setOnAction(e -> console.clear());
+
+        contextMenu.getItems().addAll(clearOutput);
+
+        output.setContextMenu(contextMenu);
     }
 }

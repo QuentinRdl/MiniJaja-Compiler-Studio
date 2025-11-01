@@ -983,6 +983,29 @@ public class MainControllerTest extends ApplicationTest {
         verifyThat("#btnRunCompile", isEnabled());
     }
 
+    @Test
+    public void testIsMinijajaFileWithNullFile(){
+        assertNull(controller.getCurrentFile());
+        assertFalse(controller.isMinijajaFile());
+    }
+
+    @Test
+    public void testIsMinijajaFileWithMinijajaFile() throws Exception {
+        File testFile = createTestFile("test.mjj", "line 1", "line 2");
+        interact(() -> controller.loadFile(testFile));
+        assertEquals(testFile, controller.getCurrentFile());
+        assertTrue(controller.isMinijajaFile());
+
+    }
+
+    @Test
+    public void testIsMinijajaFileWithJajacodeFile() throws Exception {
+        File testFile = createTestFile("test.jjc", "line 1", "line 2");
+        interact(() -> controller.loadFile(testFile));
+        assertEquals(testFile, controller.getCurrentFile());
+        assertFalse(controller.isMinijajaFile());
+    }
+
 
 
 }

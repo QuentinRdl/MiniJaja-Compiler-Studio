@@ -27,7 +27,7 @@ public class Compiler {
             AbstractSyntaxTree ast = AbstractSyntaxTree.fromString(code);
             res=ast.compileAsString();
         } catch (Exception e) {
-            output.writeLine(e.getClass()+" : "+e.getMessage());
+            output.writeLine("[ERROR] " + e.getClass()+" : "+e.getMessage());
         }
         return res;
     }
@@ -44,7 +44,7 @@ public class Compiler {
             AbstractSyntaxTree ast = AbstractSyntaxTree.fromFile(path);
             res=ast.compileAsString();
         } catch (Exception e) {
-            output.writeLine(e.getClass()+" : "+e.getMessage());
+            output.writeLine("[ERROR] " + e.getClass()+" : "+e.getMessage());
         }
         return res;
     }
