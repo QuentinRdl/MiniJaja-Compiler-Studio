@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.ufrst.m1info.pvm.group5</groupId>
     <artifactId>group5</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>pom</packaging>
     <name>group5</name>
 
@@ -14,7 +12,7 @@
         <developerConnection>
             scm:git:https://disc.univ-fcomte.fr/cr700-gitlab/projet-amv-2025/groupe-5.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>group5-1.1</tag>
     </scm>
 
     <modules>
