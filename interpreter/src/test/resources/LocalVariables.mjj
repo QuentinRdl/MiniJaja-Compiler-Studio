@@ -1,0 +1,9 @@
+class C {
+    int x = 4;
+    main {
+        int y = 3;
+        int z = 6;
+        x += z / y + 2;
+        x++;
+    }
+}

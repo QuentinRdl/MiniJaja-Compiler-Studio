@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+!**/ast/gen/**
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -37,3 +38,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### GitLab ###
+.gitlab-ci-local/
+
+### Maven ###
+*.mvn/
+
+gen/

@@ -1,0 +1,7 @@
+class C {
+  int x;
+  main {
+ 	x = 3 + 4;
+ 	x++;
+   }
+}

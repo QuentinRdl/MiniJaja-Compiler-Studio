@@ -1,0 +1,166 @@
+{
+	"IdentNode" : {
+		"identifier" : C
+	}
+	"DeclarationsNode" : {
+		"VariableNode" : {
+			"type" : INT
+			"IdentNode" : {
+				"identifier" : x
+			}
+		}
+		"DeclarationsNode" : {
+			"VariableNode" : {
+				"type" : INT
+				"IdentNode" : {
+					"identifier" : y
+				}
+				"NumberNode" : {
+					"value" : 10
+				}
+			}
+			"DeclarationsNode" : {
+				"FinalNode" : {
+					"type" : INT
+					"IdentNode" : {
+						"identifier" : VAL
+					}
+					"NumberNode" : {
+						"value" : 5
+					}
+				}
+				"DeclarationsNode" : {
+					"VariableNode" : {
+						"type" : BOOL
+						"IdentNode" : {
+							"identifier" : b1
+						}
+						"BooleanNode" : {
+							"value" : true
+						}
+					}
+					"DeclarationsNode" : {
+						"VariableNode" : {
+							"type" : BOOL
+							"IdentNode" : {
+								"identifier" : b2
+							}
+							"BooleanNode" : {
+								"value" : false
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	"MainNode" : {
+		"InstructionsNode" : {
+			"IfNode" : {
+				"AndNode" : {
+					"IdentNode" : {
+						"identifier" : b1
+					}
+					"OrNode" : {
+						"IdentNode" : {
+							"identifier" : b1
+						}
+						"NotNode" : {
+							"IdentNode" : {
+								"identifier" : b2
+							}
+						}
+					}
+				}
+				"InstructionsNode" : {
+					"AffectationNode" : {
+						"IdentNode" : {
+							"identifier" : x
+						}
+						"BinMinusNode" : {
+							"AddNode" : {
+								"IdentNode" : {
+									"identifier" : VAL
+								}
+								"IdentNode" : {
+									"identifier" : y
+								}
+							}
+							"NumberNode" : {
+								"value" : 0
+							}
+						}
+					}
+				}
+				"InstructionsNode" : {
+					"IncNode" : {
+						"IdentNode" : {
+							"identifier" : x
+						}
+					}
+				}
+			}
+			"InstructionsNode" : {
+				"WriteNode" : {
+					"text" : "x (15) = "
+				}
+				"InstructionsNode" : {
+					"WriteLineNode" : {
+						"IdentNode" : {
+							"identifier" : x
+						}
+					}
+					"InstructionsNode" : {
+						"AffectationNode" : {
+							"IdentNode" : {
+								"identifier" : x
+							}
+							"MulNode" : {
+								"IdentNode" : {
+									"identifier" : y
+								}
+								"IdentNode" : {
+									"identifier" : z
+								}
+							}
+						}
+						"InstructionsNode" : {
+							"AffectationNode" : {
+								"IdentNode" : {
+									"identifier" : x
+								}
+								"DivNode" : {
+									"IdentNode" : {
+										"identifier" : x
+									}
+									"IdentNode" : {
+										"identifier" : z
+									}
+								}
+							}
+							"InstructionsNode" : {
+								"IncNode" : {
+									"IdentNode" : {
+										"identifier" : x
+									}
+								}
+								"InstructionsNode" : {
+									"WriteNode" : {
+										"text" : "x (11) = "
+									}
+									"InstructionsNode" : {
+										"WriteLineNode" : {
+											"IdentNode" : {
+												"identifier" : x
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
