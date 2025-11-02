@@ -1,0 +1,30 @@
+class C {
+    int a = 5;
+    int b = 5;
+    int c = 5;
+    int v;
+    main{
+        if(5 > a){
+            a++;
+        };
+
+        if(b > a){
+            b = 0;
+        }
+        else {
+            b++;
+        };
+
+        if(b == 5){
+            v = c;
+        }
+        else {
+            if(a > b){
+                v = a;
+            }
+            else{
+                v = b;
+            };
+        };
+    }
+}

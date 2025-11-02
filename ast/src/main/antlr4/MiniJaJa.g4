@@ -2,8 +2,8 @@ grammar MiniJaJa;
 
 @header{
 package fr.ufrst.m1info.pvm.group5;
-import fr.ufrst.m1info.pvm.group5.Nodes.*;
-import fr.ufrst.m1info.pvm.group5.ValueType;
+import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 }
 
 classe returns [ClassNode node]
@@ -92,10 +92,18 @@ instr returns [ASTNode node]
     )?
     '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,null);}
     ('else' '{'
-     (i2=instrs {instrsflag2 = true;}
-     )?
-     '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,(instrsflag2)?$i2.node:null);}
-     )?
+    (i2=instrs {instrsflag2 = true;}
+    )?
+    '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,(instrsflag2)?$i2.node:null);}
+    )?
+    | 'write' '('
+    ( ident {$node = new WriteNode($ident.node);}
+    | e=STRING {$node = new WriteNode($e.text);}
+    ) ')'
+    | 'writeln' '('
+    ( ident {$node = new WriteLineNode($ident.node);}
+    | e=STRING {$node = new WriteLineNode($e.text);}
+    ) ')'
     ;
 
 listexp returns [ASTNode node]
@@ -172,4 +180,8 @@ NOMBRE
 
 WS
     :   (' ' | '\t' | '\r'| '\n') -> skip
+    ;
+
+STRING
+    : '"'.+?'"'
     ;

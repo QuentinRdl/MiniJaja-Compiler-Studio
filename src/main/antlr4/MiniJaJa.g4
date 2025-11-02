@@ -1,5 +1,0 @@
-grammar MiniJaJa;
-
-eval
-    : EOF
-;

@@ -44,3 +44,5 @@ build/
 
 ### Maven ###
 *.mvn/
+
+gen/

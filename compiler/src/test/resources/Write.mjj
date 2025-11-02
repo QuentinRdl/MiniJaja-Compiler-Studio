@@ -1,0 +1,10 @@
+class C {
+  int x = 3;
+  boolean b = false;
+  main {
+ 	write("Hello ");
+ 	writeln("World");
+ 	write(x);
+ 	writeln(b);
+  }
+}

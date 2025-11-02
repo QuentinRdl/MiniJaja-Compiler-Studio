@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>fr.ufrst.m1info.pvm.group5</groupId>
         <artifactId>group5</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>2-SNAPSHOT</version>
     </parent>
 
     <artifactId>driver</artifactId>
@@ -36,32 +34,55 @@
           <scope>test</scope>
       </dependency>
 
-      <!--
       <dependency>
-        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-        <artifactId>interpreter</artifactId>
-        <version>1.0-SNAPSHOT</version>
+          <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+          <artifactId>memory</artifactId>
+          <version>2-SNAPSHOT</version>
+          <scope>compile</scope>
       </dependency>
+
       <dependency>
-        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-        <artifactId>compiler</artifactId>
-        <version>1.0-SNAPSHOT</version>
+          <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+          <artifactId>interpreter</artifactId>
+          <version>2-SNAPSHOT</version>
       </dependency>
+
       <dependency>
-        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-        <artifactId>ast</artifactId>
-        <version>1.0-SNAPSHOT</version>
+          <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+          <artifactId>compiler</artifactId>
+          <version>2-SNAPSHOT</version>
       </dependency>
-      <dependency>
-        <groupId>fr.ufrst.m1info.gl.compGL</groupId>
-        <artifactId>memory</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-      -->
   </dependencies>
 
   <build>
+
     <plugins>
+
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>
+                                    fr.ufrst.m1info.pvm.group5.driver.MainApplication
+                                </mainClass>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -80,13 +101,13 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>fr.ufrst.m1info.gl.compgl.driver/fr.ufrst.m1info.pvm.group5.driver.MainApplication</mainClass>
-              <launcher>app</launcher>
-              <jlinkZipName>app</jlinkZipName>
-              <jlinkImageName>app</jlinkImageName>
-              <noManPages>true</noManPages>
-              <stripDebug>true</stripDebug>
-              <noHeaderFiles>true</noHeaderFiles>
+                <mainClass>fr.ufrst.m1info.pvm.group5.driver.MainApplication</mainClass>
+                <launcher>app</launcher>
+                <jlinkZipName>app</jlinkZipName>
+                <jlinkImageName>app</jlinkImageName>
+                <noManPages>true</noManPages>
+                <stripDebug>true</stripDebug>
+                <noHeaderFiles>true</noHeaderFiles>
             </configuration>
           </execution>
         </executions>
