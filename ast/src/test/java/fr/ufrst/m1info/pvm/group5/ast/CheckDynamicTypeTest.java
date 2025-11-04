@@ -67,82 +67,82 @@ public class CheckDynamicTypeTest {
     @Test
     @DisplayName("AddNode.checkType - int + int (valid)")
     public void testAddNode_Int() throws Exception {
-        AddNode addNode = new AddNode(opInt,opInt);
+        AddNode node = new AddNode(opInt,opInt);
 
-        String result = addNode.checkType(memoryMock);
+        String result = node.checkType(memoryMock);
         assertEquals("int", result);
     }
 
     @Test
     @DisplayName("AddNode.checkType - bool + bool (error)")
     public void testAddNode_Bool() throws Exception {
-        AddNode addNode = new AddNode(opBool,opBool);
+        AddNode node = new AddNode(opBool,opBool);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - string + string (error)")
     public void testAddNode_String() throws Exception {
-        AddNode addNode = new AddNode(opString,opString);
+        AddNode node = new AddNode(opString,opString);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - void + void (error)")
     public void testAddNode_Void() throws Exception {
-        AddNode addNode = new AddNode(opVoid,opVoid);
+        AddNode node = new AddNode(opVoid,opVoid);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - int + bool (error)")
     public void testAddNode_IntBool() throws Exception {
-        AddNode addNode = new AddNode(opInt,opBool);
+        AddNode node = new AddNode(opInt,opBool);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - bool + int (error)")
     public void testAddNode_BoolInt() throws Exception {
-        AddNode addNode = new AddNode(opBool,opInt);
+        AddNode node = new AddNode(opBool,opInt);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - int + string (error)")
     public void testAddNode_IntString() throws Exception {
-        AddNode addNode = new AddNode(opInt,opString);
+        AddNode node = new AddNode(opInt,opString);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - string + int (error)")
     public void testAddNode_StringInt() throws Exception {
-        AddNode addNode = new AddNode(opString,opInt);
+        AddNode node = new AddNode(opString,opInt);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () ->node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - int + void (error)")
     public void testAddNode_IntVoid() throws Exception {
-        AddNode addNode = new AddNode(opInt,opVoid);
+        AddNode node = new AddNode(opInt,opVoid);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
     @DisplayName("AddNode.checkType - void + int (error)")
     public void testAddNode_VoidInt() throws Exception {
-        AddNode addNode = new AddNode(opVoid,opInt);
+        AddNode node = new AddNode(opVoid,opInt);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> addNode.checkType(memoryMock));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -197,7 +197,167 @@ public class CheckDynamicTypeTest {
         assertEquals("void", result);
     }
 
+    @Test
+    @DisplayName("AndNode.checkType - int && int (error)")
+    public void testAndNode_Int() throws Exception {
+        AndNode node = new AndNode(opInt,opInt);
 
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - bool && bool (valid)")
+    public void testAndNode_Bool() throws Exception {
+        AndNode node = new AndNode(opBool,opBool);
+
+        String result = node.checkType(memoryMock);
+        assertEquals("bool", result);
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - string && string (error)")
+    public void testAndNode_String() throws Exception {
+        AndNode node = new AndNode(opString,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - void && void (error)")
+    public void testAndNode_Void() throws Exception {
+        AndNode node = new AndNode(opVoid,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - int && bool (error)")
+    public void testAndNode_IntBool() throws Exception {
+        AndNode node = new AndNode(opInt,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - bool && int (error)")
+    public void testAndNode_BoolInt() throws Exception {
+        AndNode node = new AndNode(opBool,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - int && string (error)")
+    public void testAndNode_IntString() throws Exception {
+        AndNode node = new AndNode(opInt,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - string && int (error)")
+    public void testAndNode_StringInt() throws Exception {
+        AndNode node = new AndNode(opString,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - int && void (error)")
+    public void testAndNode_IntVoid() throws Exception {
+        AndNode node = new AndNode(opInt,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("AndNode.checkType - void && int (error)")
+    public void testAndNode_VoidInt() throws Exception {
+        AndNode node = new AndNode(opVoid,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - int - int (valid)")
+    public void testBinMinusNode_Int() throws Exception {
+        BinMinusNode node = new BinMinusNode(opInt,opInt);
+
+        String result = node.checkType(memoryMock);
+        assertEquals("int", result);
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - bool - bool (error)")
+    public void testBinMinusNode_Bool() throws Exception {
+        BinMinusNode node = new BinMinusNode(opBool,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - string - string (error)")
+    public void testBinMinusNode_String() throws Exception {
+        BinMinusNode node = new BinMinusNode(opString,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - void - void (error)")
+    public void testBinMinusNode_Void() throws Exception {
+        BinMinusNode node = new BinMinusNode(opVoid,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - int - bool (error)")
+    public void testBinMinusNode_IntBool() throws Exception {
+        BinMinusNode node = new BinMinusNode(opInt,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - bool - int (error)")
+    public void testBinMinusNode_BoolInt() throws Exception {
+        BinMinusNode node = new BinMinusNode(opBool,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - int - string (error)")
+    public void testBinMinusNode_IntString() throws Exception {
+        BinMinusNode node = new BinMinusNode(opInt,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - string - int (error)")
+    public void testBinMinusNode_StringInt() throws Exception {
+        BinMinusNode node = new BinMinusNode(opString,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - int - void (error)")
+    public void testBinMinusNode_IntVoid() throws Exception {
+        BinMinusNode node = new BinMinusNode(opInt,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("BinMinusNode.checkType - void - int (error)")
+    public void testBinMinusNode_VoidInt() throws Exception {
+        BinMinusNode node = new BinMinusNode(opVoid,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
 
     @Test
     @DisplayName("BooleanNode - checkType() return bool")
