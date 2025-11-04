@@ -407,6 +407,87 @@ public class CheckDynamicTypeTest {
     }
 
     @Test
+    @DisplayName("DivNode.checkType - int / int (valid)")
+    public void testDivNode_Int() throws Exception {
+        DivNode node = new DivNode(opInt,opInt);
+
+        String result = node.checkType(memoryMock);
+        assertEquals("int", result);
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - bool / bool (error)")
+    public void testDivNode_Bool() throws Exception {
+        DivNode node = new DivNode(opBool,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - string / string (error)")
+    public void testDivNode_String() throws Exception {
+        DivNode node = new DivNode(opString,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - void / void (error)")
+    public void testDivNode_Void() throws Exception {
+        DivNode node = new DivNode(opVoid,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - int / bool (error)")
+    public void testDivNode_IntBool() throws Exception {
+        DivNode node = new DivNode(opInt,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - bool / int (error)")
+    public void testDivNode_BoolInt() throws Exception {
+        DivNode node = new DivNode(opBool,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - int / string (error)")
+    public void testDivNode_IntString() throws Exception {
+        DivNode node = new DivNode(opInt,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - string / int (error)")
+    public void testDivNode_StringInt() throws Exception {
+        DivNode node = new DivNode(opString,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - int / void (error)")
+    public void testDivNode_IntVoid() throws Exception {
+        DivNode node = new DivNode(opInt,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("DivNode.checkType - void / int (error)")
+    public void testDivNode_VoidInt() throws Exception {
+        DivNode node = new DivNode(opVoid,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
     @DisplayName("FinalNode - checkType() valid int")
     public void testFinalNode_IntOk() throws Exception {
         TypeNode typeNode = new TypeNode(ValueType.INT);
