@@ -951,6 +951,87 @@ public class CheckDynamicTypeTest {
     }
 
     @Test
+    @DisplayName("OrNode.checkType - int || int (error)")
+    public void testOrNode_Int() throws Exception {
+        OrNode node = new OrNode(opInt,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - bool || bool (valid)")
+    public void testOrNode_Bool() throws Exception {
+        OrNode node = new OrNode(opBool,opBool);
+
+        String result = node.checkType(memoryMock);
+        assertEquals("bool", result);
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - string || string (error)")
+    public void testOrNode_String() throws Exception {
+        OrNode node = new OrNode(opString,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - void || void (error)")
+    public void testOrNode_Void() throws Exception {
+        OrNode node = new OrNode(opVoid,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - int || bool (error)")
+    public void testOrNode_IntBool() throws Exception {
+        OrNode node = new OrNode(opInt,opBool);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - bool || int (error)")
+    public void testOrNode_BoolInt() throws Exception {
+        OrNode node = new OrNode(opBool,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - int || string (error)")
+    public void testOrNode_IntString() throws Exception {
+        OrNode node = new OrNode(opInt,opString);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - string || int (error)")
+    public void testOrNode_StringInt() throws Exception {
+        OrNode node = new OrNode(opString,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - int || void (error)")
+    public void testOrNode_IntVoid() throws Exception {
+        OrNode node = new OrNode(opInt,opVoid);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
+    @DisplayName("OrNode.checkType - void || int (error)")
+    public void testOrNode_VoidInt() throws Exception {
+        OrNode node = new OrNode(opVoid,opInt);
+
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+    }
+
+    @Test
     @DisplayName("ReturnNode - checkType() returns type of expression int")
     public void testReturnNode_CheckType_Int() throws Exception {
         NumberNode numberExpr = new NumberNode(10);
