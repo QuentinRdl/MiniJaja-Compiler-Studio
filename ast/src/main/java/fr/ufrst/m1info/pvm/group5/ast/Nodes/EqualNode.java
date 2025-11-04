@@ -35,6 +35,6 @@ public class EqualNode extends BinaryOperator{
                     "Equal operator must be used with 2 operand of type int or bool"
             );
         }
-        return "int";
+        return "bool";
     }
 }
