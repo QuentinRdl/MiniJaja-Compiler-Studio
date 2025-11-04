@@ -68,3 +68,28 @@
     -fx-effect: null;
 }
 
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane *.tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab {
+    -fx-padding: 5 10;
+    -fx-background-color: white;
+     -fx-border-color: transparent;
+     -fx-border-width: 0 0 2px 0;
+}
+
+.tab-pane .tab:selected {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent transparent #2196F3 transparent;
+}

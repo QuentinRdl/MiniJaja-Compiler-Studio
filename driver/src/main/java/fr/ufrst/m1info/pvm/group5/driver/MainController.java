@@ -50,6 +50,15 @@ public class MainController {
     private File currentFile;
 
     @FXML
+    private TextArea compiledText;
+
+    @FXML
+    private TabPane editorTabPane;
+
+    @FXML
+    private Tab compiledTab;
+
+    @FXML
     private Button btnSave;
     @FXML
     private Button btnSaveAs;
@@ -154,6 +163,10 @@ public class MainController {
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
             activeButtons();
+
+            if(compiledText != null){
+                compiledText.clear();
+            }
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -496,6 +509,10 @@ public class MainController {
         activeButtons();
         currentFile = null;
         fileLabel.setText("New file");
+
+        if(compiledText != null){
+            compiledText.clear();
+        }
     }
 
     /**
@@ -548,6 +565,10 @@ public class MainController {
         String res = compiler.compileCode(getModifiedCode());
 
         if (res != null){
+            if(compiledText != null){
+                compiledText.setText(res);
+            }
+            editorTabPane.getSelectionModel().select(compiledTab);
             console.getWriter().writeLine("[INFO] Compilation successful!");
             console.getWriter().writeLine("=== Compiled JajaCode ===");
             console.getWriter().writeLine(res);
