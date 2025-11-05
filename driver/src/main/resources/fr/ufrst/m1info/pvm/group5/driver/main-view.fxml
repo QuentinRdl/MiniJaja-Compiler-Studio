@@ -54,7 +54,7 @@
             <ListView fx:id="codeListView"/>
           </Tab>
           <Tab fx:id="compiledTab" text="Compiled Code" closable="true">
-            <TextArea fx:id="compiledText" editable="false"/>
+            <ListView fx:id="compiledCodeListView"/>
           </Tab>
         </TabPane>
 

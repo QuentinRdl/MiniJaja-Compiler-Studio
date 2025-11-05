@@ -36,21 +36,21 @@ public class MainController {
 
     @FXML
     private ListView<CodeLine> codeListView;
+    private ObservableList<CodeLine> codeLines;
+
+    @FXML
+    private ListView<CodeLine> compiledCodeListView;
+    private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
     TextArea output;
 
     private Console console;
 
-    private ObservableList<CodeLine> codeLines;
-
     @FXML
     private SplitPane splitPane;
 
     private File currentFile;
-
-    @FXML
-    private TextArea compiledText;
 
     @FXML
     private TabPane editorTabPane;
@@ -107,20 +107,39 @@ public class MainController {
             return cell;
         });
 
+        compiledCodeLines = FXCollections.observableArrayList();
+        compiledCodeListView.setItems(compiledCodeLines);
+        compiledCodeListView.setCellFactory(lv -> {
+            CodeLineCell cell = new CodeLineCell();
+            cell.setCodeEditable(false);
+            return cell;
+        });
+
+        editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            if(isCompiledTab()){
+                btnCompile.setDisable(true);
+                btnRunCompile.setDisable(true);
+            } else {
+                btnCompile.setDisable(false);
+                btnRunCompile.setDisable(false);
+            }
+        });
+
+        hideCompileTab();
         deactiveButtons();
         setupOutputContextMenu();
     }
 
     /**
      * Called when the user clicks the "Open" button
-     * Opens a file chooser allowing selection of a MiniJaja or JajaCode file,
+     * Opens a file chooser allowing a MiniJaja file,
      * then loads its content into the ListView
      */
     @FXML
     protected void selectFileButton() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter("MiniJaja and JajaCode file", "*.mjj", "*.jcc")
+                new ExtensionFilter("MiniJaja file", "*.mjj")
         );
         File selectedFile = fc.showOpenDialog(splitPane.getScene().getWindow());
         loadFile(selectedFile);
@@ -164,9 +183,8 @@ public class MainController {
             currentFile = selectedFile;
             activeButtons();
 
-            if(compiledText != null){
-                compiledText.clear();
-            }
+            compiledCodeLines.clear();
+            hideCompileTab();
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -229,10 +247,14 @@ public class MainController {
      * If no file is loaded, it triggers the "Save As" dialog instead
      */
     public void saveButton(){
-        if(currentFile != null){
-            saveToFile(currentFile);
+        if(isCompiledTab()){
+            saveCompiledCodeAs();
         } else {
-            saveAsButton();
+            if(currentFile != null){
+                saveToFile(currentFile);
+            } else {
+                saveAsButton();
+            }
         }
     }
 
@@ -243,8 +265,7 @@ public class MainController {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save a file as");
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter( "MiniJaja file", "*.mjj"),
-                new ExtensionFilter("JajaCode file", "*.jcc")
+                new ExtensionFilter( "MiniJaja file", "*.mjj")
         );
 
         // Default name if file exists
@@ -288,6 +309,20 @@ public class MainController {
             System.err.println("Error during saving : " + e.getMessage());
             console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
         }
+    }
+
+    public void saveCompiledCodeAs(){
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save compiled file as ");
+        fc.getExtensionFilters().addAll(
+                new ExtensionFilter( "JajaCode file", "*.jjc")
+        );
+
+        fc.setInitialFileName(getBaseFileName(currentFile.getName()));
+        fc.setInitialDirectory(currentFile.getParentFile());
+
+        File fileToSave = fc.showSaveDialog(splitPane.getScene().getWindow());
+        saveAs(fileToSave);
     }
 
     /**
@@ -510,9 +545,8 @@ public class MainController {
         currentFile = null;
         fileLabel.setText("New file");
 
-        if(compiledText != null){
-            compiledText.clear();
-        }
+        compiledCodeLines.clear();
+        hideCompileTab();
     }
 
     /**
@@ -565,14 +599,9 @@ public class MainController {
         String res = compiler.compileCode(getModifiedCode());
 
         if (res != null){
-            if(compiledText != null){
-                compiledText.setText(res);
-            }
-            editorTabPane.getSelectionModel().select(compiledTab);
+            loadCompiledCodeToListView(res);
+            showCompiledTab();
             console.getWriter().writeLine("[INFO] Compilation successful!");
-            console.getWriter().writeLine("=== Compiled JajaCode ===");
-            console.getWriter().writeLine(res);
-            console.getWriter().writeLine("=== End of compiled code ===");
         }
     }
 
@@ -608,5 +637,34 @@ public class MainController {
         contextMenu.getItems().addAll(clearOutput);
 
         output.setContextMenu(contextMenu);
+    }
+
+    public boolean isCompiledTab(){
+        return editorTabPane != null && editorTabPane.getSelectionModel().getSelectedItem() == compiledTab;
+    }
+
+    public void loadCompiledCodeToListView(String compiledCode){
+        compiledCodeLines.clear();
+
+        String[] lines = compiledCode.split("\n");
+        int lineNumber = 1;
+        for(String line : lines){
+            compiledCodeLines.add(new CodeLine(lineNumber++, line));
+        }
+    }
+
+    public void hideCompileTab(){
+        if(editorTabPane != null && compiledTab != null){
+            editorTabPane.getTabs().remove(compiledTab);
+        }
+    }
+
+    public void showCompiledTab(){
+        if(editorTabPane != null && compiledTab != null){
+            if(!editorTabPane.getTabs().contains(compiledTab)){
+                editorTabPane.getTabs().add(compiledTab);
+            }
+            editorTabPane.getSelectionModel().select(compiledTab);
+        }
     }
 }

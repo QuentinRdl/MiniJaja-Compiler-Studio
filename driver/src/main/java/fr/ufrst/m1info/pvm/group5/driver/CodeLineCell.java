@@ -36,6 +36,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
     // Flag indicating whether the line was empty before the last Backspace press
     private boolean wasEmptyOnLastBackspace = false;
 
+    private boolean editable = true;
+
     /**
      * Creates a new CodeLineCell and initializes its layout.
      * The cell includes a line number label, an optional breakpoint indicator,
@@ -165,6 +167,19 @@ public class CodeLineCell extends ListCell<CodeLine> {
     public void setListener(CodeLineCellListener listener){
         this.listener = listener;
     }
+
+    /**
+     * Sets whether this cell should be editable or read-only
+     *
+     * @param editable true for editable mode, false for read-only mode
+     */
+    public void setCodeEditable(boolean editable){
+        this.editable = editable;
+        if(codeField != null){
+            codeField.setEditable(editable);
+        }
+    }
+
 
     /**
      * Handles a mouse click on the breakpoint area
