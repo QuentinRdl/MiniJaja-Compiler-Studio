@@ -61,7 +61,7 @@ public class CheckDynamicTypeTest {
     @DisplayName("IdentNode - checkType() variable not defined")
     public void testIdentNode_Undefined() {
         IdentNode node = new IdentNode("y");
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -706,7 +706,7 @@ public class CheckDynamicTypeTest {
         IdentNode identNode = new IdentNode("y"); // pas dans memoryStorage
         IncNode incNode = new IncNode(identNode);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> incNode.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> incNode.checkType(memoryMock));
     }
 
     @Test
@@ -1088,7 +1088,7 @@ public class CheckDynamicTypeTest {
         Memory memoryMock = mock(Memory.class);
         when(memoryMock.val("x")).thenReturn(null);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> sumNode.checkType(memoryMock));
     }
 
     @Test
