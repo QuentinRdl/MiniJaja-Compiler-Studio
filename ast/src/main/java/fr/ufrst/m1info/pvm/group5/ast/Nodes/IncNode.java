@@ -58,12 +58,16 @@ public class IncNode extends ASTNode{
 
         } catch (ASTInvalidMemoryException e) {
             throw e;
+        } catch (IllegalArgumentException e) {
+            throw new ASTInvalidMemoryException(
+                        "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
+            );
         } catch (Exception e) {
             throw new ASTInvalidDynamicTypeException(
-                    "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
-            );
+                        "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
+                );
+            }
         }
-    }
 
     @Override
     protected List<ASTNode> getChildren() {

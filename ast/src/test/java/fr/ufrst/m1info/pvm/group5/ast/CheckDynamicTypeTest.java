@@ -180,7 +180,7 @@ public class CheckDynamicTypeTest {
 
         AffectationNode node = new AffectationNode(new IdentNode("x"), expr);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
