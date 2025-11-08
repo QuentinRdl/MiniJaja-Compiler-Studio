@@ -427,15 +427,11 @@ public class MainController {
     public void onRunClicked(){
         String code = getModifiedCode();
 
-        if (code.isEmpty()){
-            return;
-        }
-
         // If the code is just empty chars, do not run it
-        if(isCodeEmptyChars(code)) {
+        if (code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[ERROR] No code to interpret !");
             return;
         }
-
 
         InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
 
@@ -553,16 +549,15 @@ public class MainController {
      * Upon success, the complied JajaCode is printed in the console along with a confirmation message.
      */
     public void onCompileClicked(){
-        if(!isMinijajaFile()){
-            console.getWriter().writeLine("[ERROR] Compilation is only available for MiniJaja files (.mjj)");
+        String code = getModifiedCode();
+
+        if(code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[ERROR] No code to compile !");
             return;
         }
 
-        String code = getModifiedCode();
-
-        //TODO: find another solution to better intercept empty code (with multiple lines)
-        if(code.isEmpty()){
-            console.getWriter().writeLine("[ERROR] No code to compile !");
+        if(!isMinijajaFile()){
+            console.getWriter().writeLine("[ERROR] Compilation is only available for MiniJaja files (.mjj)");
             return;
         }
 
