@@ -39,34 +39,36 @@ public class AffectationNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        String exprType = expression.checkType(m);
-        Value v;
+
         try {
+            String exprType = expression.checkType(m);
+            Value v;
             v = (Value) m.val(identifier.identifier);
+
             if (v == null) {
-                throw new ASTInvalidDynamicTypeException(
+                throw new ASTInvalidMemoryException(
                         "AffectationNode: variable " + identifier.identifier + " not defined"
                 );
             }
-        } catch (ASTInvalidMemoryException e) {
-            throw new ASTInvalidDynamicTypeException(
-                    "AffectationNode: error accessing variable " + identifier.identifier
-            );
-        }
 
-        // Vérifie la compatibilité de type via DataType
-        DataType varDataType = ValueType.toDataType(v.Type);
-        String varTypeStr;
-        if (varDataType == DataType.INT) varTypeStr = "int";
-        else if (varDataType == DataType.BOOL) varTypeStr = "bool";
-        else throw new ASTInvalidDynamicTypeException(
-                    "AffectationNode: variable type not supported for" + identifier.identifier
-            );
+            // Vérifie la compatibilité de type via DataType
+            DataType varDataType = ValueType.toDataType(v.Type);
+            String varTypeStr;
+            if (varDataType == DataType.INT) varTypeStr = "int";
+            else if (varDataType == DataType.BOOL) varTypeStr = "bool";
+            else throw new ASTInvalidDynamicTypeException(
+                        "AffectationNode: variable type not supported for " + identifier.identifier
+                );
 
-        if (!exprType.equals(varTypeStr)) {
-            throw new ASTInvalidDynamicTypeException(
-                    "AffectationNode: type of expression (" + exprType +
-                            ") incompatible with the type of the variable(" + varTypeStr + ")"
+            if (!exprType.equals(varTypeStr)) {
+                throw new ASTInvalidDynamicTypeException(
+                        "AffectationNode: type of expression (" + exprType +
+                                ") incompatible with the type of the variable(" + varTypeStr + ")"
+                );
+            }
+        } catch (IllegalArgumentException e){
+            throw new ASTInvalidMemoryException(
+                    "AffectationNode: variable " + identifier.identifier + " not defined"
             );
         }
 

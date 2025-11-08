@@ -53,17 +53,30 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        ValueType varType = typemeth.valueType;
+        String vType="";
+        if(varType == ValueType.INT){
+            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(typemeth.valueType));
+            vType="int";
+        }
+        else if(varType == ValueType.BOOL){
+            m.declVar(ident.identifier, new Value(true), ValueType.toDataType(typemeth.valueType));
+            vType="bool";
+        }else {
+            throw new ASTInvalidDynamicTypeException(
+                    "Cannot declare variable with type " + varType
+            );
+        }
         if (vexp != null) {
             String exprType = vexp.checkType(m);
-            String varType = typemeth.valueType.equals(ValueType.INT) ? "int" : "bool";
 
-            if (!exprType.equals(varType)) {
+
+            if (!exprType.equals(vType)) {
                 throw new ASTInvalidDynamicTypeException(
-                        "Type of expression (" + exprType + ") incompatible with the type of the variable (" + varType + ")"
+                        "Type of expression (" + exprType + ") incompatible with the type of the variable (" + vType + ")"
                 );
             }
         }
-        m.declVar(ident.identifier, new Value(), ValueType.toDataType(typemeth.valueType));
         return "void";
     }
 

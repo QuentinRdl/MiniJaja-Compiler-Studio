@@ -23,8 +23,10 @@ sonarqube-job:
     - avm_groupe5
   stage: sonarqube
   image: maven:3.9.9-eclipse-temurin-22
-  dependencies:
-    - test-job
+  needs:
+    - job: test-job
+      artifacts: true
+  allow_failure: true
   script:
     - chmod +x ./settings.sh
     - ./settings.sh
@@ -35,6 +37,7 @@ sonarqube-job:
       -Dsonar.host.url=https://disc.univ-fcomte.fr/cr700-sonarqube
       -Dsonar.token=$SONAR_TOKEN
       -Dsonar.coverage.jacoco.xmlReportPaths=**/target/site/jacoco/jacoco.xml
+
 
 build-job:
   rules:

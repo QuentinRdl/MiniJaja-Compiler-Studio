@@ -43,7 +43,7 @@ public class IncNode extends ASTNode{
             Value v = (Value) m.val(ident.identifier);
 
             if (v == null) {
-                throw new ASTInvalidDynamicTypeException(
+                throw new ASTInvalidMemoryException(
                         "Variable " + ident.identifier + " not defined for increment"
                 );
             }
@@ -57,15 +57,17 @@ public class IncNode extends ASTNode{
             return "int";
 
         } catch (ASTInvalidMemoryException e) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Error accessing variable " + ident.identifier + " : " + e.getMessage()
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw new ASTInvalidMemoryException(
+                        "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
             );
         } catch (Exception e) {
             throw new ASTInvalidDynamicTypeException(
-                    "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
-            );
+                        "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
+                );
+            }
         }
-    }
 
     @Override
     protected List<ASTNode> getChildren() {

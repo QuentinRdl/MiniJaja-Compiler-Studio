@@ -89,7 +89,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableSum() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x += y;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableInc() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x++;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class InterpreterMiniJajaTest {
     public void UndefinedVariableEval() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {y = x;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(java.lang.IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -163,7 +163,8 @@ public class InterpreterMiniJajaTest {
         Assertions.assertNull(errMessage);
     }
 
-    @Disabled // TODO : Re-enable this test when the issue is fixed
+     // TODO : Re-enable this test when the issue is fixed
+    @Disabled
     @Test
     @DisplayName("Interpret Multiple Class")
     public void multipleClass() {
@@ -380,7 +381,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Declaration Wrong Type")
     public void declarationWrongType() {
@@ -389,7 +390,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Declaration Wrong Type 2")
     public void declarationWrongType2() {
@@ -398,7 +399,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Declaration Void")
     public void declarationVoid() {
@@ -407,7 +408,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Wrong Type")
     public void affectationWrongType() {
@@ -416,7 +417,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Wrong Type 2")
     public void affectationWrongType2() {
@@ -425,7 +426,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Boolean Add")
     public void affectationBooleanAdd() {
@@ -434,7 +435,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Boolean Minus")
     public void affectationBooleanMinus() {
@@ -443,7 +444,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Boolean Mul")
     public void affectationBooleanMul() {
@@ -452,7 +453,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Boolean Div")
     public void affectationBooleanDiv() {
@@ -461,7 +462,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Affectation Boolean Neg")
     public void affectationBooleanNeg() {
@@ -470,7 +471,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Add Boolean")
     public void addBoolean() {
@@ -479,7 +480,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Minus Boolean")
     public void minusBoolean() {
@@ -488,7 +489,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Mul Boolean")
     public void mulBoolean() {
@@ -497,7 +498,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Div Boolean")
     public void divBoolean() {
@@ -506,7 +507,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Sup Boolean")
     public void supBoolean() {
@@ -515,7 +516,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Neg Boolean")
     public void negBoolean() {
@@ -524,7 +525,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret Not Int")
     public void notInt() {
@@ -533,7 +534,7 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
+
     @Test
     @DisplayName("Interpret And Int")
     public void andInt() {
@@ -542,7 +543,6 @@ public class InterpreterMiniJajaTest {
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret Or Int")
     public void orInt() {

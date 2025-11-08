@@ -73,38 +73,20 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
     }
 
 
-    //TODO : redo this properly
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         String leftType = left.checkType(m);
         String rightType = right.checkType(m);
-
-        String className = getClass().getSimpleName();
-        if (className.contains("Equal") || className.contains("NotEqual")) {
-
-            if (!(leftType.equals(rightType) &&
-                    (leftType.equals("int") || leftType.equals("bool")))) {
-                throw new ASTInvalidDynamicTypeException(
-                        "Invalid operand types for comparison in " + className
-                );
-            }
-            return "bool";
-        }
-        if (className.contains("And") || className.contains("Or")) {
-            if (!leftType.equals("bool") || !rightType.equals("bool")) {
-                throw new ASTInvalidDynamicTypeException(
-                        "Boolean operator " + className + " requires boolean operands"
-                );
-            }
-            return "bool";
-        }
-        if (!leftType.equals("int") || !rightType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Arithmetic operator " + className + " requires integer operands"
-            );
-        }
-        if(className.contains("Sup"))
-            return "bool";
-        return "int";
+        return controlType(leftType,rightType);
     }
+
+    /**
+     * Operation performed by the node when checking its type
+     *
+     * @param leftType  Type of the left operand
+     * @param rightType Type of the right operand
+     * @return The type of the operation
+     * @throws Exception
+     */
+    protected abstract String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException ;
 }

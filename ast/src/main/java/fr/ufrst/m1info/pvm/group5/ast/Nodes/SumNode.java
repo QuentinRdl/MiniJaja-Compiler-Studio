@@ -58,13 +58,13 @@ public class SumNode extends ASTNode{
         try {
             v = (Value) m.val(identifier.identifier);
         } catch (Exception e) {
-            throw new ASTInvalidDynamicTypeException(
+            throw new ASTInvalidMemoryException(
                     "Error accessing variable " + identifier.identifier
             );
         }
 
         if (v == null) {
-            throw new ASTInvalidDynamicTypeException(
+            throw new ASTInvalidMemoryException(
                     "Variable " + identifier.identifier + " not defined"
             );
         }

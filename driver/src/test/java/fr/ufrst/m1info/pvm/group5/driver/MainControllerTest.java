@@ -33,6 +33,13 @@ import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import static org.testfx.matcher.base.NodeMatchers.*;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 /**
  * Unit tests for the MainController class
  */
@@ -1007,6 +1014,71 @@ public class MainControllerTest extends ApplicationTest {
         assertFalse(controller.isMinijajaFile());
     }
 
+    /*
+     */
+    @Test
+    public void confirmationRunEmptyFile() throws Exception {
+        File blankFile = createTestFile("blank.mjj", "   ", "");
+
+        interact(() -> {
+            controller.loadFile(blankFile);
+        });
+
+        assertEquals(blankFile, controller.getCurrentFile());
+
+        interact(() -> {
+            controller.onRunClicked();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
 
 
+        Thread.sleep(50);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Check that the console prints the right error
+        // We want :
+        // - "[ERROR] No code to compile !" <- for compiler
+        // - "[ERROR] No code to interpret !" <- for interpreter
+        assertTrue(controller.output.getText().contains("[ERROR] No code to interpret !"));
+    }
+
+
+    /**
+     * Provides test cases for running or compiling files when they are only made of empty chars
+     * Confirmation tests -> Before we could run files with blank chars (Spaces, tabs etc.)
+     */
+    static Stream<Arguments> notVisibleCharsTests() {
+        return Stream.of(
+                Arguments.of("blank_run", "   \n   ", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
+                Arguments.of("blank_run_oneSpace", " ", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
+                Arguments.of("blank_run_tab", "\t   \t", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
+                Arguments.of("blank_compile", " ", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
+                Arguments.of("blank_compile", "   \n    ", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
+                Arguments.of("blank_compile_tab", "\t   \t", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
+                Arguments.of("valid_run", "class C { main { int x = 1; }}", (Consumer<MainController>) (MainController::onRunClicked), ""),
+                Arguments.of("valid_compile", "class C { main { int x = 1; }}", (Consumer<MainController>) (MainController::onCompileClicked), "")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("notVisibleCharsTests")
+    void testNotVisibleChars(String fileName, String fileContent, Consumer<MainController> action, String expectedMessage) throws Exception {
+        File file = createTestFile(fileName + ".mjj", fileContent, "");
+
+        interact(() -> controller.loadFile(file));
+        assertEquals(file, controller.getCurrentFile());
+
+        interact(() -> action.accept(controller)); // Either run or compile
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(50);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        String output = controller.output.getText();
+
+        if (expectedMessage == null || expectedMessage.isEmpty()) {
+            assertFalse(output.contains("[ERROR]"), "Expected no error, but got : " + output);
+        } else {
+            assertTrue(output.contains(expectedMessage));
+        }
+    }
 }
