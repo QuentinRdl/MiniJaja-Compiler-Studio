@@ -1007,6 +1007,33 @@ public class MainControllerTest extends ApplicationTest {
         assertFalse(controller.isMinijajaFile());
     }
 
+    /*
+    * Confirmation test -> Before we could run files with blank chars (Spaces, tabs etc.)
+     */
+    @Test
+    public void confirmationRunEmptyFile() throws Exception {
+        File blankFile = createTestFile("blank.mjj", "   ", "");
 
+        interact(() -> {
+            controller.loadFile(blankFile);
+        });
+
+        assertEquals(blankFile, controller.getCurrentFile());
+
+        interact(() -> {
+            controller.onRunClicked();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+        Thread.sleep(50);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Check that the console prints the right error
+        // We want :
+        // - "[ERROR] No code to compile !" <- for compiler
+        // - "[ERROR] No code to interpret !" <- for interpreter
+        assertTrue(controller.output.getText().contains("[ERROR] No code to interpret !"));
+    }
 
 }
