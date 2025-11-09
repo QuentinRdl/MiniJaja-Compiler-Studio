@@ -40,15 +40,9 @@ public class IncNode extends ASTNode{
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         try {
-            Value v = (Value) m.val(ident.identifier);
+            DataType dataType = m.dataTypeOf(ident.identifier);
 
-            if (v == null) {
-                throw new ASTInvalidMemoryException(
-                        "Variable " + ident.identifier + " not defined for increment"
-                );
-            }
-            DataType dt = ValueType.toDataType(v.Type);
-            if (dt != DataType.INT) {
+            if (dataType != DataType.INT) {
                 throw new ASTInvalidDynamicTypeException(
                         "Cannot increment : " + ident.identifier + " is not an integer"
                 );
@@ -60,7 +54,7 @@ public class IncNode extends ASTNode{
             throw e;
         } catch (IllegalArgumentException e) {
             throw new ASTInvalidMemoryException(
-                        "Unknown error while checkingType of " + ident.identifier + " : " + e.getMessage()
+                        "Memory error while checkingType of " + ident.identifier + " : " + e.getMessage()
             );
         } catch (Exception e) {
             throw new ASTInvalidDynamicTypeException(

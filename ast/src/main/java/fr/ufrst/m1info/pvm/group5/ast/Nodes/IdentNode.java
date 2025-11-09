@@ -35,13 +35,12 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        Value v = (Value) m.val(identifier);
-        if (v == null) {
-            throw new ASTInvalidMemoryException(
-                    "Variable " + identifier + " not defined"
-            );
+        DataType dataType;
+        try{
+            dataType = m.dataTypeOf(identifier);
+        } catch (Exception e) {
+            throw new ASTInvalidMemoryException(e.getMessage());
         }
-        DataType dataType = ValueType.toDataType(v.Type);
 
         switch (dataType) {
             case INT:
