@@ -157,9 +157,16 @@ public class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Increment on unassigned variable")
+    public void incrementUnassigned() {
+        String errMessage=imj.interpretCode("class C {int y; main {y++;}}");
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
     @DisplayName("Interpret Increment")
     public void increment() {
-        String errMessage=imj.interpretCode("class C {int y; main {y++;}}");
+        String errMessage=imj.interpretCode("class C {int y=1; main {y++;}}");
         Assertions.assertNull(errMessage);
     }
 
