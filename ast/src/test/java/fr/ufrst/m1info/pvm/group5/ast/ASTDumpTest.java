@@ -17,10 +17,11 @@ public class ASTDumpTest {
     @Disabled
     @Test
     public void dumpToConsole() throws IOException {
-        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/0.mjj");
         System.out.println(AST.dump());
     }
 
+    @Disabled
     @Test
     public void Mjj0() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/0.mjj");
