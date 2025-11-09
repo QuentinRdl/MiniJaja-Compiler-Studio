@@ -1,6 +1,6 @@
 class C {
     int a;
     main{
-        a++;
+        int b = a + 2;
     }
 }
