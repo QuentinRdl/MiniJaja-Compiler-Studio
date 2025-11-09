@@ -54,22 +54,13 @@ public class SumNode extends ASTNode{
                     "The operand of SumNode must be of type int, found: " + exprType
             );
         }
-        Value v;
-        try {
-            v = (Value) m.val(identifier.identifier);
+        DataType dataType;
+        try{
+            dataType = m.dataTypeOf(identifier.identifier);
         } catch (Exception e) {
-            throw new ASTInvalidMemoryException(
-                    "Error accessing variable " + identifier.identifier
-            );
+            throw new ASTInvalidMemoryException(e.getMessage());
         }
-
-        if (v == null) {
-            throw new ASTInvalidMemoryException(
-                    "Variable " + identifier.identifier + " not defined"
-            );
-        }
-        DataType dt = ValueType.toDataType(v.Type);
-        if (dt != DataType.INT) {
+        if (dataType != DataType.INT) {
             throw new ASTInvalidDynamicTypeException(
                     "SumNode impossible : variable " + identifier.identifier + " is not an int"
             );

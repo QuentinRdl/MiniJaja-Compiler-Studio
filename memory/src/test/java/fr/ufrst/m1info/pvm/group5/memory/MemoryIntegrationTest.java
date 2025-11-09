@@ -465,4 +465,60 @@ public class MemoryIntegrationTest {
         // output must remains null
         assertNull(mem.output);
     }
+
+    @Test
+    public void valueTypeOfUndefinedVariable() {
+        Memory mem = new Memory();
+        assertThrows(IllegalArgumentException.class,() -> mem.valueTypeOf("x"));
+    }
+
+    @Test
+    public void valueTypeOfBoolean() {
+        // Default constructor leaves output == null
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(false), ValueType.toDataType(ValueType.BOOL));
+        assertEquals(ValueType.BOOL,mem.valueTypeOf("x"));
+    }
+
+    @Test
+    public void valueTypeOfInt() {
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(1), ValueType.toDataType(ValueType.INT));
+        assertEquals(ValueType.INT,mem.valueTypeOf("x"));
+    }
+
+    @Test
+    public void valueTypeOfEmpty() {
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
+        assertEquals(ValueType.EMPTY,mem.valueTypeOf("x"));
+    }
+
+    @Test
+    public void dataTypeOfUndefinedVariable() {
+        Memory mem = new Memory();
+        assertThrows(IllegalArgumentException.class,() -> mem.dataTypeOf("x"));
+    }
+
+    @Test
+    public void dataTypeOfBoolean() {
+        // Default constructor leaves output == null
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(false), ValueType.toDataType(ValueType.BOOL));
+        assertEquals(DataType.BOOL,mem.dataTypeOf("x"));
+    }
+
+    @Test
+    public void dataTypeOfInt() {
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(1), ValueType.toDataType(ValueType.INT));
+        assertEquals(DataType.INT,mem.dataTypeOf("x"));
+    }
+
+    @Test
+    public void dataTypeOfEmpty() {
+        Memory mem = new Memory();
+        mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
+        assertEquals(DataType.UNKNOWN,mem.dataTypeOf("x"));
+    }
 }
