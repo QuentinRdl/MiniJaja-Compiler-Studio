@@ -42,17 +42,8 @@ public class AffectationNode extends ASTNode{
 
         try {
             String exprType = expression.checkType(m);
-            Value v;
-            v = (Value) m.val(identifier.identifier);
 
-            if (v == null) {
-                throw new ASTInvalidMemoryException(
-                        "AffectationNode: variable " + identifier.identifier + " not defined"
-                );
-            }
-
-            // Vérifie la compatibilité de type via DataType
-            DataType varDataType = ValueType.toDataType(v.Type);
+            DataType varDataType = m.dataTypeOf(identifier.identifier);
             String varTypeStr;
             if (varDataType == DataType.INT) varTypeStr = "int";
             else if (varDataType == DataType.BOOL) varTypeStr = "bool";
