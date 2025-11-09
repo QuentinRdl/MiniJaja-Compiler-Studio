@@ -1069,7 +1069,8 @@ public class CheckDynamicTypeTest {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(expr.checkType(any(Memory.class))).thenReturn("int");
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(new Value(10));
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.INT);
+
 
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
@@ -1086,7 +1087,7 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(new Value(10));
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.INT);
 
         assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
     }
@@ -1100,7 +1101,7 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(null);
+        when(memoryMock.dataTypeOf("x")).thenThrow(IllegalArgumentException.class);
 
         assertThrows(ASTInvalidMemoryException.class, () -> sumNode.checkType(memoryMock));
     }
@@ -1114,8 +1115,7 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        Value v = new Value(true);
-        when(memoryMock.val("x")).thenReturn(v);
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.BOOL);
 
         assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
     }
