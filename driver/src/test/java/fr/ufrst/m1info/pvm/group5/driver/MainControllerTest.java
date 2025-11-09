@@ -145,6 +145,8 @@ public class MainControllerTest extends ApplicationTest {
             boolean success = controller.loadFile(nonExistent);
             assertFalse(success);
         });
+
+        assertTrue(controller.output.getText().contains("[ERROR] File doesn't exist : does_not_exist.mjj"));
     }
 
     @Test

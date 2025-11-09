@@ -155,13 +155,11 @@ public class MainController {
      */
     public boolean loadFile(File selectedFile){
         if(selectedFile == null){
-            System.out.println("No file selected");
             return false;
         }
 
         if(!selectedFile.exists()){
-            console.getWriter().writeLine("[ERROR] File doesn't exist :" + selectedFile.getName());
-            System.err.println("File doesn't exist : " + selectedFile.getName());
+            console.getWriter().writeLine("[ERROR] File doesn't exist : " + selectedFile.getName());
             return false;
         }
 
@@ -242,18 +240,38 @@ public class MainController {
         return currentFile;
     }
 
+    /**
+     * Returns the main TabPane that contains the editor tabs
+     *
+     * @return the TabPane managing open editor tabs
+     */
     public TabPane getEditorTabPane(){
         return editorTabPane;
     }
 
+    /**
+     * Returns the tab displaying the compiled code
+     *
+     * @return the Tab that shows the compiled code
+     */
     public Tab getCompiledTab(){
         return compiledTab;
     }
 
+    /**
+     * Returns the ListView component used to display compiled code lines
+     *
+     * @return the ListView containing compiled CodeLine objects
+     */
     public ListView<CodeLine> getCompiledCodeListView(){
         return compiledCodeListView;
     }
 
+    /**
+     * Returns the observable list representing the compiled code lines
+     *
+     * @return the ObservableList of compiled CodeLine objects
+     */
     public ObservableList<CodeLine> getCompiledCodeLines(){
         return compiledCodeLines;
     }
@@ -327,6 +345,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Opens a "Save As" dialog to save the compiled code as a JajaCode file
+     * The default filename and directory are based on the currently opened file
+     */
     public void saveCompiledCodeAs(){
         FileChooser fc = new FileChooser();
         fc.setTitle("Save compiled file as ");
@@ -609,7 +631,7 @@ public class MainController {
      * This method verifies that the currently loaded file is a MiniJaja file,
      * then retrieves the modified code from the editor and, if not empty, sends it
      * to the Compiler for compilation.
-     * Upon success, the complied JajaCode is printed in the console along with a confirmation message.
+     * Upon success, the compiled JajaCode is printed in the console along with a confirmation message.
      */
     public void onCompileClicked(){
         String code = getModifiedCode();
@@ -668,10 +690,21 @@ public class MainController {
         output.setContextMenu(contextMenu);
     }
 
+    /**
+     * Checks whether the currently selected tab is the compiled code tab
+     *
+     * @return true if the compiled tab is selected, false otherwise
+     */
     public boolean isCompiledTab(){
         return editorTabPane != null && editorTabPane.getSelectionModel().getSelectedItem() == compiledTab;
     }
 
+    /**
+     * Loads compiled code into the compiled code ListView
+     * Clears any existing content before filling it with new code lines
+     *
+     * @param compiledCode the compiled code to display in the ListView
+     */
     public void loadCompiledCodeToListView(String compiledCode){
         compiledCodeLines.clear();
 
@@ -682,12 +715,19 @@ public class MainController {
         }
     }
 
+    /**
+     * Hides the compiled code tab from the editor tab pane
+     */
     public void hideCompileTab(){
         if(editorTabPane != null && compiledTab != null){
             editorTabPane.getTabs().remove(compiledTab);
         }
     }
 
+    /**
+     * Displays the compiled code tab in the editor tab pane
+     * Adds it if it is not already visible, and selects it
+     */
     public void showCompiledTab(){
         if(editorTabPane != null && compiledTab != null){
             if(!editorTabPane.getTabs().contains(compiledTab)){

@@ -228,10 +228,10 @@ public class CodeLineCellTest extends ApplicationTest {
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
 
         cell.updateItem(codeLine, false);
-        assertTrue(cell.isEditable());
+        assertTrue(cell.getCodeField().isEditable());
 
         cell.setCodeEditable(false);
-        assertFalse(cell.isEditable());
+        assertFalse(cell.getCodeField().isEditable());
     }
 
 
