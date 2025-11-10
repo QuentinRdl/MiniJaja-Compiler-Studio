@@ -69,7 +69,7 @@ public class CodeLine {
     }
 
     /**
-     * Sets or clears a breakpoint on this code lin
+     * Sets or clears a breakpoint on this code line
      *
      * @param breakpoint true to set a breakpoint, false to remove it
      */

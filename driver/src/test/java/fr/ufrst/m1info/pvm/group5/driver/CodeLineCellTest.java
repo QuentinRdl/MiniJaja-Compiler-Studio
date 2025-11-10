@@ -222,5 +222,17 @@ public class CodeLineCellTest extends ApplicationTest {
         assertEquals("int y = 12", codeField.getText());
     }
 
+    @Test
+    public void testSetCodeEditable() {
+        CodeLineCell cell = new CodeLineCell();
+        CodeLine codeLine = new CodeLine(1, "int x = 10;");
+
+        cell.updateItem(codeLine, false);
+        assertTrue(cell.getCodeField().isEditable());
+
+        cell.setCodeEditable(false);
+        assertFalse(cell.getCodeField().isEditable());
+    }
+
 
 }

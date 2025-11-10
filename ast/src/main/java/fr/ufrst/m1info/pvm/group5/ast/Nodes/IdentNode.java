@@ -73,7 +73,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     @Override
     public Value eval(Memory m) throws ASTInvalidMemoryException{
         Value v = (Value) m.val(identifier);
-        if(v == null){
+        if(v == null || v.Type == ValueType.EMPTY){
             throw new ASTInvalidMemoryException("Variable " + identifier + " is undefined");
         }
         return v;

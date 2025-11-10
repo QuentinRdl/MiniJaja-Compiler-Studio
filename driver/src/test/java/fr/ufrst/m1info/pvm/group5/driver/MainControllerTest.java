@@ -145,6 +145,8 @@ public class MainControllerTest extends ApplicationTest {
             boolean success = controller.loadFile(nonExistent);
             assertFalse(success);
         });
+
+        assertTrue(controller.output.getText().contains("[ERROR] File doesn't exist : does_not_exist.mjj"));
     }
 
     @Test
@@ -1081,4 +1083,209 @@ public class MainControllerTest extends ApplicationTest {
             assertTrue(output.contains(expectedMessage));
         }
     }
+
+    @Test
+    public void testCompiledTabHiddenByDefault(){
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testCompileShowsCompiledTab() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+        assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
+    }
+
+    @Test
+    public void testCompiledTabHiddenAfterLoadingNewFile() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        File otherFile = createTestFile("other.mjj", "int y = 1;");
+        interact(() -> controller.loadFile(otherFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testCompiledTabHiddenAfterCreatingNewFile() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testCompiledCodeHasLineNumber() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
+
+        for(int i = 0; i < controller.getCompiledCodeLines().size(); i++){
+            assertEquals(i + 1, controller.getCompiledCodeLines().get(i).getLineNumber());
+        }
+    }
+
+    @Test
+    public void testCompiledCodeIsReadOnly() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> {
+            controller.getCompiledCodeListView().scrollTo(0);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField field = (TextField) controller.getCompiledCodeListView().lookup(".code-field");
+        assertNotNull(field);
+
+        assertFalse(field.isEditable());
+    }
+
+    @Test
+    public void testCompiledJajacodeFile() throws Exception {
+        File testFile = createTestFile("test.jcc", "init", "push(0)", "pop", "jcstop");
+        interact(() -> controller.loadFile(testFile));
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.output.getText().contains("[ERROR] Compilation is only available for MiniJaja files (.mjj)"));
+    }
+
+    @Test
+    public void testCompileErrorDoesNotShowCompiledTab() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}");
+        interact(() -> controller.loadFile(testFile));
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.output.getText().contains("[ERROR] "));
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testCompileButtonDisabledOnCompiledTab() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+
+        verifyThat("#btnCompile", isEnabled());
+        verifyThat("#btnRunCompile", isEnabled());
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
+        verifyThat("#btnCompile", isDisabled());
+        verifyThat("#btnRunCompile", isDisabled());
+    }
+
+    @Test
+    public void testCompiledTabIsClosable() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+        assertTrue(controller.getCompiledTab().isClosable());
+
+        interact(() -> controller.getEditorTabPane().getTabs().remove(controller.getCompiledTab()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testIsCompiledTabReturnsFalseWhenOnSourceTab() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+
+        assertFalse(controller.isCompiledTab());
+    }
+
+    @Test
+    public void testIsCompiledTabReturnsTrueWhenOnCompiledTab() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.isCompiledTab());
+    }
+
+    @Test
+    public void testLoadCompiledCodeToListViewSplitsLineCorrectly() throws Exception {
+        String compiledCode = "init\npush(0)\npop\njcstop";
+        interact(() -> controller.loadCompiledCodeToListView(compiledCode));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ObservableList<CodeLine> compiledLines = controller.getCompiledCodeLines();
+        assertEquals(4, compiledLines.size());
+        assertEquals(1, compiledLines.get(0).getLineNumber());
+        assertEquals("init", compiledLines.get(0).getCode());
+        assertEquals(2, compiledLines.get(1).getLineNumber());
+        assertEquals("push(0)", compiledLines.get(1).getCode());
+        assertEquals(3, compiledLines.get(2).getLineNumber());
+        assertEquals("pop", compiledLines.get(2).getCode());
+        assertEquals(4, compiledLines.get(3).getLineNumber());
+        assertEquals("jcstop", compiledLines.get(3).getCode());
+    }
+
+    @Test
+    public void testHideCompiledTabWhenAlreadyHidden() throws Exception {
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        interact(() -> controller.hideCompileTab());
+        WaitForAsyncUtils.waitForFxEvents();
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+    }
+
+    @Test
+    public void testShowCompiledTabWhenAlreadyShown() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        interact(() -> controller.showCompiledTab());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        long count = controller.getEditorTabPane().getTabs().stream().filter(tab -> tab == controller.getCompiledTab()).count();
+        assertEquals(1, count);
+    }
+
+
+
+
 }

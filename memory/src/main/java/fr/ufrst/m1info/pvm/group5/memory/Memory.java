@@ -77,7 +77,7 @@ public class Memory {
             symbolTable.addEntry(entry);
         }
 
-        // TODO :
+        // TODO : Implement other kinds
     }
 
     /**

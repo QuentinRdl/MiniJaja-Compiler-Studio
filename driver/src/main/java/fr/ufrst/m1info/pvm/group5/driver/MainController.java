@@ -36,18 +36,27 @@ public class MainController {
 
     @FXML
     private ListView<CodeLine> codeListView;
+    private ObservableList<CodeLine> codeLines;
+
+    @FXML
+    private ListView<CodeLine> compiledCodeListView;
+    private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
     TextArea output;
 
     private Console console;
 
-    private ObservableList<CodeLine> codeLines;
-
     @FXML
     private SplitPane splitPane;
 
     private File currentFile;
+
+    @FXML
+    private TabPane editorTabPane;
+
+    @FXML
+    private Tab compiledTab;
 
     @FXML
     private Button btnSave;
@@ -98,20 +107,39 @@ public class MainController {
             return cell;
         });
 
+        compiledCodeLines = FXCollections.observableArrayList();
+        compiledCodeListView.setItems(compiledCodeLines);
+        compiledCodeListView.setCellFactory(lv -> {
+            CodeLineCell cell = new CodeLineCell();
+            cell.setCodeEditable(false);
+            return cell;
+        });
+
+        editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            if(isCompiledTab()){
+                btnCompile.setDisable(true);
+                btnRunCompile.setDisable(true);
+            } else {
+                btnCompile.setDisable(false);
+                btnRunCompile.setDisable(false);
+            }
+        });
+
+        hideCompileTab();
         deactiveButtons();
         setupOutputContextMenu();
     }
 
     /**
      * Called when the user clicks the "Open" button
-     * Opens a file chooser allowing selection of a MiniJaja or JajaCode file,
+     * Opens a file chooser allowing a MiniJaja file,
      * then loads its content into the ListView
      */
     @FXML
     protected void selectFileButton() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter("MiniJaja and JajaCode file", "*.mjj", "*.jcc")
+                new ExtensionFilter("MiniJaja file", "*.mjj")
         );
         File selectedFile = fc.showOpenDialog(splitPane.getScene().getWindow());
         loadFile(selectedFile);
@@ -127,13 +155,11 @@ public class MainController {
      */
     public boolean loadFile(File selectedFile){
         if(selectedFile == null){
-            System.out.println("No file selected");
             return false;
         }
 
         if(!selectedFile.exists()){
-            console.getWriter().writeLine("[ERROR] File doesn't exist :" + selectedFile.getName());
-            System.err.println("File doesn't exist : " + selectedFile.getName());
+            console.getWriter().writeLine("[ERROR] File doesn't exist : " + selectedFile.getName());
             return false;
         }
 
@@ -154,6 +180,9 @@ public class MainController {
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
             activeButtons();
+
+            compiledCodeLines.clear();
+            hideCompileTab();
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -212,14 +241,54 @@ public class MainController {
     }
 
     /**
+     * Returns the main TabPane that contains the editor tabs
+     *
+     * @return the TabPane managing open editor tabs
+     */
+    public TabPane getEditorTabPane(){
+        return editorTabPane;
+    }
+
+    /**
+     * Returns the tab displaying the compiled code
+     *
+     * @return the Tab that shows the compiled code
+     */
+    public Tab getCompiledTab(){
+        return compiledTab;
+    }
+
+    /**
+     * Returns the ListView component used to display compiled code lines
+     *
+     * @return the ListView containing compiled CodeLine objects
+     */
+    public ListView<CodeLine> getCompiledCodeListView(){
+        return compiledCodeListView;
+    }
+
+    /**
+     * Returns the observable list representing the compiled code lines
+     *
+     * @return the ObservableList of compiled CodeLine objects
+     */
+    public ObservableList<CodeLine> getCompiledCodeLines(){
+        return compiledCodeLines;
+    }
+
+    /**
      * Saves the current code to the currently loaded file
      * If no file is loaded, it triggers the "Save As" dialog instead
      */
     public void saveButton(){
-        if(currentFile != null){
-            saveToFile(currentFile);
+        if(isCompiledTab()){
+            saveCompiledCodeAs();
         } else {
-            saveAsButton();
+            if(currentFile != null){
+                saveToFile(currentFile);
+            } else {
+                saveAsButton();
+            }
         }
     }
 
@@ -230,8 +299,7 @@ public class MainController {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save a file as");
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter( "MiniJaja file", "*.mjj"),
-                new ExtensionFilter("JajaCode file", "*.jcc")
+                new ExtensionFilter( "MiniJaja file", "*.mjj")
         );
 
         // Default name if file exists
@@ -275,6 +343,24 @@ public class MainController {
             System.err.println("Error during saving : " + e.getMessage());
             console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
         }
+    }
+
+    /**
+     * Opens a "Save As" dialog to save the compiled code as a JajaCode file
+     * The default filename and directory are based on the currently opened file
+     */
+    public void saveCompiledCodeAs(){
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save compiled file as ");
+        fc.getExtensionFilters().addAll(
+                new ExtensionFilter( "JajaCode file", "*.jjc")
+        );
+
+        fc.setInitialFileName(getBaseFileName(currentFile.getName()));
+        fc.setInitialDirectory(currentFile.getParentFile());
+
+        File fileToSave = fc.showSaveDialog(splitPane.getScene().getWindow());
+        saveAs(fileToSave);
     }
 
     /**
@@ -403,10 +489,6 @@ public class MainController {
     }
 
 
-
-    /*
-     */
-
     /**
      * This func checks if the code we gave (as a String), is just empty chars or not
      * @param code the given code as a String
@@ -514,6 +596,9 @@ public class MainController {
         activeButtons();
         currentFile = null;
         fileLabel.setText("New file");
+
+        compiledCodeLines.clear();
+        hideCompileTab();
     }
 
     /**
@@ -543,10 +628,10 @@ public class MainController {
     /**
      * Handles the action triggered when the user clicks the "Compile" button
      *
-     * This method werifies that the currently loaded file is a MiniJaja file,
+     * This method verifies that the currently loaded file is a MiniJaja file,
      * then retrieves the modified code from the editor and, if not empty, sends it
      * to the Compiler for compilation.
-     * Upon success, the complied JajaCode is printed in the console along with a confirmation message.
+     * Upon success, the compiled JajaCode is printed in the console along with a confirmation message.
      */
     public void onCompileClicked(){
         String code = getModifiedCode();
@@ -565,10 +650,9 @@ public class MainController {
         String res = compiler.compileCode(getModifiedCode());
 
         if (res != null){
+            showCompiledTab();
+            loadCompiledCodeToListView(res);
             console.getWriter().writeLine("[INFO] Compilation successful!");
-            console.getWriter().writeLine("=== Compiled JajaCode ===");
-            console.getWriter().writeLine(res);
-            console.getWriter().writeLine("=== End of compiled code ===");
         }
     }
 
@@ -604,5 +688,52 @@ public class MainController {
         contextMenu.getItems().addAll(clearOutput);
 
         output.setContextMenu(contextMenu);
+    }
+
+    /**
+     * Checks whether the currently selected tab is the compiled code tab
+     *
+     * @return true if the compiled tab is selected, false otherwise
+     */
+    public boolean isCompiledTab(){
+        return editorTabPane != null && editorTabPane.getSelectionModel().getSelectedItem() == compiledTab;
+    }
+
+    /**
+     * Loads compiled code into the compiled code ListView
+     * Clears any existing content before filling it with new code lines
+     *
+     * @param compiledCode the compiled code to display in the ListView
+     */
+    public void loadCompiledCodeToListView(String compiledCode){
+        compiledCodeLines.clear();
+
+        String[] lines = compiledCode.split("\n");
+        int lineNumber = 1;
+        for(String line : lines){
+            compiledCodeLines.add(new CodeLine(lineNumber++, line));
+        }
+    }
+
+    /**
+     * Hides the compiled code tab from the editor tab pane
+     */
+    public void hideCompileTab(){
+        if(editorTabPane != null && compiledTab != null){
+            editorTabPane.getTabs().remove(compiledTab);
+        }
+    }
+
+    /**
+     * Displays the compiled code tab in the editor tab pane
+     * Adds it if it is not already visible, and selects it
+     */
+    public void showCompiledTab(){
+        if(editorTabPane != null && compiledTab != null){
+            if(!editorTabPane.getTabs().contains(compiledTab)){
+                editorTabPane.getTabs().add(compiledTab);
+            }
+            editorTabPane.getSelectionModel().select(compiledTab);
+        }
     }
 }

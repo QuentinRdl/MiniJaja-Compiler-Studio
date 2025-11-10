@@ -38,14 +38,6 @@ public abstract class ASTNode {
     protected abstract List<ASTNode>getChildren();
 
     /**
-     * Create a version of the node in the JSON format
-     * @return JSON description of the node
-     */
-    public String dump(){
-        return dump(0);
-    }
-
-    /**
      * Prints non-children properties of the node
      * @param depth depth at which to print the properties of the node
      * @return properties of the node in the JSON format
@@ -54,13 +46,14 @@ public abstract class ASTNode {
         Map<String,String> props = getProperties();
         if(props==null) return "";
         StringBuilder sb = new StringBuilder();
-        for(var e : props.entrySet()) {
-            if (sb.length() > 0)
-                sb.append(",\n");
+        var iterator = props.entrySet().iterator();
+        while(iterator.hasNext()){
+            var e = iterator.next();
+            if (iterator.hasNext())
+                sb.append(",");
             addTabDepth(sb, depth);
-            sb.append("\"").append(e.getKey()).append("\" : ").append(e.getValue());
+            sb.append("\"").append(e.getKey()).append("\" : \"").append(e.getValue()).append("\"");
         }
-        sb.append("\n");
         return sb.toString();
     }
 
@@ -83,6 +76,19 @@ public abstract class ASTNode {
 
     /**
      * Creates a version of the node in the JSON format starting at a certain depth
+     * @return node formatted in JSON
+     */
+    public String dump(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n\t");
+        sb.append("\"").append(getClass().getSimpleName()).append("\" : ");
+        sb.append(dump(1));
+        sb.append("\n}");
+        return sb.toString();
+    }
+
+    /**
+     * Creates a version of the node in the JSON format starting at a certain depth
      * @param depth depth to start at
      * @return node formatted in JSON
      */
@@ -93,16 +99,23 @@ public abstract class ASTNode {
         var prop = dumpProperties(depth+1);
         if(!prop.isEmpty()) {
             sb.append(prop);
+            if(children != null && !children.isEmpty()) sb.append(",");
+            sb.append("\n");
         }
-        if(children != null)
-            for(ASTNode node : children){
-                addTabDepth(sb,depth+1);
+        if(children != null) {
+            var itr = children.iterator();
+            while(itr.hasNext()){
+                ASTNode node = itr.next();
+                addTabDepth(sb, depth + 1);
                 sb.append("\"").append(node.getClass().getSimpleName()).append("\" : ");
-                sb.append(node.dump(depth+1));
+                sb.append(node.dump(depth + 1));
+                if(itr.hasNext()) sb.append(",");
+                sb.append("\n");
             }
+        }
         if(depth>0)
             addTabDepth(sb,depth);
-        sb.append("}\n");
+        sb.append("}");
         return sb.toString();
     }
 }
