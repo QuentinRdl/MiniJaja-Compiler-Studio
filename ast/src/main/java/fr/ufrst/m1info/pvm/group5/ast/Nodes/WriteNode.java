@@ -31,7 +31,7 @@ public class WriteNode extends ASTNode{
             JJCodes.addAll(ident.compile(address));
         }
         else {
-            JJCodes.add("push("+text+")");
+            JJCodes.add("push(\""+text+"\")");
         }
         JJCodes.add("write");
         return JJCodes;

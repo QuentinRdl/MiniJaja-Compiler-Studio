@@ -98,11 +98,11 @@ instr returns [ASTNode node]
     )?
     | 'write' '('
     ( ident {$node = new WriteNode($ident.node);}
-    | e=STRING {$node = new WriteNode($e.text);}
+    | e=string {$node = new WriteNode($e.str);}
     ) ')'
     | 'writeln' '('
     ( ident {$node = new WriteLineNode($ident.node);}
-    | e=STRING {$node = new WriteLineNode($e.text);}
+    | e=string {$node = new WriteLineNode($e.str);}
     ) ')'
     ;
 
@@ -170,6 +170,10 @@ type returns [TypeNode node]
      | 'boolean' {$node = new TypeNode(ValueType.BOOL);}
      ;
 
+string returns [String str]
+    : t=STRING {$str = $t.text.substring(1, $t.text.length() - 1);}
+    ;
+
 IDENTIFIER
     : ('_' | 'a'..'z' | 'A'..'Z')+ ('_' | 'a'..'z' | 'A'..'Z' | '0'..'9')*
     ;
@@ -183,5 +187,5 @@ WS
     ;
 
 STRING
-    : '"'.+?'"'
+    : '"' .+? '"'
     ;
