@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HeapElementTest {
 
+    // Constructor
     @Test
     @DisplayName("Constructor") // yes this line is very necessary
     public void Constructor(){
@@ -33,6 +34,8 @@ public class HeapElementTest {
         assertThrows(IllegalArgumentException.class, () -> new HeapElement(0, 50, -1));
     }
 
+    // Allocate
+
     @Test
     @DisplayName("Allocate")
     public void Allocate(){
@@ -50,6 +53,8 @@ public class HeapElementTest {
         assertThrows(HeapElement.InvalidOperationException.class,()->e.allocate(DataType.INT));
     }
 
+    // Free
+
     @Test
     @DisplayName("Free - NotAllocated")
     public void NotAllocated(){
@@ -66,6 +71,8 @@ public class HeapElementTest {
         assertTrue(e.isFree());
         assertEquals(DataType.UNKNOWN, e.getStorageType());
     }
+
+    // Split
 
     @Test
     @DisplayName("Split")
@@ -104,7 +111,7 @@ public class HeapElementTest {
 
     @Test
     @DisplayName("Split - Null size")
-    public void SplitNotSamesize(){
+    public void SplitNotSameSize(){
             HeapElement e = new HeapElement(0, 50, 10);
             assertThrows(HeapElement.InsufficientSizeException.class,()->e.split(0));
     }
@@ -136,6 +143,8 @@ public class HeapElementTest {
         assertEquals(0, e.getInternalAddress());
     }
 
+    // TryMerge
+
     @Test
     @DisplayName("TryMerge - Single Merge")
     public void TryMerge(){
@@ -159,6 +168,24 @@ public class HeapElementTest {
     }
 
     @Test
+    @DisplayName("TryMerge - Already allocated")
+    public void TryMergeAllocated(){
+        HeapElement e = new HeapElement(0, 50, 10);
+        e.allocate(DataType.INT);
+        assertThrows(HeapElement.InvalidOperationException.class,()->e.split(6));
+    }
+
+    @Test
+    @DisplayName("TryMerge - Allocated Neighbor")
+    public void TryMergeAllocatedNeighbor(){
+        HeapElement e = new HeapElement(0, 50, 10);
+        HeapElement f = e.split(6);
+        f.allocate(DataType.INT);
+        assertFalse(e.tryMerge());
+        assertEquals(4, e.size());
+    }
+
+    @Test
     @DisplayName("TryMerge - Multiple merge, one element allocated")
     public void TryMergeMultipleWithAllocation(){
         HeapElement e = new HeapElement(0, 50, 100);
@@ -170,5 +197,6 @@ public class HeapElementTest {
         assertEquals(40, e.size());
         assertEquals(60, e.getInternalAddress());
     }
+
 
 }

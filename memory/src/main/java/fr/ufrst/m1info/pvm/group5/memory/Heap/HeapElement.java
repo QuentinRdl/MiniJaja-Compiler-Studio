@@ -85,6 +85,7 @@ public class HeapElement {
      * Tries to merge the element with an adjacent one.
      * If one of the elements is not free, the merge will fail.
      * @param other other element to merge with this one.
+     * @return True if the merge is a success, false otherwise
      * @throws InvalidOperationException throws an exception when attempting to merge while either of the elements are allocated
      */
     private boolean tryMerge(HeapElement other) throws InvalidOperationException {
@@ -94,11 +95,10 @@ public class HeapElement {
     /**
      * Tries to merge the element with every adjacent element.
      * If this element or it's adjacent ones are not free, the merge will fail.
+     * @return True if the merge is a success, false otherwise
      * @throws InvalidOperationException throws an exception when attempting to merge while this element is allocated
      */
     public boolean tryMerge() throws InvalidOperationException {
-        tryMerge(prev);
-        tryMerge(next);
         return false;
     }
 
