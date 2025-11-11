@@ -72,13 +72,13 @@ public class HeapElement {
     /**
      * Exception thrown when trying to split the current element with a size bigger that the current element's one
      */
-    public class InsufficientSizeException extends RuntimeException {
+    public static class InsufficientSizeException extends RuntimeException {
         InsufficientSizeException(String message) {
             super(message);
         }
     }
 
-    public class InvalidOperationException extends RuntimeException {
+    public static class InvalidOperationException extends RuntimeException {
         InvalidOperationException(String message) {super(message);}
     }
 
@@ -110,7 +110,7 @@ public class HeapElement {
      */
     public void allocate(DataType storageType) throws InvalidOperationException {
         if(!isFree)
-            throw new InvalidOperationException("Invalid allocation, block "+externalAddress+" is already allocated");
+            throw new InvalidOperationException("Invalid allocation, block " + externalAddress + " is already allocated");
         this.storageType = storageType;
         this.isFree = false;
     }
@@ -122,7 +122,7 @@ public class HeapElement {
      */
     public void free() throws InvalidOperationException {
         if(isFree)
-            throw new InvalidOperationException("Invalid free, block "+externalAddress+" has already been freed");
+            throw new InvalidOperationException("Invalid free, block " + externalAddress + " has already been freed");
         this.isFree = true;
         this.storageType = DataType.UNKNOWN;
         tryMerge();
@@ -138,7 +138,7 @@ public class HeapElement {
     private boolean tryMerge(HeapElement other) throws InvalidOperationException {
         // Check if the merge is possible
         if(!isFree)
-            throw new InvalidOperationException("Invalid merge attempt, block "+externalAddress+" is allocated");
+            throw new InvalidOperationException("Invalid merge attempt, block " + externalAddress + " is allocated");
         if(!other.isFree || other.equals(this))
             return false;
 
@@ -195,11 +195,11 @@ public class HeapElement {
     public HeapElement split(int size, boolean after) throws InsufficientSizeException, IllegalArgumentException, InvalidOperationException {
         // Invalid split cases
         if(!isFree)
-            throw new InvalidOperationException("Invalid split attempt, block "+externalAddress+" is allocated");
+            throw new InvalidOperationException("Invalid split attempt, block " + externalAddress + " is allocated");
         if(size <= 0)
             throw new IllegalArgumentException("Invalid split, size for a split must be a positive integer. Given : " + size);
         if(size >= this.size)
-            throw new InsufficientSizeException("Invalid split, block "+externalAddress+" has insufficient size. Given : " + size + " available : "+this.size);
+            throw new InsufficientSizeException("Invalid split, block " + externalAddress + " has insufficient size. Given : " + size + " available : " + this.size);
 
         // Performing split
         HeapElement result = new HeapElement();
