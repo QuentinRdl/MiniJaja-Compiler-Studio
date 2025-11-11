@@ -232,7 +232,7 @@ public class HeapElement {
      * @param internalAddress address to compare
      * @return true if the address is located within this element, false otherwise
      */
-    public boolean belongsTo(int internalAddress){
+    public boolean contains(int internalAddress){
         return internalAddress >= this.internalAddress && internalAddress < this.internalAddress + size;
     }
 

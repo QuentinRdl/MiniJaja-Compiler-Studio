@@ -220,17 +220,17 @@ public class HeapElementTest {
     @DisplayName("Belongs to - Within it")
     public void BelongsToWithinIt(){
         HeapElement e = new HeapElement(20, 50, 10);
-        assertTrue(e.belongsTo(20));
-        assertTrue(e.belongsTo(21));
-        assertTrue(e.belongsTo(29));
+        assertTrue(e.contains(20));
+        assertTrue(e.contains(21));
+        assertTrue(e.contains(29));
     }
 
     @Test
     @DisplayName("Belongs to - Outside it")
     public void BelongsToOusideIt(){
         HeapElement e = new HeapElement(20, 50, 10);
-        assertFalse(e.belongsTo(19));
-        assertFalse(e.belongsTo(30));
-        assertFalse(e.belongsTo(31));
+        assertFalse(e.contains(19));
+        assertFalse(e.contains(30));
+        assertFalse(e.contains(31));
     }
 }

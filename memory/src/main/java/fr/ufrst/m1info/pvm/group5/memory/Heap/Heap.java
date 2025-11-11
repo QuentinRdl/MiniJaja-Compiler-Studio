@@ -4,6 +4,7 @@ import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +26,8 @@ public class Heap {
         this.availableSize = totalSize;
         this.storage = new byte[totalSize];
         addresses = new HashMap<>();
+        currentElement = new HeapElement(0, newExtAddress(), totalSize);
+        addresses.put(0, currentElement);
     }
 
     /**
@@ -52,16 +55,53 @@ public class Heap {
      * @throws InsufficientMemoryException throws an exception if the given size is superior to the available one
      */
     public int allocate(int size, DataType type) throws InsufficientMemoryException{
-        return 0;
+        if(size > availableSize)
+            throw new InsufficientMemoryException(availableSize, size);
+        // Finding a suitable space for the allocation
+        HeapElement first = currentElement;
+        while(currentElement.size() < size){
+            currentElement = currentElement.getNext();
+            if(currentElement == first){ // External fragmentation (oh no :c)
+                defragment();
+                return allocate(size, type);
+            }
+        }
+        // Realising the allocation
+        HeapElement allocation = currentElement.split(size);
+        allocation.externalAddress = newExtAddress();
+        addresses.put(allocation.externalAddress, allocation);
+        allocation.allocate(type);
+
+        return allocation.externalAddress;
+    }
+
+    private HeapElement checkAddress(int externalAddress) throws InvalidMemoryAddressException{
+        HeapElement target = addresses.get(externalAddress);
+        if(target == null)
+            throw new UnmappedMemoryAddressException(externalAddress);
+        return target;
     }
 
     /**
      * Remove a memory space from the heap
      * @param address address to the element in the heap
-     * @throws InsufficientMemoryException throws an exception if the address is not referenced in the heap
+     * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
-    public void free(int address) throws InsufficientMemoryException{
+    public void free(int address) throws InvalidMemoryAddressException{
+        HeapElement target = checkAddress(address);
+        target.free();
+        addresses.remove(address);
+        currentElement = target;
+    }
 
+    /**
+     * Removed a memory space from the heap
+     * @param target memory space to remove
+     */
+    private void free(HeapElement target){
+        target.free();
+        addresses.remove(target.externalAddress);
+        currentElement = target;
     }
 
     /**
@@ -70,6 +110,8 @@ public class Heap {
      * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
     public void addReference(int address) throws InvalidMemoryAddressException{
+        HeapElement target = checkAddress(address);
+        target.references++;
     }
 
     /**
@@ -78,16 +120,10 @@ public class Heap {
      * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
     public void removeReference(int address) throws InvalidMemoryAddressException{
-    }
-
-    /**
-     * Get the value of an element at a given address
-     * @param address address located within the heap
-     * @return value stored at the given address
-     * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
-     */
-    public Value getValue(int address) throws InvalidMemoryAddressException{
-        return null;
+        HeapElement target = checkAddress(address);
+        target.references--;
+        if(target.references == 0)
+            free(target);
     }
 
     /**
@@ -98,7 +134,15 @@ public class Heap {
      * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
     public Value getValue(int address, int offset) throws InvalidMemoryAddressException{
-        return null;
+        HeapElement target = checkAddress(address);
+        if(!target.contains(address + offset))
+            throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
+        byte val = storage[target.internalAddress + offset];
+        return switch (target.getStorageType()){
+            case DataType.INT -> new Value(val);
+            case DataType.BOOL -> new Value(val == 1);
+            default -> new Value();
+        };
     }
 
     /**
@@ -108,5 +152,13 @@ public class Heap {
      */
     private void defragment(){
 
+    }
+
+    /**
+     * Check if any element were left in the heap, and not de-referenced
+     * @return list of element not de-referenced
+     */
+    public List<String> sanitize(){
+        return List.of();
     }
 }
