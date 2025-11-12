@@ -68,6 +68,7 @@ public class Heap {
             }
         }
         // Realising the allocation
+        availableSize += size;
         HeapElement allocation = currentElement.split(size);
         allocation.externalAddress = newExtAddress();
         addresses.put(allocation.externalAddress, allocation);
@@ -90,6 +91,7 @@ public class Heap {
      */
     public void free(int address) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
+        availableSize -= target.size();
         target.free();
         addresses.remove(address);
         currentElement = target; //ensures "currentElements" points to a valid element
@@ -100,6 +102,7 @@ public class Heap {
      * @param target memory space to remove
      */
     private void free(HeapElement target){
+        availableSize -= target.size();
         target.free();
         addresses.remove(target.externalAddress);
         currentElement = target;
