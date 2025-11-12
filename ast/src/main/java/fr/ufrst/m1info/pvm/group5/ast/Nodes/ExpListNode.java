@@ -6,10 +6,6 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Représente une liste d'expressions dans l'AST.
- * Exemple : (a, b+1, c) => ExpListNode(a, ExpListNode(b+1, c))
- */
 public class ExpListNode extends ASTNode {
     private final ASTNode head;
     private final ASTNode tail;
@@ -48,15 +44,10 @@ public class ExpListNode extends ASTNode {
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        // Vérifie le type de la tête
         head.checkType(m);
-
-        // Vérifie le reste (pour détecter erreurs de typage éventuelles)
         if (tail != null) {
             tail.checkType(m);
         }
-
-        // Une liste d'expressions n’a pas de type propre, donc :
         return "void";
     }
 

@@ -16,10 +16,10 @@ public class ParamNode extends ASTNode {
     public final IdentNode ident;
 
     public ParamNode(TypeNode type, IdentNode ident) {
-        if(type == null){
+        if (type == null) {
             throw new ASTBuildException("Param must have a valid type");
         }
-        if(ident == null){
+        if (ident == null) {
             throw new ASTBuildException("param must have a valid identifier");
         }
         this.type = type;

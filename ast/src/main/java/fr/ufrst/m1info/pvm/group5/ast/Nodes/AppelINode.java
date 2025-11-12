@@ -3,7 +3,6 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
-import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
@@ -41,15 +40,15 @@ public class AppelINode extends ASTNode {
         SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
 
         if (methodEntry == null) {
-            throw new ASTInvalidMemoryException("Méthode " + ident.identifier + " non trouvée.");
+            throw new ASTInvalidMemoryException("Method " + ident.identifier + " not found.");
         }
         if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidOperationException(ident.identifier + " n'est pas une méthode !");
+            throw new ASTInvalidOperationException(ident.identifier + " is not a method !");
         }
         if (args != null) {
             args.interpret(m);
         }
-        System.out.println("Appel de la méthode '" + ident.identifier + "'");
+        System.out.println("Calling the method '" + ident.identifier + "'");
     }
 
     @Override

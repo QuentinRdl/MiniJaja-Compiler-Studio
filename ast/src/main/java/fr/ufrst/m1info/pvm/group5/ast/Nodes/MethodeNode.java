@@ -42,7 +42,7 @@ public class MethodeNode extends ASTNode {
         List<String> code = new ArrayList<>();// label méthode
         if (vars != null) code.addAll(vars.compile(address));
         if (instrs != null) code.addAll(instrs.compile(address));
-        code.add("return"); // retour implicite
+        code.add("return");
         return code;
     }
 
@@ -50,7 +50,7 @@ public class MethodeNode extends ASTNode {
     public void interpret(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
         m.declMethod(ident.identifier, dataType, this);
-        System.out.println("Méthode '" + ident.identifier + "' déclarée avec type " + returnType.getValueType());
+        System.out.println("Method '" + ident.identifier + "' declared with type " + returnType.getValueType());
     }
 
     @Override
