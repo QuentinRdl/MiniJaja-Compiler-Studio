@@ -34,11 +34,11 @@ public class HeapElement {
     /**
      * Previous element
      */
-    private HeapElement prev;
+    HeapElement prev;
     /**
      * Next element
      */
-    private HeapElement next;
+    HeapElement next;
 
     // Getters
     public DataType getStorageType() {

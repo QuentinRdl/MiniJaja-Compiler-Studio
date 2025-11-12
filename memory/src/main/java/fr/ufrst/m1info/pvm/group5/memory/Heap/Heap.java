@@ -186,19 +186,45 @@ public class Heap {
      * This operation is extremely expensive, and should only be called if necessary
      */
     private void defragment(){
+        // Variables initialisation
         List<Integer> allBlocks = new ArrayList<>(addresses.keySet());
         allBlocks.sort(Integer::compareTo);
-        int lastAvailableAddress = 0;
+        int lastAvailableAddress = 0; // Last address where it is safe to write
+        HeapElement freeElements = null; // Chain containing every free elements found
+        HeapElement current = null; // Current element being treated
+        HeapElement prev = null; // Last allocated element found, and treated
+        // Iterating through every element
         for(int i : allBlocks){
-            HeapElement current = addresses.get(i);
-            if(current.internalAddress == lastAvailableAddress) {
-                lastAvailableAddress += current.size();
-                continue;
+            current = addresses.get(i);
+            if(current.isFree()){ // Current element is not allocated
+                if(freeElements == null) // If it's the first, we store it
+                    freeElements = current;
+                else { // If not, insert it after the first unallocated element
+                    freeElements.next.prev = current;
+                    current.next = freeElements.next;
+                    freeElements.next = current;
+                }
             }
-            copy(current, lastAvailableAddress);
-            current.internalAddress += lastAvailableAddress;
-            lastAvailableAddress += current.size();
+            else { // Current element is allocated
+                if (current.internalAddress == lastAvailableAddress) { // Current is already at a good place
+                    lastAvailableAddress += current.size();
+                    continue;
+                }
+                copy(current, lastAvailableAddress);
+                current.internalAddress += lastAvailableAddress;
+                lastAvailableAddress += current.size();
+                if(prev != null) { // Element being treated is the first element
+                    prev.next = current; // Chaining the element to the previous one
+                    current.prev = prev;
+                }
+                prev = current; // Updating the last element only if we treated an allocated one
+            }
         }
+        // If the defragment method was called, at least one allocated and unallocated element were seen
+        // Therefor, the following calls are safe
+        current.next = freeElements; // Chaining the last allocated element to the first non-allocated one
+        freeElements.tryMerge(); // Merging all unallocated elements
+        addresses.get(0).next = freeElements;  // Ensuring the loop property of the structure
     }
 
     /**
