@@ -145,4 +145,12 @@ public class AbstractSyntaxTreeTest {
         }
         assertEquals(104, memoryStorage.get("x").valueInt);
     }
+
+    // Confirmation test
+    @Test
+    @DisplayName("Evaluation - Unassigned variable usage")
+    public void UnassignedVar() throws IOException {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Unassigned.mjj");
+        assertThrows(ASTInvalidMemoryException.class, () -> AST.interpret(memory));
+    }
 }

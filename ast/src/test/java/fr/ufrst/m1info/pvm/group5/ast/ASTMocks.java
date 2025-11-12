@@ -6,6 +6,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -17,6 +18,8 @@ import static org.mockito.Mockito.*;
  * Static class to quickly create classes mocking Memory
  */
 public class ASTMocks {
+
+    public record Pair<T,V>(T first, V second){}
 
     /**
      * Creates a mock with no specific behaviour
@@ -100,6 +103,86 @@ public class ASTMocks {
             return null;
         }).when(mock).writeLine(any(String.class));
         return mock;
+    }
+
+    /**
+     * Creates a mock that mimics memory by using a stack, with the purpose to test jajacode instructions
+     * @param storage stack used to store the mock's data
+     * @return mock created
+     */
+    public static Memory createMemoryWithStack(Stack<Pair<String,Value>> storage){
+        Memory result = createEmptyMemory();
+        doAnswer(invocationOnMock -> {
+            Pair<String,Value> pair  = new Pair<>(
+                    invocationOnMock.getArgument(0),
+                    invocationOnMock.getArgument(1)
+            );
+            storage.push(pair);
+            return null;
+        }).when(result).declVar(any(String.class), any(Value.class), any());
+
+        doAnswer(invocationOnMock -> {
+            Pair<String,Value> pair  = new Pair<>(
+                    invocationOnMock.getArgument(0),
+                    invocationOnMock.getArgument(1)
+            );
+            storage.push(pair);
+            return null;
+        }).when(result).push(any(String.class), any(Value.class), any(), any());
+
+        doAnswer(invocationOnMock -> {
+            Stack<Pair<String,Value>> stack = new Stack<>();
+            boolean found = false;
+            while(!found && !storage.empty()){
+                Pair<String,Value> pair = storage.pop();
+                if(pair.first.equals(invocationOnMock.getArgument(0))){
+                    found = true;
+                    storage.push(new Pair<>(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1)));
+                }
+                else{
+                    stack.push(pair);
+                }
+            }
+            for(Pair<String,Value> pair : stack)
+                storage.push(pair);
+            return null;
+        }).when(result).affectValue(any(String.class), any(Value.class));
+
+        try {
+            doAnswer(invocationOnMock -> {
+                try {
+                    return storage.pop();
+                } catch (Exception e) {
+                    return null;
+                }
+            }).when(result).pop();
+        }catch (Exception _){}
+
+        doAnswer(invocationOnMock -> {
+            Value v = null;
+            Stack<Pair<String,Value>> stack = new Stack<>();
+            while(v == null && !storage.empty()){
+                Pair<String,Value> pair = storage.pop();
+                if(pair.first.equals(invocationOnMock.getArgument(0))){
+                    v = pair.second;
+                    storage.push(new Pair<>(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1)));
+                }
+                stack.push(pair);
+            }
+            for(Pair<String,Value> pair : stack)
+                storage.push(pair);
+            return v;
+        }).when(result).val(any(String.class));
+
+        doAnswer(invocationOnMock -> {
+            var v1 = storage.pop();
+            var v2 = storage.pop();
+            storage.push(v1);
+            storage.push(v2);
+            return null;
+        }).when(result).swap();
+
+        return result;
     }
 
     /**

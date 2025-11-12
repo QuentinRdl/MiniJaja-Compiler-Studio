@@ -35,35 +35,28 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        try {
-            Value v = (Value) m.val(identifier);
-            if (v == null) {
-                throw new ASTInvalidDynamicTypeException(
-                        "Variable " + identifier + " not defined"
-                );
-            }
-            DataType dataType = ValueType.toDataType(v.Type);
-
-            switch (dataType) {
-                case INT:
-                    return "int";
-                case BOOL:
-                    return "bool";
-                case VOID:
-                    throw new ASTInvalidDynamicTypeException(
-                            "Variable " + identifier + " cannot be of type void"
-                    );
-                default:
-                    throw new ASTInvalidDynamicTypeException(
-                            "Invalid type for variable " + identifier
-                    );
-            }
-
+        DataType dataType;
+        try{
+            dataType = m.dataTypeOf(identifier);
         } catch (Exception e) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Error accessing variable " + identifier + " : " + e.getMessage()
-            );
+            throw new ASTInvalidMemoryException(e.getMessage());
         }
+
+        switch (dataType) {
+            case INT:
+                return "int";
+            case BOOL:
+                return "bool";
+            case VOID:
+                throw new ASTInvalidDynamicTypeException(
+                        "Variable " + identifier + " cannot be of type void"
+                );
+            default:
+                throw new ASTInvalidDynamicTypeException(
+                        "Invalid type for variable " + identifier
+                );
+        }
+
     }
 
     @Override
@@ -80,7 +73,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     @Override
     public Value eval(Memory m) throws ASTInvalidMemoryException{
         Value v = (Value) m.val(identifier);
-        if(v == null){
+        if(v == null || v.Type == ValueType.EMPTY){
             throw new ASTInvalidMemoryException("Variable " + identifier + " is undefined");
         }
         return v;

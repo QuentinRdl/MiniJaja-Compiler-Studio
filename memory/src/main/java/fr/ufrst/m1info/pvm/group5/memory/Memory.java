@@ -77,7 +77,7 @@ public class Memory {
             symbolTable.addEntry(entry);
         }
 
-        // TODO :
+        // TODO : Implement other kinds
     }
 
     /**
@@ -254,6 +254,30 @@ public class Memory {
         }
 
         return Stack_Object.stackObjToValue(stackobj);
+    }
+
+    /**
+     * Returns the value type of the given identifier
+     * @param identifier identifier of the Object we are looking for
+     * @return ValueType
+     */
+    public ValueType valueTypeOf(String identifier){
+        Value v = (Value) val(identifier);
+        if (v == null) {
+            throw new IllegalArgumentException(
+                    "Variable " + identifier + " not defined"
+            );
+        }
+        return v.Type;
+    }
+
+    /**
+     * Returns the data type of the given identifier
+     * @param identifier identifier of the Object we are looking for
+     * @return DataType
+     */
+    public DataType dataTypeOf(String identifier){
+        return ValueType.toDataType(valueTypeOf(identifier));
     }
 
     public String identVarClass() {

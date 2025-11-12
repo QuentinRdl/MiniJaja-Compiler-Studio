@@ -57,11 +57,18 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
 
         String declaredType;
         switch (type.valueType) {
-            case INT -> declaredType = "int";
-            case BOOL -> declaredType = "bool";
-            default -> throw new ASTInvalidDynamicTypeException(
+            case INT :
+                declaredType = "int";
+                m.declCst(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+                break;
+            case BOOL :
+                declaredType = "bool";
+                m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType));
+                break;
+            default :
+                throw new ASTInvalidDynamicTypeException(
                     "Unsupported type for constant " + ident.identifier
-            );
+                );
         }
 
         if (!exprType.equals(declaredType)) {
@@ -71,7 +78,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
                             ") for the variable " + ident.identifier
             );
         }
-        m.declCst(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
+
         return "void";
     }
 

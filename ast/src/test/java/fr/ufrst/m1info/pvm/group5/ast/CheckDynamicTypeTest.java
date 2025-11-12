@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import org.junit.jupiter.api.*;
@@ -31,6 +32,19 @@ public class CheckDynamicTypeTest {
             String ident = invocation.getArgument(0);
             return memoryStorage.get(ident);
         }).when(memoryMock).val(any(String.class));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            Value v =memoryStorage.get(ident);
+            if (v==null){
+                throw new IllegalArgumentException("");
+            }
+            return switch (v.Type) {
+                case INT -> DataType.INT;
+                case BOOL -> DataType.BOOL;
+                case VOID -> DataType.VOID;
+                default -> DataType.UNKNOWN;
+            };
+        }).when(memoryMock).dataTypeOf(any(String.class));
         opInt = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(opInt.checkType(memoryMock)).thenReturn("int");
         opBool = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
@@ -61,7 +75,7 @@ public class CheckDynamicTypeTest {
     @DisplayName("IdentNode - checkType() variable not defined")
     public void testIdentNode_Undefined() {
         IdentNode node = new IdentNode("y");
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -180,7 +194,7 @@ public class CheckDynamicTypeTest {
 
         AffectationNode node = new AffectationNode(new IdentNode("x"), expr);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
@@ -706,7 +720,7 @@ public class CheckDynamicTypeTest {
         IdentNode identNode = new IdentNode("y"); // pas dans memoryStorage
         IncNode incNode = new IncNode(identNode);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> incNode.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> incNode.checkType(memoryMock));
     }
 
     @Test
@@ -1055,7 +1069,8 @@ public class CheckDynamicTypeTest {
         ASTNode expr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(expr.checkType(any(Memory.class))).thenReturn("int");
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(new Value(10));
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.INT);
+
 
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
@@ -1072,7 +1087,7 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(new Value(10));
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.INT);
 
         assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
     }
@@ -1086,9 +1101,9 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        when(memoryMock.val("x")).thenReturn(null);
+        when(memoryMock.dataTypeOf("x")).thenThrow(IllegalArgumentException.class);
 
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> sumNode.checkType(memoryMock));
     }
 
     @Test
@@ -1100,8 +1115,7 @@ public class CheckDynamicTypeTest {
         SumNode sumNode = new SumNode(new IdentNode("x"), expr);
 
         Memory memoryMock = mock(Memory.class);
-        Value v = new Value(true);
-        when(memoryMock.val("x")).thenReturn(v);
+        when(memoryMock.dataTypeOf("x")).thenReturn(DataType.BOOL);
 
         assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.checkType(memoryMock));
     }

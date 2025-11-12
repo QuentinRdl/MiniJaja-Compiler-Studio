@@ -136,8 +136,6 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsole("empty.mjj", content);
-        System.out.println("interpreterEmptyFileDirectCall : ");
-        System.out.println(consoleText);
         assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
     }
 
@@ -146,7 +144,6 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("empty_btn.mjj", content);
-        System.out.println("interpreterEmptyFileBtn : ");
         assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
     }
 
