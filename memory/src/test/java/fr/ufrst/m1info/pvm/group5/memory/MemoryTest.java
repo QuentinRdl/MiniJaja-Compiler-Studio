@@ -75,11 +75,11 @@ public class MemoryTest {
 
     @Test
     public void pushWithIllegalArg() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.push("x", 42, DataType.INT, null);
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.push("x", 42, null, EntryKind.VARIABLE);
         });
     }
@@ -138,11 +138,11 @@ public class MemoryTest {
 
     @Test
     public void withdrawDeclThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.withdrawDecl("");
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.withdrawDecl(null);
         });
     }

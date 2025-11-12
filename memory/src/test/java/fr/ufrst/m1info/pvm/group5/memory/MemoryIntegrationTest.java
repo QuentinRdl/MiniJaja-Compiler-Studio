@@ -123,7 +123,7 @@ public class MemoryIntegrationTest {
     @MethodSource("typeOfVars")
     public void popEmptySymbolTable(String id, Object value, DataType type) {
         mem.stack.setVar("var", value, type);
-        assertThrows(IllegalArgumentException.class, () -> mem.pop());
+        assertThrows(java.lang.IllegalArgumentException.class, () -> mem.pop());
     }
 
     @ParameterizedTest
@@ -231,7 +231,7 @@ public class MemoryIntegrationTest {
         Value val = (Value) ret;
         Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
-        assertThrows(java.lang.IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(id, newValue);
         });
     }
@@ -247,7 +247,7 @@ public class MemoryIntegrationTest {
         Value val = (Value) ret;
         Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
-        assertThrows(java.lang.IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(null, newValue);
         });
     }
@@ -306,7 +306,7 @@ public class MemoryIntegrationTest {
         Value val = (Value) ret;
         Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
-        assertThrows(java.lang.IllegalStateException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(id, newValue);
         });
     }
@@ -393,13 +393,13 @@ public class MemoryIntegrationTest {
     @MethodSource("affVarNull")
     public void affVarClassCalledNull(Object arg) {
         // We test with no declared class var
-        assertThrows(java.lang.IllegalStateException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affVarClass(arg);
         });
 
         // Now we declare and call it with null
         mem.declVarClass("val");
-        assertThrows(java.lang.IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affVarClass(null);
         });
 
@@ -410,7 +410,7 @@ public class MemoryIntegrationTest {
         // First declaration should succeed
         mem.declVarClass("classVar");
         // Second declaration (any identifier) should fail because a class var already exists
-        assertThrows(IllegalStateException.class, () -> mem.declVarClass("another"));
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("another"));
     }
 
     @Test
@@ -419,7 +419,7 @@ public class MemoryIntegrationTest {
         mem.declVar("idInTable", 1, DataType.INT);
 
         // Attempting to declare a class var with the same identifier must fail (symbolTable.contains branch)
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> mem.declVarClass("idInTable"));
+        Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idInTable"));
         assertTrue(ex.getMessage().contains("Symbol Table") || ex.getMessage().contains("Symbol"));
     }
 
@@ -432,7 +432,7 @@ public class MemoryIntegrationTest {
         assertFalse(mem.symbolTable.contains("idOnStackOnly"));
 
         // Now declVarClass should throw because stack.hasObj(identifier) is true
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> mem.declVarClass("idOnStackOnly"));
+        Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idOnStackOnly"));
         assertTrue(ex.getMessage().contains("Stack") || ex.getMessage().contains("Stack"));
     }
 
