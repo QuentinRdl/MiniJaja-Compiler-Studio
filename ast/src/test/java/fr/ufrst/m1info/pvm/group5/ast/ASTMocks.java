@@ -151,7 +151,7 @@ public class ASTMocks {
         try {
             doAnswer(invocationOnMock -> {
                 try {
-                    return storage.pop();
+                    return storage.pop().second;
                 } catch (Exception e) {
                     return null;
                 }
