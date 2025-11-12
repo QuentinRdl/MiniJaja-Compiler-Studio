@@ -37,6 +37,15 @@ public class Memory {
         this.output = output;
     }
 
+    /**
+     * Exception thrown when attempting to pop a scope from the stack when no scopes exist.
+     */
+    public static class MemoryIllegalArgException extends RuntimeException{
+        public MemoryIllegalArgException(String msg) {
+            super(msg);
+        }
+    }
+
     public void setPreserveAfterInterpret(boolean preserve) {
         this.preserveAfterInterpret = preserve;
     }
@@ -57,11 +66,11 @@ public class Memory {
     public void push(String identifier, Object value, DataType type, EntryKind kind) {
 
         if(kind == null || type == null || value == null || identifier == null) {
-            throw new IllegalArgumentException("One of the following arguments are not compatible with this function call : identifier = " + identifier + " value = " + value + " type = " + type + " kind = " + kind);
+            throw new MemoryIllegalArgException("One of the following arguments are not compatible with this function call : identifier = " + identifier + " value = " + value + " type = " + type + " kind = " + kind);
         }
         if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT) {
             // TODO : Implement for different EntryKind
-            throw new IllegalArgumentException("Pushing with " + kind + " as en EntryKind is invalid !");
+            throw new MemoryIllegalArgException("Pushing with " + kind + " as en EntryKind is invalid !");
         }
 
         if(kind == EntryKind.VARIABLE) {
@@ -137,7 +146,7 @@ public class Memory {
      */
     public void withdrawDecl(String identifier) {
         if(identifier == null || identifier.isEmpty()) {
-            throw new IllegalArgumentException("Cannot call 'withdrawDecl' with an empty/null identifier");
+            throw new MemoryIllegalArgException("Cannot call 'withdrawDecl' with an empty/null identifier");
         }
         if(this.preserveAfterInterpret) {
             // This way we can keep the values, and test them
@@ -159,10 +168,10 @@ public class Memory {
      */
     public void affectValue(String identifier, Object value) {
         if(identifier == null) {
-            throw new IllegalArgumentException("affectValue cannot be called with null identifier");
+            throw new MemoryIllegalArgException("affectValue cannot be called with null identifier");
         }
         else if(value == null) {
-            throw new IllegalArgumentException("affectValue cannot be called with null value");
+            throw new MemoryIllegalArgException("affectValue cannot be called with null value");
         }
 
         // Check that it exists in the symbol table
@@ -174,7 +183,7 @@ public class Memory {
         // Find the object in the stack
         Stack_Object obj = stack.searchObject(identifier);
         if (obj == null) {
-            throw new IllegalArgumentException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
+            throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
         }
 
         // Ensure declared type matches given value type
@@ -201,7 +210,7 @@ public class Memory {
         if (entry.getKind() == EntryKind.CONSTANT) {
             // Constants can only be initialized once
             if (obj.getValue() != null) {
-                throw new IllegalStateException("Cannot modify constant '" + identifier + "' once it has already been declared");
+                throw new MemoryIllegalArgException("Cannot modify constant '" + identifier + "' once it has already been declared");
             }
             obj.setValue(value);
             entry.setReference(value);
@@ -209,19 +218,19 @@ public class Memory {
         }
 
         // TODO : For other kinds, we don't support assignment yet
-        throw new IllegalArgumentException("affectValue is not supported YET for EntryKind: " + entry.getKind());
+        throw new MemoryIllegalArgException("affectValue is not supported YET for EntryKind: " + entry.getKind());
     }
 
     public void declVarClass(String identifier) {
         if(identifierVarClass != null) {
-            throw new IllegalStateException("The class variable is already defined, cannot create a new one");
+            throw new MemoryIllegalArgException("The class variable is already defined, cannot create a new one");
         }
         // We check that nothing on the Symbol Table & the stack is defined w/ this name
         if(symbolTable.contains(identifier)) {
-            throw new IllegalStateException("The class variable is already defined in the Symbol Table, cannot create a new one");
+            throw new MemoryIllegalArgException("The class variable is already defined in the Symbol Table, cannot create a new one");
         }
         if(stack.hasObj(identifier)) {
-            throw new IllegalStateException("The class variable is already defined in the Stack, cannot create a new one");
+            throw new MemoryIllegalArgException("The class variable is already defined in the Stack, cannot create a new one");
         }
         // Everything checks out, we create the var, with null type, and null value
         declVar(identifier, null, DataType.UNKNOWN);
@@ -235,7 +244,7 @@ public class Memory {
      */
     public Object val(String identifier) {
         if(identifier == null || identifier.isEmpty()) {
-            throw new IllegalArgumentException("val cannot be called with an empty/null identifier");
+            throw new MemoryIllegalArgException("val cannot be called with an empty/null identifier");
         }
         // Lookup the symbol table entry
         SymbolTableEntry entry = symbolTable.lookup(identifier);
@@ -244,7 +253,7 @@ public class Memory {
         Stack_Object stackobj = stack.getObject(ref);
         // We convert the stack object into a Value
         if (stackobj == null) {
-            throw new IllegalArgumentException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
+            throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
         }
 
         Object raw = stackobj.getValue();
@@ -264,9 +273,7 @@ public class Memory {
     public ValueType valueTypeOf(String identifier){
         Value v = (Value) val(identifier);
         if (v == null) {
-            throw new IllegalArgumentException(
-                    "Variable " + identifier + " not defined"
-            );
+            throw new MemoryIllegalArgException("Variable " + identifier + " not defined");
         }
         return v.Type;
     }
@@ -286,10 +293,10 @@ public class Memory {
 
     public void affVarClass(Object value) {
         if(identifierVarClass == null) {
-            throw new IllegalStateException("Cannot affect a value to the class var, it does not exist");
+            throw new MemoryIllegalArgException("Cannot affect a value to the class var, it does not exist");
         }
         if(value == null) {
-            throw new IllegalArgumentException("Cannot call affVarClass with null object");
+            throw new MemoryIllegalArgException("Cannot call affVarClass with null object");
         }
         affectValue(identifierVarClass, value);
     }
