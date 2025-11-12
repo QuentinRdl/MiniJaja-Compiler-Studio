@@ -8,6 +8,7 @@ import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 public enum ValueType {
     INT,
     BOOL,
+    STRING,
     EMPTY,
     VOID;
 
@@ -20,6 +21,7 @@ public enum ValueType {
         return switch (vt) {
             case INT -> DataType.INT;
             case BOOL -> DataType.BOOL;
+            case STRING -> DataType.STRING;
             case VOID -> DataType.VOID;
             default -> DataType.UNKNOWN;
         };
@@ -29,6 +31,7 @@ public enum ValueType {
         return switch (this) {
             case INT -> "INT";
             case BOOL -> "BOOL";
+            case STRING -> "STRING";
             case VOID -> "VOID";
             default -> "UNKNOWN";
         };
