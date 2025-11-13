@@ -2,8 +2,10 @@ package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.Value;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 
 import java.util.ArrayList;
@@ -14,8 +16,8 @@ public class AppelINode extends ASTNode {
     public final ASTNode args;
 
     public AppelINode(IdentNode ident, ASTNode args) {
-        if (ident == null || args == null) {
-            throw new ASTBuildException("AppelINode cannot have null nodes");
+        if (ident == null) {
+            throw new ASTBuildException("AppelINode cannot have null ident");
         }
         this.ident = ident;
         this.args = args;
@@ -23,32 +25,94 @@ public class AppelINode extends ASTNode {
 
     @Override
     protected List<ASTNode> getChildren() {
-        return List.of(ident, args);
+        List<ASTNode> children = new ArrayList<>();
+        children.add(ident);
+        if (args != null) children.add(args);
+        return children;
     }
 
     @Override
     public List<String> compile(int address) {
         List<String> code = new ArrayList<>();
-        code.addAll(args.compile(address));
+        if (args != null) code.addAll(args.compile(address));
         code.add("invoke(" + ident.identifier + ")");
         return code;
     }
 
     @Override
     public void interpret(Memory m)
-            throws ASTInvalidMemoryException, ASTInvalidOperationException {
+            throws ASTInvalidMemoryException, ASTInvalidOperationException, ASTInvalidDynamicTypeException {
+        // 1) Récupère la méthode
         SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
-
         if (methodEntry == null) {
             throw new ASTInvalidMemoryException("Method " + ident.identifier + " not found.");
         }
         if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidOperationException(ident.identifier + " is not a method !");
+            throw new ASTInvalidOperationException(ident.identifier + " is not a method!");
         }
+
+        // 2) Évalue les arguments (si présent)
+        List<Value> evaluatedArgs = new ArrayList<>();
         if (args != null) {
-            args.interpret(m);
+            if (args instanceof ExpListNode) {
+                evaluatedArgs.addAll(((ExpListNode) args).evalList(m));
+            } else if (args instanceof EvaluableNode) {
+                evaluatedArgs.add(((EvaluableNode) args).eval(m));
+            } else {
+                throw new ASTInvalidOperationException("Arguments node is not an ExpListNode/evaluable.");
+            }
         }
-        System.out.println("Calling the method '" + ident.identifier + "'");
+
+        // 3) Récupère le noeud de la méthode (on a stocké le MethodeNode dans la référence)
+        Object ref = methodEntry.getReference();
+        if (!(ref instanceof MethodeNode)) {
+            throw new ASTInvalidOperationException("Method reference for " + ident.identifier + " is not a MethodeNode");
+        }
+        MethodeNode methodNode = (MethodeNode) ref;
+
+        // 4) Ouvre un nouveau scope pour l'appel
+        // NOTE: requires Memory.pushScope() to exist
+        m.pushScope();
+
+        // 5) Déclare les paramètres et affecte les valeurs évaluées
+        if (methodNode.params != null) {
+            if (!(methodNode.params instanceof ParamListNode)) {
+                // si la structure diffère, adapter ici
+                throw new ASTInvalidOperationException("Method parameters are not a ParamListNode");
+            }
+            ParamListNode paramList = (ParamListNode) methodNode.params;
+            List<ParamNode> formals = paramList.toList();
+            if (evaluatedArgs.size() != formals.size()) {
+                throw new ASTInvalidOperationException(
+                        "Arity mismatch when calling " + ident.identifier + ": expected " + formals.size() + " got " + evaluatedArgs.size()
+                );
+            }
+            for (int i = 0; i < formals.size(); i++) {
+                ParamNode p = formals.get(i);
+                Value argVal = evaluatedArgs.get(i);
+                // déclare la variable param avec la valeur fournie
+                m.declVar(p.ident.identifier, argVal, ValueType.toDataType(p.type.valueType));
+            }
+        }
+
+        // 6) Exécution du corps de la méthode
+        if (methodNode.instrs != null) {
+            methodNode.instrs.interpret(m);
+        }
+
+        // 7) Retrait des paramètres (clean-up)
+        if (methodNode.params != null) {
+            if (methodNode.params instanceof WithdrawalNode) {
+                ((WithdrawalNode) methodNode.params).withdrawInterpret(m);
+            } else if (methodNode.params instanceof ParamListNode) {
+                // fallback : retirer un par un si WithdrawalNode non implémenté
+                List<ParamNode> formals = ((ParamListNode) methodNode.params).toList();
+                for (ParamNode p : formals) {
+                    m.withdrawDecl(p.ident.identifier);
+                }
+            }
+        }
+        m.popScope();
     }
 
     @Override
