@@ -92,12 +92,12 @@ public class Memory {
     /**
      * Removes the top of the stack
      */
-    public Stack_Object pop() throws Stack.StackIsEmptyException {
+    public Object pop() throws Stack.StackIsEmptyException {
         Stack_Object top = stack.pop();
         if (top != null) {
             symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
         }
-        return top;
+        return top.getValue();
     }
 
     /**

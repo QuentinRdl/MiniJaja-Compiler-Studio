@@ -126,4 +126,87 @@ public class InstructionsUnitTest {
         assertEquals(0, storage.pop().second().valueInt);
     }
 
+    //load
+    @Test
+    public void load_simple(){
+        storage.add(new ASTMocks.Pair<>("test",new Value(5)));
+        LoadInstruction l = new LoadInstruction("test");
+        var res = l.execute(0,memory);
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(5, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void load_many(){
+        storage.add(new ASTMocks.Pair<>("test1",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("test2",new Value(2)));
+        storage.add(new ASTMocks.Pair<>("test3",new Value(3)));
+        storage.add(new ASTMocks.Pair<>("test4",new Value(4)));
+
+        LoadInstruction l = new LoadInstruction("test3");
+        var res = l.execute(0,memory);
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(3, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void load_notExist(){
+        storage.add(new ASTMocks.Pair<>("test1",new Value(1)));
+
+        LoadInstruction l = new LoadInstruction("test3");
+        assertThrows(Exception.class, () -> l.execute(0,memory));
+    }
+
+
+    @Test
+    public void pop_simple() throws Exception{
+        PushInstruction p1 = new PushInstruction(new Value(5));
+        var res = p1.execute(0, memory);
+        assertEquals(1, res);
+        PopInstruction p2 = new PopInstruction();
+        res = p2.execute(1, memory);
+        assertEquals(2, res);
+        assertTrue(storage.isEmpty());
+    }
+
+    //TODO: empty pop test
+
+    @Test
+    public void swap_simple_instruction() throws Exception {
+        PushInstruction p1 = new PushInstruction(new Value(2));
+        PushInstruction p2 = new PushInstruction(new Value(5));
+
+        p1.execute(0, memory);
+        p2.execute(1, memory);
+
+        SwapInstruction swap = new SwapInstruction();
+        var res = swap.execute(2, memory);
+
+        assertEquals(3, res);
+        assertEquals(2, storage.pop().second().valueInt);
+        assertEquals(5, storage.pop().second().valueInt);
+    }
+
+    //TODO: empty swap test
+
+    @Test
+    public void goto_instruction() throws Exception {
+        GotoInstruction i = new GotoInstruction(5);
+        var res = i.execute(0, memory);
+        assertEquals(5, res);
+    }
+
+    @Test
+    public void nop_instruction() throws Exception {
+        NopInstruction i = new NopInstruction();
+        var res = i.execute(0, memory);
+        assertEquals(1, res);
+    }
+
+
+
 }

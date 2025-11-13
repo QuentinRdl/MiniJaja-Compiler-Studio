@@ -101,7 +101,7 @@ public class MemoryIntegrationTest {
     @MethodSource("typeOfVars")
     public void popWorks(String id, Object value, DataType type) throws Exception {
         mem.push(id, value, type, EntryKind.VARIABLE);
-        Stack_Object ret = mem.pop();
+        Object ret = mem.pop();
         assertNotNull(ret);
     }
 
@@ -112,7 +112,7 @@ public class MemoryIntegrationTest {
         assertThrows(Stack.StackIsEmptyException.class, () -> mem.pop());
 
         mem.push(id, value, type, EntryKind.VARIABLE);
-        Stack_Object ret = mem.pop();
+        Object ret = mem.pop();
         assertNotNull(ret);
 
         // Stack is now empty again, should throw StackIsEmptyException

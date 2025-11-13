@@ -21,6 +21,11 @@ eval returns [List<Instruction> instrs]
 
 instr
     : 'push' '(' valeur ')' {instrList.add(new PushInstruction($valeur.v));}
+    | 'pop' {instrList.add(new PopInstruction());}
+    | 'swap' {instrList.add(new SwapInstruction());}
+    | 'return' {instrList.add(new ReturnInstruction());}
+    | 'goto' '(' n=NOMBRE ')' {instrList.add(new GotoInstruction(Integer.parseInt($n.text)));}
+    | 'nop' {instrList.add(new NopInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
     | 'jcstop' {instrList.add(new JcstopInstruction());}
     | 'if' '(' n=NOMBRE ')' {instrList.add(new IfInstruction(Integer.parseInt($n.text)));}
@@ -48,6 +53,8 @@ IDENTIFIER
 NOMBRE
     : ('0'..'9')+
     ;
+
+
 
 
 
