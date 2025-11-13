@@ -1,9 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.Nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
@@ -11,7 +8,7 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParamNode extends ASTNode {
+public class ParamNode extends ASTNode implements WithdrawalNode {
     public final TypeNode type;
     public final IdentNode ident;
 
@@ -52,4 +49,15 @@ public class ParamNode extends ASTNode {
         return "void";
     }
 
+    @Override
+    public void withdrawInterpret(Memory m) {
+        m.withdrawDecl(ident.identifier);
+    }
+
+    @Override
+    public List<String> withdrawCompile(int address) {
+        List<String> code = new ArrayList<>();
+        code.add("pop(" + ident.identifier + ")");
+        return code;
+    }
 }
