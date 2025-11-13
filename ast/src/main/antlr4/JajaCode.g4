@@ -26,6 +26,7 @@ instr
     | 'nop' {instrList.add(new NopInstruction());}
     | 'load' '(' string ')' {instrList.add(new LoadInstruction($string.str));}
     | 'store' '(' string ')' {instrList.add(new StoreInstruction($string.str));}
+    | 'add' {instrList.add(new AddInstruction());}{}
     ;
 
 valeur returns [Value v]
