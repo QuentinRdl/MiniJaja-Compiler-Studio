@@ -24,6 +24,8 @@ instr
     | 'return' {instrList.add(new ReturnInstruction());}
     | 'goto' '(' n=NOMBRE ')' {instrList.add(new GotoInstruction(Integer.parseInt($n.text)));}
     | 'nop' {instrList.add(new NopInstruction());}
+    | 'write' {instrList.add(new WriteInstruction());}
+    | 'writeln' {instrList.add(new WritelnInstruction());}
     ;
 
 valeur returns [Value v]
