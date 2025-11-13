@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 public class InstructionsUnitTest {
     @Mock
@@ -53,8 +55,27 @@ public class InstructionsUnitTest {
 
     @Test
     public void if_empty_stack(){
+        doAnswer(invocationOnMock -> {
+            throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
+        }).when(memory).pop();
         Instruction ifInstr = new IfInstruction(5);
         assertThrows(ASTInvalidMemoryException.class,() -> ifInstr.execute(2,memory));
+    }
+
+    @Test
+    public void if_int() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(1));
+        Instruction ifInstr = new IfInstruction(5);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> ifInstr.execute(2,memory));
+    }
+
+    @Test
+    public void if_string() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value("Not a boolean"));
+        Instruction ifInstr = new IfInstruction(5);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> ifInstr.execute(2,memory));
     }
 
     //jcstop
