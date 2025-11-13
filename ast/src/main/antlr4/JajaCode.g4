@@ -24,12 +24,21 @@ instr
     | 'return' {instrList.add(new ReturnInstruction());}
     | 'goto' '(' n=NOMBRE ')' {instrList.add(new GotoInstruction(Integer.parseInt($n.text)));}
     | 'nop' {instrList.add(new NopInstruction());}
+    | 'load' '(' string ')' {instrList.add(new LoadInstruction($string.str));}
     ;
 
 valeur returns [Value v]
     :
     ;
 
+string returns [String str]
+    : t=STRING {$str = $t.text.substring(1, $t.text.length() - 1);}
+    ;
+
 NOMBRE
     : ('0'..'9')+
+    ;
+
+STRING
+    : '"' .+? '"'
     ;
