@@ -9,8 +9,7 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 public class WriteInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) throws Exception {
-        Stack_Object topObj = (Stack_Object) m.pop();
-        Value top = Stack_Object.stackObjToValue(topObj);
+        Value top = (Value) m.pop();
         m.write(top.toString());
         return address + 1;
     }
