@@ -329,8 +329,10 @@ public class Memory {
             throw new IllegalStateException("Method '" + identifier + "' already exists in the symbol table");
         }
         SymbolTableEntry entry = new SymbolTableEntry(identifier, EntryKind.METHOD, returnType);
-        entry.setReference(params); // on peut stocker les paramètres ou le noeud AST
+        entry.setReference(params);
         symbolTable.addEntry(entry);
+        stack.setMethod(identifier, params, returnType);
+        stack.pushScope();
     }
 
     /**
@@ -363,11 +365,16 @@ public class Memory {
             throw new IllegalArgumentException("Cannot withdraw '" + identifier + "' because it is not a method");
         }
         symbolTable.removeEntry(identifier);
+        Stack_Object obj = stack.getObject(identifier);
+        if (obj != null) {
+            stack.removeObject(obj);
+        }
         try {
             stack.popScope();
         } catch (Stack.NoScopeException e) {
         }
     }
+
     public void pushScope() {
         stack.pushScope();
     }

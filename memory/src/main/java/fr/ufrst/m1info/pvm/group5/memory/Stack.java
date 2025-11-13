@@ -1,7 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.*;
 
 import java.io.Serial;
 import java.util.ArrayDeque;
@@ -524,4 +523,28 @@ public class Stack {
         obj.setValue(value);
         return true;
     }
+    /**
+     * Returns the depth of the current scope.
+     */
+    public int getCurrentScope() {
+        return scopeDepth;
+    }
+
+
+    public void setMethod(String identifier, Object params, DataType returnType) {
+        if (identifier == null || identifier.isEmpty()) {
+            throw new IllegalArgumentException("Cannot define method with null or empty identifier");
+        }
+
+        Stack_Object obj = new Stack_Object(
+                identifier,
+                params,
+                this.getCurrentScope(),
+                EntryKind.METHOD,
+                returnType
+        );
+        stack_content.push(obj);
+    }
+
+
 }

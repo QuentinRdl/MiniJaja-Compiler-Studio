@@ -39,10 +39,28 @@ public class MethodeNode extends ASTNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> code = new ArrayList<>();// label méthode
-        if (vars != null) code.addAll(vars.compile(address));
-        if (instrs != null) code.addAll(instrs.compile(address));
+        List<String> code = new ArrayList<>();
+        List<String> pens = params.compile(address + 3);
+        List<String> pdvs = vars != null ? vars.compile(address + 3 + pens.size()) : List.of();
+        List<String> piss = instrs != null ? instrs.compile(address + 3 + pens.size() + pdvs.size()) : List.of();
+        List<String> prdvs = List.of();
+
+        int n = address;
+        int nens = pens.size();
+        int ndvs = pdvs.size();
+        int niss = piss.size();
+        int nrdvs = prdvs.size();
+        code.add("jncnil");
+        code.add("push(" + (n + 3) + ")");
+        code.add("new(" + ident.identifier + ", " + returnType + ", meth, 0)");
+        code.add("goto(" + (n + nens + ndvs + niss + nrdvs + 5) + ")");
+        code.addAll(pens);
+        code.addAll(pdvs);
+        code.addAll(piss);
+        code.addAll(prdvs);
+        code.add("swap");
         code.add("return");
+
         return code;
     }
 
@@ -50,7 +68,6 @@ public class MethodeNode extends ASTNode {
     public void interpret(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
         m.declMethod(ident.identifier, dataType, this);
-        System.out.println("Method '" + ident.identifier + "' declared with type " + returnType.getValueType());
     }
 
     @Override
