@@ -57,6 +57,14 @@ public class ASTMocks {
 
         doAnswer( invocation -> {
                     String ident = invocation.getArgument(0);
+                    Value value = invocation.getArgument(1);
+                    storage.put(ident, value);
+                    return null;
+                }
+        ).when(result).declCst(any(String.class), any(Value.class), any());
+
+        doAnswer( invocation -> {
+                    String ident = invocation.getArgument(0);
                     storage.put(ident, new Value());
                     return null;
                 }
