@@ -181,6 +181,7 @@ public class Stack_Object {
         return switch (val.Type) {
             case INT -> new Stack_Object(null, val.valueInt, 0, EntryKind.OTHER);
             case BOOL -> new Stack_Object(null, val.valueBool, 0, EntryKind.OTHER);
+            case STRING -> new Stack_Object(null, val.valueString, 0, EntryKind.OTHER);
             case EMPTY, VOID -> new Stack_Object(null, null, 0, EntryKind.OTHER);
             // TODO : DO MORE
         };
