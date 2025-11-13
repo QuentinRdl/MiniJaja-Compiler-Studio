@@ -2,28 +2,30 @@ package fr.ufrst.m1info.pvm.group5.ast.Instructions;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 public class NewInstruction extends Instruction{
     String identifier;
     DataType type;
-    String v;
+    EntryKind kind;
     int scope;
 
-    public NewInstruction(String identifier, DataType type, String v, int scope){
+    public NewInstruction(String identifier, DataType type, EntryKind kind, int scope){
         this.identifier=identifier;
         this.type=type;
-        this.v = v;
+        this.kind = kind;
         this.scope = scope;
     }
 
     @Override
     public int execute(int address, Memory m) {
-        if (v.equals("var")){
-            m.declVar(identifier,new Value(),type);
+        Value v = (Value) m.pop().getValue();
+        if (kind==EntryKind.VARIABLE){
+            m.declVar(identifier,v,type);
         }
-        else if (v.equals("cst")){
-            m.declCst(identifier,new Value(),type);
+        else if (kind==EntryKind.CONSTANT){
+            m.declCst(identifier,v,type);
         }
         return address+1;
     }
