@@ -6,6 +6,7 @@ package fr.ufrst.m1info.pvm.group5.memory;
 public class Value {
     public int valueInt;
     public boolean valueBool;
+    public String valueString;
     public ValueType Type;
 
     public Value(boolean valueBool){
@@ -18,6 +19,11 @@ public class Value {
         this.Type = ValueType.INT;
     }
 
+    public Value(String valueString){
+        this.valueString = valueString;
+        this.Type = ValueType.STRING;
+    }
+
     public Value(){
         this.Type=ValueType.EMPTY;
     }
@@ -26,6 +32,7 @@ public class Value {
         return switch (Type) {
             case INT -> valueInt + "";
             case BOOL -> valueBool + "";
+            case STRING -> valueString;
             default -> "";
         };
     }

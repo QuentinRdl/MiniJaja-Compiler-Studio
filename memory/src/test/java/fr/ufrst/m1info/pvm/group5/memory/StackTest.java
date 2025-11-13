@@ -551,7 +551,7 @@ public class StackTest {
     @Test
     public void swapTop_notEnoughElements() {
         Stack s = new Stack();
-        assertThrows(IllegalStateException.class, s::swap);
+        assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
 
         // Calling w/ 1 element should throw exception
         Stack_Object only = mock(Stack_Object.class);
@@ -568,7 +568,7 @@ public class StackTest {
             fail("Reflection setup failed: " + ex.getMessage());
         }
 
-        assertThrows(IllegalStateException.class, s::swap);
+        assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
     }
 
     @Test
