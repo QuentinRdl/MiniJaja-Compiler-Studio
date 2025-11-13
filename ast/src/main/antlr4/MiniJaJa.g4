@@ -93,10 +93,6 @@ entetes returns [ParamListNode node]
     : e1=entete {$node = new ParamListNode((ParamNode)$e1.node, null);}
       ( ',' e2=entetes {$node = new ParamListNode((ParamNode)$e1.node, $e2.node);} )?
     ;
-
-    ;
-
-
 instrs returns [InstructionsNode node]
     : instr ';' {$node = new InstructionsNode($instr.node, null);}
     (instrs {$node = new InstructionsNode($instr.node, $instrs.node);}
