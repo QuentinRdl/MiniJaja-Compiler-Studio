@@ -116,7 +116,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsole("empty.mjj", content);
-        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
+        assertTrue(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
     }
 
 
@@ -125,7 +125,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("empty_btn.mjj", content);
-        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
+        assertTrue(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
     }
 
 

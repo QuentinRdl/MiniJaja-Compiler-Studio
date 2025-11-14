@@ -1284,8 +1284,4 @@ public class MainControllerTest extends ApplicationTest {
         long count = controller.getEditorTabPane().getTabs().stream().filter(tab -> tab == controller.getCompiledTab()).count();
         assertEquals(1, count);
     }
-
-
-
-
 }
