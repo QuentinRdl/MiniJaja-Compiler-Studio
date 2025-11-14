@@ -22,6 +22,43 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 
+
+    private final String contentValid = String.join("\n",
+            "class C {",
+            "    int x;",
+            "    main {",
+            "        x = 3 + 4;",
+            "        x++;",
+            "    }",
+            "}"
+    );
+
+    // Expected compiled JajaCode lines
+    private final String[] expectedCompilOutput = new String[]{
+            "init",
+            "new(x,INT,var,0)",
+            "push(3)",
+            "push(4)",
+            "add",
+            "store(x)",
+            "push(1)",
+            "inc(x)",
+            "push(0)",
+            "swap",
+            "pop",
+            "pop",
+            "jcstop"
+    };
+
+    private final String contentIncorrect = String.join("\n",
+            "class C {",
+            "    int x;",
+            "    main {",
+            "        x = 3 + 4;",
+            "        x++;",
+            "    }"
+    );
+
     @BeforeAll
     public static void initTempDir(@TempDir Path td) {
         MainControllerTest.tempDir = td;
@@ -103,50 +140,21 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
     @Test
     public void compilatorWorks() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }",
-                "}"
-        );
-
-        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
     public void compilatorButtonWorks() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }",
-                "}"
-        );
-
-        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
     public void compilerDoesNotWork() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }"
-        );
-
-        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
     }
@@ -154,16 +162,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
     @Test
     public void compilerDoesNotWorkActualBtn() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }"
-        );
-
-        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
     }
@@ -171,86 +170,33 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
     @Test
     public void compilatorOutputsCorrect() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }",
-                "}"
-        );
 
-        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
-
-        // Expected compiled JajaCode lines
-        String[] expected = new String[]{
-                "init",
-                "new(x,INT,var,0)",
-                "push(3)",
-                "push(4)",
-                "add",
-                "store(x)",
-                "push(1)",
-                "inc(x)",
-                "push(0)",
-                "swap",
-                "pop",
-                "pop",
-                "jcstop"
-        };
 
         // Check number of lines
         var compiledLines = controller.getCompiledCodeLines();
-        org.junit.jupiter.api.Assertions.assertEquals(expected.length, compiledLines.size());
+        org.junit.jupiter.api.Assertions.assertEquals(expectedCompilOutput.length, compiledLines.size());
 
         // Check content of lines
-        for (int i = 0; i < expected.length; i++) {
-            org.junit.jupiter.api.Assertions.assertEquals(expected[i], compiledLines.get(i).getCode());
+        for (int i = 0; i < expectedCompilOutput.length; i++) {
+            org.junit.jupiter.api.Assertions.assertEquals(expectedCompilOutput[i], compiledLines.get(i).getCode());
         }
     }
+
 
     @Test
     public void compilatorButtonOutputsCorrect() throws Exception {
-        String content = String.join("\n",
-                "class C {",
-                "    int x;",
-                "    main {",
-                "        x = 3 + 4;",
-                "        x++;",
-                "    }",
-                "}"
-        );
-
-        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
+        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
-
-        // Expected compiled JajaCode lines
-        String[] expected = new String[]{
-                "init",
-                "new(x,INT,var,0)",
-                "push(3)",
-                "push(4)",
-                "add",
-                "store(x)",
-                "push(1)",
-                "inc(x)",
-                "push(0)",
-                "swap",
-                "pop",
-                "pop",
-                "jcstop"
-        };
 
         // Check number of lines
         var compiledLines = controller.getCompiledCodeLines();
-        org.junit.jupiter.api.Assertions.assertEquals(expected.length, compiledLines.size());
+        org.junit.jupiter.api.Assertions.assertEquals(expectedCompilOutput.length, compiledLines.size());
 
         // Check content of lines
-        for (int i = 0; i < expected.length; i++) {
-            org.junit.jupiter.api.Assertions.assertEquals(expected[i], compiledLines.get(i).getCode());
+        for (int i = 0; i < expectedCompilOutput.length; i++) {
+            org.junit.jupiter.api.Assertions.assertEquals(expectedCompilOutput[i], compiledLines.get(i).getCode());
         }
     }
-
 }
