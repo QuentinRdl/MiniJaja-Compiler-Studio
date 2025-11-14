@@ -506,7 +506,20 @@ public class MainController {
      * Retrieves the code from the editor and passes it to the InterpreterMiniJaja for interpretation
      * After interpretation, logs either a success message or an error message to the console
      */
-    public void onRunClicked(){
+    public void onRunClicked() {
+        //if(!isMinijajaFile() && !isJajaCode){
+        boolean miniJaja = isMinijajaFile();
+        boolean jajaCode = isJajaCode();
+
+        if(!miniJaja && !jajaCode) {
+            console.getWriter().writeLine("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)");
+            return;
+        } else if (miniJaja && jajaCode) {
+            // Should never be called in actual code but still check for tests purpose
+            console.getWriter().writeLine("[INTERNAL ERROR] current file is marked as jjc and mjj");
+            return;
+        }
+
         String code = getModifiedCode();
 
         // If the code is just empty chars, do not run it
@@ -515,9 +528,15 @@ public class MainController {
             return;
         }
 
-        InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+        String err = null;
 
-        String err = interpreterMiniJaja.interpretCode(code);
+        if(miniJaja) {
+            InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+            err = interpreterMiniJaja.interpretCode(code);
+        } else if (jajaCode) {
+            // TODO : Write jajaCode interpretation
+            console.getWriter().writeLine("[ERROR] JJC Interpretation not implemented yet");
+        }
 
         if(err == null){
             console.getWriter().writeLine("[INFO] Interpretation successfully completed");
@@ -662,12 +681,33 @@ public class MainController {
      * @return true if the file exists and its name ends with ".mjj", false otherwise
      */
     public boolean isMinijajaFile(){
+        return fileExtensionMatches(".mjj");
+    }
+
+
+    /**
+     * Checks whether the currently opened file is a JajaCode source file
+     *
+     * @return true if the file exists and its name ends with ".jjc", false otherwise
+     */
+    public boolean isJajaCode(){
+        return fileExtensionMatches(".jjc");
+    }
+
+
+    /**
+     * Checks that the current file extension matches with the parameter we give it
+     * @param extension the extension we want to match
+     * @return true if extension == actual extension, false otherwise
+     */
+    public boolean fileExtensionMatches(String extension) {
         if(currentFile == null){
             return false;
         }
         String fileName = currentFile.getName().toLowerCase();
-        return fileName.endsWith(".mjj");
+        return fileName.endsWith(extension);
     }
+
 
     /**
      * Initializes a context menu for the output console
