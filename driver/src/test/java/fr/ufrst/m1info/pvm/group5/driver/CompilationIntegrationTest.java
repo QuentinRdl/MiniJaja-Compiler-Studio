@@ -169,10 +169,50 @@ public class CompilationIntegrationTest extends ApplicationTest {
     }
 
 
-    /*
-    // TODO : Complete and finish the logic
     @Test
     public void compilatorOutputsCorrect() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }",
+                "}"
+        );
+
+        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
+        assertTrue(consoleText.contains("[INFO] Compilation successful!"));
+
+        // Expected compiled JajaCode lines
+        String[] expected = new String[]{
+                "init",
+                "new(x,INT,var,0)",
+                "push(3)",
+                "push(4)",
+                "add",
+                "store(x)",
+                "push(1)",
+                "inc(x)",
+                "push(0)",
+                "swap",
+                "pop",
+                "pop",
+                "jcstop"
+        };
+
+        // Check number of lines
+        var compiledLines = controller.getCompiledCodeLines();
+        org.junit.jupiter.api.Assertions.assertEquals(expected.length, compiledLines.size());
+
+        // Check content of lines
+        for (int i = 0; i < expected.length; i++) {
+            org.junit.jupiter.api.Assertions.assertEquals(expected[i], compiledLines.get(i).getCode());
+        }
+    }
+
+    @Test
+    public void compilatorButtonOutputsCorrect() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -186,25 +226,31 @@ public class CompilationIntegrationTest extends ApplicationTest {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
 
-        // Then we must check that the output we got is the one we expect :
+        // Expected compiled JajaCode lines
+        String[] expected = new String[]{
+                "init",
+                "new(x,INT,var,0)",
+                "push(3)",
+                "push(4)",
+                "add",
+                "store(x)",
+                "push(1)",
+                "inc(x)",
+                "push(0)",
+                "swap",
+                "pop",
+                "pop",
+                "jcstop"
+        };
 
-        // Expected output :
-        init
-        new(x,INT,var,0)
-        push(3)
-        push(4)
-        add
-        store(x)
-        push(1)
-        inc(x)
-        push(0)
-        swap
-        pop
-        pop
-        jcstop
+        // Check number of lines
+        var compiledLines = controller.getCompiledCodeLines();
+        org.junit.jupiter.api.Assertions.assertEquals(expected.length, compiledLines.size());
+
+        // Check content of lines
+        for (int i = 0; i < expected.length; i++) {
+            org.junit.jupiter.api.Assertions.assertEquals(expected[i], compiledLines.get(i).getCode());
+        }
     }
-
-    // TODO : Add a test that does the same but with actual button push
-    */
 
 }
