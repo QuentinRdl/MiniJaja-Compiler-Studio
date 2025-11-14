@@ -71,7 +71,34 @@ public class CompilationIntegrationTest extends ApplicationTest {
     }
 
 
+    /**
+     * Just like createFileLoadCompileAndGetConsole but triggers the actual Compile button (#btnCompile)
+     *
+     * @param filename name of the file to create in the test temp directory
+     * @param content full file content
+     * @return the text currently present in the controller's output TextArea (console)
+     * @throws Exception Exception
+     */
+    private String createFileLoadCompileAndGetConsoleByButton(String filename, String content) throws Exception {
+        String[] lines;
+        if (content == null || content.isEmpty()){
+            lines = new String[0];
+        } else {
+            lines = content.split("\\R", -1);
+        }
 
+        File testFile = createTestFile(filename, lines);
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnCompile");
+
+        Thread.sleep(50);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        return controller.output.getText();
+    }
 
 
     @Test
@@ -88,5 +115,56 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
+    }
+
+
+    @Test
+    public void compilatorButtonWorks() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }",
+                "}"
+        );
+
+        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
+        assertTrue(consoleText.contains("[INFO] Compilation successful!"));
+    }
+
+
+    @Test
+    public void compilerDoesNotWork() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadCompileAndGetConsole("test.mjj", content);
+        assertTrue(consoleText.contains("[ERROR]"));
+        assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
+    }
+
+
+    @Test
+    public void compilerDoesNotWorkActualBtn() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", content);
+        assertTrue(consoleText.contains("[ERROR]"));
+        assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
     }
 }
