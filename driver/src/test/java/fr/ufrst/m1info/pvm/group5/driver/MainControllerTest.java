@@ -1285,7 +1285,81 @@ public class MainControllerTest extends ApplicationTest {
         assertEquals(1, count);
     }
 
+    @Test
+    public void testSaveShortcutCtrlS() throws Exception {
+        File testFile = createTestFile("shortcut_save.mjj", "int x = 10;", "x++");
 
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
 
+        assertEquals(testFile, controller.getCurrentFile());
 
+        interact(() -> controller.getCodeListView().scrollTo(0));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField firstField = (TextField) controller.getCodeListView().lookup(".code-field");
+        assertNotNull(firstField);
+
+        clickOn(firstField).eraseText(controller.getCodeLines().get(0).getCode().length()).write("boolean x = true;");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Press Ctrl+S
+        press(KeyCode.CONTROL);
+        type(KeyCode.S);
+        release(KeyCode.CONTROL);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(50);
+
+        List<String> savedLines = Files.readAllLines(testFile.toPath(), StandardCharsets.UTF_8);
+        assertEquals("boolean x = true;", savedLines.get(0));
+        assertEquals("x++", savedLines.get(1));
+    }
+
+    @Test
+    public void testRunShortcutCtrlR() throws Exception {
+        File testFile = createTestFile("shortcut_run.mjj", "class C { main { int x = 1; }}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(testFile, controller.getCurrentFile());
+
+        // Press Ctrl+R
+        press(KeyCode.CONTROL);
+        type(KeyCode.R);
+        release(KeyCode.CONTROL);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        String out = controller.output.getText();
+        assertFalse(out.contains("[ERROR] No code to interpret !"));
+        assertTrue(out.contains("[INFO]") || out.length() > 0);
+    }
+
+    @Test
+    public void testCompileShortcutCtrlKShowsCompiledTab() throws Exception {
+        File testFile = createTestFile("shortcut_compile.mjj", "class C {", "main {", "}", "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+
+        // Press Ctrl+K
+        press(KeyCode.CONTROL);
+        type(KeyCode.K);
+        release(KeyCode.CONTROL);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(150);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
+        assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
+    }
 }
