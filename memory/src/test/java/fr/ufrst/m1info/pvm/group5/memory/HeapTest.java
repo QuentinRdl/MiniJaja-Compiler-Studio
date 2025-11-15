@@ -1,9 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.Heap.Heap;
-import fr.ufrst.m1info.pvm.group5.memory.Heap.InsufficientMemoryException;
-import fr.ufrst.m1info.pvm.group5.memory.Heap.InvalidMemoryAddressException;
-import fr.ufrst.m1info.pvm.group5.memory.Heap.UnmappedMemoryAddressException;
+import fr.ufrst.m1info.pvm.group5.memory.Heap.*;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -243,6 +240,98 @@ public class HeapTest {
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.free(address);
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address, 11, new Value(5)));
+        assertThrows(InvalidMemoryAddressException.class, ()->heap.setValue(address, 11, new Value(5)));
+    }
+
+    // GetValue
+    @Test
+    @DisplayName("GetValue")
+    public void getValueTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        heap.setValue(address, 2, new Value(5));
+        assertEquals(5, heap.getValue(address,2).valueInt);
+    }
+
+    @Test
+    @DisplayName("GetValue - Bool")
+    public void getValueBooleanTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.BOOL);
+        heap.setValue(address, 2, new Value(true));
+        heap.setValue(address, 3, new Value(false));
+        assertTrue(heap.getValue(address,2).valueBool);
+        assertFalse(heap.getValue(address,3).valueBool);
+    }
+
+    @Test
+    @DisplayName("GetValue - Get in UnAllocated block")
+    public void GetValueGetInUnAllocatedBlockTest(){
+        Heap heap = new Heap(512);
+        assertThrows(InvalidMemoryAddressException.class, ()->heap.getValue(0,0));
+    }
+
+    @Test
+    @DisplayName("GetValue - InvalidAddress")
+    public void GetValueInvalidAddressTest(){
+        Heap heap = new Heap(512);
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(1,0));
+    }
+
+    @Test
+    @DisplayName("GetValue - Offset OOB")
+    public void GetValueOffsetOOBTest(){
+        Heap heap = new Heap(512);
+        var address = heap.allocate(12,DataType.INT);
+        heap.getValue(address, 11); // 11 is still in bounds
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(address,12));
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(address,13));
+    }
+
+    // Heap Defragmentation
+    @Test
+    @DisplayName("Defragment")
+    public void DefragmentTest(){
+        Heap heap = new Heap(512);
+        heap.allocate(150,DataType.INT);
+        int a2 = heap.allocate(150,DataType.INT);
+        heap.allocate(150,DataType.INT);
+        heap.free(a2);
+        assertEquals(212,heap.getAvailableSize());
+        heap.allocate(200,DataType.INT); // This instruction will call "defragment"
+        List<Heap.ElementRecord> result = List.of(
+                new Heap.ElementRecord(0, true, 150, false),
+                new Heap.ElementRecord(150, true, 150, false),
+                new Heap.ElementRecord(300, true, 200, false),
+                new Heap.ElementRecord(500, false, 12, true)
+        );
+        assertEquals(result,heap.getBlocksSnapshot());
+    }
+
+    @Test
+    @DisplayName("Defragment - Several free blocks")
+    public void DefragmentSeveralFreeTest(){
+        Heap heap = new Heap(1024);
+        int a1 = heap.allocate(128,DataType.INT);
+        heap.allocate(128,DataType.INT);
+        int a2 = heap.allocate(50,DataType.INT);
+        heap.allocate(18,DataType.INT);
+        int a3 = heap.allocate(300,DataType.INT);
+        heap.allocate(200,DataType.INT);
+        int a4 = heap.allocate(100,DataType.INT);
+        heap.allocate(100,DataType.INT);
+        heap.free(a1);
+        heap.free(a2);
+        heap.free(a3);
+        heap.free(a4);
+        heap.allocate(578, DataType.INT); // This instruction causes a defragmentation
+        List<Heap.ElementRecord> result = List.of(
+                new Heap.ElementRecord(0, true, 128, false),
+                new Heap.ElementRecord(128, true, 18, false),
+                new Heap.ElementRecord(146, true, 200, false),
+                new Heap.ElementRecord(346, true, 100, false),
+                new Heap.ElementRecord(446, true, 578, true)
+        );
+        assertEquals(result,heap.getBlocksSnapshot());
     }
 }
