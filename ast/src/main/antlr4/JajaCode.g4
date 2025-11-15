@@ -34,7 +34,8 @@ instr
     | 'div' {instrList.add(new DivInstruction());}{}
     | 'or' {instrList.add(new OrInstruction());}{}
     | 'and' {instrList.add(new AndInstruction());}{}
-    | 'sup' {instrList.add(new AndInstruction());}{}
+    | 'sup' {instrList.add(new SupInstruction());}{}
+    | 'cmp' {instrList.add(new CmpInstruction());}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
