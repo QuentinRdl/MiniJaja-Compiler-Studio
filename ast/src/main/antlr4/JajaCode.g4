@@ -31,6 +31,7 @@ instr
     | 'add' {instrList.add(new AddInstruction());}{}
     | 'mul' {instrList.add(new MulInstruction());}{}
     | 'sub' {instrList.add(new MulInstruction());}{}
+    | 'div' {instrList.add(new MulInstruction());}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
