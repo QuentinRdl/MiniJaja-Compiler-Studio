@@ -7,6 +7,8 @@ import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.ufrst.m1info.pvm.group5.ast.Instructions.PushInstruction;
+import fr.ufrst.m1info.pvm.group5.ast.Instructions.ReturnInstruction;
 import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Stack;
@@ -220,6 +222,14 @@ public class AstMemoryIT {
         assertThrows(Stack.StackIsEmptyException.class, m::pop);
     }
 
+    // Confirmation test
+    @Test
+    public void return_valid_address() throws Exception{
+        PushInstruction p = new PushInstruction(new Value(5));
+        p.execute(0, memory);
 
-
+        ReturnInstruction r = new ReturnInstruction();
+        int next = r.execute(1, memory);
+        assertEquals(5, next);
+    }
 }

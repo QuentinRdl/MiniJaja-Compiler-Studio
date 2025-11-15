@@ -2,16 +2,15 @@ package fr.ufrst.m1info.pvm.group5.ast.Instructions;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Stack_Object;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
-public class ReturnInstruction extends Instruction {
+public class WriteInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) throws Exception {
         Value top = (Value) m.pop();
-        if(top.Type != ValueType.INT){
-            throw new IllegalStateException("Return address must be int");
-        }
-        return top.valueInt;
+        m.write(top.toString());
+        return address + 1;
     }
 }
