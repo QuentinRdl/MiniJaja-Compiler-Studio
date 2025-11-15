@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.Instructions;
 
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -15,6 +16,10 @@ public class LoadInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.val(ident);
+        if (v.Type == ValueType.STRING){
+            throw new ASTInvalidTypeException("Type error: operation does not accept STRING type, but received " + v.Type + ".");
+
+        }
         m.push(".", v, ValueType.toDataType(v.Type), EntryKind.CONSTANT);
         return address+1;
     }
