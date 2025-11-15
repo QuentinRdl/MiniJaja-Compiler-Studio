@@ -37,9 +37,9 @@ public class Heap {
         return storage.clone();
     }
 
-    public record ElementRecord(int address, boolean isAllocated, int size, boolean isPointed){
+    public record ElementRecord(int address, boolean isAllocated, int size, boolean isPointed, DataType type) {
         public String toString(){
-            return (isPointed? "<" : "[") + "@" + address + ": " + size + " " + (isAllocated ? "Allocated" : "Free") + (isPointed? ">" : "]");
+            return (isPointed? "<" : "[") + "@" + address + ": " + size + " " + (isAllocated ? type + " Allocated" : "Free") + (isPointed? ">" : "]");
         }
 
         public boolean equals(Object o){
@@ -47,7 +47,7 @@ public class Heap {
         }
 
         public boolean equals(ElementRecord e){
-            return address == e.address && size == e.size && isAllocated == e.isAllocated && isPointed == e.isPointed;
+            return address == e.address && size == e.size && isAllocated == e.isAllocated && isPointed == e.isPointed && type == e.type;
         }
     }
 
@@ -56,7 +56,7 @@ public class Heap {
         HeapElement first = getFirstElement();
         HeapElement curr =  first;
         do{
-            elements.add(new ElementRecord(curr.internalAddress, !curr.isFree(), curr.size, curr == currentElement));
+            elements.add(new ElementRecord(curr.internalAddress, !curr.isFree(), curr.size, curr == currentElement, curr.getStorageType()));
             curr = curr.next;
         }while (curr != first);
         return elements;

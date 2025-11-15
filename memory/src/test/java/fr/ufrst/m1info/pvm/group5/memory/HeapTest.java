@@ -32,8 +32,8 @@ public class HeapTest {
         assertEquals(512, heap.getTotalSize());
         assertEquals(500, heap.getAvailableSize());
         List<Heap.ElementRecord> result = List.of(
-          new Heap.ElementRecord(0, true, 12, false),
-          new Heap.ElementRecord(12, false, 500, true)
+          new Heap.ElementRecord(0, true, 12, false, DataType.INT),
+          new Heap.ElementRecord(12, false, 500, true, DataType.UNKNOWN)
         );
         assertEquals(result, heap.getBlocksSnapshot());
     }
@@ -67,9 +67,9 @@ public class HeapTest {
         List<Heap.ElementRecord> result = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             heap.allocate(50,  DataType.INT);
-            result.add(new Heap.ElementRecord(i * 50,true,50,false));
+            result.add(new Heap.ElementRecord(i * 50,true,50,false, DataType.INT));
         }
-        result.add(new Heap.ElementRecord(500,false,12,true));
+        result.add(new Heap.ElementRecord(500,false,12,true, DataType.UNKNOWN));
         assertEquals(result,heap.getBlocksSnapshot());
     }
 
@@ -82,7 +82,7 @@ public class HeapTest {
         heap.free(address);
         assertEquals(512, heap.getTotalSize());
         assertEquals(512, heap.getAvailableSize());
-        assertEquals(new Heap.ElementRecord(0, false, 512, true), heap.getBlocksSnapshot().getFirst());
+        assertEquals(new Heap.ElementRecord(0, false, 512, true, DataType.UNKNOWN), heap.getBlocksSnapshot().getFirst());
     }
 
     @Test
@@ -162,8 +162,8 @@ public class HeapTest {
         heap.removeReference(address);
         assertEquals(500, heap.getAvailableSize());
         List<Heap.ElementRecord> result = List.of(
-                new Heap.ElementRecord(0, true, 12, false),
-                new Heap.ElementRecord(12, false, 500, true)
+                new Heap.ElementRecord(0, true, 12, false, DataType.INT),
+                new Heap.ElementRecord(12, false, 500, true, DataType.UNKNOWN)
         );
         assertEquals(result, heap.getBlocksSnapshot());
     }
@@ -300,10 +300,10 @@ public class HeapTest {
         assertEquals(212,heap.getAvailableSize());
         heap.allocate(200,DataType.INT); // This instruction causes a defragmentation
         List<Heap.ElementRecord> result = List.of(
-                new Heap.ElementRecord(0, true, 150, false),
-                new Heap.ElementRecord(150, true, 150, false),
-                new Heap.ElementRecord(300, true, 200, false),
-                new Heap.ElementRecord(500, false, 12, true)
+                new Heap.ElementRecord(0, true, 150, false, DataType.INT),
+                new Heap.ElementRecord(150, true, 150, false, DataType.INT),
+                new Heap.ElementRecord(300, true, 200, false, DataType.INT),
+                new Heap.ElementRecord(500, false, 12, true, DataType.UNKNOWN)
         );
         assertEquals(result,heap.getBlocksSnapshot());
     }
@@ -326,11 +326,11 @@ public class HeapTest {
         heap.free(a4);
         heap.allocate(578, DataType.INT); // This instruction causes a defragmentation
         List<Heap.ElementRecord> result = List.of(
-                new Heap.ElementRecord(0, true, 128, false),
-                new Heap.ElementRecord(128, true, 18, false),
-                new Heap.ElementRecord(146, true, 200, false),
-                new Heap.ElementRecord(346, true, 100, false),
-                new Heap.ElementRecord(446, true, 578, true)
+                new Heap.ElementRecord(0, true, 128, false, DataType.INT),
+                new Heap.ElementRecord(128, true, 18, false, DataType.INT),
+                new Heap.ElementRecord(146, true, 200, false, DataType.INT),
+                new Heap.ElementRecord(346, true, 100, false, DataType.INT),
+                new Heap.ElementRecord(446, true, 578, true, DataType.INT)
         );
         assertEquals(result,heap.getBlocksSnapshot());
     }
