@@ -298,7 +298,7 @@ public class HeapTest {
         heap.allocate(150,DataType.INT);
         heap.free(a2);
         assertEquals(212,heap.getAvailableSize());
-        heap.allocate(200,DataType.INT); // This instruction will call "defragment"
+        heap.allocate(200,DataType.INT); // This instruction causes a defragmentation
         List<Heap.ElementRecord> result = List.of(
                 new Heap.ElementRecord(0, true, 150, false),
                 new Heap.ElementRecord(150, true, 150, false),
@@ -333,5 +333,24 @@ public class HeapTest {
                 new Heap.ElementRecord(446, true, 578, true)
         );
         assertEquals(result,heap.getBlocksSnapshot());
+    }
+
+    // Sanitize
+    @Test
+    @DisplayName("Sanitize - Empty")
+    public void SanitizeTest(){
+        Heap heap = new Heap(512);
+        assertEquals(0, heap.sanitize().size());
+    }
+
+    @Test
+    @DisplayName("Sanitize - Allocated Blocks")
+    public void SanitizeAllocationTest(){
+        Heap heap = new Heap(512);
+        heap.allocate(12,DataType.INT);
+        int h1 = heap.allocate(12,DataType.INT);
+        heap.allocate(12,DataType.INT);
+        heap.free(h1);
+        assertEquals(2, heap.sanitize().size());
     }
 }
