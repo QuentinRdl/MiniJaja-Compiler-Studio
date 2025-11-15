@@ -14,6 +14,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -128,7 +132,47 @@ public class MainController {
         hideCompileTab();
         deactiveButtons();
         setupOutputContextMenu();
+        setupKeyboardShortcuts();
     }
+
+
+    /**
+     * Register keyboard shortcuts with the Scene so we can use
+     * shortcuts like Ctrl + S (save)
+     */
+    private void setupKeyboardShortcuts() {
+        Platform.runLater(() -> {
+            if (splitPane == null) return;
+            Scene scene = splitPane.getScene();
+            if (scene == null) return;
+
+            // Ctrl + S -> Save
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
+                    this::saveButton
+            );
+
+            // Ctrl + Shift + S -> Save As
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+                    this::saveAsButton
+            );
+
+            // Ctrl + R -> Run
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN),
+                    this::onRunClicked
+            );
+
+            // Ctrl + K -> Compile
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN),
+                    this::onCompileClicked
+            );
+
+        });
+    }
+
 
     /**
      * Called when the user clicks the "Open" button
@@ -414,7 +458,7 @@ public class MainController {
 
         codeLines.remove(index);
 
-        renumberAllLines();;
+        renumberAllLines();
 
         int targetIndex = Math.max(0, index - 1);
         Platform.runLater(() -> {
