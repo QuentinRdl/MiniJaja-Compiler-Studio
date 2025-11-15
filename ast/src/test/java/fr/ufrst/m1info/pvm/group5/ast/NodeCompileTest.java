@@ -510,5 +510,243 @@ public class NodeCompileTest {
         WhileNode tested = new WhileNode(condition,null);
         assertEquals(List.of("CMP","not","if(5)","goto(1)"),tested.compile(1));
     }
+    @Test
+    public void testParamNode_Compile() {
+        TypeNode type = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("x");
+        ParamNode param = new ParamNode(type, ident);
+
+        List<String> result = param.compile(0);
+        assertEquals(List.of("new(x," + type + ",param,0)"), result);
+    }
+    @Test
+    public void testParamNode_WithdrawCompile() {
+        TypeNode type = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("x");
+        ParamNode param = new ParamNode(type, ident);
+
+        assertEquals(List.of("pop(x)"), param.withdrawCompile(0));
+    }
+    @Test
+    @DisplayName("ParamListNode - compile() generates correct code")
+    public void testParamListNodeCompile() {
+        ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("a"));
+        ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("b"));
+        ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
+
+        List<String> expected = new ArrayList<>();
+        expected.addAll(p1.compile(0));
+        expected.addAll(p2.compile(p1.compile(0).size()));
+
+        assertEquals(expected, list.compile(0));
+    }
+    @Test
+    @DisplayName("ParamListNode - withdrawCompile() generates correct pop order")
+    public void testParamListNodeWithdrawCompile() {
+        ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("x"));
+        ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("flag"));
+        ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
+
+        List<String> result = list.withdrawCompile(0);
+
+        assertEquals(List.of("pop(flag)", "pop(x)"), result);
+    }
+    @Test
+    @DisplayName("ParamListNode - compile() with non-zero starting address")
+    public void testParamListNodeCompileWithOffset() {
+        ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("a"));
+        ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("b"));
+
+        ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
+
+        List<String> result = list.compile(10);
+
+        assertEquals(
+                List.of(
+                        "new(a," + p1.type + ",param,0)",
+                        "new(b," + p2.type + ",param,0)"
+                ),
+                result
+        );
+    }
+
+
+    @Test
+    public void testExpListNodeCompile() {
+        NumberNode n1 = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
+        NumberNode n2 = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
+        ExpListNode list = new ExpListNode(n1, new ExpListNode(n2, null));
+
+        assertEquals(List.of("push(5)", "push(10)"), list.compile(1));
+    }
+    @Test
+    public void testAppelINodeCompile() {
+        ASTNode arg = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(5)"));
+        ExpListNode argsList = new ExpListNode(arg, null);
+
+        IdentNode ident = new IdentNode("myMethod");
+        AppelINode appel = new AppelINode(ident, argsList);
+
+        List<String> expected = List.of("push(5)", "invoke(myMethod)");
+        assertEquals(expected, appel.compile(0));
+    }
+    @Test
+    public void testMethodeNodeCompile() {
+        TypeNode returnType = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("m");
+
+        ASTNode params = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("P1", "P2")
+        );
+
+        ASTNode vars = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("V1")
+        );
+
+        ASTNode instrs = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("I1", "I2")
+        );
+
+        MethodeNode method = new MethodeNode(returnType, ident, params, vars, instrs);
+
+        List<String> code = method.compile(1);
+        assertEquals("jncnil", code.get(0));
+        assertEquals("push(4)", code.get(1));
+        assertTrue(code.get(2).startsWith("new(m"));
+        assertTrue(code.contains("P1"));
+        assertTrue(code.contains("P2"));
+        assertTrue(code.contains("V1"));
+        assertTrue(code.contains("I1"));
+        assertTrue(code.contains("I2"));
+        assertEquals("swap", code.get(code.size() - 2));
+        assertEquals("return", code.get(code.size() - 1));
+    }
+    @Test
+    public void testMethodeNodeCompile_ParamsOnly() {
+        ASTNode params = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("P1", "P2")
+        );
+
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.INT),
+                new IdentNode("f"),
+                params,
+                null,
+                null
+        );
+
+        List<String> code = m.compile(10);
+
+        assertEquals(
+                List.of(
+                        "jncnil",
+                        "push(13)",
+                        "new(f, INT, meth, 0)",
+                        "goto(17)",
+                        "P1",
+                        "P2",
+                        "swap",
+                        "return"
+                ),
+                code
+        );
+    }
+
+    @Test
+    public void testMethodeNodeCompile_ParamsVars() {
+        ASTNode params = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("P1")
+        );
+
+        ASTNode vars = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("V1", "V2")
+        );
+
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.BOOL),
+                new IdentNode("f"),
+                params,
+                vars,
+                null
+        );
+
+        List<String> code = m.compile(0);
+
+        assertEquals(
+                List.of(
+                        "jncnil",
+                        "push(3)",
+                        "new(f, BOOL, meth, 0)",
+                        "goto(8)",
+                        "P1",
+                        "V1",
+                        "V2",
+                        "swap",
+                        "return"
+                ),
+                code
+        );
+    }
+
+    @Test
+    public void testMethodeNodeCompile_WithInstrs() {
+        ASTNode params = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("P1")
+        );
+
+        ASTNode vars = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("V1")
+        );
+
+        ASTNode instrs = ASTMocks.createNode(
+                ASTNode.class,
+                null,
+                i -> List.of("I1", "I2")
+        );
+
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.VOID),
+                new IdentNode("g"),
+                params,
+                vars,
+                instrs
+        );
+
+        List<String> code = m.compile(0);
+
+        assertEquals(
+                List.of(
+                        "jncnil",
+                        "push(3)",
+                        "new(g, VOID, meth, 0)",
+                        "goto(9)",
+                        "P1",
+                        "V1",
+                        "I1",
+                        "I2",
+                        "swap",
+                        "return"
+                ),
+                code
+        );
+    }
+
+
 
 }
