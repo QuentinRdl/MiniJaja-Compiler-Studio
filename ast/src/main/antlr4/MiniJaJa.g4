@@ -48,8 +48,28 @@ vexp returns [ASTNode node]
      ;
 
 methode returns [ASTNode node]
-    : . {$node = null;}
+    @init {
+        boolean entetesFlag = false;
+        boolean varsFlag = false;
+        boolean instrsFlag = false;
+    }
+    : typemeth ident '('
+        (entetes { entetesFlag = true; })?
+      ')' '{'
+        (vars { varsFlag = true; })?
+        (instrs { instrsFlag = true; })?
+      '}'
+      {
+          $node = new MethodeNode(
+              $typemeth.node,
+              $ident.node,
+              (entetesFlag)?$entetes.node:null,
+              (varsFlag)?$vars.node:null,
+              (instrsFlag)?$instrs.node:null
+          );
+      }
     ;
+
 
 methmain returns [MainNode node]
     @init{boolean varsflag = false; boolean instrsflag = false;}
@@ -61,14 +81,18 @@ methmain returns [MainNode node]
     '}' {$node = new MainNode((varsflag)?$vars.node:null, (instrsflag)?$instrs.node:null);}
     ;
 
-entetes returns [ASTNode node]
-    : . {$node = null;}
-    ;
-
 entete returns [ASTNode node]
-    : . {$node = null;}
+    : type ident
+      {
+          $node = new ParamNode($type.node, $ident.node);
+      }
     ;
 
+
+entetes returns [ParamListNode node]
+    : e1=entete {$node = new ParamListNode((ParamNode)$e1.node, null);}
+      ( ',' e2=entetes {$node = new ParamListNode((ParamNode)$e1.node, $e2.node);} )?
+    ;
 instrs returns [InstructionsNode node]
     : instr ';' {$node = new InstructionsNode($instr.node, null);}
     (instrs {$node = new InstructionsNode($instr.node, $instrs.node);}
@@ -102,12 +126,15 @@ instr returns [ASTNode node]
     ) ')'
     | 'writeln' '('
     ( ident {$node = new WriteLineNode($ident.node);}
+    | ident '(' listexp ')' {$node = new AppelINode($ident.node, $listexp.node);}
     | e=string {$node = new WriteLineNode($e.str);}
     ) ')'
     ;
 
 listexp returns [ASTNode node]
-    : . {$node = null;}
+    : exp {$node = $exp.node;}
+    (',' exp {$node = new ExpListNode($node, $exp.node);}
+    )*
     ;
 
 exp returns [ASTNode node]

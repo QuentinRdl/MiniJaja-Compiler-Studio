@@ -75,11 +75,11 @@ public class MemoryTest {
 
     @Test
     public void pushWithIllegalArg() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.push("x", 42, DataType.INT, null);
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.push("x", 42, null, EntryKind.VARIABLE);
         });
     }
@@ -138,11 +138,11 @@ public class MemoryTest {
 
     @Test
     public void withdrawDeclThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.withdrawDecl("");
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.withdrawDecl(null);
         });
     }
@@ -188,4 +188,64 @@ public class MemoryTest {
         assertThrows(RuntimeException.class, () -> memory.swap());
         verify(stackMocked, times(1)).swap();
     }
+    @Test
+    public void declMethodAddsSymbolTableEntry() {
+        // On déclare une méthode "foo" avec type de retour INT et params null (ASTNode par ex)
+        memory.declMethod("foo", DataType.INT, null);
+
+        ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
+        verify(symbolTableMocked, times(1)).addEntry(captor.capture());
+
+        SymbolTableEntry entry = captor.getValue();
+        assertEquals("foo", entry.getName());
+        assertEquals(EntryKind.METHOD, entry.getKind());
+        assertEquals(DataType.INT, entry.getDataType());
+        assertNull(entry.getReference());
+    }
+
+    @Test
+    public void getMethodReturnsMethodEntry() {
+        SymbolTableEntry methodEntry = mock(SymbolTableEntry.class);
+        when(methodEntry.getKind()).thenReturn(EntryKind.METHOD);
+        when(symbolTableMocked.lookup("foo")).thenReturn(methodEntry);
+
+        SymbolTableEntry result = memory.getMethod("foo");
+
+        assertEquals(methodEntry, result);
+        verify(symbolTableMocked, times(1)).lookup("foo");
+    }
+    @Test
+    public void withdrawMethodRemovesMethodEntryFromSymbolTable() {
+        // Arrange
+        SymbolTableEntry methodEntry = mock(SymbolTableEntry.class);
+        when(methodEntry.getKind()).thenReturn(EntryKind.METHOD);
+        when(symbolTableMocked.lookup("foo")).thenReturn(methodEntry);
+
+        // Act
+        memory.withdrawMethod("foo");
+
+        // Assert
+        verify(symbolTableMocked, times(1)).lookup("foo");
+        verify(symbolTableMocked, times(1)).removeEntry("foo");
+    }
+    @Test
+    public void withdrawMethodThrowsExceptionForInvalidIdentifier() {
+        assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod(""));
+        assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod(null));
+    }
+    @Test
+    public void withdrawMethodThrowsIfEntryNotFound() {
+        when(symbolTableMocked.lookup("foo")).thenReturn(null);
+        assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod("foo"));
+    }
+    @Test
+    public void withdrawMethodThrowsIfNotAMethod() {
+        SymbolTableEntry variableEntry = mock(SymbolTableEntry.class);
+        when(variableEntry.getKind()).thenReturn(EntryKind.VARIABLE);
+        when(symbolTableMocked.lookup("foo")).thenReturn(variableEntry);
+
+        assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod("foo"));
+    }
+
+
 }

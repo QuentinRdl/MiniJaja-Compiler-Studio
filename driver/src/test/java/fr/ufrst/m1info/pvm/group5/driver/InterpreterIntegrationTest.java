@@ -2,45 +2,26 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import org.junit.jupiter.api.Test;
 import org.testfx.util.WaitForAsyncUtils;
-import fr.ufrst.m1info.pvm.group5.driver.MainControllerTest;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.testfx.api.FxRobot;
 
 import static fr.ufrst.m1info.pvm.group5.driver.MainControllerTest.createTestFile;
-import static org.junit.jupiter.api.Assertions.*;
 
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.matcher.control.LabeledMatchers;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
-import static org.testfx.util.NodeQueryUtils.isVisible;
-import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
-import static org.testfx.matcher.base.NodeMatchers.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
@@ -65,7 +46,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWorks() throws Exception{
+    public void interpreterWorks() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -82,7 +63,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWorksActualBtn() throws Exception{
+    public void interpreterWorksActualBtn() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -99,7 +80,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterDoesNotWork() throws Exception{
+    public void interpreterDoesNotWork() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -114,8 +95,9 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
     }
 
+
     @Test
-    public void interpreterDoesNotWorkActualBtn() throws Exception{
+    public void interpreterDoesNotWorkActualBtn() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -136,16 +118,82 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsole("empty.mjj", content);
-        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
+        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]"));
     }
 
+
     @Test
-    public void interpreterEmptyFileByButton() throws Exception{
+    public void interpreterEmptyFileByButton() throws Exception {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("empty_btn.mjj", content);
-        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]") || consoleText.length() >= 0);
+        assertTrue(consoleText.contains("Interpret") || consoleText.contains("[INFO]"));
     }
+
+
+    @Test
+    public void interpreterWithNoExtension() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsoleByButton("test", content);
+        assertTrue(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
+    }
+
+
+    @Test
+    public void interpreterWithIncorrectExtension() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsoleByButton("test.java", content);
+        assertTrue(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
+    }
+
+
+    @Test
+    public void interpreterWithMjjExtension() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsoleByButton("test.mjj", content);
+        assertFalse(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
+    }
+
+
+    @Test
+    public void interpreterWithJccExtension() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "    int x;",
+                "    main {",
+                "        x = 3 + 4;",
+                "        x++;",
+                "    }"
+        );
+
+        String consoleText = createFileLoadRunAndGetConsoleByButton("test.jjc", content);
+        assertFalse(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
+    }
+
 
 
     /**
@@ -156,7 +204,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
      * @return the text currently present in the controller's output TextArea
      * @throws Exception if fails
      */
-    private String createFileLoadRunAndGetConsole(String filename, String content) throws Exception{
+    private String createFileLoadRunAndGetConsole(String filename, String content) throws Exception {
         String[] lines;
         if (content == null || content.isEmpty()){
             lines = new String[0];
@@ -187,9 +235,9 @@ public class InterpreterIntegrationTest extends ApplicationTest {
      * @param filename name of the file to create in the test temp directory
      * @param content full file content
      * @return the text currently present in the controller's output TextArea (console)
-     * @throws Exception
+     * @throws Exception Exception
      */
-    private String createFileLoadRunAndGetConsoleByButton(String filename, String content) throws Exception{
+    private String createFileLoadRunAndGetConsoleByButton(String filename, String content) throws Exception {
         String[] lines;
         if (content == null || content.isEmpty()){
             lines = new String[0];

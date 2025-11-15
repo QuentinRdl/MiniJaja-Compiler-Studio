@@ -56,10 +56,10 @@ public class WriteLineNode extends ASTNode{
             try {
                 Value v = (Value) m.val(ident.identifier);
                 if(v == null)
-                    throw new ASTInvalidDynamicTypeException("Variable " + ident.identifier +" is not defined");
+                    throw new ASTInvalidMemoryException("Variable " + ident.identifier +" is not defined");
             }
             catch (Exception e) {
-                throw new ASTInvalidDynamicTypeException("Variable " + ident.identifier +" is not defined");
+                throw new ASTInvalidMemoryException("Variable " + ident.identifier +" is not defined");
             }
         }
         return "void";

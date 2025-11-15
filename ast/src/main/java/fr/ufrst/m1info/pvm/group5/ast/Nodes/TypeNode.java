@@ -12,4 +12,9 @@ public class TypeNode {
     public String toString(){
         return valueType.toString();
     }
+
+    public ValueType getValueType() {
+        return valueType;
+    }
+
 }

@@ -1,7 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.*;
 
 import java.io.Serial;
 import java.util.ArrayDeque;
@@ -19,7 +18,7 @@ public class Stack {
     /**
      * Exception thrown when attempting to pop a scope from the stack when no scopes exist.
      */
-    public static class NoScopeException extends Exception {
+    public static class NoScopeException extends RuntimeException{
         public NoScopeException(String msg) {
             super(msg);
         }
@@ -28,7 +27,7 @@ public class Stack {
     /**
      * Exception thrown when attempting to pop or access an element from the stack when it is empty.
      */
-    public static class StackIsEmptyException extends Exception {
+    public static class StackIsEmptyException extends RuntimeException {
         public StackIsEmptyException(String msg) {
             super(msg);
         }
@@ -62,7 +61,7 @@ public class Stack {
      * Exception thrown when attempting to create or set a variable with an invalid (null/empty) name.
      * This is unchecked so existing callers don't need to change their signatures.
      */
-    public static class InvalidNameException extends IllegalArgumentException {
+    public static class InvalidNameException extends RuntimeException{
         public InvalidNameException(String msg) {
             super(msg);
         }
@@ -361,39 +360,39 @@ public class Stack {
             return;
         }
         if (value == null) {
-            throw new IllegalArgumentException("Called with null value for type " + type);
+            throw new Memory.MemoryIllegalArgException("Called with null value for type " + type);
         }
 
         switch (type) {
             case BOOL:
                 if (!(value instanceof Boolean)) {
-                    throw new IllegalArgumentException("Called with BOOL DataType, but object is of type " + value.getClass());
+                    throw new Memory.MemoryIllegalArgException("Called with BOOL DataType, but object is of type " + value.getClass());
                 }
                 break;
             case INT:
                 if (!(value instanceof Integer)) {
-                    throw new IllegalArgumentException("Called with INT DataType, but object is of type " + value.getClass());
+                    throw new Memory.MemoryIllegalArgException("Called with INT DataType, but object is of type " + value.getClass());
                 }
                 break;
             case FLOAT:
                 if (!(value instanceof Float)) {
-                    throw new IllegalArgumentException("Called with FLOAT DataType, but object is of type " + value.getClass());
+                    throw new Memory.MemoryIllegalArgException("Called with FLOAT DataType, but object is of type " + value.getClass());
                 }
                 break;
             case DOUBLE:
                 if (!(value instanceof Double)) {
-                    throw new IllegalArgumentException("Called with DOUBLE DataType, but object is of type " + value.getClass());
+                    throw new Memory.MemoryIllegalArgException("Called with DOUBLE DataType, but object is of type " + value.getClass());
                 }
                 break;
             case STRING:
                 if (!(value instanceof String)) {
-                    throw new IllegalArgumentException("Called with STRING DataType, but object is of type " + value.getClass());
+                    throw new Memory.MemoryIllegalArgException("Called with STRING DataType, but object is of type " + value.getClass());
                 }
                 break;
             case VOID:
             case UNKNOWN:
             default:
-                throw new IllegalArgumentException("Called with unvalid argument : " + value.getClass());
+                throw new Memory.MemoryIllegalArgException("Called with unvalid argument : " + value.getClass());
         }
     }
 
@@ -407,14 +406,14 @@ public class Stack {
     public boolean swap(Stack_Object obj1, Stack_Object obj2) {
         // Validate arguments
         if (obj1 == null || obj2 == null) {
-            throw new IllegalArgumentException("Swap requires non-null Stack_Object arguments");
+            throw new Memory.MemoryIllegalArgException("Swap requires non-null Stack_Object arguments");
         }
 
         String id1 = obj1.getName();
         String id2 = obj2.getName();
 
         if (id1 == null || id2 == null) {
-            throw new IllegalArgumentException("Swap requires Stack_Object instances with non-null names");
+            throw new Memory.MemoryIllegalArgException("Swap requires Stack_Object instances with non-null names");
         }
 
         // If identifiers are equal, nothing to do
@@ -459,7 +458,7 @@ public class Stack {
     public void swap() {
         // private Deque<Stack_Object> stack_content;
         if(stack_content.size() < 2) {
-            throw new IllegalStateException("Not enough elements to swap (need at least 2)");
+            throw new Memory.MemoryIllegalArgException("Not enough elements to swap (need at least 2)");
         }
 
         // Pop top two elements and push them back in reversed order
@@ -509,19 +508,43 @@ public class Stack {
     public boolean initializeConst(Stack_Object obj, Object value) {
         if(obj == null || value == null) return false;
         if(obj.getEntryKind() != EntryKind.CONSTANT) {
-            throw new IllegalArgumentException("initializeConst must be called with a const !");
+            throw new Memory.MemoryIllegalArgException("initializeConst must be called with a const !");
         }
 
         DataType dt = getDataTypeFromGenericObject(obj);
         if(dt != obj.getDataType()) {
-            throw new IllegalArgumentException("Called intializeConst with incorrect data type");
+            throw new Memory.MemoryIllegalArgException("Called intializeConst with incorrect data type");
         }
 
         if(obj.getValue() != null) {
-            throw new IllegalStateException("Called intializeConst with a const that is already affected");
+            throw new Memory.MemoryIllegalArgException("Called intializeConst with a const that is already affected");
         }
 
         obj.setValue(value);
         return true;
     }
+    /**
+     * Returns the depth of the current scope.
+     */
+    public int getCurrentScope() {
+        return scopeDepth;
+    }
+
+
+    public void setMethod(String identifier, Object params, DataType returnType) {
+        if (identifier == null || identifier.isEmpty()) {
+            throw new IllegalArgumentException("Cannot define method with null or empty identifier");
+        }
+
+        Stack_Object obj = new Stack_Object(
+                identifier,
+                params,
+                this.getCurrentScope(),
+                EntryKind.METHOD,
+                returnType
+        );
+        stack_content.push(obj);
+    }
+
+
 }
