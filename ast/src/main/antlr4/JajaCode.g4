@@ -30,8 +30,8 @@ instr
     | 'store' '(' string ')' {instrList.add(new StoreInstruction($string.str));}
     | 'add' {instrList.add(new AddInstruction());}{}
     | 'mul' {instrList.add(new MulInstruction());}{}
-    | 'sub' {instrList.add(new MulInstruction());}{}
-    | 'div' {instrList.add(new MulInstruction());}{}
+    | 'sub' {instrList.add(new SubInstruction());}{}
+    | 'div' {instrList.add(new DivInstruction());}{}
     | 'or' {instrList.add(new OrInstruction());}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
