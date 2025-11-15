@@ -189,7 +189,7 @@ public class Heap {
      */
     public Value getValue(int address, int offset) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
-        if(!target.contains(address + offset))
+        if(offset >= target.size())
             throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
         byte val = storage[target.internalAddress + offset];
         return switch (target.getStorageType()){
@@ -208,8 +208,10 @@ public class Heap {
      */
     public void setValue(int address, int offset, Value value) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
-        if(!target.contains(address + offset))
+        if(offset >= target.size())
             throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
+        if(target.isFree())
+            throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
         storage[target.internalAddress + offset] = switch (target.getStorageType()){
             case INT -> (byte) value.valueInt;
             case BOOL -> (byte)((value.valueBool)? 1 : 0);

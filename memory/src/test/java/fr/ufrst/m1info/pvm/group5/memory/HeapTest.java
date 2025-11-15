@@ -181,4 +181,68 @@ public class HeapTest {
         assertThrows(InvalidMemoryAddressException.class, ()->heap.removeReference(address));
     }
 
+    // setValue
+    @Test
+    @DisplayName("SetValue")
+    public void SetValueTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        heap.setValue(address, 2, new Value(5));
+        assertEquals(5, heap.getStorageSnapshot()[2]);
+    }
+
+    @Test
+    @DisplayName("SetValue - boolean")
+    public void SetValueBooleanTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.BOOL);
+        heap.setValue(address, 2, new Value(true));
+        assertEquals(1, heap.getStorageSnapshot()[2]);
+        heap.setValue(address, 3, new Value(false));
+        assertEquals(0, heap.getStorageSnapshot()[3]);
+    }
+
+    @Test
+    @DisplayName("SetValue - Middle of the array")
+    public void SetValueMiddleTest(){
+        Heap heap = new Heap(512);
+        heap.allocate(250, DataType.INT);
+        var address = heap.allocate(12, DataType.INT);
+        heap.allocate(249,DataType.INT);
+        heap.setValue(address, 7, new Value(5));
+        assertEquals(5, heap.getStorageSnapshot()[257]);
+    }
+
+    @Test
+    @DisplayName("SetValue - Set in UnAllocated block")
+    public void SetValueSetInUnAllocatedBlockTest(){
+        Heap heap = new Heap(512);
+        assertThrows(InvalidMemoryAddressException.class, ()->heap.setValue(0,0, new Value(5)));
+    }
+
+    @Test
+    @DisplayName("SetValue - InvalidAddress")
+    public void SetValueInvalidAddressTest(){
+        Heap heap = new Heap(512);
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(1,0, new Value(5)));
+    }
+
+    @Test
+    @DisplayName("SetValue - Offset OOB")
+    public void SetValueOffsetOOBTest(){
+        Heap heap = new Heap(512);
+        var address = heap.allocate(12,DataType.INT);
+        heap.setValue(address, 11, new Value(5)); // 11 is still in bounds
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address,12, new Value(5)));
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address,13, new Value(5)));
+    }
+
+    @Test
+    @DisplayName("SetValue - AfterFree")
+    public void SetValueAfterFreeTest(){
+        Heap heap = new Heap(512);
+        var address = heap.allocate(12,DataType.INT);
+        heap.free(address);
+        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address, 11, new Value(5)));
+    }
 }
