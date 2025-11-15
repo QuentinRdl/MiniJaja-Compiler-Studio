@@ -1337,7 +1337,7 @@ public class MainControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         String out = controller.output.getText();
-        assertTrue(out.contains("INFO] Interpretation success !"));
+        assertTrue(out.contains("[INFO] Interpretation successfully completed"));
     }
 
     @Test
