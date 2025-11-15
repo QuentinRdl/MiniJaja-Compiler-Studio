@@ -30,6 +30,7 @@ instr
     | 'store' '(' string ')' {instrList.add(new StoreInstruction($string.str));}
     | 'add' {instrList.add(new AddInstruction());}{}
     | 'mul' {instrList.add(new MulInstruction());}{}
+    | 'sub' {instrList.add(new MulInstruction());}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
