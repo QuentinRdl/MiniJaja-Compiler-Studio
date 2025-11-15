@@ -9,16 +9,58 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of the heap
+ * Implementation of the heap.
+ * Usage :
+ *  - Declare an array (ex : int array;) :
+ *      1. Allocate a block using [allocate] with the desired type. The result of the method will give you
+ *         an address to access the block
+ *      2. Add a reference to the block using [addReference].
+ *  - Synonymy (ex : int array2 = array):
+ *      1. Add a reference to the block used by the synonymy using [addReference].
+ *  - Changing the value of an array (ex : array2 = otherArray) :
+ *      1. Remove a reference from the previous value of array2 using [removeReference].
+ *      2. Change the address pointed by array2
+ *      3. Add a reference to otherArray using [addReference]
+ *  - "Freeing" an array :
+ *      1. Remove a reference to the array using [removeReference]
+ *  - Check the content of the heap :
+ *      1. Call [getStorageSnapshot] to see the full content of the memory.
+ *      2. Call [getBlocksSnapshot] to see the internal handling of the memory.
+ *  - Ensure everything in the heap has been freed at the end of my program :
+ *      1. Call [sanitize] to get an array of all errors
+ *      2. If the array is empty, no allocated block have not been freed
+ *      3. Otherwise, the content will tell you what blocks have been forgotten, and at which address
  */
 public class Heap {
+    /**
+     * Total size of the heap, defined at creation
+     */
     final int totalSize;
-    int availableSize;
-    HeapElement currentElement;
-    byte[] storage;
-    public Map<Integer, HeapElement> externalAddresses;
+    /**
+     * Memory space currently available in the heap
+     */
+    private int availableSize;
+    /**
+     * Element currently pointed.
+     * Its purpose is to make looking for an empty block for an allocation easier.
+     * It always points to an empty element, unless the heap is full.
+     */
+    private HeapElement currentElement;
+    /**
+     * Array used as a storage for the array.
+     */
+    private final byte[] storage;
+    /**
+     * Map allowing to transcribe external addresses to blocks.
+     */
+    private final Map<Integer, HeapElement> externalAddresses;
 
     // Getters for the content of the heap
+
+    /**
+     * Internal function returning the element with the internal address 0
+     * @return HeapElement with internal address 0
+     */
     private HeapElement getFirstElement(){
         HeapElement result = currentElement;
         while(result.internalAddress != 0) result =  result.next;
@@ -33,10 +75,22 @@ public class Heap {
         return availableSize;
     }
 
+    /**
+     * Returns an array containing a snapshot of the storage at the current instant
+     * @return Array equal to the current memory of the heap
+     */
     public byte[] getStorageSnapshot(){
         return storage.clone();
     }
 
+    /**
+     * Class allowing to describe the state of a Heap element
+     * @param address internal address of the element
+     * @param isAllocated true if the element is currently allocated, false otherwise
+     * @param size size of the block
+     * @param isPointed true if the heap is currently pointing at the element. Only one is pointed simultaneously
+     * @param type type of value stored in the heap at the address corresponding to the block
+     */
     public record ElementRecord(int address, boolean isAllocated, int size, boolean isPointed, DataType type) {
         public String toString(){
             return (isPointed? "<" : "[") + "@" + address + ": " + size + " " + (isAllocated ? type + " Allocated" : "Free") + (isPointed? ">" : "]");
@@ -51,6 +105,10 @@ public class Heap {
         }
     }
 
+    /**
+     * Gets a snapshot of the current internal state of the heap, in the form of a linked list of records
+     * @return snapshot of the current internal state of the heap
+     */
     public List<ElementRecord> getBlocksSnapshot(){
         List<ElementRecord> elements = new ArrayList<>();
         HeapElement first = getFirstElement();
@@ -93,7 +151,11 @@ public class Heap {
     }
 
     /**
-     * Allocate a space in the heap
+     * Allocate a memory block in the heap.
+     * If there is not enough memory available, the allocation will fail.
+     * Principle : Iterate on the heap from the current pointed element, until a block of the right size is found.
+     * If a complete loop is done, it means the heap is too fragmented to make the allocation, despite the space for it being available.
+     * In that case, the heap is defragmented, and the process is repeated.
      * @param size size of the space to allocate
      * @param type type of value stored in the memory space
      * @return address of the created memory space
@@ -129,6 +191,13 @@ public class Heap {
         return allocation.externalAddress;
     }
 
+    /**
+     * Utility function.
+     * Check if the given external address is valid, and return the corresponding element
+     * @param externalAddress external address of a heap element
+     * @return heap element corresponding to the address
+     * @throws InvalidMemoryAddressException throws an exception if no element matches the address
+     */
     private HeapElement checkAddress(int externalAddress) throws InvalidMemoryAddressException{
         HeapElement target = externalAddresses.get(externalAddress);
         if(target == null)
@@ -150,6 +219,8 @@ public class Heap {
 
     /**
      * Remove a memory space from the heap
+     * /!\ This method should only be called for direct memory management. /!\
+     * /!\ Do not use this if you want to use the garbage collector /!\
      * @param address address to the element in the heap
      * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
@@ -183,7 +254,8 @@ public class Heap {
     }
 
     /**
-     * Notify the garbage collector a reference has been removed from a memory space
+     * Notify the garbage collector a reference has been removed from a memory space.
+     * If the memory has no reference pointing to it, it will be freed.
      * @param address address of an element in the heap
      * @throws InvalidMemoryAddressException throws an exception if the address is not referenced in the heap
      */
