@@ -246,7 +246,7 @@ public class Heap {
     private void copy(HeapElement origin, int target){
         int originAddress = origin.internalAddress;
         for(int i = 0; i < origin.size(); i++){
-            storage[originAddress + i] =  storage[target + i];
+            storage[target + i] =  storage[originAddress + i];
         }
     }
 

@@ -309,6 +309,38 @@ public class HeapTest {
     }
 
     @Test
+    @DisplayName("Defragment - With values")
+    public void DefragmentMovedTest(){
+        Heap heap = new Heap(512);
+        heap.allocate(150,DataType.INT);
+        int a2 = heap.allocate(150,DataType.INT);
+        heap.allocate(150,DataType.INT);
+
+        // Setting values
+        heap.setValue(1, 0, new Value(1));
+        heap.setValue(1, 149, new Value(2));
+        heap.setValue(3, 0, new Value(3));
+        heap.setValue(3, 149, new Value(4));
+
+        heap.free(a2);
+        assertEquals(212,heap.getAvailableSize());
+        heap.allocate(200,DataType.INT); // This instruction causes a defragmentation
+
+        // Checking the values with getValue
+        assertEquals(1,heap.getValue(1, 0).valueInt);
+        assertEquals(2,heap.getValue(1, 149).valueInt);
+        assertEquals(3,heap.getValue(3, 0).valueInt);
+        assertEquals(4,heap.getValue(3, 149).valueInt);
+
+        // Checking the values with direct access
+        var array = heap.getStorageSnapshot();
+        assertEquals(1, array[0]);
+        assertEquals(2, array[149]);
+        assertEquals(3, array[150]);
+        assertEquals(4, array[299]);
+    }
+
+    @Test
     @DisplayName("Defragment - Several free blocks")
     public void DefragmentSeveralFreeTest(){
         Heap heap = new Heap(1024);
