@@ -1308,6 +1308,9 @@ public class MainControllerTest extends ApplicationTest {
 
         interact(() -> fake.onRunClicked());
 
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(50);
+
         assertTrue(fake.output.getText().contains("[INTERNAL ERROR] current file is marked as jjc and mjj"));
     }
 
