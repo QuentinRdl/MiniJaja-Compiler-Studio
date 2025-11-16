@@ -14,9 +14,9 @@ import java.util.List;
 List<Instruction> instrList = new ArrayList();
 }
 
-eval returns [List<Instruction> instrs]
-    @init{$instrs = instrList;}
-    : instr
+eval returns [List<Instruction> instructions]
+    @init{$instructions = instrList;}
+    : (instr)+
     ;
 
 instr
@@ -26,6 +26,19 @@ instr
     | 'return' {instrList.add(new ReturnInstruction());}
     | 'goto' '(' n=NOMBRE ')' {instrList.add(new GotoInstruction(Integer.parseInt($n.text)));}
     | 'nop' {instrList.add(new NopInstruction());}
+    | 'load' '(' i=IDENTIFIER ')' {instrList.add(new LoadInstruction($i.text));}
+    | 'store' '(' i=IDENTIFIER ')' {instrList.add(new StoreInstruction($i.text));}
+    | 'add' {instrList.add(new AddInstruction());}
+    | 'mul' {instrList.add(new MulInstruction());}
+    | 'sub' {instrList.add(new SubInstruction());}
+    | 'div' {instrList.add(new DivInstruction());}
+    | 'or' {instrList.add(new OrInstruction());}
+    | 'and' {instrList.add(new AndInstruction());}
+    | 'sup' {instrList.add(new SupInstruction());}
+    | 'cmp' {instrList.add(new CmpInstruction());}
+    | 'neg' {instrList.add(new NegInstruction());}
+    | 'not' {instrList.add(new NotInstruction());}
+    | 'inc' '(' i=IDENTIFIER ')' {instrList.add(new IncInstruction($i.text));}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
@@ -35,7 +48,22 @@ instr
     ;
 
 valeur returns [Value v]
-    :
+    : nombre
+    | string
+    | boolean
+    ;
+
+nombre returns [int i]
+    : n=NOMBRE {$i = Integer.parseInt($n.text);}
+    ;
+
+string returns [String str]
+    : t=STRING {$str = $t.text.substring(1, $t.text.length() - 1);}
+    ;
+
+boolean returns [boolean b]
+    : 'true' {$b = true;}
+    | 'false' {$b = false;}
     ;
 
 type returns [DataType dt]
@@ -54,4 +82,12 @@ IDENTIFIER
 
 NOMBRE
     : ('0'..'9')+
+    ;
+
+STRING
+    : '"' .+? '"'
+    ;
+
+WS
+    :   (' ' | '\t' | '\r'| '\n') -> skip
     ;

@@ -33,7 +33,7 @@ public class Jajacode {
         parser.removeErrorListeners();
         parser.addErrorListener(ExceptionErrorListener.INSTANCE);
 
-        return parser.eval().instrs;
+        return parser.eval().instructions;
     }
 
     /**

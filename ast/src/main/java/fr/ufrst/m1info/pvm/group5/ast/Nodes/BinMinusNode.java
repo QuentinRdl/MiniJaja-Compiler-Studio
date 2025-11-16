@@ -10,7 +10,7 @@ public class BinMinusNode extends BinaryOperator {
 
     @Override
     protected String getCompileName() {
-        return "minus";
+        return "sub";
     }
 
     @Override

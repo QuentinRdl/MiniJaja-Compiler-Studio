@@ -152,34 +152,81 @@ public class InstructionsUnitTest {
 
     //push
     @Test
-    public void push_simple(){
+    public void push_simple_int(){
         PushInstruction p = new PushInstruction(new Value(5));
+
         var res = p.execute(0,memory);
+
         assertEquals(1, res);
         assertEquals(5, storage.pop().second().valueInt);
+    }
+
+    @Test
+    public void push_simple_bool(){
+        PushInstruction p = new PushInstruction(new Value(true));
+
+        var res = p.execute(0,memory);
+
+        assertEquals(1, res);
+        assertEquals(true, storage.pop().second().valueBool);
+    }
+
+    @Test
+    public void push_simple_string(){
+        PushInstruction p = new PushInstruction(new Value("test"));
+
+        var res = p.execute(0,memory);
+
+        assertEquals(1, res);
+        assertEquals("test", storage.pop().second().valueString);
     }
 
     @Test
     public void push_many(){
         PushInstruction p = new PushInstruction(new Value(5));
         PushInstruction z = new PushInstruction(new Value(0));
+
         p.execute(0,memory);
         p.execute(1,memory);
         var res = z.execute(2, memory);
+
         assertEquals(3, res);
         assertEquals(0, storage.pop().second().valueInt);
     }
 
     //load
     @Test
-    public void load_simple(){
+    public void load_simple_int(){
         storage.add(new ASTMocks.Pair<>("test",new Value(5)));
         LoadInstruction l = new LoadInstruction("test");
+
         var res = l.execute(0,memory);
+
         ASTMocks.Pair<String, Value> top = storage.pop();
         assertEquals(5, top.second().valueInt);
         assertEquals(".", top.first());
         assertEquals(1, res);
+    }
+
+    @Test
+    public void load_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("test",new Value(true)));
+        LoadInstruction l = new LoadInstruction("test");
+
+        var res = l.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(true, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void load_simple_string(){
+        storage.add(new ASTMocks.Pair<>("test",new Value("t")));
+        LoadInstruction l = new LoadInstruction("test");
+
+        assertThrows(ASTInvalidTypeException.class, () -> l.execute(0, memory));
     }
 
     @Test
@@ -197,13 +244,438 @@ public class InstructionsUnitTest {
         assertEquals(1, res);
     }
 
+    //store
     @Test
-    public void load_notExist(){
-        storage.add(new ASTMocks.Pair<>("test1",new Value(1)));
+    public void store_simple_int(){
+        storage.add(new ASTMocks.Pair<>("test",new Value(1)));
+        storage.add(new ASTMocks.Pair<>(".",new Value(5)));
 
-        LoadInstruction l = new LoadInstruction("test3");
-        assertThrows(Exception.class, () -> l.execute(0,memory));
+        StoreInstruction s = new StoreInstruction("test");
+        var res = s.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(5, top.second().valueInt);
+        assertEquals("test", top.first());
+        assertEquals(1, res);
     }
+
+    @Test
+    public void store_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("test",new Value(true)));
+        storage.add(new ASTMocks.Pair<>(".",new Value(false)));
+
+        StoreInstruction s = new StoreInstruction("test");
+        var res = s.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(false, top.second().valueBool);
+        assertEquals("test", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void store_simple_string(){
+        storage.add(new ASTMocks.Pair<>("test",new Value("t1")));
+        storage.add(new ASTMocks.Pair<>(".",new Value("t2")));
+
+        StoreInstruction s = new StoreInstruction("test");
+
+        assertThrows(ASTInvalidTypeException.class, () -> s.execute(0, memory));
+    }
+
+    //add
+    @Test
+    public void add_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(4)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(5)));
+
+        AddInstruction a = new AddInstruction();
+        var res = a.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(9, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void add_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        AddInstruction a = new AddInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> a.execute(0, memory));
+    }
+
+    @Test
+    public void add_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        AddInstruction a = new AddInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> a.execute(0, memory));
+    }
+
+    //mul
+    @Test
+    public void mul_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(3)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(5)));
+
+        MulInstruction m = new MulInstruction();
+        var res = m.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(15, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void mul_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        MulInstruction m = new MulInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> m.execute(0, memory));
+    }
+
+    @Test
+    public void mul_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        MulInstruction m = new MulInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> m.execute(0, memory));
+    }
+
+
+    //sub
+    @Test
+    public void sub_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(10)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(5)));
+
+        SubInstruction s = new SubInstruction();
+        var res = s.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(5, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void sub_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        SubInstruction s = new SubInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> s.execute(0, memory));
+    }
+
+    @Test
+    public void sub_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        SubInstruction s = new SubInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> s.execute(0, memory));
+    }
+
+    //div
+    @Test
+    public void div_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(10)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(5)));
+
+        DivInstruction d = new DivInstruction();
+        var res = d.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(2, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void div_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        DivInstruction d = new DivInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> d.execute(0, memory));
+    }
+
+    @Test
+    public void div_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        DivInstruction d = new DivInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> d.execute(0, memory));
+    }
+
+    @Test
+    public void div_divisionByZero(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(10)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(0)));
+
+        DivInstruction d = new DivInstruction();
+
+        assertThrows(ASTInvalidOperationException.class, () -> d.execute(0, memory));
+    }
+
+    //or
+    @Test
+    public void or_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        OrInstruction o = new OrInstruction();
+        var res = o.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(true, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void or_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        OrInstruction o = new OrInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> o.execute(0, memory));
+    }
+
+    @Test
+    public void or_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        OrInstruction o = new OrInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> o.execute(0, memory));
+    }
+
+    //and
+    @Test
+    public void and_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(false)));
+
+        AndInstruction a = new AndInstruction();
+        var res = a.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(false, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void and_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        AndInstruction a = new AndInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> a.execute(0, memory));
+    }
+
+    @Test
+    public void and_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        AndInstruction a = new AndInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> a.execute(0, memory));
+    }
+
+    //neg
+    @Test
+    public void neg_simple_int(){
+        storage.add(new ASTMocks.Pair<>("op",new Value(2)));
+
+        NegInstruction n = new NegInstruction();
+        var res = n.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(-2, top.second().valueInt);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void neg_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("op",new Value(true)));
+
+        NegInstruction n = new NegInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> n.execute(0, memory));
+    }
+
+    @Test
+    public void neg_simple_string(){
+        storage.add(new ASTMocks.Pair<>("op",new Value("t")));
+
+        NegInstruction n = new NegInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> n.execute(0, memory));
+    }
+
+    //not
+    @Test
+    public void not_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("op",new Value(true)));
+
+        NotInstruction n = new NotInstruction();
+        var res = n.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(false, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void not_simple_int(){
+        storage.add(new ASTMocks.Pair<>("op",new Value(1)));
+
+        NotInstruction n = new NotInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> n.execute(0, memory));
+    }
+
+    @Test
+    public void not_simple_string(){
+        storage.add(new ASTMocks.Pair<>("op",new Value("t")));
+
+        NotInstruction n = new NotInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> n.execute(0, memory));
+    }
+
+    //cmp
+    @Test
+    public void cmp_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        CmpInstruction c = new CmpInstruction();
+        var res = c.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(true, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void cmp_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(1)));
+
+        CmpInstruction c = new CmpInstruction();
+        var res = c.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(true, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void cmp_simple_string_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(true)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        CmpInstruction c = new CmpInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> c.execute(0, memory));
+    }
+
+    @Test
+    public void cmp_simple_string_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        CmpInstruction c = new CmpInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> c.execute(0, memory));
+    }
+
+    @Test
+    public void cmp_simple_bool_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        CmpInstruction c = new CmpInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> c.execute(0, memory));
+    }
+
+    //sup
+    @Test
+    public void sup_simple_int(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(5)));
+
+        SupInstruction s = new SupInstruction();
+        var res = s.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(false, top.second().valueBool);
+        assertEquals(".", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void sup_simple_bool(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value(true)));
+
+        SupInstruction s = new SupInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> s.execute(0, memory));
+    }
+
+    @Test
+    public void sup_simple_string(){
+        storage.add(new ASTMocks.Pair<>("opl",new Value(1)));
+        storage.add(new ASTMocks.Pair<>("opr",new Value("t")));
+
+        SupInstruction s = new SupInstruction();
+        assertThrows(ASTInvalidTypeException.class, () -> s.execute(0, memory));
+    }
+
+    //inc
+    @Test
+    public void inc_simple_int(){
+        storage.push(new ASTMocks.Pair<>("test",new Value(10)));
+        storage.push(new ASTMocks.Pair<>(".",new Value(5)));
+
+        IncInstruction i = new IncInstruction("test");
+        var res = i.execute(0,memory);
+
+        ASTMocks.Pair<String, Value> top = storage.pop();
+        assertEquals(15, top.second().valueInt);
+        assertEquals("test", top.first());
+        assertEquals(1, res);
+    }
+
+    @Test
+    public void inc_simple_bool(){
+        storage.push(new ASTMocks.Pair<>("test",new Value(10)));
+        storage.push(new ASTMocks.Pair<>(".",new Value(true)));
+
+        IncInstruction i = new IncInstruction("test");
+
+        assertThrows(ASTInvalidTypeException.class, () -> i.execute(0, memory));
+    }
+
+    @Test
+    public void inc_simple_string(){
+        storage.push(new ASTMocks.Pair<>("test",new Value(10)));
+        storage.push(new ASTMocks.Pair<>(".",new Value("t")));
+
+        IncInstruction i = new IncInstruction("test");
+
+        assertThrows(ASTInvalidTypeException.class, () -> i.execute(0, memory));
+    }
+
 
     //pop
     @Test

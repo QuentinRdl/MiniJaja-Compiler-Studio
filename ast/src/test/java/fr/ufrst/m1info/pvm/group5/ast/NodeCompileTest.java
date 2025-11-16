@@ -25,7 +25,7 @@ public class NodeCompileTest {
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         BinMinusNode tested = new BinMinusNode(lop,rop);
-        assertEquals(List.of("push(5)","push(5)", "minus"), tested.compile(1));
+        assertEquals(List.of("push(5)","push(5)", "sub"), tested.compile(1));
     }
 
     @Test

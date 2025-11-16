@@ -58,7 +58,7 @@ public class CompilerTest {
                 "load(y)\n" +
                 "add\n" +
                 "push(0)\n" +
-                "minus\n" +
+                "sub\n" +
                 "store(x)\n" +
                 "load(y)\n" +
                 "load(VAL)\n" +

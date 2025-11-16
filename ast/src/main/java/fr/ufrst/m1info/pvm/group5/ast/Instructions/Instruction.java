@@ -10,6 +10,6 @@ public abstract class Instruction {
      * @param m Memory used for the interpretation
      * @return The address of the next instruction to be executed
      */
-    public abstract int execute(int address, Memory m) throws Exception;
+    public abstract int execute(int address, Memory m);
 
 }
