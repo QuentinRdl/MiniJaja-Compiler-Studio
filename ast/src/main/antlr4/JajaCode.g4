@@ -38,6 +38,7 @@ instr
     | 'cmp' {instrList.add(new CmpInstruction());}{}
     | 'neg' {instrList.add(new NegInstruction());}{}
     | 'not' {instrList.add(new NotInstruction());}{}
+    | 'inc' '(' string ')' {instrList.add(new IncInstruction($string.str));}{}
     | 'write' {instrList.add(new WriteInstruction());}
     | 'writeln' {instrList.add(new WritelnInstruction());}
     | 'init' {instrList.add(new InitInstruction());}
