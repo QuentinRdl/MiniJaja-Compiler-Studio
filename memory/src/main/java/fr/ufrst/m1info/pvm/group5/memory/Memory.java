@@ -392,6 +392,11 @@ public class Memory {
         } catch (Stack.NoScopeException ignored) {
         }
     }
+    public boolean contains(String identifier) {
+        if (identifier == null || identifier.isEmpty()) return false;
+        return symbolTable.contains(identifier);
+    }
+
 
 
 

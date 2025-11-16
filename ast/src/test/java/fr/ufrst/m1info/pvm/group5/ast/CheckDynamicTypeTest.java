@@ -1322,6 +1322,182 @@ public class CheckDynamicTypeTest {
         String result = whileNode.checkType(memoryMock);
         assertEquals("void", result);
     }
+    @Test
+    @DisplayName("ParamNode - checkType() INT")
+    public void testParamNode_CheckType_Int() throws Exception {
+        TypeNode type = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("x");
+        ParamNode node = new ParamNode(type, ident);
+
+        assertEquals("void", node.checkType(memoryMock));
+        verify(memoryMock).declVar(eq("x"), any(Value.class), eq(DataType.INT));
+    }
+
+    @Test
+    @DisplayName("ParamNode - checkType() BOOL")
+    public void testParamNode_CheckType_Bool() throws Exception {
+        TypeNode type = new TypeNode(ValueType.BOOL);
+        IdentNode ident = new IdentNode("flag");
+        ParamNode node = new ParamNode(type, ident);
+
+        assertEquals("void", node.checkType(memoryMock));
+        verify(memoryMock).declVar(eq("flag"), any(Value.class), eq(DataType.BOOL));
+    }
+
+    @Test
+    @DisplayName("ParamNode - checkType() VOID → erreur")
+    public void testParamNode_CheckType_Void() {
+        TypeNode type = new TypeNode(ValueType.VOID);
+        IdentNode ident = new IdentNode("v");
+        ParamNode node = new ParamNode(type, ident);
+
+        assertThrows(ASTInvalidDynamicTypeException.class,
+                () -> node.checkType(memoryMock));
+    }
+    @Test
+    @DisplayName("ParamListNode - checkType() valid parameters")
+    public void testParamListNode_CheckType_Valid() throws Exception {
+        ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("x"));
+        ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("flag"));
+        ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
+        String result = list.checkType(memoryMock);
+        assertEquals("void", result);
+        verifyNoInteractions(memoryMock);
+    }
+
+    @Test
+    @DisplayName("ParamListNode - checkType() void type rejected")
+    public void testParamListNode_CheckType_Void_Throws() {
+        ParamNode invalid = new ParamNode(new TypeNode(ValueType.VOID), new IdentNode("v"));
+
+        ParamListNode list = new ParamListNode(invalid, null);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> list.checkType(memoryMock));
+
+        verifyNoInteractions(memoryMock);
+    }
+    @Test
+    @DisplayName("ExpListNode - checkType() simple two expressions")
+    public void testExpListNode_CheckType_Two() throws Exception {
+        ExpListNode list = new ExpListNode(opInt, new ExpListNode(opBool, null));
+
+        String type = list.checkType(memoryMock);
+
+        assertEquals("void", type);
+        verify(opInt).checkType(memoryMock);
+        verify(opBool).checkType(memoryMock);
+    }
+
+    @Test
+    @DisplayName("ExpListNode - checkType() throws if head throws")
+    public void testExpListNode_CheckType_HeadThrows() throws Exception {
+        ASTNode bad = mock(ASTNode.class);
+        when(bad.checkType(memoryMock)).thenThrow(new ASTInvalidDynamicTypeException("err"));
+
+        ExpListNode list = new ExpListNode(bad, null);
+
+        assertThrows(ASTInvalidDynamicTypeException.class,
+                () -> list.checkType(memoryMock));
+    }
+    @Test
+    @DisplayName("ExpListNode - checkType() single element")
+    public void testExpListNodeCheckTypeSingle() throws Exception {
+        ExpListNode list = new ExpListNode(opInt, null);
+
+        String type = list.checkType(memoryMock);
+        assertEquals("void", type);
+        verify(opInt).checkType(memoryMock);
+    }
+    @Test
+    public void testMethodeNodeCheckType() {
+        Memory memory = mock(Memory.class);
+
+        TypeNode returnType = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("foo");
+        ASTNode params = ASTMocks.createNode(ASTNode.class, null, i -> List.of());
+
+        ASTNode instrs = mock(ASTNode.class);
+        when(instrs.checkType(memory)).thenReturn("void");
+
+        MethodeNode method = new MethodeNode(returnType, ident, params, null, instrs);
+
+        String result = method.checkType(memory);
+
+        assertEquals("int", result);
+        verify(instrs).checkType(memory);
+    }
+    @Test
+    public void testMethodeNodeCheckType_NoInstrs() {
+        Memory memory = mock(Memory.class);
+
+        MethodeNode method = new MethodeNode(
+                new TypeNode(ValueType.BOOL),
+                new IdentNode("test"),
+                ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
+                null,
+                null
+        );
+
+        assertEquals("bool", method.checkType(memory));
+    }
+    @Test
+    public void testMethodeNodeCheckType_Int() {
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.INT),
+                new IdentNode("f"),
+                ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
+                null,
+                null
+        );
+        assertEquals("int", m.checkType(mock(Memory.class)));
+    }
+
+    @Test
+    public void testMethodeNodeCheckType_Bool() {
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.BOOL),
+                new IdentNode("f"),
+                ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
+                null,
+                null
+        );
+        assertEquals("bool", m.checkType(mock(Memory.class)));
+    }
+
+    @Test
+    public void testMethodeNodeCheckType_Void() {
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.VOID),
+                new IdentNode("f"),
+                ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
+                null,
+                null
+        );
+        assertEquals("void", m.checkType(mock(Memory.class)));
+    }
+    @Test
+    public void testMethodeNodeCheckType_WithInstrs() {
+        Memory mem = mock(Memory.class);
+
+        ASTNode instrs = mock(ASTNode.class);
+        when(instrs.checkType(mem)).thenReturn("void");
+
+        MethodeNode m = new MethodeNode(
+                new TypeNode(ValueType.INT),
+                new IdentNode("f"),
+                ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
+                null,
+                instrs
+        );
+
+        String result = m.checkType(mem);
+
+        assertEquals("int", result);
+        verify(instrs).checkType(mem);
+    }
+
+
+
+
 
 
     class DummyWithdrNode extends ASTNode implements WithdrawalNode {

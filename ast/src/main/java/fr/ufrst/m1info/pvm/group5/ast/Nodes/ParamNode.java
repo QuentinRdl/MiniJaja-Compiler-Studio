@@ -37,8 +37,15 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        m.declVar(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
+        Value val;
+        switch (type.valueType) {
+            case BOOL -> val = new Value(false);
+            case INT -> val = new Value(0);
+            default -> val = new Value();
+        }
+        m.declVar(ident.identifier, val, ValueType.toDataType(type.valueType));
     }
+
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
