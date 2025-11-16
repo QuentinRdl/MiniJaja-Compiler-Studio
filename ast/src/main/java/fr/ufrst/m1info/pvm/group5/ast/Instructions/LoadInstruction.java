@@ -13,6 +13,10 @@ public class LoadInstruction extends Instruction{
         this.ident = ident;
     }
 
+    public String getIdent() {
+        return ident;
+    }
+
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.val(ident);

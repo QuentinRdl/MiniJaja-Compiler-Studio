@@ -20,6 +20,22 @@ public class NewInstruction extends Instruction{
         this.scope = scope;
     }
 
+    public DataType getType() {
+        return type;
+    }
+
+    public EntryKind getKind() {
+        return kind;
+    }
+
+    public int getScope() {
+        return scope;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
     @Override
     public int execute(int address, Memory m) {
         Value v;
