@@ -5,7 +5,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Stack;
 
 public class PopInstruction extends Instruction {
     @Override
-    public int execute(int address, Memory m) throws Exception {
+    public int execute(int address, Memory m) {
         m.pop();
         return address + 1;
     }

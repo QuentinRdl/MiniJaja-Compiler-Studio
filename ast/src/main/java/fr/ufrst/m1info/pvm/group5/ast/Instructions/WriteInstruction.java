@@ -8,7 +8,7 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 public class WriteInstruction extends Instruction {
     @Override
-    public int execute(int address, Memory m) throws Exception {
+    public int execute(int address, Memory m) {
         Value top = (Value) m.pop();
         m.write(top.toString());
         return address + 1;

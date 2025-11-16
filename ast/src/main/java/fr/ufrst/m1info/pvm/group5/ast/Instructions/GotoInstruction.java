@@ -10,7 +10,7 @@ public class GotoInstruction extends Instruction {
     }
 
     @Override
-    public int execute(int address, Memory m) throws Exception {
+    public int execute(int address, Memory m) {
         return this.address;
     }
 }
