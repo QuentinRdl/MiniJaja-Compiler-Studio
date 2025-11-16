@@ -14,7 +14,7 @@ public class AndInstruction extends Instruction {
         if (v1.Type != ValueType.BOOL || v2.Type != ValueType.BOOL){
             throw new ASTInvalidTypeException("Type error: AND operator expects two BOOL operands, but received " + v1.Type + " and " + v2.Type + ".");
         }
-        boolean res = v1.valueBool || v2.valueBool;
+        boolean res = v1.valueBool && v2.valueBool;
         Value vres = new Value(res);
         m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
         return address+1;
