@@ -1207,7 +1207,7 @@ public class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ParamNode - interpret() BOOL parameter")
-    public void testParamNodeInterpret_BOOL() throws Exception {
+    void testParamNodeInterpret_BOOL() throws Exception {
         TypeNode type = new TypeNode(ValueType.BOOL);
         IdentNode ident = new IdentNode("flag");
         ParamNode node = new ParamNode(type, ident);
@@ -1222,7 +1222,7 @@ public class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ParamNode - interpret() INT parameter")
-    public void testParamNodeInterpret_INT() throws Exception {
+    void testParamNodeInterpret_INT() throws Exception {
         TypeNode type = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("x");
         ParamNode node = new ParamNode(type, ident);
@@ -1236,7 +1236,7 @@ public class NodeInterpretationUnitTest {
     }
     @Test
     @DisplayName("ParamNode - withdrawInterpret() removes variable")
-    public void testParamNodeWithdrawInterpret() throws Exception {
+    void testParamNodeWithdrawInterpret() throws Exception {
         Memory memory = new Memory();
         TypeNode type = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("x");
@@ -1250,7 +1250,7 @@ public class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ParamListNode - interpret() declares all parameters")
-    public void testParamListNodeInterpret() throws Exception {
+    void testParamListNodeInterpret() throws Exception {
         ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("x"));
         ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("flag"));
         ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
@@ -1270,7 +1270,7 @@ public class NodeInterpretationUnitTest {
     }
     @Test
     @DisplayName("ParamListNode - withdrawInterpret() removes declarations in reverse order")
-    public void testParamListNodeWithdrawInterpret() throws Exception {
+    void testParamListNodeWithdrawInterpret() throws Exception {
 
         Memory m = mock(Memory.class);
 

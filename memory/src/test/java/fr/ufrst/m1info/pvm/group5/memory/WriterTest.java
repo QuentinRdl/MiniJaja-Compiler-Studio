@@ -26,7 +26,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event trigger - write")
-    public void EventTrigger_Write() throws Exception{
+    void EventTrigger_Write() throws Exception{
         writer.write("a");
         
         assertTrue(flags[0]);
@@ -36,7 +36,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event trigger - Writeline")
-    public void EventTrigger_Writeline() throws Exception{
+    void EventTrigger_Writeline() throws Exception{
         writer.writeLine("a");
         assertTrue(flags[0]);
         assertFalse(flags[1]);
@@ -45,7 +45,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event trigger - Erase")
-    public void EventTrigger_Erase() throws Exception{
+    void EventTrigger_Erase() throws Exception{
         writer.erase(5);
         
         assertFalse(flags[0]);
@@ -55,7 +55,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event trigger - EraseLine")
-    public void EventTrigger_EraseLine() throws Exception{
+    void EventTrigger_EraseLine() throws Exception{
         writer.eraseLineAsync();
         
         assertFalse(flags[0]);
@@ -69,7 +69,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Write / Text added event")
-    public void EventInfo_Write_Textadded() throws Exception{
+    void EventInfo_Write_Textadded() throws Exception{
         writer.TextAddedEvent.subscribe(e -> {
             assertEquals("hello world", e.diff());
             assertEquals(11, e.nbAdded());
@@ -82,7 +82,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Write / Text added event / with text present")
-    public void EventInfo_Write_Textadded2() throws Exception{
+    void EventInfo_Write_Textadded2() throws Exception{
         writer.write("hello ");
         
         writer.TextAddedEvent.subscribe(e -> {
@@ -97,7 +97,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Write / Text changed event")
-    public void EventInfo_Write_TextChanged() throws Exception{
+    void EventInfo_Write_TextChanged() throws Exception{
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("hello world", e.diff());
             assertEquals(11, e.nbAdded());
@@ -111,7 +111,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Write / Text changed event / with text present")
-    public void EventInfo_Write_TextChanged2() throws Exception{
+    void EventInfo_Write_TextChanged2() throws Exception{
         writer.write("hello ");
         
         writer.TextChangedEvent.subscribe(e -> {
@@ -127,7 +127,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Writeline / Text added event")
-    public void EventInfo_WriteLine_Textadded() throws Exception{
+    void EventInfo_WriteLine_Textadded() throws Exception{
         writer.TextAddedEvent.subscribe(e -> {
             assertEquals("hello world\n", e.diff());
             assertEquals(12, e.nbAdded());
@@ -140,7 +140,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - WriteLine / Text added event / with text present")
-    public void EventInfo_WriteLine_Textadded2() throws Exception{
+    void EventInfo_WriteLine_Textadded2() throws Exception{
         writer.write("hello ");
         
         writer.TextAddedEvent.subscribe(e -> {
@@ -155,7 +155,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - WriteLine / Text changed event")
-    public void EventInfo_WriteLine_TextChanged() throws Exception{
+    void EventInfo_WriteLine_TextChanged() throws Exception{
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("hello world\n", e.diff());
             assertEquals(12, e.nbAdded());
@@ -169,7 +169,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Write / Text changed event / with text present")
-    public void EventInfo_WriteLine_TextChanged2() throws Exception{
+    void EventInfo_WriteLine_TextChanged2() throws Exception{
         writer.write("hello ");
         
         writer.TextChangedEvent.subscribe(e -> {
@@ -185,7 +185,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Erase / no text")
-    public void EventInfo_Erase_NoText() throws Exception{
+    void EventInfo_Erase_NoText() throws Exception{
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("", e.diff());
             assertEquals("", e.oldText());
@@ -198,7 +198,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / more text than erased")
-    public void EventInfo_Erase_TextRemoved_tooMuch() throws Exception{
+    void EventInfo_Erase_TextRemoved_tooMuch() throws Exception{
         writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
@@ -212,7 +212,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / more text than erased")
-    public void EventInfo_Erase_TextChanged_tooMuch() throws Exception{
+    void EventInfo_Erase_TextChanged_tooMuch() throws Exception{
         writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("world", e.diff());
@@ -227,7 +227,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Erase / Text removed event / less text than erased")
-    public void EventInfo_Erase_TextRemoved_notEnough() throws Exception{
+    void EventInfo_Erase_TextRemoved_notEnough() throws Exception{
         writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
@@ -241,7 +241,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - Erase / Text changed event / less text than erased")
-    public void EventInfo_Erase_TextChanged_notEnough() throws Exception{
+    void EventInfo_Erase_TextChanged_notEnough() throws Exception{
         writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
@@ -256,7 +256,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / no text")
-    public void EventInfo_EraseLine_NoText() throws Exception{
+    void EventInfo_EraseLine_NoText() throws Exception{
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("", e.diff());
             assertEquals("", e.oldText());
@@ -269,7 +269,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / oneLine")
-    public void EventInfo_Erase_TextRemoved_oneLine() throws Exception{
+    void EventInfo_Erase_TextRemoved_oneLine() throws Exception{
         writer.write("Hello world");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
@@ -283,7 +283,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / oneLine")
-    public void EventInfo_Erase_TextChanged_oneLine() throws Exception{
+    void EventInfo_Erase_TextChanged_oneLine() throws Exception{
         writer.write("Hello world");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("Hello world", e.diff());
@@ -298,7 +298,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / multipleLines")
-    public void EventInfo_Erase_TextRemoved_moreLines() throws Exception{
+    void EventInfo_Erase_TextRemoved_moreLines() throws Exception{
         writer.write("Hello world\ndlrow olleH");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\ndlrow olleH", e.diff());
@@ -312,7 +312,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / multipleLines")
-    public void EventInfo_Erase_TextChanged_moreLines() throws Exception{
+    void EventInfo_Erase_TextChanged_moreLines() throws Exception{
         writer.write("Hello world\ndlrow olleH");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\ndlrow olleH", e.diff());
@@ -327,7 +327,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / emptyLastLine")
-    public void EventInfo_Erase_TextRemoved_noLastLine() throws Exception{
+    void EventInfo_Erase_TextRemoved_noLastLine() throws Exception{
         writer.write("Hello world\n");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
@@ -341,7 +341,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / emptyLastLine")
-    public void EventInfo_Erase_TextChanged_noLastLine() throws Exception{
+    void EventInfo_Erase_TextChanged_noLastLine() throws Exception{
         writer.write("Hello world\n");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
@@ -356,7 +356,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text removed event / onlyEmptyLastLine")
-    public void EventInfo_Erase_TextRemoved_noLastLine2() throws Exception{
+    void EventInfo_Erase_TextRemoved_noLastLine2() throws Exception{
         writer.write("\n");
         writer.TextRemovedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
@@ -370,7 +370,7 @@ public class WriterTest {
 
     @Test
     @DisplayName("Event info - EraseLine / Text changed event / onlyEmptyLastLine")
-    public void EventInfo_Erase_TextChanged_noLastLine2() throws Exception{
+    void EventInfo_Erase_TextChanged_noLastLine2() throws Exception{
         writer.write("\n");
         writer.TextChangedEvent.subscribe(e -> {
             assertEquals("\n", e.diff());
