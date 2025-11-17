@@ -96,7 +96,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVars")
-    public void popWorks(String id, Object value, DataType type) throws Exception {
+    void popWorks(String id, Object value, DataType type) throws Exception {
         mem.push(id, value, type, EntryKind.VARIABLE);
         Object ret = mem.pop();
         assertNotNull(ret);
@@ -104,7 +104,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVars")
-    public void popCheckStackException(String id, Object value, DataType type) throws Exception {
+    void popCheckStackException(String id, Object value, DataType type) throws Exception {
         // Stack is empty, pop should throw StackIsEmptyException
         assertThrows(Stack.StackIsEmptyException.class, () -> mem.pop());
 
@@ -118,14 +118,14 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVars")
-    public void popEmptySymbolTable(String id, Object value, DataType type) {
+    void popEmptySymbolTable(String id, Object value, DataType type) {
         mem.stack.setVar("var", value, type);
         assertThrows(java.lang.IllegalArgumentException.class, () -> mem.pop());
     }
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
-    public void affectValueWorks(String id, Object value, DataType type, Object newValue) {
+    void affectValueWorks(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
@@ -158,7 +158,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("affectValueMultiple")
-    public void affectValueMultiple(String id, Object value, DataType type, Object newValue, Object newValue1, Object newValue2) {
+    void affectValueMultiple(String id, Object value, DataType type, Object newValue, Object newValue1, Object newValue2) {
         // We declare, then affect
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
@@ -219,7 +219,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsNull2")
-    public void affectValueNullGiven(String id, Object value, DataType type, Object newValue) {
+    void affectValueNullGiven(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
@@ -235,7 +235,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
-    public void affectValueIdNull(String id, Object value, DataType type, Object newValue) {
+    void affectValueIdNull(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
@@ -251,7 +251,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
-    public void affectValueNotDeclared(String id, Object value, DataType type, Object newValue) {
+    void affectValueNotDeclared(String id, Object value, DataType type, Object newValue) {
         assertThrows(java.lang.IllegalArgumentException.class, () -> {
             mem.affectValue(id, newValue);
         });
@@ -262,7 +262,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsNull")
-    public void declVarWithNull(String id, Object value, DataType type, Object newValue) {
+    void declVarWithNull(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declVar(id, value, type);
         Object ret = mem.val(id);
@@ -278,7 +278,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
-    public void affectValueConst(String id, Object value, DataType type, Object newValue) {
+    void affectValueConst(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declCst(id, null, type);
         Object ret = mem.val(id);
@@ -294,7 +294,7 @@ public class MemoryIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
-    public void affectValueConstCannotModify(String id, Object value, DataType type, Object newValue) {
+    void affectValueConstCannotModify(String id, Object value, DataType type, Object newValue) {
         // We declare, then affect
         mem.declCst(id, value, type);
         Object ret = mem.val(id);
@@ -310,7 +310,7 @@ public class MemoryIntegrationTest {
 
 
     @Test
-    public void declVarClassWorks() {
+    void declVarClassWorks() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
         assertEquals("val", ret);
@@ -322,7 +322,7 @@ public class MemoryIntegrationTest {
      * a DataType set with UNKNOWN
      */
     @Test
-    public void declVarClassUsesUnknownDataType() {
+    void declVarClassUsesUnknownDataType() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
         Stack_Object obj = mem.stack.getObject("val");
@@ -336,7 +336,7 @@ public class MemoryIntegrationTest {
      * data = null
      */
     @Test
-    public void declVarClassUsesValueEqualsNull() {
+    void declVarClassUsesValueEqualsNull() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
         Stack_Object obj = mem.stack.getObject("val");
@@ -345,7 +345,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void affVarClass() {
+    void affVarClass() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
         Stack_Object obj = mem.stack.getObject("val");
@@ -364,7 +364,7 @@ public class MemoryIntegrationTest {
     /* TODO : Put back later
     @Disabled
     @Test
-    public void affVarClassReaffectDiffType() {
+    void affVarClassReaffectDiffType() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
         Stack_Object obj = mem.stack.getObject("val");
@@ -388,7 +388,7 @@ public class MemoryIntegrationTest {
      */
     @ParameterizedTest
     @MethodSource("affVarNull")
-    public void affVarClassCalledNull(Object arg) {
+    void affVarClassCalledNull(Object arg) {
         // We test with no declared class var
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affVarClass(arg);
@@ -403,7 +403,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void declVarClassThrowsWhenClassVarAlreadyDefined() {
+    void declVarClassThrowsWhenClassVarAlreadyDefined() {
         // First declaration should succeed
         mem.declVarClass("classVar");
         // Second declaration (any identifier) should fail because a class var already exists
@@ -411,7 +411,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void declVarClassThrowsWhenSymbolTableContainsIdentifier() {
+    void declVarClassThrowsWhenSymbolTableContainsIdentifier() {
         // Declare a normal variable which will add an entry in the symbol table
         mem.declVar("idInTable", 1, DataType.INT);
 
@@ -421,7 +421,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void declVarClassThrowsWhenStackHasObjectWithSameIdentifier() {
+    void declVarClassThrowsWhenStackHasObjectWithSameIdentifier() {
         // Add an object directly to the stack without adding a symbol table entry
         mem.stack.setVar("idOnStackOnly", 2, DataType.INT);
 
@@ -434,7 +434,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void memoryConstructorAndWriteMethods() {
+    void memoryConstructorAndWriteMethods() {
         Writer writer = new Writer();
         StringBuilder sb = new StringBuilder();
 
@@ -450,7 +450,7 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void write_and_writeLine_withNullOutput_doNotThrow() {
+    void write_and_writeLine_withNullOutput_doNotThrow() {
         // Default constructor leaves output == null
         Memory mem = new Memory();
         assertNull(mem.output);
@@ -464,13 +464,13 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void valueTypeOfUndefinedVariable() {
+    void valueTypeOfUndefinedVariable() {
         Memory mem = new Memory();
         assertThrows(IllegalArgumentException.class,() -> mem.valueTypeOf("x"));
     }
 
     @Test
-    public void valueTypeOfBoolean() {
+    void valueTypeOfBoolean() {
         // Default constructor leaves output == null
         Memory mem = new Memory();
         mem.declVar("x", new Value(false), ValueType.toDataType(ValueType.BOOL));
@@ -478,27 +478,27 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void valueTypeOfInt() {
+    void valueTypeOfInt() {
         Memory mem = new Memory();
         mem.declVar("x", new Value(1), ValueType.toDataType(ValueType.INT));
         assertEquals(ValueType.INT,mem.valueTypeOf("x"));
     }
 
     @Test
-    public void valueTypeOfEmpty() {
+    void valueTypeOfEmpty() {
         Memory mem = new Memory();
         mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
         assertEquals(ValueType.EMPTY,mem.valueTypeOf("x"));
     }
 
     @Test
-    public void dataTypeOfUndefinedVariable() {
+    void dataTypeOfUndefinedVariable() {
         Memory mem = new Memory();
         assertThrows(IllegalArgumentException.class,() -> mem.dataTypeOf("x"));
     }
 
     @Test
-    public void dataTypeOfBoolean() {
+    void dataTypeOfBoolean() {
         // Default constructor leaves output == null
         Memory mem = new Memory();
         mem.declVar("x", new Value(false), ValueType.toDataType(ValueType.BOOL));
@@ -506,14 +506,14 @@ public class MemoryIntegrationTest {
     }
 
     @Test
-    public void dataTypeOfInt() {
+    void dataTypeOfInt() {
         Memory mem = new Memory();
         mem.declVar("x", new Value(1), ValueType.toDataType(ValueType.INT));
         assertEquals(DataType.INT,mem.dataTypeOf("x"));
     }
 
     @Test
-    public void dataTypeOfEmpty() {
+    void dataTypeOfEmpty() {
         Memory mem = new Memory();
         mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
         assertEquals(DataType.UNKNOWN,mem.dataTypeOf("x"));

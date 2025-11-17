@@ -139,21 +139,21 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorWorks() throws Exception {
+    void compilatorWorks() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
-    public void compilatorButtonWorks() throws Exception {
+    void compilatorButtonWorks() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
-    public void compilerDoesNotWork() throws Exception {
+    void compilerDoesNotWork() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
@@ -161,7 +161,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilerDoesNotWorkActualBtn() throws Exception {
+    void compilerDoesNotWorkActualBtn() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
@@ -169,7 +169,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorOutputsCorrect() throws Exception {
+    void compilatorOutputsCorrect() throws Exception {
 
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
@@ -186,7 +186,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorButtonOutputsCorrect() throws Exception {
+    void compilatorButtonOutputsCorrect() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
 

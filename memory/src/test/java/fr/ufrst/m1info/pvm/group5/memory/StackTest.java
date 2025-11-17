@@ -31,34 +31,34 @@ public class StackTest {
     }
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         assertTrue(stack.isEmpty());
         assertEquals(0, stack.size());
     }
 
     @Test
-    public void pushScope() {
+    void pushScope() {
         stack.pushScope();
         assertTrue(stack.isEmpty());
         // Even though we pushed a scope, as there are nothing in the scope it should still be empty
     }
 
     @Test
-    public void popScope() throws Stack.NoScopeException {
+    void popScope() throws Stack.NoScopeException {
         stack.pushScope();
         stack.popScope();
         assertTrue(stack.isEmpty());
     }
 
     @Test
-    public void testPopScopeWhenNoScopes() {
+    void testPopScopeWhenNoScopes() {
         assertThrows(Stack.NoScopeException.class, () -> {
             stack.popScope();
         });
     }
 
     @Test
-    public void setVar() {
+    void setVar() {
         stack.pushScope();
         assertEquals(0, stack.size());
         stack.setVar("x", 1234, DataType.INT);
@@ -67,7 +67,7 @@ public class StackTest {
     }
 
     @Test
-    public void setConst() {
+    void setConst() {
         stack.pushScope();
         assertEquals(0, stack.size());
         stack.setConst("x", 1234, DataType.INT);
@@ -76,7 +76,7 @@ public class StackTest {
     }
 
     @Test
-    public void getObject() {
+    void getObject() {
         stack.pushScope();
         Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         assertEquals(0, stack.size());
@@ -89,7 +89,7 @@ public class StackTest {
     }
 
     @Test
-    public void isEqual() {
+    void isEqual() {
         Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         Stack_Object constantTrue = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         assertTrue(constant.equals(constantTrue));
@@ -114,7 +114,7 @@ public class StackTest {
     }
 
     @Test
-    public void hashCode_differsWhenFieldsDiffer() {
+    void hashCode_differsWhenFieldsDiffer() {
         Stack_Object base = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         Stack_Object diffName = new Stack_Object("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         Stack_Object diffVal = new Stack_Object("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
@@ -138,7 +138,7 @@ public class StackTest {
     }
 
     @Test
-    public void setVarMultipleVariables() {
+    void setVarMultipleVariables() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         stack.setVar("y", 2345, integ);
@@ -147,7 +147,7 @@ public class StackTest {
     }
 
     @Test
-    public void testTop() {
+    void testTop() {
         stack.pushScope();
         stack.setVar("a", 100, integ);
         Stack_Object top = stack.top();
@@ -156,14 +156,14 @@ public class StackTest {
     }
 
     @Test
-    public void testTopWhenEmpty() {
+    void testTopWhenEmpty() {
         assertThrows(java.util.EmptyStackException.class, () -> {
             stack.top();
         });
     }
 
     @Test
-    public void testPop() throws Stack.StackIsEmptyException {
+    void testPop() throws Stack.StackIsEmptyException {
         stack.pushScope();
         stack.setVar("x", 50, integ);
         Stack_Object popped = stack.pop();
@@ -174,14 +174,14 @@ public class StackTest {
 
     @Test
     //(expected = Stack.StackIsEmptyException.class)
-    public void popWhenEmpty() throws Stack.StackIsEmptyException {
+    void popWhenEmpty() throws Stack.StackIsEmptyException {
         assertThrows(Stack.StackIsEmptyException.class, () -> {
             stack.pop();
         });
     }
 
     @Test
-    public void getVar() {
+    void getVar() {
         stack.pushScope();
         stack.setVar("x", 1234, DataType.INT);
         Object value = stack.getObjectValue("x");
@@ -189,7 +189,7 @@ public class StackTest {
     }
 
     @Test
-    public void getVarNotFound() {
+    void getVarNotFound() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         Object value = stack.getObject("y");
@@ -197,7 +197,7 @@ public class StackTest {
     }
 
     @Test
-    public void getVarDifferentScopes() {
+    void getVarDifferentScopes() {
         stack.pushScope();
         stack.setVar("x", 1, integ);
 
@@ -216,7 +216,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateVar() {
+    void updateVar() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean upd = stack.updateVar("x", 100);
@@ -225,7 +225,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateVarNotFound() {
+    void updateVarNotFound() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean updated = stack.updateVar("y", 100);
@@ -233,7 +233,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopVar() {
+    void updateTopVar() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean updated = stack.updateTopVar(99);
@@ -242,13 +242,13 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopVarWhenEmpty() {
+    void updateTopVarWhenEmpty() {
         boolean updated = stack.updateTopVar(50);
         assertFalse(updated);
     }
 
     @Test
-    public void hasObj() {
+    void hasObj() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         assertTrue(stack.hasObj("x"));
@@ -256,7 +256,7 @@ public class StackTest {
     }
 
     @Test
-    public void hasObjDifferentScopes() {
+    void hasObjDifferentScopes() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
 
@@ -266,7 +266,7 @@ public class StackTest {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         assertEquals(0, stack.size());
         stack.pushScope();
         stack.setVar("x", 10, integ);
@@ -276,7 +276,7 @@ public class StackTest {
     }
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         assertTrue(stack.isEmpty());
         stack.pushScope();
         stack.setVar("x", 11234, integ);
@@ -284,7 +284,7 @@ public class StackTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         stack.pushScope();
         stack.setVar("x", 10, integ);
         stack.setVar("y", 20, integ);
@@ -296,7 +296,7 @@ public class StackTest {
     }
 
     @Test
-    public void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
+    void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
         // Global scope
         stack.pushScope();
         stack.setVar("x", 5, integ);
@@ -326,7 +326,7 @@ public class StackTest {
     }
 
     @Test
-    public void multipleScopesWithSameVarName() throws Stack.NoScopeException {
+    void multipleScopesWithSameVarName() throws Stack.NoScopeException {
         stack.pushScope();
         stack.setVar("count", 0, integ);
         assertEquals(0, stack.getObjectValue("count"));
@@ -350,7 +350,7 @@ public class StackTest {
     }
 
     @Test
-    public void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
+    void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
         stack.pushScope();
         stack.setVar("global", 1, DataType.INT);
 
@@ -368,13 +368,13 @@ public class StackTest {
     }
 
     @Test
-    public void emptyStack_toString() {
+    void emptyStack_toString() {
         Stack s = new Stack();
         assertEquals("Stack{scopeDepth=0, contents=[]}", s.toString());
     }
 
     @Test
-    public void nonEmptyStack_toString() throws Exception {
+    void nonEmptyStack_toString() throws Exception {
         Stack s = new Stack();
 
         // Construct Stack_Object instances (use constructor that accepts DataType)
@@ -395,7 +395,7 @@ public class StackTest {
     }
 
     @Test
-    public void constructorExceptionTest() {
+    void constructorExceptionTest() {
         String msg = "Invalid variable name";
         Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
 
@@ -404,7 +404,7 @@ public class StackTest {
 
 
     @Test
-    public void testSwap_sameIdentifier_noop_returnsTrue() {
+    void testSwap_sameIdentifier_noop_returnsTrue() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -427,7 +427,7 @@ public class StackTest {
 
 
     @Test
-    public void testSwap_successful() {
+    void testSwap_successful() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -473,7 +473,7 @@ public class StackTest {
     }
 
     @Test
-    public void testSwap_missingObject_returnsFalse() {
+    void testSwap_missingObject_returnsFalse() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -499,7 +499,7 @@ public class StackTest {
     }
 
     @Test
-    public void swapTop_successful() {
+    void swapTop_successful() {
         Stack s = new Stack();
 
         // Create mocked stack objects to avoid depending on other classes/constructors
@@ -549,7 +549,7 @@ public class StackTest {
     }
 
     @Test
-    public void swapTop_notEnoughElements() {
+    void swapTop_notEnoughElements() {
         Stack s = new Stack();
         assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
 
@@ -572,14 +572,14 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_emptyStack_returnsFalse() {
+    void updateTopValue_emptyStack_returnsFalse() {
         Stack s = new Stack();
         boolean res = s.updateTopValue(42);
         assertFalse(res);
     }
 
     @Test
-    public void updateTopValue_variable_success() {
+    void updateTopValue_variable_success() {
         stack.pushScope();
         stack.setVar("x", 1, DataType.INT);
         boolean res = stack.updateTopValue(2);
@@ -588,7 +588,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_typeMismatch_returnsFalse() {
+    void updateTopValue_typeMismatch_returnsFalse() {
         stack.pushScope();
         stack.setVar("x", 1, DataType.INT);
         // Attempt to update with a Double while variable is INT
@@ -599,7 +599,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantAlreadyAssigned_returnsFalse() {
+    void updateTopValue_constantAlreadyAssigned_returnsFalse() {
         stack.pushScope();
         stack.setConst("c", 10, DataType.INT);
         // constant already has a value -> updateTopValue should refuse
@@ -609,7 +609,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantUninitialized_canInitialize() {
+    void updateTopValue_constantUninitialized_canInitialize() {
         stack.pushScope();
         // declare constant without initial value
         stack.setConst("c", null, DataType.INT);
@@ -620,7 +620,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantUninitialized_typeMismatch_returnsFalse() {
+    void updateTopValue_constantUninitialized_typeMismatch_returnsFalse() {
         stack.pushScope();
         stack.setConst("c", null, DataType.INT);
         // attempt to initialize with wrong type
@@ -649,7 +649,7 @@ public class StackTest {
      */
 
     @Test
-    public void searchObject_returnsObjectWhenPresent() {
+    void searchObject_returnsObjectWhenPresent() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -677,7 +677,7 @@ public class StackTest {
     }
 
     @Test
-    public void searchObject_notFound_returnsNull() {
+    void searchObject_notFound_returnsNull() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -698,7 +698,7 @@ public class StackTest {
     }
 
     @Test
-    public void searchObject_multipleMatches_returnsFirstEncountered() {
+    void searchObject_multipleMatches_returnsFirstEncountered() {
         Stack s = new Stack();
 
         Stack_Object first = mock(Stack_Object.class);
@@ -723,7 +723,7 @@ public class StackTest {
     }
 
     @Test
-    public void removeObject_removesGivenObject() {
+    void removeObject_removesGivenObject() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -757,7 +757,7 @@ public class StackTest {
     }
 
     @Test
-    public void removeObject_onlyRemovesSpecifiedInstanceWhenDuplicatesExist() {
+    void removeObject_onlyRemovesSpecifiedInstanceWhenDuplicatesExist() {
         Stack s = new Stack();
 
         Stack_Object first = mock(Stack_Object.class);
@@ -787,7 +787,7 @@ public class StackTest {
     }
 
     @Test
-    public void removeObject_noopWhenObjectNotPresent() {
+    void removeObject_noopWhenObjectNotPresent() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -817,7 +817,7 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_existing_movesToTop_andReturnsTrue() {
+    void putOnTop_existing_movesToTop_andReturnsTrue() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -853,7 +853,7 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_notFound_returnsFalse_andLeavesStackUnchanged() {
+    void putOnTop_notFound_returnsFalse_andLeavesStackUnchanged() {
         Stack s = new Stack();
 
         Stack_Object a = mock(Stack_Object.class);
@@ -878,7 +878,7 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_withDuplicates_movesFirstEncountered() {
+    void putOnTop_withDuplicates_movesFirstEncountered() {
         Stack s = new Stack();
 
         Stack_Object other = mock(Stack_Object.class);
@@ -915,7 +915,7 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
+    void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
         java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
@@ -932,7 +932,7 @@ public class StackTest {
     }
 
     @Test
-    public void validateType_validTypes_doNotThrow() throws Exception {
+    void validateType_validTypes_doNotThrow() throws Exception {
         Stack s = new Stack();
         java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, DataType.class);
         m.setAccessible(true);
@@ -975,7 +975,7 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
+    void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
         java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
@@ -1016,7 +1016,7 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
+    void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
         java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
@@ -1043,7 +1043,7 @@ public class StackTest {
     }
 
     @Test
-    public void getDataTypeFromGenericObjectTest() {
+    void getDataTypeFromGenericObjectTest() {
         DataType res;
         // INT
         int integer = 2;

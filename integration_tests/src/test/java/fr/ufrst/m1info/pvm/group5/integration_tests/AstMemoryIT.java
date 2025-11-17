@@ -33,7 +33,7 @@ public class AstMemoryIT {
 
     @Test
     @DisplayName("AST -> Memory Int Test | Evaluation - BasicOperations")
-    public void BasicOperations() throws Exception {
+    void BasicOperations() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("../ast/src/test/resources/BasicOperations.mjj");
 
         AST.interpret(memory);
@@ -44,7 +44,7 @@ public class AstMemoryIT {
 
     @Test
     @DisplayName("AST -> Memory Int Test | Evaluation - OperationPrevalence")
-    public void OperationPrevalence() throws Exception {
+    void OperationPrevalence() throws Exception {
 
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile(testPath + "src/test/resources/OperationPrevalence.mjj");
         AST.interpret(memory);
@@ -72,7 +72,7 @@ public class AstMemoryIT {
 
     @Test
     @DisplayName("AST -> Memory Int Test | Evaluation - Local Variables")
-    public void LocalVariables() throws Exception {
+    void LocalVariables() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile(testPath + "src/test/resources/LocalVariables.mjj");
         try {
             AST.interpret(memory);
@@ -88,7 +88,7 @@ public class AstMemoryIT {
 
     @Test
     @DisplayName("AST -> Memory Int Test | Evaluation - Conditionnals")
-    public void Conditionnals() throws Exception {
+    void Conditionnals() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile(testPath + "src/test/resources/Conditionals.mjj");
         try {
             AST.interpret(memory);
@@ -116,7 +116,7 @@ public class AstMemoryIT {
 
     @Test
     @DisplayName("AST -> Memory Int Test | Evaluation - Loops")
-    public void Loops() throws Exception {
+    void Loops() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile(testPath + "src/test/resources/Loops.mjj");
         try {
             AST.interpret(memory);
@@ -133,7 +133,7 @@ public class AstMemoryIT {
     // End of conversion of AbstractSyntaxTreeTest
     // Conversion of NodeInterpretationUnitTest
     @Test
-    public void AddNode_Operation(){
+    void AddNode_Operation(){
         NumberNode lop = new NumberNode(5);
         NumberNode rop = new NumberNode(10);
         AddNode tested = new AddNode(lop, rop);
@@ -142,7 +142,7 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void AffectationNode_Default() throws Exception {
+    void AffectationNode_Default() throws Exception {
         // declare variable x in memory
         memory.declVar("x", null, DataType.INT);
         IdentNode lop = new IdentNode("x");
@@ -156,7 +156,7 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void AffectationNode_UndefinedOperand(){
+    void AffectationNode_UndefinedOperand(){
         IdentNode lop = new IdentNode("x");
         NumberNode rop = new NumberNode(5);
         AffectationNode tested = new AffectationNode(lop, rop);
@@ -164,7 +164,7 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void BooleanNode_Evaluation(){
+    void BooleanNode_Evaluation(){
         BooleanNode t = new BooleanNode(true);
         BooleanNode f = new BooleanNode(false);
         assertTrue(t.eval(memory).valueBool);
@@ -172,7 +172,7 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void ClassNode_NoContent() throws Exception{
+    void ClassNode_NoContent() throws Exception{
         IdentNode ident = new IdentNode("C");
         MainNode main = new MainNode(null, null);
         ClassNode c = new ClassNode(ident, null, main);
@@ -183,7 +183,7 @@ public class AstMemoryIT {
 
 
     @Test
-    public void AndNode_Operation(){
+    void AndNode_Operation(){
         BooleanNode TNode = new BooleanNode(true);
         BooleanNode FNode = new BooleanNode(false);
         AndNode tested = new AndNode(TNode,FNode);
@@ -197,7 +197,7 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void MinusNode_Operation(){
+    void MinusNode_Operation(){
         NumberNode lop = new NumberNode(5);
         NumberNode rop = new NumberNode(10);
         BinMinusNode tested = new BinMinusNode(lop,rop);
@@ -205,13 +205,13 @@ public class AstMemoryIT {
     }
 
     @Test
-    public void BooleanNode_InvalidOperation(){
+    void BooleanNode_InvalidOperation(){
         BooleanNode t = new BooleanNode(true);
         assertThrows(ASTInvalidOperationException.class, () -> t.interpret(memory));
     }
 
     @Test
-    public void ClassNode_NoContent_EmptyMemory(){
+    void ClassNode_NoContent_EmptyMemory(){
         IdentNode ident = new IdentNode("C");
         MainNode main = new MainNode(null, null);
         ClassNode c = new ClassNode(ident, null, main);
@@ -222,7 +222,7 @@ public class AstMemoryIT {
 
     // Confirmation test
     @Test
-    public void return_valid_address() throws Exception{
+    void return_valid_address() throws Exception{
         PushInstruction p = new PushInstruction(new Value(5));
         p.execute(0, memory);
 

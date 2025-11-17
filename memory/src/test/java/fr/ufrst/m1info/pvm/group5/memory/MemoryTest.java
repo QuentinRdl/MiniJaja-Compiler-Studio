@@ -51,7 +51,7 @@ public class MemoryTest {
     // Test will fail right now, as it is TDD and the API is not implemented yet
 
     @Test
-    public void constructor() {
+    void constructor() {
          // Memory should have non-null fields (we'll replace them with mocks in setUp)
         assertNotNull(memory);
         assertNotNull(memory.stack);
@@ -59,14 +59,14 @@ public class MemoryTest {
     }
 
     @Test
-    public void pushDelegatesToStackInt() {
+    void pushDelegatesToStackInt() {
         // When we push in the Stack we must delegate it to the setVar method
         memory.push("x", 42, DataType.INT, EntryKind.VARIABLE);
         verify(stackMocked, times(1)).setVar("x", 42, DataType.INT);
     }
 
     @Test
-    public void pushDelegatesToStackCst() {
+    void pushDelegatesToStackCst() {
         // When we push in the Stack we must delegate it to the setVar method
         memory.push("x", 42, DataType.INT, EntryKind.CONSTANT);
         verify(stackMocked, times(1)).setConst("x", 42, DataType.INT);
@@ -74,7 +74,7 @@ public class MemoryTest {
 
 
     @Test
-    public void pushWithIllegalArg() {
+    void pushWithIllegalArg() {
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.push("x", 42, DataType.INT, null);
         });
@@ -85,14 +85,14 @@ public class MemoryTest {
     }
 
     @Test
-    public void popDelegatesToStack() throws Exception {
+    void popDelegatesToStack() throws Exception {
         when(stackMocked.pop()).thenReturn(new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT));
         memory.pop();
         verify(stackMocked, times(1)).pop();
     }
 
     @Test
-    public void popDelegatesToSymbolTable() throws Exception {
+    void popDelegatesToSymbolTable() throws Exception {
         Stack_Object obj = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.pop()).thenReturn(obj);
 
@@ -102,7 +102,7 @@ public class MemoryTest {
     }
 
     @Test
-    public void declVarAddsSymbolTableEntry() {
+    void declVarAddsSymbolTableEntry() {
         memory.declVar("a", 123, DataType.INT);
         ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
         verify(symbolTableMocked, times(1)).addEntry(captor.capture());
@@ -115,7 +115,7 @@ public class MemoryTest {
     }
 
     @Test
-    public void declCstAddsSymbolTableEntry() {
+    void declCstAddsSymbolTableEntry() {
         memory.declCst("PI", 3.14, DataType.DOUBLE);
 
         ArgumentCaptor<SymbolTableEntry> captor = ArgumentCaptor.forClass(SymbolTableEntry.class);
@@ -130,14 +130,14 @@ public class MemoryTest {
 
 
     @Test
-    public void withdrawDeclRemovesEntry() {
+    void withdrawDeclRemovesEntry() {
         memory.withdrawDecl("tmp");
         verify(symbolTableMocked, times(1)).removeEntry("tmp");
     }
 
 
     @Test
-    public void withdrawDeclThrowsException() {
+    void withdrawDeclThrowsException() {
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             memory.withdrawDecl("");
         });
@@ -151,7 +151,7 @@ public class MemoryTest {
 
     /**
     @Test
-    public void affectValueUpdatesSymbolTableEntry() {
+    void affectValueUpdatesSymbolTableEntry() {
         SymbolTableEntry mockedEntry = mock(SymbolTableEntry.class);
 
         when(symbolTableMocked.lookup("v")).thenReturn(mockedEntry);
@@ -162,7 +162,7 @@ public class MemoryTest {
     }
 
     @Test
-    public void valReturnsReferenceFromSymbolTable() {
+    void valReturnsReferenceFromSymbolTable() {
         SymbolTableEntry realEntry = new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.INT);
         realEntry.setReference(777);
         when(symbolTableMocked.lookup("y")).thenReturn(realEntry);
@@ -175,21 +175,21 @@ public class MemoryTest {
     */
 
     @Test
-    public void swapDelegatesToStack() {
+    void swapDelegatesToStack() {
         // Call swap on memory and verify it calls the stack swap method
         memory.swap();
         verify(stackMocked, times(1)).swap();
     }
 
     @Test
-    public void swapPropagatesException() {
+    void swapPropagatesException() {
         // Calling swap should throw error
         doThrow(new RuntimeException("swap error")).when(stackMocked).swap();
         assertThrows(RuntimeException.class, () -> memory.swap());
         verify(stackMocked, times(1)).swap();
     }
     @Test
-    public void declMethodAddsSymbolTableEntry() {
+    void declMethodAddsSymbolTableEntry() {
         // On déclare une méthode "foo" avec type de retour INT et params null (ASTNode par ex)
         memory.declMethod("foo", DataType.INT, null);
 
@@ -204,7 +204,7 @@ public class MemoryTest {
     }
 
     @Test
-    public void getMethodReturnsMethodEntry() {
+    void getMethodReturnsMethodEntry() {
         SymbolTableEntry methodEntry = mock(SymbolTableEntry.class);
         when(methodEntry.getKind()).thenReturn(EntryKind.METHOD);
         when(symbolTableMocked.lookup("foo")).thenReturn(methodEntry);
@@ -215,7 +215,7 @@ public class MemoryTest {
         verify(symbolTableMocked, times(1)).lookup("foo");
     }
     @Test
-    public void withdrawMethodRemovesMethodEntryFromSymbolTable() {
+    void withdrawMethodRemovesMethodEntryFromSymbolTable() {
         // Arrange
         SymbolTableEntry methodEntry = mock(SymbolTableEntry.class);
         when(methodEntry.getKind()).thenReturn(EntryKind.METHOD);
@@ -229,17 +229,17 @@ public class MemoryTest {
         verify(symbolTableMocked, times(1)).removeEntry("foo");
     }
     @Test
-    public void withdrawMethodThrowsExceptionForInvalidIdentifier() {
+    void withdrawMethodThrowsExceptionForInvalidIdentifier() {
         assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod(""));
         assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod(null));
     }
     @Test
-    public void withdrawMethodThrowsIfEntryNotFound() {
+    void withdrawMethodThrowsIfEntryNotFound() {
         when(symbolTableMocked.lookup("foo")).thenReturn(null);
         assertThrows(IllegalArgumentException.class, () -> memory.withdrawMethod("foo"));
     }
     @Test
-    public void withdrawMethodThrowsIfNotAMethod() {
+    void withdrawMethodThrowsIfNotAMethod() {
         SymbolTableEntry variableEntry = mock(SymbolTableEntry.class);
         when(variableEntry.getKind()).thenReturn(EntryKind.VARIABLE);
         when(symbolTableMocked.lookup("foo")).thenReturn(variableEntry);
