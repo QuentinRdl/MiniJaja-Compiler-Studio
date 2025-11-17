@@ -2,7 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.JajaCodeLexer;
 import fr.ufrst.m1info.pvm.group5.JajaCodeParser;
-import fr.ufrst.m1info.pvm.group5.ast.Instructions.Instruction;
+import fr.ufrst.m1info.pvm.group5.ast.instructions.Instruction;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

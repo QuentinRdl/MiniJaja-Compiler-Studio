@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.*;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.*;
 
 import java.io.Serial;
 import java.util.ArrayDeque;

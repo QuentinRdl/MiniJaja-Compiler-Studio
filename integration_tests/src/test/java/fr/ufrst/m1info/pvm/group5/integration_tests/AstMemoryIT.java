@@ -1,19 +1,17 @@
 package fr.ufrst.m1info.pvm.group5.integration_tests;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.ufrst.m1info.pvm.group5.ast.Instructions.PushInstruction;
-import fr.ufrst.m1info.pvm.group5.ast.Instructions.ReturnInstruction;
-import fr.ufrst.m1info.pvm.group5.ast.Nodes.*;
+import fr.ufrst.m1info.pvm.group5.ast.instructions.PushInstruction;
+import fr.ufrst.m1info.pvm.group5.ast.instructions.ReturnInstruction;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Stack;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import org.junit.jupiter.api.*;
 

@@ -9,16 +9,16 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
 // TODO : Import the following w/ the pom
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTable;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.SymbolTableEntry;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTable;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 
 public class MemoryTest {
     private Memory memory;

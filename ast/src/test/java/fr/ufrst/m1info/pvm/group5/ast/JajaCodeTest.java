@@ -1,5 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.ast;
-import fr.ufrst.m1info.pvm.group5.ast.Instructions.*;
+import fr.ufrst.m1info.pvm.group5.ast.instructions.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.ast.ASTMocks.Pair;
@@ -7,9 +7,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
