@@ -1,9 +1,12 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
 
+import fr.ufrst.m1info.pvm.group5.ast.Jajacode;
+import fr.ufrst.m1info.pvm.group5.ast.instructions.Instruction;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+
+import java.util.List;
 
 public class InterpreterJajaCode implements Interpreter{
     Writer output;
@@ -24,11 +27,10 @@ public class InterpreterJajaCode implements Interpreter{
      */
     @Override
     public String interpretCode(String code) {
-        Memory mem = new Memory(output);
         String errMessage= null;
         try{
-            AbstractSyntaxTree ast = AbstractSyntaxTree.fromString(code);
-            ast.interpret(mem);
+            List<Instruction> jjc = Jajacode.fromString(code);
+            interpretJajaCode(jjc);
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();
         }
@@ -43,14 +45,30 @@ public class InterpreterJajaCode implements Interpreter{
      */
     @Override
     public String interpretFile(String path)  {
-        Memory mem = new Memory(output);
         String errMessage= null;
         try{
-            AbstractSyntaxTree ast = AbstractSyntaxTree.fromFile(path);
-            ast.interpret(mem);
+            List<Instruction> jjc = Jajacode.fromString(code);
+            interpretJajaCode(jjc);
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();
         }
         return errMessage;
+    }
+
+    /**
+     * Interpret a list of JajaCode instruction
+     *
+     * @param instructions the list of JajaCode instruction
+     */
+    public void interpretJajaCode(List<Instruction> instructions){
+        Memory mem = new Memory(output);
+        int adress=1;
+        int size=instructions.size();
+        while (adress>0){
+            adress = instructions.get(adress-1).execute(adress,mem);
+            if (adress>size){
+                throw new IndexOutOfBoundsException("Line "+adress+" not found");
+            }
+        }
     }
 }
