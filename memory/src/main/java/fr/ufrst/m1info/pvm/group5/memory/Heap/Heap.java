@@ -310,6 +310,19 @@ public class Heap {
     }
 
     /**
+     * Gets the size of a memory block of the heap, by its address
+     * @param address address of the block of the heap
+     * @return size of the block at the given address
+     * @throws InvalidMemoryAddressException throws an exception if the address is not allocated in the heap
+     */
+    public int sizeOf(int address) throws InvalidMemoryAddressException{
+        HeapElement target = checkAddress(address);
+        if(target.isFree())
+            throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
+        return target.size();
+    }
+
+    /**
      * Copies the content of the memory from an address to another
      * No check is done to ensure the address is free, valid, and does not create a new block to store the information of the moved content
      * @param origin memory block to move

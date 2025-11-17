@@ -385,4 +385,31 @@ public class HeapTest {
         heap.free(h1);
         assertEquals(2, heap.sanitize().size());
     }
+
+    // sizeof
+    @Test
+    @DisplayName("Sizeof")
+    void SizeofTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        assertEquals(12,heap.sizeOf(address));
+    }
+
+    @Test
+    @DisplayName("Sizeof - Invalid address")
+    void SizeofInvalidAddressTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        assertThrows(UnmappedMemoryAddressException.class, () -> heap.sizeOf(address + 1));
+    }
+
+    @Test
+    @DisplayName("Sizeof - Empty block")
+    void SizeofEmptyBlockTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        heap.allocate(12,DataType.INT);
+        heap.free(address);
+        assertThrows(InvalidMemoryAddressException.class, () -> heap.sizeOf(address));
+    }
 }
