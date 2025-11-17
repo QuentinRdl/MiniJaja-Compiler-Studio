@@ -23,7 +23,7 @@ public class IfInstruction extends Instruction{
         }catch (Exception e){
             throw new ASTInvalidMemoryException(e.getMessage());
         }
-        if (v.Type!=ValueType.BOOL){
+        if (v.type !=ValueType.BOOL){
             throw new ASTInvalidDynamicTypeException("if line ("+(address+1)+") : Value in top of the stack must be boolean");
         }
         b = v.valueBool;

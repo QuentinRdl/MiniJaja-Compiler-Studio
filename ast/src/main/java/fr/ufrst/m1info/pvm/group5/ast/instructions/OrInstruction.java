@@ -11,8 +11,8 @@ public class OrInstruction extends Instruction {
     public int execute(int address, Memory m) {
         Value v2 = (Value) m.pop(); //first pop => right operand
         Value v1 = (Value) m.pop(); //second pop => left operand
-        if (v1.Type != ValueType.BOOL || v2.Type != ValueType.BOOL){
-            throw new ASTInvalidTypeException("Type error: OR operator expects two BOOL operands, but received " + v1.Type + " and " + v2.Type + ".");
+        if (v1.type != ValueType.BOOL || v2.type != ValueType.BOOL){
+            throw new ASTInvalidTypeException("Type error: OR operator expects two BOOL operands, but received " + v1.type + " and " + v2.type + ".");
         }
         boolean res = v1.valueBool || v2.valueBool;
         Value vres = new Value(res);

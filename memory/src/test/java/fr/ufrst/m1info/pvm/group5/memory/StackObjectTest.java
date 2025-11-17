@@ -10,7 +10,7 @@ class StackObjectTest {
 
     @Test
     void constructNonVarNonConst_ok() {
-        Stack_Object obj = new Stack_Object("m", "val", 1, EntryKind.METHOD);
+        StackObject obj = new StackObject("m", "val", 1, EntryKind.METHOD);
         assertEquals("m", obj.getName());
         assertEquals("val", obj.getValue());
         assertEquals(1, obj.getScope());
@@ -20,7 +20,7 @@ class StackObjectTest {
 
     @Test
     void constructVariable_withDataType_ok() {
-        Stack_Object var = new Stack_Object("x", 10, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject var = new StackObject("x", 10, 0, EntryKind.VARIABLE, DataType.INT);
         assertEquals("x", var.getName());
         assertEquals(10, var.getValue());
         assertEquals(0, var.getScope());
@@ -40,7 +40,7 @@ class StackObjectTest {
 
     @Test
     void setValue_onVariable_updates() {
-        Stack_Object var = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject var = new StackObject("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
         assertEquals(1, var.getValue());
         var.setValue(2);
         assertEquals(2, var.getValue());
@@ -48,27 +48,27 @@ class StackObjectTest {
 
     @Test
     void setValue_onConstant_throws() {
-        Stack_Object cst = new Stack_Object("c", 1, 0, EntryKind.CONSTANT, DataType.INT);
+        StackObject cst = new StackObject("c", 1, 0, EntryKind.CONSTANT, DataType.INT);
         assertThrows(Stack.ConstantModificationException.class, () -> cst.setValue(2));
     }
 
     @Test
     void setValue_onNonConstant_allowed() {
-        Stack_Object obj = new Stack_Object("o", "old", 0, EntryKind.METHOD);
+        StackObject obj = new StackObject("o", "old", 0, EntryKind.METHOD);
         obj.setValue("new");
         assertEquals("new", obj.getValue());
     }
 
     @Test
     void toString_formatsAsExpected() {
-        Stack_Object obj = new Stack_Object("x", 42, 2, EntryKind.VARIABLE, DataType.INT);
+        StackObject obj = new StackObject("x", 42, 2, EntryKind.VARIABLE, DataType.INT);
         assertEquals("x_2=42", obj.toString());
     }
 
     @Test
     void constructNonVarWithDataType_throws() {
         assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
-            new Stack_Object("m", "val", 1, EntryKind.METHOD, DataType.INT)
+            new StackObject("m", "val", 1, EntryKind.METHOD, DataType.INT)
         );
     }
 }

@@ -226,7 +226,7 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value val = (Value) ret;
-        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
+        StackObject stack_ret = StackObject.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(id, newValue);
@@ -242,7 +242,7 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value val = (Value) ret;
-        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
+        StackObject stack_ret = StackObject.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(null, newValue);
@@ -269,7 +269,7 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value val = (Value) ret;
-        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
+        StackObject stack_ret = StackObject.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         mem.affectValue(id, newValue);
         stack_ret = mem.stack.getObject(id);
@@ -285,7 +285,7 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value val = (Value) ret;
-        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
+        StackObject stack_ret = StackObject.valueToStackObj(val);
         assertNull(stack_ret.getValue());
         mem.affectValue(id, newValue);
         stack_ret = mem.stack.getObject(id);
@@ -301,7 +301,7 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value val = (Value) ret;
-        Stack_Object stack_ret = Stack_Object.valueToStackObj(val);
+        StackObject stack_ret = StackObject.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
         assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(id, newValue);
@@ -325,7 +325,7 @@ class MemoryIntegrationTest {
     void declVarClassUsesUnknownDataType() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
-        Stack_Object obj = mem.stack.getObject("val");
+        StackObject obj = mem.stack.getObject("val");
         assertEquals("val", ret);
         assertEquals(DataType.UNKNOWN, obj.getDataType());
     }
@@ -339,7 +339,7 @@ class MemoryIntegrationTest {
     void declVarClassUsesValueEqualsNull() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
-        Stack_Object obj = mem.stack.getObject("val");
+        StackObject obj = mem.stack.getObject("val");
         assertEquals("val", ret);
         assertNull(obj.getValue());
     }
@@ -348,7 +348,7 @@ class MemoryIntegrationTest {
     void affVarClass() {
         mem.declVarClass("val");
         String ret = mem.identVarClass();
-        Stack_Object obj = mem.stack.getObject("val");
+        StackObject obj = mem.stack.getObject("val");
         assertEquals("val", ret);
         assertNull(obj.getValue());
         mem.affVarClass(2); // We affect the var class to 2
@@ -439,7 +439,7 @@ class MemoryIntegrationTest {
         StringBuilder sb = new StringBuilder();
 
         // subscribe to TextAddedEvent so we can capture written diffs
-        writer.TextAddedEvent.subscribe(data -> sb.append(data.diff()));
+        writer.textAddedEvent.subscribe(data -> sb.append(data.diff()));
 
         Memory memWithWriter = new Memory(writer);
         memWithWriter.write("hello");

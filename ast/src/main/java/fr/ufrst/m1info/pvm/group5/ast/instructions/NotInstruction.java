@@ -12,8 +12,8 @@ public class NotInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.pop();
-        if (v.Type != ValueType.BOOL){
-            throw new ASTInvalidTypeException("Type error: not operator expects one BOOL operands, but received " + v.Type + ".");
+        if (v.type != ValueType.BOOL){
+            throw new ASTInvalidTypeException("Type error: not operator expects one BOOL operands, but received " + v.type + ".");
         }
         boolean res = !v.valueBool ;
         Value vres = new Value(res);

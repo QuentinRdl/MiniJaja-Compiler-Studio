@@ -17,7 +17,7 @@ public class EqualNode extends BinaryOperator{
 
     @Override
     protected Value mainOperation(Value leftOperand, Value rightOperand) {
-        if (leftOperand.Type == ValueType.BOOL){
+        if (leftOperand.type == ValueType.BOOL){
             return new Value(leftOperand.valueBool == rightOperand.valueBool);
         }
         return new Value(leftOperand.valueInt == rightOperand.valueInt);

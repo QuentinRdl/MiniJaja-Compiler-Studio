@@ -16,8 +16,8 @@ public class IncInstruction extends Instruction{
     public int execute(int address, Memory m) {
         Value v_add = (Value) m.val(ident);
         Value v_pop = (Value) m.pop();
-        if (v_add.Type != ValueType.INT || v_pop.Type != ValueType.INT){
-            throw new ASTInvalidTypeException("Type error: inc operator expects INT operands, but received " + v_add.Type + " and " + v_pop.Type + ".");
+        if (v_add.type != ValueType.INT || v_pop.type != ValueType.INT){
+            throw new ASTInvalidTypeException("Type error: inc operator expects INT operands, but received " + v_add.type + " and " + v_pop.type + ".");
         }
         int res = v_pop.valueInt + v_add.valueInt;
         Value vres = new Value(res);

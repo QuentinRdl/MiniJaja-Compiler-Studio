@@ -16,11 +16,11 @@ public class LoadInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.val(ident);
-        if (v.Type == ValueType.STRING){
-            throw new ASTInvalidTypeException("Type error: operation does not accept STRING type, but received " + v.Type + ".");
+        if (v.type == ValueType.STRING){
+            throw new ASTInvalidTypeException("Type error: operation does not accept STRING type, but received " + v.type + ".");
 
         }
-        m.push(".", v, ValueType.toDataType(v.Type), EntryKind.CONSTANT);
+        m.push(".", v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
         return address+1;
     }
 }

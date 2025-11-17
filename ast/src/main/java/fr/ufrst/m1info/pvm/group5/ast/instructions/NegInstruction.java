@@ -12,8 +12,8 @@ public class NegInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.pop();
-        if (v.Type != ValueType.INT){
-            throw new ASTInvalidTypeException("Type error: neg operator expects one INT operands, but received " + v.Type + ".");
+        if (v.type != ValueType.INT){
+            throw new ASTInvalidTypeException("Type error: neg operator expects one INT operands, but received " + v.type + ".");
         }
         int res = -v.valueInt ;
         Value vres = new Value(res);

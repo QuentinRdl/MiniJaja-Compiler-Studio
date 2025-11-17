@@ -914,7 +914,7 @@ class NodeInterpretationUnitTest {
         VariableNode var = new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("x"), null);
         var.interpret(memory);
         assertTrue(memoryStorage.containsKey("x"));
-        assertEquals(ValueType.EMPTY, memoryStorage.get("x").Type);
+        assertEquals(ValueType.EMPTY, memoryStorage.get("x").type);
     }
 
     @Test
@@ -923,7 +923,7 @@ class NodeInterpretationUnitTest {
         VariableNode var = new VariableNode(new TypeNode(ValueType.BOOL), new IdentNode("x"), exp);
         var.interpret(memory);
         assertTrue(memoryStorage.containsKey("x"));
-        assertEquals(ValueType.INT, memoryStorage.get("x").Type);
+        assertEquals(ValueType.INT, memoryStorage.get("x").type);
         assertEquals(5, memoryStorage.get("x").valueInt);
     }
 
@@ -1216,7 +1216,7 @@ class NodeInterpretationUnitTest {
 
         assertTrue(memoryStorage.containsKey("flag"));
         Value val = memoryStorage.get("flag");
-        assertEquals(ValueType.BOOL, val.Type);
+        assertEquals(ValueType.BOOL, val.type);
         assertFalse(val.valueBool);
     }
 
@@ -1231,7 +1231,7 @@ class NodeInterpretationUnitTest {
 
         assertTrue(memoryStorage.containsKey("x"));
         Value val = memoryStorage.get("x");
-        assertEquals(ValueType.INT, val.Type);
+        assertEquals(ValueType.INT, val.type);
         assertEquals(0, val.valueInt);
     }
     @Test
@@ -1261,11 +1261,11 @@ class NodeInterpretationUnitTest {
         Value valFlag = memoryStorage.get("flag");
 
         assertNotNull(valX);
-        assertEquals(ValueType.INT, valX.Type);
+        assertEquals(ValueType.INT, valX.type);
         assertEquals(0, valX.valueInt);
 
         assertNotNull(valFlag);
-        assertEquals(ValueType.BOOL, valFlag.Type);
+        assertEquals(ValueType.BOOL, valFlag.type);
         assertFalse(valFlag.valueBool);
     }
     @Test

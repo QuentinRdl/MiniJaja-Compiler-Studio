@@ -38,7 +38,7 @@ class CheckDynamicTypeTest {
             if (v==null){
                 throw new IllegalArgumentException("");
             }
-            return switch (v.Type) {
+            return switch (v.type) {
                 case INT -> DataType.INT;
                 case BOOL -> DataType.BOOL;
                 case VOID -> DataType.VOID;

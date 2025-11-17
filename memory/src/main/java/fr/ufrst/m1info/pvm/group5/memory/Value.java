@@ -7,29 +7,29 @@ public class Value {
     public int valueInt;
     public boolean valueBool;
     public String valueString;
-    public ValueType Type;
+    public ValueType type;
 
     public Value(boolean valueBool){
         this.valueBool = valueBool;
-        this.Type = ValueType.BOOL;
+        this.type = ValueType.BOOL;
     }
 
     public Value(int valueInt){
         this.valueInt = valueInt;
-        this.Type = ValueType.INT;
+        this.type = ValueType.INT;
     }
 
     public Value(String valueString){
         this.valueString = valueString;
-        this.Type = ValueType.STRING;
+        this.type = ValueType.STRING;
     }
 
     public Value(){
-        this.Type=ValueType.EMPTY;
+        this.type =ValueType.EMPTY;
     }
     
     public String toString(){
-        return switch (Type) {
+        return switch (type) {
             case INT -> valueInt + "";
             case BOOL -> valueBool + "";
             case STRING -> valueString;

@@ -13,8 +13,8 @@ public class DivInstruction extends Instruction{
     public int execute(int address, Memory m) {
         Value v2 = (Value) m.pop(); //first pop => right operand
         Value v1 = (Value) m.pop(); //second pop => left operand
-        if (v1.Type != ValueType.INT || v2.Type != ValueType.INT){
-            throw new ASTInvalidTypeException("Type error: div instruction expects two INT operands, but received " + v1.Type + " and " + v2.Type + ".");
+        if (v1.type != ValueType.INT || v2.type != ValueType.INT){
+            throw new ASTInvalidTypeException("Type error: div instruction expects two INT operands, but received " + v1.type + " and " + v2.type + ".");
         }
         if (v2.valueInt == 0){
             throw new ASTInvalidOperationException("Division by 0 is impossible");
