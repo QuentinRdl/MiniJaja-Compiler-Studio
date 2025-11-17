@@ -94,14 +94,14 @@ public class MainControllerTest extends ApplicationTest {
 
 
     @Test
-    public void testInitialState(){
+    void testInitialState(){
         FxAssert.verifyThat("#fileLabel", LabeledMatchers.hasText("No file selected"));
 
         assertTrue(controller.getCodeLines().isEmpty(), "The ListView should be empty at the start");
     }
 
     @Test
-    public void testButtonsAreVisible(){
+    void testButtonsAreVisible(){
         FxAssert.verifyThat("#btnOpen", isVisible());
         FxAssert.verifyThat("#btnSave", isVisible());
         FxAssert.verifyThat("#btnRun", isVisible());
@@ -110,7 +110,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadFileSuccess() throws IOException{
+    void testLoadFileSuccess() throws IOException{
         File testFile = createTestFile("test.mjj", "int x = 10;", "x = x + 1;");
 
         interact(() -> {
@@ -125,7 +125,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadFileNull(){
+    void testLoadFileNull(){
         interact(() -> {
             boolean success = controller.loadFile(null);
             assertFalse(success);
@@ -136,7 +136,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadFileNoExistent(){
+    void testLoadFileNoExistent(){
         File nonExistent = tempDir.resolve("does_not_exist.mjj").toFile();
 
         assertFalse(nonExistent.exists());
@@ -150,7 +150,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadEmptyFile() throws IOException {
+    void testLoadEmptyFile() throws IOException {
         File emptyFile = createTestFile("empty.mjj");
 
         assertTrue(emptyFile.exists());
@@ -165,7 +165,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadMultipleLines() throws IOException {
+    void testLoadMultipleLines() throws IOException {
         File multipleLines = createTestFile("multiple.mjj", "line 1", "line 2", "line 3", "line 4", "line 5");
 
         interact(() -> {
@@ -182,7 +182,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadFileWithSpecialCharacter() throws IOException {
+    void testLoadFileWithSpecialCharacter() throws IOException {
         File testFile = createTestFile("special.mjj", "String message = \"L'été est reposant !\";", "// Ceci est un commentaire");
 
         interact(() -> {
@@ -197,7 +197,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadMultipleFilesSuccessively() throws IOException {
+    void testLoadMultipleFilesSuccessively() throws IOException {
         File firstFile = createTestFile("first.mjj", "int x = 1;", "int y = x + 1;");
 
         interact(() -> {
@@ -223,7 +223,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testGetModifiedCode() throws Exception{
+    void testGetModifiedCode() throws Exception{
         File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
 
         interact(() -> {
@@ -251,7 +251,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSingleEnterAddsLineBelow() throws Exception{
+    void testSingleEnterAddsLineBelow() throws Exception{
         File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
 
         interact(() -> {
@@ -282,7 +282,7 @@ public class MainControllerTest extends ApplicationTest {
 
 
     @Test
-    public void testMultipleEnterPresses() throws Exception {
+    void testMultipleEnterPresses() throws Exception {
         File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
 
         interact(() -> {
@@ -314,7 +314,7 @@ public class MainControllerTest extends ApplicationTest {
 
 
     @Test
-    public void testSaveButtonCurrentFileExisting() throws Exception {
+    void testSaveButtonCurrentFileExisting() throws Exception {
         File testFile = createTestFile("test.mjj", "int x = 10;", "x++");
 
         interact(() -> {
@@ -349,7 +349,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSavePreservesModifications() throws Exception {
+    void testSavePreservesModifications() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
 
         interact(() -> {
@@ -378,7 +378,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveAfterAddingLine() throws Exception {
+    void testSaveAfterAddingLine() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2");
 
         interact(() -> {
@@ -412,7 +412,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveEmptyFile() throws Exception {
+    void testSaveEmptyFile() throws Exception {
         File emptyFile = createTestFile("empty.mjj");
 
         interact(() -> {
@@ -433,7 +433,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveButtonWhenCurrentFileNull() throws Exception {
+    void testSaveButtonWhenCurrentFileNull() throws Exception {
         controller.getCodeLines().add(new CodeLine(1, "int x = 10;"));
         controller.getCodeLines().add(new CodeLine(2, "x++;"));
 
@@ -458,7 +458,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveAsWithNullFile() throws Exception {
+    void testSaveAsWithNullFile() throws Exception {
         File initialFile = createTestFile("initial.mjj", "line 1", "line 2");
 
         interact(() -> {
@@ -478,7 +478,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveAsWithNewFile() throws Exception {
+    void testSaveAsWithNewFile() throws Exception {
         File initialFile = createTestFile("initial.mjj", "line 1", "line 2");
 
         interact(() -> {
@@ -510,7 +510,7 @@ public class MainControllerTest extends ApplicationTest {
 
     //TODO: tests when the backspace key is pressed
     @Test
-    public void testEnterThenBackspaceDeleteEmptyLine() throws Exception {
+    void testEnterThenBackspaceDeleteEmptyLine() throws Exception {
         File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
 
         interact(() -> {
@@ -544,7 +544,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testDeleteTextThenBackspaceDeletesEmptyLines() throws Exception {
+    void testDeleteTextThenBackspaceDeletesEmptyLines() throws Exception {
         File testFile = createTestFile("test.mjj", "main () {", "abc", "}");
         interact(() -> {
             controller.loadFile(testFile);
@@ -600,7 +600,7 @@ public class MainControllerTest extends ApplicationTest {
 
 
     @Test
-    public void testSelectEmptyLineThenBackspaceDeletesImmediately() throws Exception {
+    void testSelectEmptyLineThenBackspaceDeletesImmediately() throws Exception {
         File testFile = createTestFile("test.mjj", "main () {", "", "}");
         interact(() -> controller.loadFile(testFile));
 
@@ -640,7 +640,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCannotDeleteLastLine() throws Exception {
+    void testCannotDeleteLastLine() throws Exception {
         File testFile = createTestFile("test.mjj", "");
         interact(() -> controller.loadFile(testFile));
 
@@ -666,7 +666,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testBackspaceInMiddleOfTextDoesNotDeleteLine() throws Exception {
+    void testBackspaceInMiddleOfTextDoesNotDeleteLine() throws Exception {
         File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
         interact(() -> controller.loadFile(testFile));
 
@@ -695,7 +695,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testTypingAfterEmptyingLineResetFlag() throws Exception {
+    void testTypingAfterEmptyingLineResetFlag() throws Exception {
         File testFile = createTestFile("test.mjj", "main () {", "x", "}");
         interact(() -> {
             controller.loadFile(testFile);
@@ -751,7 +751,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testMultipleEmptyLinesCreationAndDeletion() throws Exception {
+    void testMultipleEmptyLinesCreationAndDeletion() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1");
         interact(() -> controller.loadFile(testFile));
 
@@ -784,27 +784,27 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void getBaseFileNameNullFileReturnsNull(){
+    void getBaseFileNameNullFileReturnsNull(){
         assertNull(controller.getBaseFileName(null));
     }
 
     @Test
-    public void getBaseFileNameReturnsNameWithoutExtension(){
+    void getBaseFileNameReturnsNameWithoutExtension(){
         assertEquals("test", controller.getBaseFileName("test.mjj"));
     }
 
     @Test
-    public void getBaseFileNameNoExtensionReturnsFullName(){
+    void getBaseFileNameNoExtensionReturnsFullName(){
         assertEquals("test", controller.getBaseFileName("test"));
     }
 
     @Test
-    public void getBaseFileNameMultipleExtensionsReturnsBeforeLastDot(){
+    void getBaseFileNameMultipleExtensionsReturnsBeforeLastDot(){
         assertEquals("test.jjc", controller.getBaseFileName("test.jjc.mjj"));
     }
 
     @Test
-    public void testNewFileCreatesEmptyDocument(){
+    void testNewFileCreatesEmptyDocument(){
         assertTrue(controller.getCodeLines().isEmpty());
 
         clickOn("#btnNew");
@@ -818,7 +818,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testNewFileReplacesExistingLoadedFile() throws Exception {
+    void testNewFileReplacesExistingLoadedFile() throws Exception {
         File testFile = createTestFile("test.mjj", "main () {", "int x = 10;", "}");
         interact(() -> controller.loadFile(testFile));
 
@@ -837,7 +837,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testArrowUpSelectsPreviousLine() throws Exception {
+    void testArrowUpSelectsPreviousLine() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3", "line 4");
         interact(() -> controller.loadFile(testFile));
 
@@ -874,7 +874,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testArrowUpOnFirstLineDoesNothing() throws Exception {
+    void testArrowUpOnFirstLineDoesNothing() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
         interact(() -> controller.loadFile(testFile));
 
@@ -899,7 +899,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testArrowDownSelectsNextLine() throws Exception {
+    void testArrowDownSelectsNextLine() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
         interact(() -> controller.loadFile(testFile));
 
@@ -921,7 +921,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testArrowDownOnLastLineDoesNothing() throws Exception {
+    void testArrowDownOnLastLineDoesNothing() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2", "line 3");
         interact(() -> controller.loadFile(testFile));
 
@@ -955,7 +955,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testButtonsActivatedAfterClickNew(){
+    void testButtonsActivatedAfterClickNew(){
         interact(() ->  controller.deactiveButtons());
 
         verifyThat("#btnSave", isDisabled());
@@ -975,7 +975,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testButtonsActivatedAfterLoadedFile() throws Exception {
+    void testButtonsActivatedAfterLoadedFile() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2");
 
         verifyThat("#btnSave", isDisabled());
@@ -994,13 +994,13 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testIsMinijajaFileWithNullFile(){
+    void testIsMinijajaFileWithNullFile(){
         assertNull(controller.getCurrentFile());
         assertFalse(controller.isMinijajaFile());
     }
 
     @Test
-    public void testIsMinijajaFileWithMinijajaFile() throws Exception {
+    void testIsMinijajaFileWithMinijajaFile() throws Exception {
         File testFile = createTestFile("test.mjj", "line 1", "line 2");
         interact(() -> controller.loadFile(testFile));
         assertEquals(testFile, controller.getCurrentFile());
@@ -1009,7 +1009,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testIsMinijajaFileWithJajacodeFile() throws Exception {
+    void testIsMinijajaFileWithJajacodeFile() throws Exception {
         File testFile = createTestFile("test.jjc", "line 1", "line 2");
         interact(() -> controller.loadFile(testFile));
         assertEquals(testFile, controller.getCurrentFile());
@@ -1019,7 +1019,7 @@ public class MainControllerTest extends ApplicationTest {
     /*
      */
     @Test
-    public void confirmationRunEmptyFile() throws Exception {
+    void confirmationRunEmptyFile() throws Exception {
         File blankFile = createTestFile("blank.mjj", "   ", "");
 
         interact(() -> {
@@ -1085,12 +1085,12 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledTabHiddenByDefault(){
+    void testCompiledTabHiddenByDefault(){
         assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
     }
 
     @Test
-    public void testCompileShowsCompiledTab() throws Exception {
+    void testCompileShowsCompiledTab() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}");
         interact(() -> controller.loadFile(testFile));
 
@@ -1104,7 +1104,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledTabHiddenAfterLoadingNewFile() throws Exception {
+    void testCompiledTabHiddenAfterLoadingNewFile() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1120,7 +1120,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledTabHiddenAfterCreatingNewFile() throws Exception {
+    void testCompiledTabHiddenAfterCreatingNewFile() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1134,7 +1134,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledCodeHasLineNumber() throws Exception {
+    void testCompiledCodeHasLineNumber() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1148,7 +1148,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledCodeIsReadOnly() throws Exception {
+    void testCompiledCodeIsReadOnly() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1166,7 +1166,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledJajacodeFile() throws Exception {
+    void testCompiledJajacodeFile() throws Exception {
         File testFile = createTestFile("test.jcc", "init", "push(0)", "pop", "jcstop");
         interact(() -> controller.loadFile(testFile));
 
@@ -1177,7 +1177,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompileErrorDoesNotShowCompiledTab() throws Exception {
+    void testCompileErrorDoesNotShowCompiledTab() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}");
         interact(() -> controller.loadFile(testFile));
 
@@ -1191,7 +1191,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompileButtonDisabledOnCompiledTab() throws Exception {
+    void testCompileButtonDisabledOnCompiledTab() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
 
@@ -1207,7 +1207,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompiledTabIsClosable() throws Exception {
+    void testCompiledTabIsClosable() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1223,7 +1223,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testIsCompiledTabReturnsFalseWhenOnSourceTab() throws Exception {
+    void testIsCompiledTabReturnsFalseWhenOnSourceTab() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
 
@@ -1231,7 +1231,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testIsCompiledTabReturnsTrueWhenOnCompiledTab() throws Exception {
+    void testIsCompiledTabReturnsTrueWhenOnCompiledTab() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1241,7 +1241,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testLoadCompiledCodeToListViewSplitsLineCorrectly() throws Exception {
+    void testLoadCompiledCodeToListViewSplitsLineCorrectly() throws Exception {
         String compiledCode = "init\npush(0)\npop\njcstop";
         interact(() -> controller.loadCompiledCodeToListView(compiledCode));
         WaitForAsyncUtils.waitForFxEvents();
@@ -1259,7 +1259,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testHideCompiledTabWhenAlreadyHidden() throws Exception {
+    void testHideCompiledTabWhenAlreadyHidden() throws Exception {
         assertFalse(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
 
         interact(() -> controller.hideCompileTab());
@@ -1268,7 +1268,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testShowCompiledTabWhenAlreadyShown() throws Exception {
+    void testShowCompiledTabWhenAlreadyShown() throws Exception {
         File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
         interact(() -> controller.loadFile(testFile));
         interact(() -> controller.onCompileClicked());
@@ -1286,7 +1286,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testShowInternalErrorWhenBothMiniJajaAndJajaCode() throws Exception {
+    void testShowInternalErrorWhenBothMiniJajaAndJajaCode() throws Exception {
         MainController realController = this.controller;
         class FakeController extends MainController {
             @Override
@@ -1347,7 +1347,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testRunShortcutCtrlR() throws Exception {
+    void testRunShortcutCtrlR() throws Exception {
         File testFile = createTestFile("shortcut_run.mjj", "class C { main { int x = 1; }}");
 
         interact(() -> controller.loadFile(testFile));
@@ -1369,7 +1369,7 @@ public class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testCompileShortcutCtrlKShowsCompiledTab() throws Exception {
+    void testCompileShortcutCtrlKShowsCompiledTab() throws Exception {
         File testFile = createTestFile("shortcut_compile.mjj", "class C {", "main {", "}", "}");
 
         interact(() -> controller.loadFile(testFile));

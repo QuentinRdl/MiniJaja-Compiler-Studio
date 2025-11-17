@@ -57,7 +57,7 @@ public class CodeLineCellTest extends ApplicationTest {
      * with the expected number of child nodes
      */
     @Test
-    public void testCellDisplaysCorrectContent(){
+    void testCellDisplaysCorrectContent(){
         CodeLineCell cell = (CodeLineCell) listView.lookup(".list-cell"); // Retrieves a cell from the listview
         assertNotNull(cell);
 
@@ -67,7 +67,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testNullCellHasNoGraphic(){
+    void testNullCellHasNoGraphic(){
         CodeLineCell cell = new CodeLineCell();
         cell.updateItem(null, false);
 
@@ -76,7 +76,7 @@ public class CodeLineCellTest extends ApplicationTest {
 
 
     @Test
-    public void testEmptyCellHasNoGraphic(){
+    void testEmptyCellHasNoGraphic(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "x = 10;");
 
@@ -86,7 +86,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testCellUpdate(){
+    void testCellUpdate(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "x = 10;");
 
@@ -105,7 +105,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testBreakpointShouldBeVisible(){
+    void testBreakpointShouldBeVisible(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         codeLine.setBreakpoint(true);
@@ -119,7 +119,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testBreakpointShouldNotBeVisible(){
+    void testBreakpointShouldNotBeVisible(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         assertFalse(codeLine.isBreakpoint());
@@ -132,7 +132,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
     
     @Test
-    public void testBreakpointDisplayWhenLineNumberContainerIsClicked(){
+    void testBreakpointDisplayWhenLineNumberContainerIsClicked(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         assertFalse(codeLine.isBreakpoint());
@@ -163,7 +163,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testRemoveBreakpointWhenLineNumberContainerIsClicked(){
+    void testRemoveBreakpointWhenLineNumberContainerIsClicked(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         codeLine.setBreakpoint(true);
@@ -196,7 +196,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testCodeLineUpdatesWhenUserEditsTextField(){
+    void testCodeLineUpdatesWhenUserEditsTextField(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
 
@@ -223,7 +223,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testSetCodeEditable() {
+    void testSetCodeEditable() {
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
 

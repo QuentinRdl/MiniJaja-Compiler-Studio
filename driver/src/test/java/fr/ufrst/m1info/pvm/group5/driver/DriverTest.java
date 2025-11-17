@@ -11,7 +11,7 @@ public class DriverTest {
      * Rigorous Test :-)
      */
     @Test
-    public void testApp() {
+    void testApp() {
         assertTrue(true);
     }
 }

@@ -8,9 +8,6 @@ import java.nio.file.NoSuchFileException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/*
-Commented tests doesn't work because API memory is not done yet
- */
 public class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
 
@@ -21,7 +18,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Code Without Error")
-    public void InterpretCodeNoError() {
+    void InterpretCodeNoError() {
         String input = "class C {"
                 + "  main{}"
                 + "}";
@@ -30,13 +27,13 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret File BasicOperations")
-    public void InterpretFileBasicOperations() {
+    void InterpretFileBasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File That Doesn't Exist")
-    public void InterpretNotExistingFile() {
+    void InterpretNotExistingFile() {
         String errMessage=imj.interpretFile("src/test/resources/FileThatDoesntExist.mjj");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(NoSuchFileException.class.toString(),errMessage.split(":")[0].trim());
@@ -44,49 +41,49 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret File BasicOperations")
-    public void BasicOperations() {
+    void BasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File Complex")
-    public void Complex() {
+    void Complex() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Complex.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File Conditionals")
-    public void Conditionals() {
+    void Conditionals() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Conditionals.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File Local Variables")
-    public void LocalVariables() {
+    void LocalVariables() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/LocalVariables.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File Loops")
-    public void Loops() {
+    void Loops() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File OperationPrevalence")
-    public void OperationPrevalence() {
+    void OperationPrevalence() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
     }
 
     @Test
     @DisplayName("Interpret File Simple")
-    public void Simple() {
+    void Simple() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
-    public void UndefinedVariableSum() {
+    void UndefinedVariableSum() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x += y;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -94,7 +91,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Undefined Variable / Inc")
-    public void UndefinedVariableInc() {
+    void UndefinedVariableInc() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x++;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -102,7 +99,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Undefined Variable / Evaluation")
-    public void UndefinedVariableEval() {
+    void UndefinedVariableEval() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {y = x;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -110,7 +107,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Unnamed Variable")
-    public void UnnamedVariable() {
+    void UnnamedVariable() {
         String errMessage=imj.interpretCode("class C {int  = 10;main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -118,7 +115,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret No Main")
-    public void noMain() {
+    void noMain() {
         String errMessage=imj.interpretCode("class C {int y = 10;}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -126,7 +123,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret No Class")
-    public void noClass() {
+    void noClass() {
         String errMessage=imj.interpretCode("int y = 10; main{}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -134,7 +131,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Without Value")
-    public void declarationWithoutValue() {
+    void declarationWithoutValue() {
         String errMessage=imj.interpretCode("class C {int y = ;main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -142,7 +139,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Without Value")
-    public void affectationWithoutValue() {
+    void affectationWithoutValue() {
         String errMessage=imj.interpretCode("class C {int y; main {y= ;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -150,7 +147,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Sum Without Value")
-    public void sumWithoutValue() {
+    void sumWithoutValue() {
         String errMessage=imj.interpretCode("class C {int y=10; main {y+= ;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -158,14 +155,14 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Increment on unassigned variable")
-    public void incrementUnassigned() {
+    void incrementUnassigned() {
         String errMessage=imj.interpretCode("class C {int y; main {y++;}}");
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
     @DisplayName("Interpret Increment")
-    public void increment() {
+    void increment() {
         String errMessage=imj.interpretCode("class C {int y=1; main {y++;}}");
         Assertions.assertNull(errMessage);
     }
@@ -174,7 +171,7 @@ public class InterpreterMiniJajaTest {
     @Disabled
     @Test
     @DisplayName("Interpret Multiple Class")
-    public void multipleClass() {
+    void multipleClass() {
         String errMessage=imj.interpretCode("class C {main {}} class D {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -182,7 +179,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Multiple Main")
-    public void multipleMain() {
+    void multipleMain() {
         String errMessage=imj.interpretCode("class C {main {} main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -190,7 +187,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Class into Class")
-    public void classIntoClass() {
+    void classIntoClass() {
         String errMessage=imj.interpretCode("class C {class D {main {}}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -198,7 +195,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Class Into Main")
-    public void classIntoMain() {
+    void classIntoMain() {
         String errMessage=imj.interpretCode("main {class C {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -206,7 +203,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Main Into Main")
-    public void mainIntoMain() {
+    void mainIntoMain() {
         String errMessage=imj.interpretCode("class C {main {main {}}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -214,7 +211,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret String Error")
-    public void stringError() {
+    void stringError() {
         String errMessage=imj.interpretCode("ERROR");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -222,7 +219,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Unnamed Class")
-    public void unnamedClass() {
+    void unnamedClass() {
         String errMessage=imj.interpretCode("class {main {}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -230,7 +227,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Named Main")
-    public void namedMain() {
+    void namedMain() {
         String errMessage=imj.interpretCode("class C {main M{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -238,7 +235,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Every Operations At Once")
-    public void everyOperations() {
+    void everyOperations() {
         String errMessage=imj.interpretCode("class C {main{int y=1 +-*/> 2;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -246,7 +243,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Every Types At Once")
-    public void everyTypes() {
+    void everyTypes() {
         String errMessage=imj.interpretCode("class C {void int boolean y; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -254,7 +251,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Variable Named Int")
-    public void variableNamedInt() {
+    void variableNamedInt() {
         String errMessage=imj.interpretCode("class C {int int; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -262,7 +259,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Variable Named Int2")
-    public void variableNamedInt2() {
+    void variableNamedInt2() {
         String errMessage=imj.interpretCode("class C {int int2; main{}}");
         Assertions.assertNull(errMessage);
     }
@@ -270,7 +267,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret If Without Condition")
-    public void ifWithoutCondition() {
+    void ifWithoutCondition() {
         String errMessage=imj.interpretCode("class C { main{if(){};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -278,7 +275,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Else Without If")
-    public void elseWithoutIf() {
+    void elseWithoutIf() {
         String errMessage=imj.interpretCode("class C { main{else{};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -286,7 +283,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Instruction Not In Main")
-    public void instructionNotInMain() {
+    void instructionNotInMain() {
         String errMessage=imj.interpretCode("class C { int y; y = 10; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -294,7 +291,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration With 2 Equals")
-    public void declarationWith2Equals() {
+    void declarationWith2Equals() {
         String errMessage=imj.interpretCode("class C { int y == 10; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -302,7 +299,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation With 2 Equals")
-    public void affectationWith2Equals() {
+    void affectationWith2Equals() {
         String errMessage=imj.interpretCode("class C { int y; main{y == 10;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -310,7 +307,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Double Declaration")
-    public void doubleDeclaration() {
+    void doubleDeclaration() {
         String errMessage=imj.interpretCode("class C { int y = 5 = 10; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -318,7 +315,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Double Affectation")
-    public void doubleAffectation() {
+    void doubleAffectation() {
         String errMessage=imj.interpretCode("class C { int y; main{y = 5 = 10;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -326,7 +323,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Increment With 3 Plus")
-    public void incrementWith3Plus() {
+    void incrementWith3Plus() {
         String errMessage=imj.interpretCode("class C { int y = 10; main{y +++;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -334,7 +331,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Increment With Number")
-    public void incrementWithNumber() {
+    void incrementWithNumber() {
         String errMessage=imj.interpretCode("class C { int y = 10; main{y ++ 5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -342,7 +339,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Increment Affectation")
-    public void incrementAffectation() {
+    void incrementAffectation() {
         String errMessage=imj.interpretCode("class C { int y = 10; main{y ++= 5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -350,7 +347,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Sum Without Ident")
-    public void sumWithoutIdent() {
+    void sumWithoutIdent() {
         String errMessage=imj.interpretCode("class C { int y = 10; main{ += 5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -358,7 +355,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Without Ident")
-    public void affectationWithoutIdent() {
+    void affectationWithoutIdent() {
         String errMessage=imj.interpretCode("class C { int y; main{ = 5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -366,7 +363,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation On A Number")
-    public void affectationOnANumber() {
+    void affectationOnANumber() {
         String errMessage=imj.interpretCode("class C { int y; main{ 1 = 5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -374,7 +371,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Number")
-    public void number() {
+    void number() {
         String errMessage=imj.interpretCode("class C { main{10;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -382,7 +379,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret I Forgot A Semicolon")
-    public void iForgotASemiColon() {
+    void iForgotASemiColon() {
         String errMessage=imj.interpretCode("class C {main{int y=1 + 2}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -391,7 +388,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Wrong Type")
-    public void declarationWrongType() {
+    void declarationWrongType() {
         String errMessage=imj.interpretCode("class C {int y=false; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -400,7 +397,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Wrong Type 2")
-    public void declarationWrongType2() {
+    void declarationWrongType2() {
         String errMessage=imj.interpretCode("class C {boolean y=0; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -409,7 +406,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Void")
-    public void declarationVoid() {
+    void declarationVoid() {
         String errMessage=imj.interpretCode("class C {void y; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -417,7 +414,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Boolean Add")
-    public void declarationBooleanAdd() {
+    void declarationBooleanAdd() {
         String errMessage=imj.interpretCode("class C {boolean y=1+5; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -426,7 +423,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Boolean Minus")
-    public void declarationBooleanMinus() {
+    void declarationBooleanMinus() {
         String errMessage=imj.interpretCode("class C {boolean y=1-5; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -435,7 +432,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Boolean Mul")
-    public void declarationBooleanMul() {
+    void declarationBooleanMul() {
         String errMessage=imj.interpretCode("class C {boolean y=1*5; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -444,7 +441,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Boolean Div")
-    public void declarationBooleanDiv() {
+    void declarationBooleanDiv() {
         String errMessage=imj.interpretCode("class C {boolean y=1/5; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -453,7 +450,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Boolean Neg")
-    public void declarationBooleanNeg() {
+    void declarationBooleanNeg() {
         String errMessage=imj.interpretCode("class C {boolean y=-5; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -461,7 +458,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Int And")
-    public void declarationIntAnd() {
+    void declarationIntAnd() {
         String errMessage=imj.interpretCode("class C {int y=false && true; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -469,7 +466,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Int Or")
-    public void declarationIntOr() {
+    void declarationIntOr() {
         String errMessage=imj.interpretCode("class C {int y=false || true; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -477,7 +474,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Int Not")
-    public void declarationIntNot() {
+    void declarationIntNot() {
         String errMessage=imj.interpretCode("class C {int y=! true; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -485,7 +482,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Declaration Int Sup")
-    public void declarationIntSup() {
+    void declarationIntSup() {
         String errMessage=imj.interpretCode("class C {int y=4 > 1; main{}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -494,7 +491,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Wrong Type")
-    public void affectationWrongType() {
+    void affectationWrongType() {
         String errMessage=imj.interpretCode("class C {int y; main{y=false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -503,7 +500,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Wrong Type 2")
-    public void affectationWrongType2() {
+    void affectationWrongType2() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=0;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -512,7 +509,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Boolean Add")
-    public void affectationBooleanAdd() {
+    void affectationBooleanAdd() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=1+5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -521,7 +518,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Boolean Minus")
-    public void affectationBooleanMinus() {
+    void affectationBooleanMinus() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=1-5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -530,7 +527,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Boolean Mul")
-    public void affectationBooleanMul() {
+    void affectationBooleanMul() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=1*5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -539,7 +536,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Boolean Div")
-    public void affectationBooleanDiv() {
+    void affectationBooleanDiv() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=1/5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -548,7 +545,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Boolean Neg")
-    public void affectationBooleanNeg() {
+    void affectationBooleanNeg() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=-5;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -556,7 +553,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Int And")
-    public void affectationIntAnd() {
+    void affectationIntAnd() {
         String errMessage=imj.interpretCode("class C {int y; main{y=false && true;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -564,7 +561,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Int Or")
-    public void affectationIntOr() {
+    void affectationIntOr() {
         String errMessage=imj.interpretCode("class C {int y; main{y=false || true;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -572,7 +569,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Int Not")
-    public void affectationIntNot() {
+    void affectationIntNot() {
         String errMessage=imj.interpretCode("class C {int y; main{y=! true;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -580,7 +577,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Affectation Int Sup")
-    public void affectationIntSup() {
+    void affectationIntSup() {
         String errMessage=imj.interpretCode("class C {int y; main{y=4 > 1;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -589,7 +586,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Add Boolean")
-    public void addBoolean() {
+    void addBoolean() {
         String errMessage=imj.interpretCode("class C {int y; main{y=true+false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -598,7 +595,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Minus Boolean")
-    public void minusBoolean() {
+    void minusBoolean() {
         String errMessage=imj.interpretCode("class C {int y; main{y=true-false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -607,7 +604,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Mul Boolean")
-    public void mulBoolean() {
+    void mulBoolean() {
         String errMessage=imj.interpretCode("class C {int y; main{y=true*false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -616,7 +613,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Div Boolean")
-    public void divBoolean() {
+    void divBoolean() {
         String errMessage=imj.interpretCode("class C {int y; main{y=true/false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -625,7 +622,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Sup Boolean")
-    public void supBoolean() {
+    void supBoolean() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=true>false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -634,7 +631,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Neg Boolean")
-    public void negBoolean() {
+    void negBoolean() {
         String errMessage=imj.interpretCode("class C {int y; main{y=-false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -643,7 +640,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Not Int")
-    public void notInt() {
+    void notInt() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=!4;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -652,7 +649,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret And Int")
-    public void andInt() {
+    void andInt() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=81 && 1;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -660,7 +657,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Or Int")
-    public void orInt() {
+    void orInt() {
         String errMessage=imj.interpretCode("class C {boolean y; main{y=4 || 81;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -668,7 +665,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret If Int")
-    public void ifInt() {
+    void ifInt() {
         String errMessage=imj.interpretCode("class C { main{if(4){};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -676,7 +673,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret If Variable Int")
-    public void ifVarInt() {
+    void ifVarInt() {
         String errMessage=imj.interpretCode("class C {int y=4; main{if(y){};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -684,7 +681,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret While Int")
-    public void whileInt() {
+    void whileInt() {
         String errMessage=imj.interpretCode("class C { main{while(4){};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -692,7 +689,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret While Variable Int")
-    public void whileVarInt() {
+    void whileVarInt() {
         String errMessage=imj.interpretCode("class C {int y=4; main{while(y){};}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -700,7 +697,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Inc Bool")
-    public void incBool() {
+    void incBool() {
         String errMessage=imj.interpretCode("class C {boolean y=false; main{y++;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -708,7 +705,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Sum Variable Bool")
-    public void sumVarBool() {
+    void sumVarBool() {
         String errMessage=imj.interpretCode("class C {boolean y=false; main{y+=4;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -716,7 +713,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Sum Bool")
-    public void sumBool() {
+    void sumBool() {
         String errMessage=imj.interpretCode("class C {int y=4; main{y+=false;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -724,28 +721,28 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Write Variable Bool")
-    public void WriteVarBool() {
+    void WriteVarBool() {
         String errMessage=imj.interpretCode("class C {boolean y=false; main{write(y);}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Write Variable Int")
-    public void WriteVarInt() {
+    void WriteVarInt() {
         String errMessage=imj.interpretCode("class C {int y=4; main{write(y);}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Write String")
-    public void WriteString() {
+    void WriteString() {
         String errMessage=imj.interpretCode("class C {int y; main{write(\"Hello World\");}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Write Bool")
-    public void WriteBool() {
+    void WriteBool() {
         String errMessage=imj.interpretCode("class C {int y; main{write(false);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -753,7 +750,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Write Int")
-    public void WriteInt() {
+    void WriteInt() {
         String errMessage=imj.interpretCode("class C {int y; main{write(2);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -761,7 +758,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Write Undefined Variable")
-    public void WriteUndefinedVar() {
+    void WriteUndefinedVar() {
         String errMessage=imj.interpretCode("class C {int y; main{write(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -769,7 +766,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Write Not Existing Variable")
-    public void WriteNotExistingVar() {
+    void WriteNotExistingVar() {
         String errMessage=imj.interpretCode("class C { main{write(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -777,28 +774,28 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Writeln Variable Bool")
-    public void WritelnVarBool() {
+    void WritelnVarBool() {
         String errMessage=imj.interpretCode("class C {boolean y=false; main{writeln(y);}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Writeln Variable Int")
-    public void WritelnVarInt() {
+    void WritelnVarInt() {
         String errMessage=imj.interpretCode("class C {int y=4; main{writeln(y);}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Writeln String")
-    public void WritelnString() {
+    void WritelnString() {
         String errMessage=imj.interpretCode("class C {int y; main{writeln(\"Hello World\");}}");
         Assertions.assertNull(errMessage);
     }
 
     @Test
     @DisplayName("Interpret Writeln Bool")
-    public void WritelnBool() {
+    void WritelnBool() {
         String errMessage=imj.interpretCode("class C {int y; main{writeln(false);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -806,7 +803,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Writeln Int")
-    public void WritelnInt() {
+    void WritelnInt() {
         String errMessage=imj.interpretCode("class C {int y; main{writeln(2);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -814,7 +811,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Writeln Undefined Variable")
-    public void WritelnUndefinedVar() {
+    void WritelnUndefinedVar() {
         String errMessage=imj.interpretCode("class C {int y; main{writeln(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -822,7 +819,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Writeln Not Existing Variable")
-    public void WritelnNotExistingVar() {
+    void WritelnNotExistingVar() {
         String errMessage=imj.interpretCode("class C { main{writeln(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
@@ -830,7 +827,7 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Random String")
-    public void randomString() {
+    void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -838,24 +835,22 @@ public class InterpreterMiniJajaTest {
 
     @Test
     @DisplayName("Interpret Empty String")
-    public void emptyString() {
+    void emptyString() {
         String errMessage=imj.interpretCode("");
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Null String")
-    public void nullString() {
+    void nullString() {
         String errMessage=imj.interpretCode(null);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Null Filepath")
-    public void nullFilepath() {
+    void nullFilepath() {
         String errMessage=imj.interpretFile(null);
         Assertions.assertNotEquals(null,errMessage);
     }
-
-
 }

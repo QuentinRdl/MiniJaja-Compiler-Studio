@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StackObjectTest {
 
     @Test
-    public void constructNonVarNonConst_ok() {
+    void constructNonVarNonConst_ok() {
         Stack_Object obj = new Stack_Object("m", "val", 1, EntryKind.METHOD);
         assertEquals("m", obj.getName());
         assertEquals("val", obj.getValue());
@@ -19,7 +19,7 @@ public class StackObjectTest {
     }
 
     @Test
-    public void constructVariable_withDataType_ok() {
+    void constructVariable_withDataType_ok() {
         Stack_Object var = new Stack_Object("x", 10, 0, EntryKind.VARIABLE, DataType.INT);
         assertEquals("x", var.getName());
         assertEquals(10, var.getValue());
@@ -31,7 +31,7 @@ public class StackObjectTest {
     /*
     Should not pass with the modifications we did to the memory
     @Test
-    public void constructVariable_withoutDataType_throws() {
+    void constructVariable_withoutDataType_throws() {
         assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
             new Stack_Object("x", 10, 0, EntryKind.VARIABLE)
         );
@@ -39,7 +39,7 @@ public class StackObjectTest {
      */
 
     @Test
-    public void setValue_onVariable_updates() {
+    void setValue_onVariable_updates() {
         Stack_Object var = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
         assertEquals(1, var.getValue());
         var.setValue(2);
@@ -47,26 +47,26 @@ public class StackObjectTest {
     }
 
     @Test
-    public void setValue_onConstant_throws() {
+    void setValue_onConstant_throws() {
         Stack_Object cst = new Stack_Object("c", 1, 0, EntryKind.CONSTANT, DataType.INT);
         assertThrows(Stack.ConstantModificationException.class, () -> cst.setValue(2));
     }
 
     @Test
-    public void setValue_onNonConstant_allowed() {
+    void setValue_onNonConstant_allowed() {
         Stack_Object obj = new Stack_Object("o", "old", 0, EntryKind.METHOD);
         obj.setValue("new");
         assertEquals("new", obj.getValue());
     }
 
     @Test
-    public void toString_formatsAsExpected() {
+    void toString_formatsAsExpected() {
         Stack_Object obj = new Stack_Object("x", 42, 2, EntryKind.VARIABLE, DataType.INT);
         assertEquals("x_2=42", obj.toString());
     }
 
     @Test
-    public void constructNonVarWithDataType_throws() {
+    void constructNonVarWithDataType_throws() {
         assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
             new Stack_Object("m", "val", 1, EntryKind.METHOD, DataType.INT)
         );

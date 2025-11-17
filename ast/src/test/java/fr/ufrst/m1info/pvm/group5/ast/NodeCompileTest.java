@@ -12,7 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class NodeCompileTest {
     @Test
-    public void AddNode_Operation(){
+    void AddNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         AddNode tested = new AddNode(lop,rop);
@@ -20,7 +20,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void BinMinusNode_Operation(){
+    void BinMinusNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         BinMinusNode tested = new BinMinusNode(lop,rop);
@@ -28,7 +28,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void AndNode_Operation(){
+    void AndNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         AndNode tested = new AndNode(lop,rop);
@@ -36,7 +36,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void DivNode_Operation(){
+    void DivNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         DivNode tested = new DivNode(lop,rop);
@@ -44,7 +44,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void EqualNode_Operation(){
+    void EqualNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         EqualNode tested = new EqualNode(lop,rop);
@@ -52,7 +52,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void MulNode_Operation(){
+    void MulNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         MulNode tested = new MulNode(lop,rop);
@@ -60,7 +60,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void OrNode_Operation(){
+    void OrNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         OrNode tested = new OrNode(lop,rop);
@@ -68,7 +68,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void SupNode_Operation(){
+    void SupNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         NumberNode rop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         SupNode tested = new SupNode(lop,rop);
@@ -76,7 +76,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void AffectationNode(){
+    void AffectationNode(){
         IdentNode ident = new IdentNode("x");
         NumberNode exp = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));
         AffectationNode tested = new AffectationNode(ident,exp);
@@ -84,19 +84,19 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void BooleanNodeTrue(){
+    void BooleanNodeTrue(){
         BooleanNode tested = new BooleanNode(true);
         assertEquals(List.of("push(jcvrai)"),tested.compile(1));
     }
 
     @Test
-    public void BooleanNodeFalse(){
+    void BooleanNodeFalse(){
         BooleanNode tested = new BooleanNode(false);
         assertEquals(List.of("push(jcfaux)"),tested.compile(1));
     }
 
     @Test
-    public void ClassNodeWithDecls(){
+    void ClassNodeWithDecls(){
         IdentNode ident = new IdentNode("x");
         DeclarationsNode decls = ASTMocks.createWithdrawNode(
                 DeclarationsNode.class,
@@ -111,7 +111,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void ClassNodeWithoutDecls(){
+    void ClassNodeWithoutDecls(){
         IdentNode ident = new IdentNode("x");
         DeclarationsNode decls = null;
         MainNode main = ASTMocks.createNode(MainNode.class, null, i -> List.of("MAINTEST"));;
@@ -120,7 +120,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void DeclarationsNode(){
+    void DeclarationsNode(){
         VariableNode var1 = ASTMocks.createNode(VariableNode.class,
                 null,
                 i -> List.of("VARIABLETEST1"));
@@ -133,7 +133,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void DeclarationsNodeWithdraw(){
+    void DeclarationsNodeWithdraw(){
         VariableNode var1 = ASTMocks.createWithdrawNode(
                 VariableNode.class,
                 null,
@@ -154,7 +154,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void FinalNodeInt(){
+    void FinalNodeInt(){
         IdentNode ident = new IdentNode("x");
         AddNode exp = ASTMocks.createNode(
                 AddNode.class,
@@ -167,7 +167,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void FinalNodeBool(){
+    void FinalNodeBool(){
         IdentNode ident = new IdentNode("x");
         AddNode exp = ASTMocks.createNode(
                 AddNode.class,
@@ -180,7 +180,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void FinalNodeWithoutExp(){
+    void FinalNodeWithoutExp(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.INT);
         FinalNode tested = new FinalNode(type,ident,null);
@@ -188,7 +188,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void FinalNodeWithdraw(){
+    void FinalNodeWithdraw(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.INT);
         FinalNode tested = new FinalNode(type,ident,null);
@@ -196,14 +196,14 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void IdentNode(){
+    void IdentNode(){
         IdentNode tested = new IdentNode("x");
         assertEquals(List.of("load(x)"),tested.compile(1));
     }
 
 
     @Test
-    public void IfNodeWithoutElse(){
+    void IfNodeWithoutElse(){
         AddNode condition = ASTMocks.createNode(
                 AddNode.class,
                 null,
@@ -220,7 +220,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void IfNodeWithElse(){
+    void IfNodeWithElse(){
         AddNode condition = ASTMocks.createNode(
                 AddNode.class,
                 null,
@@ -242,7 +242,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void IfNodeWithoutElseAndElse(){
+    void IfNodeWithoutElseAndElse(){
         AddNode condition = ASTMocks.createNode(
                 AddNode.class,
                 null,
@@ -254,7 +254,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void IfNodeWithoutThen(){
+    void IfNodeWithoutThen(){
         AddNode condition = ASTMocks.createNode(
                 AddNode.class,
                 null,
@@ -271,14 +271,14 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void IncNode(){
+    void IncNode(){
         IdentNode ident = new IdentNode("x");
         IncNode tested = new IncNode(ident);
         assertEquals(List.of("push(1)","inc(x)"),tested.compile(1));
     }
 
     @Test
-    public void InstructionsNode(){
+    void InstructionsNode(){
         IncNode instr = ASTMocks.createNode(
                 IncNode.class,
                 null,
@@ -289,7 +289,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void InstructionsNodeManyInstrs(){
+    void InstructionsNodeManyInstrs(){
         IncNode instr1 = ASTMocks.createNode(
                 IncNode.class,
                 null,
@@ -312,7 +312,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void MainNodeWithVarsAndInstrs(){
+    void MainNodeWithVarsAndInstrs(){
         VariablesNode vars = ASTMocks.createWithdrawNode(
                 VariablesNode.class,
                 null,
@@ -330,7 +330,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void MainNodeWithoutVars(){
+    void MainNodeWithoutVars(){
         InstructionsNode instrs = ASTMocks.createNode(
                 InstructionsNode.class,
                 null,
@@ -341,7 +341,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void MainNodeWithoutInstrs(){
+    void MainNodeWithoutInstrs(){
         VariablesNode vars = ASTMocks.createWithdrawNode(
                 VariablesNode.class,
                 null,
@@ -354,40 +354,40 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void MainNodeWithoutVarsAndInstrs(){
+    void MainNodeWithoutVarsAndInstrs(){
         MainNode tested = new MainNode(null,null);
         assertEquals(List.of("push(0)"),tested.compile(1));
     }
 
     @Test
-    public void NotNode(){
+    void NotNode(){
         IdentNode ident = new IdentNode("x");
         NotNode tested = new NotNode(ident);
         assertEquals(List.of("load(x)","not"),tested.compile(1));
     }
 
     @Test
-    public void NumberNode(){
+    void NumberNode(){
         NumberNode tested = new NumberNode(5);
         assertEquals(List.of("push(5)"),tested.compile(1));
     }
 
     @Test
-    public void ReturnNode(){
+    void ReturnNode(){
         IdentNode ident = new IdentNode("x");
         ReturnNode tested = new ReturnNode(ident);
         assertEquals(List.of("load(x)"),tested.compile(1));
     }
 
     @Test
-    public void UnMinusNode(){
+    void UnMinusNode(){
         IdentNode ident = new IdentNode("x");
         UnMinusNode tested = new UnMinusNode(ident);
         assertEquals(List.of("load(x)","neg"),tested.compile(1));
     }
 
     @Test
-    public void VariableNodeInt(){
+    void VariableNodeInt(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.INT);
         NumberNode exp = ASTMocks.createNode(
@@ -400,7 +400,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariableNodeBool(){
+    void VariableNodeBool(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.BOOL);
         NumberNode exp = ASTMocks.createNode(
@@ -413,7 +413,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariableNodeWithoutExp(){
+    void VariableNodeWithoutExp(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.INT);
         VariableNode tested = new VariableNode(type,ident,null);
@@ -421,7 +421,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariableNodeWithdraw(){
+    void VariableNodeWithdraw(){
         IdentNode ident = new IdentNode("x");
         TypeNode type = new TypeNode(ValueType.INT);
         VariableNode tested = new VariableNode(type,ident,null);
@@ -429,7 +429,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariablesNode(){
+    void VariablesNode(){
         VariableNode var = ASTMocks.createNode(
                 VariableNode.class,
                 null,
@@ -440,7 +440,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariablesNodeManyVariables(){
+    void VariablesNodeManyVariables(){
         VariableNode var1 = ASTMocks.createNode(
                 VariableNode.class,
                 null,
@@ -463,7 +463,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void VariablesNodeWithdraw(){
+    void VariablesNodeWithdraw(){
         VariableNode var1 = ASTMocks.createWithdrawNode(
                 VariableNode.class,
                 null,
@@ -484,7 +484,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void WhileNode(){
+    void WhileNode(){
         EqualNode condition = ASTMocks.createNode(
                 EqualNode.class,
                 null,
@@ -500,7 +500,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void WhileNodeWithoutInstrs(){
+    void WhileNodeWithoutInstrs(){
         EqualNode condition = ASTMocks.createNode(
                 EqualNode.class,
                 null,
@@ -510,7 +510,7 @@ public class NodeCompileTest {
         assertEquals(List.of("CMP","not","if(5)","goto(1)"),tested.compile(1));
     }
     @Test
-    public void testParamNode_Compile() {
+    void testParamNode_Compile() {
         TypeNode type = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("x");
         ParamNode param = new ParamNode(type, ident);
@@ -519,7 +519,7 @@ public class NodeCompileTest {
         assertEquals(List.of("new(x," + type + ",param,0)"), result);
     }
     @Test
-    public void testParamNode_WithdrawCompile() {
+    void testParamNode_WithdrawCompile() {
         TypeNode type = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("x");
         ParamNode param = new ParamNode(type, ident);
@@ -528,7 +528,7 @@ public class NodeCompileTest {
     }
     @Test
     @DisplayName("ParamListNode - compile() generates correct code")
-    public void testParamListNodeCompile() {
+    void testParamListNodeCompile() {
         ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("a"));
         ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("b"));
         ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
@@ -571,7 +571,7 @@ public class NodeCompileTest {
 
 
     @Test
-    public void testExpListNodeCompile() {
+    void testExpListNodeCompile() {
         NumberNode n1 = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
         NumberNode n2 = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
         ExpListNode list = new ExpListNode(n1, new ExpListNode(n2, null));
@@ -579,7 +579,7 @@ public class NodeCompileTest {
         assertEquals(List.of("push(5)", "push(10)"), list.compile(1));
     }
     @Test
-    public void testAppelINodeCompile() {
+    void testAppelINodeCompile() {
         ASTNode arg = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(5)"));
         ExpListNode argsList = new ExpListNode(arg, null);
 
@@ -590,7 +590,7 @@ public class NodeCompileTest {
         assertEquals(expected, appel.compile(0));
     }
     @Test
-    public void testMethodeNodeCompile() {
+    void testMethodeNodeCompile() {
         TypeNode returnType = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("m");
 
@@ -627,7 +627,7 @@ public class NodeCompileTest {
         assertEquals("return", code.get(code.size() - 1));
     }
     @Test
-    public void testMethodeNodeCompile_ParamsOnly() {
+    void testMethodeNodeCompile_ParamsOnly() {
         ASTNode params = ASTMocks.createNode(
                 ASTNode.class,
                 null,
@@ -660,7 +660,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void testMethodeNodeCompile_ParamsVars() {
+    void testMethodeNodeCompile_ParamsVars() {
         ASTNode params = ASTMocks.createNode(
                 ASTNode.class,
                 null,
@@ -700,7 +700,7 @@ public class NodeCompileTest {
     }
 
     @Test
-    public void testMethodeNodeCompile_WithInstrs() {
+    void testMethodeNodeCompile_WithInstrs() {
         ASTNode params = ASTMocks.createNode(
                 ASTNode.class,
                 null,

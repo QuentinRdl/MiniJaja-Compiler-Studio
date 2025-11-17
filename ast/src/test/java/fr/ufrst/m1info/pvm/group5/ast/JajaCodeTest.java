@@ -25,7 +25,7 @@ public class JajaCodeTest {
     }
 
     @Test
-    public void fromFile_simple() throws IOException {
+    void fromFile_simple() throws IOException {
         List<Instruction> instrs = Jajacode.fromFile("src/test/resources/Simple.jjc");
         assertEquals(12, instrs.size());
         assertTrue(instrs.get(0) instanceof InitInstruction);

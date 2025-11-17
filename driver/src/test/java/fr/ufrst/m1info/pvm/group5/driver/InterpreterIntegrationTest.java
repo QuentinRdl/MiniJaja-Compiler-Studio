@@ -46,7 +46,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWorks() throws Exception {
+    void interpreterWorks() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -63,7 +63,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWorksActualBtn() throws Exception {
+    void interpreterWorksActualBtn() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -80,7 +80,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterDoesNotWork() throws Exception {
+    void interpreterDoesNotWork() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -97,7 +97,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterDoesNotWorkActualBtn() throws Exception {
+    void interpreterDoesNotWorkActualBtn() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -114,7 +114,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterEmptyFileDirectCall() throws Exception {
+    void interpreterEmptyFileDirectCall() throws Exception {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsole("empty.mjj", content);
@@ -123,7 +123,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterEmptyFileByButton() throws Exception {
+    void interpreterEmptyFileByButton() throws Exception {
         String content = "";
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("empty_btn.mjj", content);
@@ -132,7 +132,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWithNoExtension() throws Exception {
+    void interpreterWithNoExtension() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -148,7 +148,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWithIncorrectExtension() throws Exception {
+    void interpreterWithIncorrectExtension() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -164,7 +164,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWithMjjExtension() throws Exception {
+    void interpreterWithMjjExtension() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",
@@ -180,7 +180,7 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void interpreterWithJccExtension() throws Exception {
+    void interpreterWithJccExtension() throws Exception {
         String content = String.join("\n",
                 "class C {",
                 "    int x;",

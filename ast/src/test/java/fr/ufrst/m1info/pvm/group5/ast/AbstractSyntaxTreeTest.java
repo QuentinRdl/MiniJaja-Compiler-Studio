@@ -32,7 +32,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Construction - From file, simple")
-    public void FromFile() throws IOException {
+    void FromFile() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Simple.mjj");
     }
 
