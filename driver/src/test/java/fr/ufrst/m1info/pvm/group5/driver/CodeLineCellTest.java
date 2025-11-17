@@ -26,7 +26,7 @@ import static org.testfx.matcher.base.NodeMatchers.isInvisible;
  * Unit tests for the CodeLineCell class
  */
 @ExtendWith(ApplicationExtension.class)
-public class CodeLineCellTest extends ApplicationTest {
+class CodeLineCellTest extends ApplicationTest {
 
     private ListView<CodeLine> listView;
 

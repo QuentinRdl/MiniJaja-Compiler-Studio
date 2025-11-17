@@ -20,7 +20,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory.MemoryIllegalArgException;
 /**
  * Static class to quickly create classes mocking Memory
  */
-public class ASTMocks {
+class ASTMocks {
 
     public record Pair<T,V>(T first, V second){}
 

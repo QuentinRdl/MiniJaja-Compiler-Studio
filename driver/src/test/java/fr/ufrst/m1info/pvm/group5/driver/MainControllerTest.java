@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-public class MainControllerTest extends ApplicationTest {
+class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir

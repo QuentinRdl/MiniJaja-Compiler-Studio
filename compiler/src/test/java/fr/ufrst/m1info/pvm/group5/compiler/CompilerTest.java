@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 
-public class CompilerTest {
+class CompilerTest {
     Compiler comp;
 
     @BeforeEach

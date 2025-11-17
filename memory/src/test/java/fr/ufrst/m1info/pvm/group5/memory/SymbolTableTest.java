@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link SymbolTable}.
  */
-public class SymbolTableTest {
+class SymbolTableTest {
     private SymbolTable globalTable;
 
     /**

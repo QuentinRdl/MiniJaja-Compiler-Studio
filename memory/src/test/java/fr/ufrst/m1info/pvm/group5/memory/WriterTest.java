@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class WriterTest {
+class WriterTest {
     Writer writer;
     boolean flags[];
 

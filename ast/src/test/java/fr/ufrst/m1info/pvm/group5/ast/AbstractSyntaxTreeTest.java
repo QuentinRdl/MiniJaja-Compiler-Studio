@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AbstractSyntaxTreeTest {
+class AbstractSyntaxTreeTest {
     Map<String, Value> memoryStorage;
     @Mock
     Memory memory;

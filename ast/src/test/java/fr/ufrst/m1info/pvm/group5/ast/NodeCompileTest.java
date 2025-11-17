@@ -10,7 +10,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
-public class NodeCompileTest {
+class NodeCompileTest {
     @Test
     void AddNode_Operation(){
         NumberNode lop = ASTMocks.createNode(NumberNode.class, null,i -> List.of("push(5)"));

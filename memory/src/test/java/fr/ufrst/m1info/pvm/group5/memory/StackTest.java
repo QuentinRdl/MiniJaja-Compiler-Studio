@@ -17,7 +17,7 @@ import java.util.Deque;
 /**
  * Unit test for the Stack class
  */
-public class StackTest {
+class StackTest {
     private Stack stack;
     private DataType integ;
 

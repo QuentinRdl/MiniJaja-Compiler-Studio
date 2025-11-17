@@ -18,7 +18,7 @@ import static fr.ufrst.m1info.pvm.group5.driver.MainControllerTest.createTestFil
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
-public class CompilationIntegrationTest extends ApplicationTest {
+class CompilationIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 

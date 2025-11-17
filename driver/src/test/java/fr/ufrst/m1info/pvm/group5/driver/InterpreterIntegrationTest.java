@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
-public class InterpreterIntegrationTest extends ApplicationTest {
+class InterpreterIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AstMemoryIT {
+class AstMemoryIT {
     private final String testPath = "../ast/";
     Map<String, Value> memoryStorage;
     Memory memory;

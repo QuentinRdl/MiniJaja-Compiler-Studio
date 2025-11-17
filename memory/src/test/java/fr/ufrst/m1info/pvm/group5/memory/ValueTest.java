@@ -5,7 +5,7 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ValueTest {
+class ValueTest {
 
     @Test
     void intConstructor_shouldSetTypeAndValue() {

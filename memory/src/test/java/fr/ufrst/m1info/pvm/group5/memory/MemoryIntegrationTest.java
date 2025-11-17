@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.stream.Stream;
 
-public class MemoryIntegrationTest {
+class MemoryIntegrationTest {
 
     Memory mem;
 
