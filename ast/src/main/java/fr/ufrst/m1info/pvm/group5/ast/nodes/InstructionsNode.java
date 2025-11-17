@@ -23,11 +23,11 @@ public class InstructionsNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(instruction.compile(address));
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.addAll(instruction.compile(address));
         if(otherInstructions!=null)
-            JJCodes.addAll(otherInstructions.compile(address + JJCodes.size()));
-        return JJCodes;
+            jjcodes.addAll(otherInstructions.compile(address + jjcodes.size()));
+        return jjcodes;
     }
 
     @Override

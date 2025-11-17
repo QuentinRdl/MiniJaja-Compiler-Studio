@@ -15,8 +15,8 @@ public class StoreInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.pop();
-        if (v.Type == ValueType.STRING){
-            throw new ASTInvalidTypeException("Type error: operation does not accept STRING type, but received " + v.Type + ".");
+        if (v.type == ValueType.STRING){
+            throw new ASTInvalidTypeException("Type error: operation does not accept STRING type, but received " + v.type + ".");
         }
         m.affectValue(this.ident, v);
         return address+1;

@@ -28,16 +28,16 @@ public class ClassNode extends ASTNode {
 
     @Override
     public List<String> compile(int  address) {
-        List<String> JJCodes = new ArrayList<String>();
-        JJCodes.add("init");
+        List<String> jjcodes = new ArrayList<String>();
+        jjcodes.add("init");
         if(decls!=null)
-            JJCodes.addAll(decls.compile(address + JJCodes.size()));
-        JJCodes.addAll(main.compile(address + JJCodes.size()));
+            jjcodes.addAll(decls.compile(address + jjcodes.size()));
+        jjcodes.addAll(main.compile(address + jjcodes.size()));
         if(decls!=null)
-            JJCodes.addAll(((WithdrawalNode)decls).withdrawCompile(address + JJCodes.size()));
-        JJCodes.add("pop");
-        JJCodes.add("jcstop");
-        return JJCodes;
+            jjcodes.addAll(((WithdrawalNode)decls).withdrawCompile(address + jjcodes.size()));
+        jjcodes.add("pop");
+        jjcodes.add("jcstop");
+        return jjcodes;
     }
 
     @Override

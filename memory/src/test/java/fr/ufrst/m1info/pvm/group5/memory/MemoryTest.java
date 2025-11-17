@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTable;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 
-public class MemoryTest {
+class MemoryTest {
     private Memory memory;
 
     @Mock
@@ -86,14 +86,14 @@ public class MemoryTest {
 
     @Test
     void popDelegatesToStack() throws Exception {
-        when(stackMocked.pop()).thenReturn(new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT));
+        when(stackMocked.pop()).thenReturn(new StackObject("x", 1, 0, EntryKind.VARIABLE, DataType.INT));
         memory.pop();
         verify(stackMocked, times(1)).pop();
     }
 
     @Test
     void popDelegatesToSymbolTable() throws Exception {
-        Stack_Object obj = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject obj = new StackObject("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.pop()).thenReturn(obj);
 
         memory.pop();

@@ -28,10 +28,10 @@ public class SumNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(expression.compile(address));
-        JJCodes.add("inc(" + identifier.identifier + ")");
-        return JJCodes;
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.addAll(expression.compile(address));
+        jjcodes.add("inc(" + identifier.identifier + ")");
+        return jjcodes;
     }
 
     @Override

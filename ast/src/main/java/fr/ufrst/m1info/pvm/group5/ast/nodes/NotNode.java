@@ -28,10 +28,10 @@ public class NotNode extends ASTNode implements EvaluableNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(expr.compile(address));
-        JJCodes.add("not");
-        return JJCodes;
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.addAll(expr.compile(address));
+        jjcodes.add("not");
+        return jjcodes;
     }
 
     @Override

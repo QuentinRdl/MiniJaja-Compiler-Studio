@@ -24,10 +24,10 @@ public class AffectationNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(expression.compile(address));
-        JJCodes.add("store("+identifier.identifier+")");
-        return JJCodes;
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.addAll(expression.compile(address));
+        jjcodes.add("store("+identifier.identifier+")");
+        return jjcodes;
     }
 
     @Override

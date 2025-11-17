@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for the CodeLine class
  */
-public class CodeLineTest {
+class CodeLineTest {
     private CodeLine codeLine;
     private int lineNumber = 0;
 

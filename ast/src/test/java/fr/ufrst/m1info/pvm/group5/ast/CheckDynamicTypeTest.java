@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CheckDynamicTypeTest {
+class CheckDynamicTypeTest {
 
     Map<String, Value> memoryStorage;
     @Mock
@@ -38,7 +38,7 @@ public class CheckDynamicTypeTest {
             if (v==null){
                 throw new IllegalArgumentException("");
             }
-            return switch (v.Type) {
+            return switch (v.type) {
                 case INT -> DataType.INT;
                 case BOOL -> DataType.BOOL;
                 case VOID -> DataType.VOID;

@@ -8,7 +8,7 @@ public class ReturnInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
         Value top = (Value) m.pop();
-        if(top.Type != ValueType.INT){
+        if(top.type != ValueType.INT){
             throw new IllegalStateException("Return address must be int");
         }
         return top.valueInt;

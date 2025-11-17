@@ -8,7 +8,7 @@ import java.nio.file.NoSuchFileException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InterpreterMiniJajaTest {
+class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
 
     @BeforeEach

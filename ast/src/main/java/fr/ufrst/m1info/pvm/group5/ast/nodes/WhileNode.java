@@ -24,17 +24,17 @@ public class WhileNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
+        List<String> jjcodes = new ArrayList<>();
         // Compiling sub-instructions
         List<String> pe = condition.compile(address);
         List<String> piss = (iss == null)?List.of() : iss.compile(address + pe.size() + 2);
         // Node compilation
-        JJCodes.addAll(pe);
-        JJCodes.add("not");
-        JJCodes.add("if(" + (address + pe.size() + piss.size() + 3) +")");
-        JJCodes.addAll(piss);
-        JJCodes.add("goto("+address+")");
-        return JJCodes;
+        jjcodes.addAll(pe);
+        jjcodes.add("not");
+        jjcodes.add("if(" + (address + pe.size() + piss.size() + 3) +")");
+        jjcodes.addAll(piss);
+        jjcodes.add("goto("+address+")");
+        return jjcodes;
     }
 
     @Override

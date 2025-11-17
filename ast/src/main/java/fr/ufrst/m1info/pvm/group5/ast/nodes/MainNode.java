@@ -20,15 +20,15 @@ public class MainNode extends ASTNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<String>();
+        List<String> jjcodes = new ArrayList<>();
         if(vars != null)
-            JJCodes.addAll(vars.compile(address));
+            jjcodes.addAll(vars.compile(address));
         if(instrs != null)
-            JJCodes.addAll(instrs.compile(address + JJCodes.size()));
-        JJCodes.add("push(0)");
+            jjcodes.addAll(instrs.compile(address + jjcodes.size()));
+        jjcodes.add("push(0)");
         if(vars != null)
-            JJCodes.addAll(((WithdrawalNode)vars).withdrawCompile(address + JJCodes.size()));
-        return JJCodes;
+            jjcodes.addAll(((WithdrawalNode)vars).withdrawCompile(address + jjcodes.size()));
+        return jjcodes;
     }
 
     @Override

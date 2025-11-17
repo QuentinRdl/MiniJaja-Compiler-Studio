@@ -93,7 +93,7 @@ public class Memory {
      * Removes the top of the stack
      */
     public Object pop() throws Stack.StackIsEmptyException {
-        Stack_Object top = stack.pop();
+        StackObject top = stack.pop();
         if (top != null) {
             symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
         }
@@ -155,7 +155,7 @@ public class Memory {
         symbolTable.removeEntry(identifier);
 
         // Find the object in the stack
-        Stack_Object obj = stack.getObject(identifier);
+        StackObject obj = stack.getObject(identifier);
         // If object present in the stack, remove it
         if(obj != null) stack.removeObject(obj);
     }
@@ -181,7 +181,7 @@ public class Memory {
         DataType givenDataType = stack.getDataTypeFromGenericObject(value);
 
         // Find the object in the stack
-        Stack_Object obj = stack.searchObject(identifier);
+        StackObject obj = stack.searchObject(identifier);
         if (obj == null) {
             throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
         }
@@ -250,7 +250,7 @@ public class Memory {
         SymbolTableEntry entry = symbolTable.lookup(identifier);
         String ref = entry.getName();
 
-        Stack_Object stackobj = stack.getObject(ref);
+        StackObject stackobj = stack.getObject(ref);
         // We convert the stack object into a Value
         if (stackobj == null) {
             throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
@@ -262,7 +262,7 @@ public class Memory {
             return (Value) raw;
         }
 
-        return Stack_Object.stackObjToValue(stackobj);
+        return StackObject.stackObjToValue(stackobj);
     }
 
     /**
@@ -275,7 +275,7 @@ public class Memory {
         if (v == null) {
             throw new MemoryIllegalArgException("Variable " + identifier + " not defined");
         }
-        return v.Type;
+        return v.type;
     }
 
     /**
@@ -372,7 +372,7 @@ public class Memory {
             throw new IllegalArgumentException("Cannot withdraw '" + identifier + "' because it is not a method");
         }
         symbolTable.removeEntry(identifier);
-        Stack_Object obj = stack.getObject(identifier);
+        StackObject obj = stack.getObject(identifier);
         if (obj != null) {
             stack.removeObject(obj);
         }

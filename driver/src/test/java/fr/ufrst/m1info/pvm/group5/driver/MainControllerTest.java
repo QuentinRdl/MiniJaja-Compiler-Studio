@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-public class MainControllerTest extends ApplicationTest {
+class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
@@ -555,7 +555,6 @@ public class MainControllerTest extends ApplicationTest {
             controller.getCodeListView().getSelectionModel().select(1);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
         assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
 
         // Find the TextField of the selected row
@@ -612,7 +611,6 @@ public class MainControllerTest extends ApplicationTest {
             controller.getCodeListView().getSelectionModel().select(1);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
         assertEquals(1, controller.getCodeListView().getSelectionModel().getSelectedIndex());
 
         // Find the TextField of the selected row
@@ -1034,7 +1032,6 @@ public class MainControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
 
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         // Check that the console prints the right error
@@ -1071,8 +1068,6 @@ public class MainControllerTest extends ApplicationTest {
         assertEquals(file, controller.getCurrentFile());
 
         interact(() -> action.accept(controller)); // Either run or compile
-        WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         String output = controller.output.getText();
@@ -1309,7 +1304,6 @@ public class MainControllerTest extends ApplicationTest {
         interact(() -> fake.onRunClicked());
 
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(50);
 
         assertTrue(fake.output.getText().contains("[INTERNAL ERROR] current file is marked as jjc and mjj"));
     }
@@ -1339,7 +1333,6 @@ public class MainControllerTest extends ApplicationTest {
         release(KeyCode.CONTROL);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(50);
 
         List<String> savedLines = Files.readAllLines(testFile.toPath(), StandardCharsets.UTF_8);
         assertEquals("boolean x = true;", savedLines.get(0));
@@ -1361,8 +1354,6 @@ public class MainControllerTest extends ApplicationTest {
         release(KeyCode.CONTROL);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
-        WaitForAsyncUtils.waitForFxEvents();
 
         String out = controller.output.getText();
         assertTrue(out.contains("[INFO] Interpretation successfully completed"));
@@ -1382,8 +1373,6 @@ public class MainControllerTest extends ApplicationTest {
         type(KeyCode.K);
         release(KeyCode.CONTROL);
 
-        WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(150);
         WaitForAsyncUtils.waitForFxEvents();
 
         assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));

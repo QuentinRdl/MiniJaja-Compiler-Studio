@@ -18,7 +18,7 @@ import static org.mockito.Mockito.doAnswer;
 import fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory.MemoryIllegalArgException;
 
-public class InstructionsUnitTest {
+class InstructionsUnitTest {
     @Mock
     Memory memory;
     Stack<ASTMocks.Pair<String, Value>> storage;

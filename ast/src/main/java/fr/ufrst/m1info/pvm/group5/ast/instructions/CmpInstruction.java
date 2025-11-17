@@ -13,16 +13,16 @@ public class CmpInstruction extends Instruction{
         Value v2 = (Value) m.pop(); //first pop => right operand
         Value v1 = (Value) m.pop(); //second pop => left operand
 
-        if (v1.Type == ValueType.INT && v2.Type == ValueType.INT){
+        if (v1.type == ValueType.INT && v2.type == ValueType.INT){
             boolean res = v1.valueInt == v2.valueInt;
             Value vres = new Value(res);
             m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
-        }else if (v1.Type == ValueType.BOOL && v2.Type == ValueType.BOOL) {
+        }else if (v1.type == ValueType.BOOL && v2.type == ValueType.BOOL) {
             boolean res = v1.valueBool == v2.valueBool;
             Value vres = new Value(res);
             m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
         }else{
-            throw new ASTInvalidTypeException("Type error: sup operator expects two INT operands, but received " + v1.Type + " and " + v2.Type + ".");
+            throw new ASTInvalidTypeException("Type error: sup operator expects two INT operands, but received " + v1.type + " and " + v2.type + ".");
         }
 
         return address+1;

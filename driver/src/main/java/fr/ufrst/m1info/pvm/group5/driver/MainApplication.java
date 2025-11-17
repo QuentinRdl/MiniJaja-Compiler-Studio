@@ -12,10 +12,10 @@ import java.io.IOException;
  * Main entry point of the JavaFX application
  */
 public class MainApplication extends Application {
-    private final int WINDOW_HEIGHT = 720;
-    private final int WINDOW_WIDTH = 1280;
+    private static final int windowHeight = 720;
+    private static final int windowWidth = 1280;
 
-    private final String WINDOW_TITLE = "AVM Project - group 5";
+    private static final String windowTitle = "AVM Project - group 5";
 
     /**
      * Starts the JavaFX application by loading the main interface and displaying the window.
@@ -26,9 +26,9 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(fxmlLoader.load(), windowWidth, windowHeight);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-        stage.setTitle(WINDOW_TITLE);
+        stage.setTitle(windowTitle);
         //stage.setFullScreen(true); //go full screen
         stage.setScene(scene);
         stage.show();

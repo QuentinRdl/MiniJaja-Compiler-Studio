@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
-public class InterpreterIntegrationTest extends ApplicationTest {
+class InterpreterIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 
@@ -222,7 +222,6 @@ public class InterpreterIntegrationTest extends ApplicationTest {
         interact(() -> {
             controller.onRunClicked();
         });
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -252,7 +251,6 @@ public class InterpreterIntegrationTest extends ApplicationTest {
 
         clickOn("#btnRun");
 
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();

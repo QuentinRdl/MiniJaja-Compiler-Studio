@@ -13,7 +13,7 @@ import java.util.Stack;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class JajaCodeTest {
+class JajaCodeTest {
     @Mock
     Memory memory;
     Stack<Pair<String, Value>> storage;

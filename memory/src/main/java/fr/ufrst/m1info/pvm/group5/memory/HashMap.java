@@ -140,17 +140,17 @@ public class HashMap<K,V>
      */
     public V put(K key, V value){
         int index=getIndex(key);
-        V old_value=null;
+        V oldValue=null;
         for (EntryHashMap<K,V> e : buckets[index]){
             if (key==null && e.getKey()==null){
-                old_value=e.getValue();
+                oldValue=e.getValue();
                 e.setValue(value);
-                return old_value;
+                return oldValue;
             }
             if ((key!=null && e.getKey()!=null) && key.equals(e.getKey())){
-                old_value=e.getValue();
+                oldValue=e.getValue();
                 e.setValue(value);
-                return old_value;
+                return oldValue;
             }
         }
         buckets[index].add(new EntryHashMap<>(key,value));
@@ -158,7 +158,7 @@ public class HashMap<K,V>
         if (sizeHashMap>capacity*loadFactor){
             resize();
         }
-        return old_value;
+        return oldValue;
     }
 
     /**

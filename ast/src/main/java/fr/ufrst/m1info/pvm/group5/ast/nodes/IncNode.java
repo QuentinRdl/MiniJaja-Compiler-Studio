@@ -20,10 +20,10 @@ public class IncNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.add("push(1)");
-        JJCodes.add("inc("+ident.identifier+")");
-        return JJCodes;
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.add("push(1)");
+        jjcodes.add("inc("+ident.identifier+")");
+        return jjcodes;
     }
 
     @Override

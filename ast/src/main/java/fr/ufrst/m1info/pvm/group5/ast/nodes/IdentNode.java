@@ -23,7 +23,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.add("load(" + this.identifier + ")");
         return jajacodes;
     }
@@ -73,7 +73,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     @Override
     public Value eval(Memory m) throws ASTInvalidMemoryException{
         Value v = (Value) m.val(identifier);
-        if(v == null || v.Type == ValueType.EMPTY){
+        if(v == null || v.type == ValueType.EMPTY){
             throw new ASTInvalidMemoryException("Variable " + identifier + " is undefined");
         }
         return v;

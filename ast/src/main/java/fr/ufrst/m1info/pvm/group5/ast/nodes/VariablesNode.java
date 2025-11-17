@@ -23,7 +23,7 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.addAll(variable.compile(address));
         if (variables != null){
             jajacodes.addAll(variables.compile(address + jajacodes.size()));
@@ -67,7 +67,7 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> withdrawCompile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         if(variables != null)
             jajacodes.addAll(((WithdrawalNode)variables).withdrawCompile(address));
         jajacodes.addAll(((WithdrawalNode)variable).withdrawCompile(address + jajacodes.size()));

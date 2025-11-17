@@ -20,9 +20,9 @@ public class ReturnNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
-        JJCodes.addAll(expr.compile(address));
-        return JJCodes;
+        List<String> jjcodes = new ArrayList<>();
+        jjcodes.addAll(expr.compile(address));
+        return jjcodes;
     }
 
     @Override

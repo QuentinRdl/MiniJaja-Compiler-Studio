@@ -12,6 +12,7 @@ public class ExceptionErrorListener extends BaseErrorListener {
 
     public static final ExceptionErrorListener INSTANCE = new ExceptionErrorListener();
 
+    @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) throws ParseCancellationException {
         throw new ParseCancellationException("Error while parsing file : \n" +
                 "line " + line + ":" + charPositionInLine + " " + msg);

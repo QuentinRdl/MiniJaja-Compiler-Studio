@@ -19,7 +19,7 @@ public class NumberNode extends ASTNode implements EvaluableNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.add("push(" + this.number + ")");
         return jajacodes;
     }

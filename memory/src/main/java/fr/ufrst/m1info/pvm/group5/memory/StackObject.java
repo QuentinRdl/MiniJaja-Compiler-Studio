@@ -9,7 +9,7 @@ import java.util.Objects;
  * Represents an entry of a variable in the stack, with name that contains the actual
  * name of the variable and scope the scope it has as a suffix
  */
-public class Stack_Object {
+public class StackObject {
     private final String name;
     private Object value;
     private final EntryKind entryKind;
@@ -25,7 +25,7 @@ public class Stack_Object {
      * @param kind kind of the object
      * @param dataType dataType of the object
      */
-    public Stack_Object(String name, Object value, int scope, EntryKind kind, DataType dataType) {
+    public StackObject(String name, Object value, int scope, EntryKind kind, DataType dataType) {
         if (kind == EntryKind.VARIABLE || kind == EntryKind.CONSTANT) {
             if (dataType == null) {
                 throw new Stack.InvalidStackObjectConstructionException(
@@ -53,7 +53,7 @@ public class Stack_Object {
      * @param scope current scope of the object
      * @param kind kind of the object
      */
-    public Stack_Object(String name, Object value, int scope, EntryKind kind) {
+    public StackObject(String name, Object value, int scope, EntryKind kind) {
         this(name, value, scope, kind, DataType.UNKNOWN);
     }
 
@@ -109,7 +109,7 @@ public class Stack_Object {
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Stack_Object actualObj)) {
+        if (!(obj instanceof StackObject actualObj)) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public class Stack_Object {
      * @param obj object to cast into value
      * @return Value value casted from the given Stack_Object
      */
-    public static Value stackObjToValue(Stack_Object obj) {
+    public static Value stackObjToValue(StackObject obj) {
         if(obj == null) return null;
 
         Object raw = obj.getValue();
@@ -169,20 +169,20 @@ public class Stack_Object {
      * @param val Value to cast into Stack_Object
      * @return Stack_Object casted from the given Stack_Object
      */
-    public static Stack_Object valueToStackObj(Value val) {
+    public static StackObject valueToStackObj(Value val) {
         if (val == null) return null;
 
         final String objName = null;
 
-        if (val.Type == null) {
-            return new Stack_Object(null, null, 0, EntryKind.OTHER);
+        if (val.type == null) {
+            return new StackObject(null, null, 0, EntryKind.OTHER);
         }
 
-        return switch (val.Type) {
-            case INT -> new Stack_Object(null, val.valueInt, 0, EntryKind.OTHER);
-            case BOOL -> new Stack_Object(null, val.valueBool, 0, EntryKind.OTHER);
-            case STRING -> new Stack_Object(null, val.valueString, 0, EntryKind.OTHER);
-            case EMPTY, VOID -> new Stack_Object(null, null, 0, EntryKind.OTHER);
+        return switch (val.type) {
+            case INT -> new StackObject(null, val.valueInt, 0, EntryKind.OTHER);
+            case BOOL -> new StackObject(null, val.valueBool, 0, EntryKind.OTHER);
+            case STRING -> new StackObject(null, val.valueString, 0, EntryKind.OTHER);
+            case EMPTY, VOID -> new StackObject(null, null, 0, EntryKind.OTHER);
             // TODO : DO MORE
         };
     }

@@ -25,7 +25,7 @@ public class IfNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
+        List<String> jjcodes = new ArrayList<>();
         List<String> pe = condition.compile(address);
         List<String> ps1 = new ArrayList<>();
         List<String> ps = new ArrayList<>();
@@ -36,13 +36,13 @@ public class IfNode extends ASTNode{
             ps = instrThen.compile(address + pe.size() + ps1.size() + 2);
         }
 
-        JJCodes.addAll(pe);
-        JJCodes.add("if("+ (address + pe.size() + ps1.size() + 2) + ")");
-        JJCodes.addAll(ps1);
-        JJCodes.add("goto("+ (address + pe.size() + ps1.size() + ps.size() + 2) + ")");
-        JJCodes.addAll(ps);
+        jjcodes.addAll(pe);
+        jjcodes.add("if("+ (address + pe.size() + ps1.size() + 2) + ")");
+        jjcodes.addAll(ps1);
+        jjcodes.add("goto("+ (address + pe.size() + ps1.size() + ps.size() + 2) + ")");
+        jjcodes.addAll(ps);
 
-        return JJCodes;
+        return jjcodes;
     }
 
     @Override

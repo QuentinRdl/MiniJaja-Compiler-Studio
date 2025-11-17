@@ -18,7 +18,7 @@ import static fr.ufrst.m1info.pvm.group5.driver.MainControllerTest.createTestFil
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
-public class CompilationIntegrationTest extends ApplicationTest {
+class CompilationIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 
@@ -101,7 +101,6 @@ public class CompilationIntegrationTest extends ApplicationTest {
         interact(() -> {
             controller.onCompileClicked();
         });
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -131,7 +130,6 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
         clickOn("#btnCompile");
 
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();

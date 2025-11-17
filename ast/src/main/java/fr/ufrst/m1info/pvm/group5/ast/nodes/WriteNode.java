@@ -26,15 +26,15 @@ public class WriteNode extends ASTNode{
 
     @Override
     public List<String> compile(int address) {
-        List<String> JJCodes = new ArrayList<>();
+        List<String> jjcodes = new ArrayList<>();
         if(text == null){
-            JJCodes.addAll(ident.compile(address));
+            jjcodes.addAll(ident.compile(address));
         }
         else {
-            JJCodes.add("push(\""+text+"\")");
+            jjcodes.add("push(\""+text+"\")");
         }
-        JJCodes.add("write");
-        return JJCodes;
+        jjcodes.add("write");
+        return jjcodes;
     }
 
     @Override
