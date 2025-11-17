@@ -33,7 +33,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         if(expression != null) {
             jajacodes.addAll(expression.compile(address));
         }
@@ -104,7 +104,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> withdrawCompile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.add("swap");
         jajacodes.add("pop");
         return jajacodes;

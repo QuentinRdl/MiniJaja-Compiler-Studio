@@ -18,7 +18,7 @@ public class BooleanNode extends ASTNode implements EvaluableNode {
     }
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         if (this.bool){
             jajacodes.add("push(jcvrai)");
         } else {

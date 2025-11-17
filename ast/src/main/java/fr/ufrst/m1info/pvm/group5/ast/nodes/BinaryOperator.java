@@ -21,7 +21,7 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
      * @param right right operand of the operator
      * @throws ASTBuildException throws an exception if one of the operator is null or not evaluable
      */
-    public BinaryOperator(ASTNode left, ASTNode right) {
+    protected BinaryOperator(ASTNode left, ASTNode right) {
         this.left = left;
         this.right = right;
         if (this.left == null || this.right == null) {

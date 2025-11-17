@@ -22,7 +22,7 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.addAll(declaration.compile(address));
         if (declarations != null) {
             jajacodes.addAll(declarations.compile(address + jajacodes.size()));

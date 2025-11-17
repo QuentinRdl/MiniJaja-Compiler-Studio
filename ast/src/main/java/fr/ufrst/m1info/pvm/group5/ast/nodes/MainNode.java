@@ -20,7 +20,7 @@ public class MainNode extends ASTNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jjcodes = new ArrayList<String>();
+        List<String> jjcodes = new ArrayList<>();
         if(vars != null)
             jjcodes.addAll(vars.compile(address));
         if(instrs != null)

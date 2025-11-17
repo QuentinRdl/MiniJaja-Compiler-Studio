@@ -23,7 +23,7 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
 
     @Override
     public List<String> compile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         jajacodes.addAll(exp.compile(address));
         jajacodes.add("neg");
         return jajacodes;
