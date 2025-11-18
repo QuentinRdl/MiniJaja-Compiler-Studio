@@ -194,8 +194,7 @@ public class Memory {
     public void affectValue(String identifier, Object value) {
         if(identifier == null) {
             throw new MemoryIllegalArgException("affectValue cannot be called with null identifier");
-        }
-        else if(value == null) {
+        } else if(value == null) {
             throw new MemoryIllegalArgException("affectValue cannot be called with null value");
         }
 
@@ -221,20 +220,28 @@ public class Memory {
             } else {
                 throw new IllegalArgumentException("Type mismatch when affecting value to '" + identifier + "' : declared=" + declared + " given=" + givenDataType);
             }
-        }*/
+        }
+        */
 
         // Handle according to the kind
-        if (entry.getKind() == EntryKind.VARIABLE) {
+        if(entry.getKind() == EntryKind.ARRAY) {
+            // Remove the reference from old array
+            int oldReference = (int) obj.getValue();
+            heap.removeReference(oldReference);
+
+            // Add the new reference to the heap & the stack
+            heap.addReference((int)value);
+            obj.setValue(value);
+            // TODO : The way we implemented it would free the block no ?
+        } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
             obj.setValue(value);
             // Update symbol table reference
             entry.setReference(value);
             return;
-        }
-
-        if (entry.getKind() == EntryKind.CONSTANT) {
+        } else if(entry.getKind() == EntryKind.CONSTANT) {
             // Constants can only be initialized once
-            if (obj.getValue() != null) {
+            if(obj.getValue() != null) {
                 throw new MemoryIllegalArgException("Cannot modify constant '" + identifier + "' once it has already been declared");
             }
             obj.setValue(value);
@@ -379,6 +386,7 @@ public class Memory {
         }
         return entry;
     }
+
     /**
      * Remove a method from memory
      * @param identifier method name
@@ -417,6 +425,7 @@ public class Memory {
         } catch (Stack.NoScopeException ignored) {
         }
     }
+
     public boolean contains(String identifier) {
         if (identifier == null || identifier.isEmpty()) return false;
         return symbolTable.contains(identifier);
@@ -427,5 +436,56 @@ public class Memory {
         symbolTable.addEntry(identifier, EntryKind.ARRAY, type);
         // In the stack should we treat the address as a var, or make a special type ?
         stack.setVar(identifier, addr, DataType.INT);
+    }
+
+    /**
+     * Modifies the given array at given index with given value
+     * identifier[index] = value
+     * @param identifier id of the array
+     * @param index index of the array we want to affect
+     * @param value value we want to affect
+     */
+    public void affectValT(String identifier, int index, Value value) {
+        StackObject addressObj = stack.getObject(identifier);
+        if(addressObj.getDataType() != DataType.INT) {
+            return; // An array should be stocked as an int that has its own reference
+        }
+
+        int address = (int) addressObj.getValue();
+
+        heap.setValue(address, index, value);
+
+    }
+
+    /**
+     * Returns the value stocked on the given array at the given index
+     * will return the value of identifier[index]
+     * @param identifier id of the array
+     * @param index index of the value
+     * @return Value the value stocked at identifier[index]
+     */
+    public Value valT(String identifier, int index) {
+        StackObject addressObj = stack.getObject(identifier);
+        if(addressObj.getDataType() != DataType.INT) {
+            return null; // An array should be stocked as an int that has its own reference
+        }
+
+        int address = (int) addressObj.getValue();
+        return heap.getValue(address, index);
+    }
+
+    /**
+     * Returns the length of the given array
+     * @param identifier id of the array
+     * @return length of the given array -1 if incorrect
+     */
+    public int tabLength(String identifier) {
+        StackObject addressObj = stack.getObject(identifier);
+        if(addressObj.getDataType() != DataType.INT) {
+            return -1; // An array should be stocked as an int that has its own reference
+        }
+
+        int address = (int) addressObj.getValue();
+        return heap.sizeOf(address);
     }
 }
