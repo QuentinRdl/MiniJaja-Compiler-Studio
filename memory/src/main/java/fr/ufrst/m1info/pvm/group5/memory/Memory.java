@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
+import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTable;
@@ -13,6 +14,8 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 public class Memory {
     Stack stack = new Stack();
     SymbolTable symbolTable = new SymbolTable();
+    private Heap heap = new Heap();
+
     private String identifierVarClass;
     /**
      * Writer used for the "write" and "writeline" methods
@@ -35,6 +38,14 @@ public class Memory {
     public Memory(Writer output){
         this();
         this.output = output;
+    }
+
+    public Heap getHeap() {
+        return heap;
+    }
+
+    public void setHeap(Heap heap) {
+        this.heap = heap;
     }
 
     /**
@@ -152,13 +163,27 @@ public class Memory {
             // This way we can keep the values, and test them
             return;
         }
+
+        SymbolTableEntry kind = symbolTable.lookup(identifier);
         symbolTable.removeEntry(identifier);
 
         // Find the object in the stack
         StackObject obj = stack.getObject(identifier);
+
+        if(kind.getKind() == EntryKind.ARRAY) {
+            // The entry kind is an array, so we must dereference the heap referenced to it.
+            // For that, we get the int with the address of the heap reference from the stack
+            if(obj.getEntryKind() != EntryKind.VARIABLE && obj.getDataType() != DataType.INT) {
+                throw new MemoryIllegalArgException("When referencing an array, we should find an int");
+            }
+            int reference_value = (int)obj.getValue();
+            heap.removeReference(reference_value);
+        }
+
         // If object present in the stack, remove it
         if(obj != null) stack.removeObject(obj);
     }
+
 
     /**
      * Give a value to a given identifier.
@@ -397,7 +422,10 @@ public class Memory {
         return symbolTable.contains(identifier);
     }
 
-
-
-
+    public void declTab(String identifier, int size, DataType type) {
+        int addr = heap.allocate(size, type);
+        symbolTable.addEntry(identifier, EntryKind.ARRAY, type);
+        // In the stack should we treat the address as a var, or make a special type ?
+        stack.setVar(identifier, addr, DataType.INT);
+    }
 }

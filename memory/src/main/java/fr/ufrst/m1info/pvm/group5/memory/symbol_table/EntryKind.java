@@ -18,6 +18,9 @@ public enum EntryKind {
     /** A class entry */
     CLASS,
 
+    /** An array entry */
+    ARRAY,
+
     /** Any other kind of symbol */
     OTHER
 }
