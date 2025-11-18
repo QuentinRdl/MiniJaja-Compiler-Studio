@@ -170,7 +170,7 @@ public class Memory {
         // Find the object in the stack
         StackObject obj = stack.getObject(identifier);
 
-        if(kind.getKind() == EntryKind.ARRAY) {
+        if(kind != null && kind.getKind() == EntryKind.ARRAY) {
             // The entry kind is an array, so we must dereference the heap referenced to it.
             // For that, we get the int with the address of the heap reference from the stack
             if(obj.getEntryKind() != EntryKind.VARIABLE && obj.getDataType() != DataType.INT) {
