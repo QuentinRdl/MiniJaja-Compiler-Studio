@@ -149,7 +149,6 @@ public class Memory {
         stack.setConst(identifier, value, type);
     }
 
-    // TODO : DeclTab and DeclMeth will be done when we'll do methods and arrays
 
     /**
      * Remove a declaration
@@ -232,7 +231,7 @@ public class Memory {
             // Add the new reference to the heap & the stack
             heap.addReference((int)value);
             obj.setValue(value);
-            // TODO : The way we implemented it would free the block no ?
+            return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
             obj.setValue(value);
@@ -289,7 +288,6 @@ public class Memory {
         }
 
         Object raw = stackobj.getValue();
-        // If the stored object is already a Value, return it, right now it will not be, but later on it will be
         if (raw instanceof Value) {
             return (Value) raw;
         }
@@ -434,7 +432,6 @@ public class Memory {
     public void declTab(String identifier, int size, DataType type) {
         int addr = heap.allocate(size, type);
         symbolTable.addEntry(identifier, EntryKind.ARRAY, type);
-        // In the stack should we treat the address as a var, or make a special type ?
         stack.setVar(identifier, addr, DataType.INT);
     }
 
