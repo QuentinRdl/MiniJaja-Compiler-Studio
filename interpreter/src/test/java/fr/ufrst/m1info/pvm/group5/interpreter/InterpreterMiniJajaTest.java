@@ -6,8 +6,6 @@ import fr.ufrst.m1info.pvm.group5.ast.*;
 
 import java.nio.file.NoSuchFileException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
 

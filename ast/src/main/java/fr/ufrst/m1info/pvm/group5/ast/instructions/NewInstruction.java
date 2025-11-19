@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.ast.instructions;
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.StackObject;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -24,9 +25,18 @@ public class NewInstruction extends Instruction{
     public int execute(int address, Memory m) {
         Value v;
         try{
-            v = ((Value) m.pop());
+            StackObject top= m.top();
+            String name= ".";
+            if (top!=null){
+                name=top.getName();
+            }
+            if(name.equals(".")) {
+                v = ((Value) m.pop());
+            }else{
+                v=new Value();
+            }
         }catch (Exception e){
-            throw new ASTInvalidMemoryException(e.getMessage());
+            v=new Value();
         }
         if (kind==EntryKind.VARIABLE){
             m.declVar(identifier,v,type);

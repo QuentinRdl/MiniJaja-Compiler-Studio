@@ -48,9 +48,9 @@ instr
     ;
 
 valeur returns [Value v]
-    : nombre
-    | string
-    | boolean
+    : nombre  {$v = new Value($nombre.i);}
+    | string  {$v = new Value($string.str);}
+    | jcboolean  {$v = new Value($jcboolean.b);}
     ;
 
 nombre returns [int i]
@@ -61,9 +61,9 @@ string returns [String str]
     : t=STRING {$str = $t.text.substring(1, $t.text.length() - 1);}
     ;
 
-boolean returns [boolean b]
-    : 'true' {$b = true;}
-    | 'false' {$b = false;}
+jcboolean returns [boolean b]
+    : 'jcvrai' {$b = true;}
+    | 'jcfaux' {$b = false;}
     ;
 
 type returns [DataType dt]

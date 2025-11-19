@@ -98,11 +98,11 @@ class InstructionsUnitTest {
 
     @Test
     void new_var_bool() throws Exception {
-        Instruction pushInstr = new PushInstruction(new Value(false));
+        Instruction pushInstr = new PushInstruction(new Value(true));
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.VARIABLE,0);
         pushInstr.execute(1,memory);
         assertEquals(3,newInstr.execute(2,memory));
-        assertFalse(((Value) memory.val("x")).valueBool);
+        assertTrue(((Value) memory.val("x")).valueBool);
     }
 
     @Test
@@ -111,7 +111,8 @@ class InstructionsUnitTest {
             throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
         }).when(memory).pop();
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.VARIABLE,0);
-        assertThrows(ASTInvalidMemoryException.class,() -> newInstr.execute(1,memory));
+        assertEquals(3,newInstr.execute(2,memory));
+        assertNotEquals(null,memory.val("x"));
     }
 
     @Test
@@ -138,7 +139,8 @@ class InstructionsUnitTest {
             throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
         }).when(memory).pop();
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.CONSTANT,0);
-        assertThrows(ASTInvalidMemoryException.class,() -> newInstr.execute(1,memory));
+        assertEquals(3,newInstr.execute(2,memory));
+        assertNotEquals(null,memory.val("x"));
     }
 
     @Test
