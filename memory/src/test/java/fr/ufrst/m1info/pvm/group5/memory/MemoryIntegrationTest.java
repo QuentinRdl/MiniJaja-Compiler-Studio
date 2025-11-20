@@ -571,8 +571,6 @@ class MemoryIntegrationTest {
     @ValueSource(ints = {127, -127}) // TODO : Put back once heap corrected -> , 12345678, -12345678})
     void valTandAffValT(int testValue) {
         Memory mem = new Memory();
-        Heap heap = mem.getHeap();
-        int initialHeapSize = heap.getAvailableSize();
 
         Value val = new Value(testValue);
         int valInt = val.valueInt;
@@ -582,6 +580,20 @@ class MemoryIntegrationTest {
 
         assertEquals(valInt, mem.valT("arr", 0).valueInt);
     }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void valTAndAffValTBool(boolean valBool) {
+        Memory mem = new Memory();
+
+        Value val = new Value(valBool);
+
+        mem.declTab("arr", 5, DataType.BOOL);
+        mem.affectValT("arr", 0, val);
+
+        assertEquals(valBool, mem.valT("arr", 0).valueBool);
+    }
+
 
     /*
     @Test
