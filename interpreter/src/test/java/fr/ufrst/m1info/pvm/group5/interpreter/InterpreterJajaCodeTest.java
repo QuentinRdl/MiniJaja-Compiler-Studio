@@ -109,6 +109,36 @@ public class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File WriteLocalVariables")
+    void WriteLocalVariables() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteLocalVariables.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 4\ny : 3\nz : 6\nx : 8\nx : 9\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteLoops")
+    void WriteLoops() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteLoops.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 0\nx : 8\nx : 16\nx : 24\nx : 32\nx : 40\nx : 48\nx : 56\nx : 64\nx : 72\nx : 80\nx : 88\nx : 96\nx : 104\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteOperationPrevalence")
+    void WriteOperationPrevalence() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteOperationPrevalence.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 17\ny : 17\nz : -1\nw : true\nv : true\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File That Doesn't Exist")
     void InterpretNotExistingFile() {
         String errMessage=ijc.interpretFile("src/test/resources/FileThatDoesntExist.jjc");
