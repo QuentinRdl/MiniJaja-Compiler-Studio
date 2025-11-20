@@ -20,31 +20,35 @@ eval returns [List<Instruction> instructions]
     ;
 
 instr
-    : 'push' '(' valeur ')' {instrList.add(new PushInstruction($valeur.v));}
-    | 'pop' {instrList.add(new PopInstruction());}
-    | 'swap' {instrList.add(new SwapInstruction());}
-    | 'return' {instrList.add(new ReturnInstruction());}
-    | 'goto' '(' n=NOMBRE ')' {instrList.add(new GotoInstruction(Integer.parseInt($n.text)));}
-    | 'nop' {instrList.add(new NopInstruction());}
-    | 'load' '(' i=IDENTIFIER ')' {instrList.add(new LoadInstruction($i.text));}
-    | 'store' '(' i=IDENTIFIER ')' {instrList.add(new StoreInstruction($i.text));}
-    | 'add' {instrList.add(new AddInstruction());}
-    | 'mul' {instrList.add(new MulInstruction());}
-    | 'sub' {instrList.add(new SubInstruction());}
-    | 'div' {instrList.add(new DivInstruction());}
-    | 'or' {instrList.add(new OrInstruction());}
-    | 'and' {instrList.add(new AndInstruction());}
-    | 'sup' {instrList.add(new SupInstruction());}
-    | 'cmp' {instrList.add(new CmpInstruction());}
-    | 'neg' {instrList.add(new NegInstruction());}
-    | 'not' {instrList.add(new NotInstruction());}
-    | 'inc' '(' i=IDENTIFIER ')' {instrList.add(new IncInstruction($i.text));}{}
-    | 'write' {instrList.add(new WriteInstruction());}
-    | 'writeln' {instrList.add(new WritelnInstruction());}
-    | 'init' {instrList.add(new InitInstruction());}
-    | 'jcstop' {instrList.add(new JcstopInstruction());}
-    | 'if' '(' n=NOMBRE ')' {instrList.add(new IfInstruction(Integer.parseInt($n.text)));}
-    | 'new' '(' id=IDENTIFIER ',' type ',' entrykind ',' scope=NOMBRE ')' {instrList.add(new NewInstruction($id.text,$type.dt,$entrykind.ek,Integer.parseInt($scope.text)));}
+    : instruction {instrList.add($instruction.inst); $instruction.inst.setLine($instruction.start.getLine());}
+    ;
+
+instruction returns [Instruction inst]
+    : 'push' '(' valeur ')' {$inst = new PushInstruction($valeur.v);}
+    | 'pop' {$inst = new PopInstruction();}
+    | 'swap' {$inst = new SwapInstruction();}
+    | 'return' {$inst = new ReturnInstruction();}
+    | 'goto' '(' n=NOMBRE ')' {$inst = new GotoInstruction(Integer.parseInt($n.text));}
+    | 'nop' {$inst = new NopInstruction();}
+    | 'load' '(' i=IDENTIFIER ')' {$inst = new LoadInstruction($i.text);}
+    | 'store' '(' i=IDENTIFIER ')' {$inst = new StoreInstruction($i.text);}
+    | 'add' {$inst = new AddInstruction();}
+    | 'mul' {$inst = new MulInstruction();}
+    | 'sub' {$inst = new SubInstruction();}
+    | 'div' {$inst = new DivInstruction();}
+    | 'or' {$inst = new OrInstruction();}
+    | 'and' {$inst = new AndInstruction();}
+    | 'sup' {$inst = new SupInstruction();}
+    | 'cmp' {$inst = new CmpInstruction();}
+    | 'neg' {$inst = new NegInstruction();}
+    | 'not' {$inst = new NotInstruction();}
+    | 'inc' '(' i=IDENTIFIER ')' {$inst = new IncInstruction($i.text);}
+    | 'write' {$inst = new WriteInstruction();}
+    | 'writeln' {$inst = new WritelnInstruction();}
+    | 'init' {$inst = new InitInstruction();}
+    | 'jcstop' {$inst = new JcstopInstruction();}
+    | 'if' '(' n=NOMBRE ')' {$inst = new IfInstruction(Integer.parseInt($n.text));}
+    | 'new' '(' id=IDENTIFIER ',' type ',' entrykind ',' scope=NOMBRE ')' {$inst = new NewInstruction($id.text,$type.dt,$entrykind.ek,Integer.parseInt($scope.text));}
     ;
 
 valeur returns [Value v]
