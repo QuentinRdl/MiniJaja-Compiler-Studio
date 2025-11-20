@@ -636,42 +636,4 @@ class MemoryIntegrationTest {
         assertThrows(java.lang.NullPointerException.class, () -> mem.affectValT("arr", 0, new Value(12)));
         assertThrows(java.lang.NullPointerException.class, () -> mem.valT("arr", 0));
     }
-
-
-    /*
-
-
-
-    @Test
-    void valTReturnsNullWhenBackingNotInt() {
-        StackObject wrongObj = new StackObject("arr", "not-an-address", 0, EntryKind.VARIABLE, DataType.DOUBLE);
-        when(stackMocked.getObject("arr")).thenReturn(wrongObj);
-
-        Value result = memory.valT("arr", 2);
-        assertNull(result);
-        verify(heapMocked, never()).getValue(anyInt(), anyInt());
-    }
-
-    @Test
-    void valTThrowsWhenNoStackObject() {
-        when(stackMocked.getObject("arr")).thenReturn(null);
-        assertThrows(NullPointerException.class, () -> memory.valT("arr", 0));
-    }
-
-    @Test
-    void tabLengthReturnsMinusOneWhenBackingNotInt() {
-        StackObject wrongObj = new StackObject("arr", "not-an-address", 0, EntryKind.VARIABLE, DataType.DOUBLE);
-        when(stackMocked.getObject("arr")).thenReturn(wrongObj);
-
-        int len = memory.tabLength("arr");
-        assertEquals(-1, len);
-        verify(heapMocked, never()).sizeOf(anyInt());
-    }
-
-    @Test
-    void tabLengthThrowsWhenNoStackObject() {
-        when(stackMocked.getObject("arr")).thenReturn(null);
-        assertThrows(NullPointerException.class, () -> memory.tabLength("arr"));
-    }
-     */
 }
