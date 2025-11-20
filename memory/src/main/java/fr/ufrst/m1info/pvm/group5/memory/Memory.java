@@ -467,7 +467,6 @@ public class Memory {
         }
 
         int address = (int) addressObj.getValue();
-        System.out.println("The address is = " + address + " for identifier " + identifier + " and index " + index + " with a value = " + heap.getValue(address, index));
         return heap.getValue(address, index);
     }
 
