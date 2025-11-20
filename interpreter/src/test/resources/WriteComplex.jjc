@@ -1,0 +1,85 @@
+init
+new(x,INT,var,0)
+push(10)
+new(y,INT,var,0)
+push("y : ")
+write
+load(y)
+writeln
+push(5)
+new(VAL,INT,cst,0)
+push("VAL : ")
+write
+load(VAL)
+writeln
+push(jcvrai)
+new(b1,BOOL,var,0)
+push("b1 : ")
+write
+load(b1)
+writeln
+push(jcfaux)
+new(b2,BOOL,var,0)
+push("b2 : ")
+write
+load(b2)
+writeln
+load(b1)
+load(b1)
+load(b2)
+not
+or
+and
+if(41)
+push(1)
+inc(x)
+push("x : ")
+write
+load(x)
+writeln
+goto(51)
+load(VAL)
+load(y)
+add
+push(0)
+sub
+store(x)
+push("x : ")
+write
+load(x)
+writeln
+load(y)
+load(VAL)
+mul
+store(x)
+push("x : ")
+write
+load(x)
+writeln
+load(x)
+load(VAL)
+div
+store(x)
+push("x : ")
+write
+load(x)
+writeln
+push(1)
+inc(x)
+push("x : ")
+write
+load(x)
+writeln
+push(0)
+swap
+pop
+swap
+pop
+swap
+pop
+swap
+pop
+swap
+pop
+pop
+jcstop

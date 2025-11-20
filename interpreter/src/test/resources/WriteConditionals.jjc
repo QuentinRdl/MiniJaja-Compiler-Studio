@@ -1,0 +1,87 @@
+init
+push(5)
+new(a,INT,var,0)
+push("a : ")
+write
+load(a)
+writeln
+push(5)
+new(b,INT,var,0)
+push("b : ")
+write
+load(b)
+writeln
+push(5)
+new(c,INT,var,0)
+push("c : ")
+write
+load(c)
+writeln
+new(v,INT,var,0)
+push(5)
+load(a)
+sup
+if(26)
+goto(32)
+push(1)
+inc(a)
+push("a : ")
+write
+load(a)
+writeln
+load(b)
+load(a)
+sup
+if(43)
+push(1)
+inc(b)
+push("b : ")
+write
+load(b)
+writeln
+goto(49)
+push(0)
+store(b)
+push("b : ")
+write
+load(b)
+writeln
+load(b)
+push(5)
+cmp
+if(71)
+load(a)
+load(b)
+sup
+if(64)
+load(b)
+store(v)
+push("v : ")
+write
+load(v)
+writeln
+goto(70)
+load(a)
+store(v)
+push("v : ")
+write
+load(v)
+writeln
+goto(77)
+load(c)
+store(v)
+push("v : ")
+write
+load(v)
+writeln
+push(0)
+swap
+pop
+swap
+pop
+swap
+pop
+swap
+pop
+pop
+jcstop

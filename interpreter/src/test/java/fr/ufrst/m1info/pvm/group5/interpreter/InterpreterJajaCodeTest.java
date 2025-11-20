@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,12 +10,16 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.NoSuchFileException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class InterpreterJajaCodeTest {
     InterpreterJajaCode ijc;
+    Writer writer;
 
     @BeforeEach
     public void setup() {
-        ijc=new InterpreterJajaCode();
+        writer = new Writer();
+        ijc=new InterpreterJajaCode(writer);
     }
 
     @Test
@@ -71,6 +76,36 @@ public class InterpreterJajaCodeTest {
     @DisplayName("Interpret File Simple")
     void Simple() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Simple.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteBasicOperations")
+    void WriteBasicOperations() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteBasicOperations.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 7\nx : 8\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteComplex")
+    void WriteComplex() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteComplex.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("y : 10\nVAL : 5\nb1 : true\nb2 : false\nx : 15\nx : 50\nx : 10\nx : 11\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteConditionals")
+    void WriteConditionals() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteConditionals.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("a : 5\nb : 5\nc : 5\nb : 6\nv : 6\n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
