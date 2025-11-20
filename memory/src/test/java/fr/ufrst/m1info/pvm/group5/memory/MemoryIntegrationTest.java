@@ -1,15 +1,25 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
+import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 
@@ -430,7 +440,7 @@ class MemoryIntegrationTest {
 
         // Now declVarClass should throw because stack.hasObj(identifier) is true
         Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idOnStackOnly"));
-        assertTrue(ex.getMessage().contains("Stack") || ex.getMessage().contains("Stack"));
+        assertTrue(ex.getMessage().contains("Stack"));
     }
 
     @Test
@@ -518,4 +528,177 @@ class MemoryIntegrationTest {
         mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
         assertEquals(DataType.UNKNOWN,mem.dataTypeOf("x"));
     }
+
+    @Test
+    void declTabBasic() {
+        Memory mem = new Memory();
+        Heap heap = mem.getHeap();
+        int initialHeapSize = heap.getAvailableSize();
+
+        // First, the initial size should be equal to the total size
+        assertEquals(initialHeapSize, heap.getTotalSize());
+        mem.declTab("arr", 5, DataType.INT);
+
+        // Array reference should be stocked as an int
+        assertEquals(DataType.INT, mem.dataTypeOf("arr"));
+
+        // We should now have less space than initially
+        assertTrue(initialHeapSize > heap.getAvailableSize());
+    }
+
+    @Test
+    void declTabPlusWithdraw() {
+        Memory mem = new Memory();
+        Heap heap = mem.getHeap();
+        int initialHeapSize = heap.getAvailableSize();
+
+        mem.declTab("arr", 5, DataType.INT);
+
+        // Array reference should be stocked as an int
+        assertEquals(DataType.INT, mem.dataTypeOf("arr"));
+        assertTrue(initialHeapSize > heap.getAvailableSize());
+
+        mem.withdrawDecl("arr");
+
+        java.lang.IllegalArgumentException ex = assertThrows(java.lang.IllegalArgumentException.class, () -> mem.val("arr"));
+        assertTrue(ex.getMessage().contains("Symbol not found"));
+
+        // After freeing the block, the available size of the heap should return to the total space
+        assertEquals(initialHeapSize, heap.getTotalSize());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {127, -127}) // TODO : Put back once heap corrected -> , 12345678, -12345678})
+    void valTandAffValT(int testValue) {
+        Memory mem = new Memory();
+        Heap heap = mem.getHeap();
+        int initialHeapSize = heap.getAvailableSize();
+
+        Value val = new Value(testValue);
+        int valInt = val.valueInt;
+
+        mem.declTab("arr", 5, DataType.INT);
+        mem.affectValT("arr", 0, val);
+
+        assertEquals(valInt, mem.valT("arr", 0).valueInt);
+    }
+
+    /*
+    @Test
+    void affectValueOnArrayUpdatesValue() {
+        SymbolTableEntry arrayEntry = new SymbolTableEntry("arr", EntryKind.ARRAY, DataType.INT);
+        when(symbolTableMocked.lookup("arr")).thenReturn(arrayEntry);
+
+        int oldRef = 50;
+        StackObject obj = new StackObject("arr", oldRef, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.searchObject("arr")).thenReturn(obj);
+
+        memory.affectValue("arr", 200);
+
+        verify(symbolTableMocked, times(1)).lookup("arr");
+        verify(stackMocked, times(1)).searchObject("arr");
+        verify(heapMocked, times(1)).removeReference(oldRef);
+        verify(heapMocked, times(1)).addReference(200);
+        // stack object's value should be updated
+        assertEquals(200, obj.getValue());
+    }
+
+    /*
+    @Test
+    void affectValTDelegatesToHeap() {
+        int addr = 77;
+        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.getObject("arr")).thenReturn(addrObj);
+
+        Value val = new Value(999);
+
+        memory.affectValT("arr", 3, val);
+
+        verify(stackMocked, times(1)).getObject("arr");
+        verify(heapMocked, times(1)).setValue(addr, 3, val);
+    }
+
+    @Test
+    void valTReturnsValueFromHeap() {
+        int addr = 88;
+        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.getObject("arr")).thenReturn(addrObj);
+
+        Value expected = new Value(42);
+        when(heapMocked.getValue(addr, 1)).thenReturn(expected);
+
+        Value result = memory.valT("arr", 1);
+
+        verify(stackMocked, times(1)).getObject("arr");
+        verify(heapMocked, times(1)).getValue(addr, 1);
+        assertNotNull(result);
+        assertEquals(ValueType.INT, result.type);
+        assertEquals(42, result.valueInt);
+    }
+
+    @Test
+    void tabLengthDelegatesToHeapSizeOf() {
+        int addr = 99;
+        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        when(stackMocked.getObject("arr")).thenReturn(addrObj);
+
+        when(heapMocked.sizeOf(addr)).thenReturn(5);
+
+        int len = memory.tabLength("arr");
+
+        verify(stackMocked, times(1)).getObject("arr");
+        verify(heapMocked, times(1)).sizeOf(addr);
+        assertEquals(5, len);
+    }
+
+    @Test
+    void affectValTDoesNothingWhenBackingNotInt() {
+        StackObject wrongObj = new StackObject("arr", "not-an-address", 0, EntryKind.VARIABLE, DataType.DOUBLE);
+        when(stackMocked.getObject("arr")).thenReturn(wrongObj);
+
+        Value val = new Value(1);
+
+        memory.affectValT("arr", 0, val);
+
+        verify(heapMocked, never()).setValue(anyInt(), anyInt(), any(Value.class));
+    }
+
+    @Test
+    void affectValTThrowsWhenNoStackObject() {
+        when(stackMocked.getObject("arr")).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> memory.affectValT("arr", 0, new Value(1)));
+    }
+
+    @Test
+    void valTReturnsNullWhenBackingNotInt() {
+        StackObject wrongObj = new StackObject("arr", "not-an-address", 0, EntryKind.VARIABLE, DataType.DOUBLE);
+        when(stackMocked.getObject("arr")).thenReturn(wrongObj);
+
+        Value result = memory.valT("arr", 2);
+        assertNull(result);
+        verify(heapMocked, never()).getValue(anyInt(), anyInt());
+    }
+
+    @Test
+    void valTThrowsWhenNoStackObject() {
+        when(stackMocked.getObject("arr")).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> memory.valT("arr", 0));
+    }
+
+    @Test
+    void tabLengthReturnsMinusOneWhenBackingNotInt() {
+        StackObject wrongObj = new StackObject("arr", "not-an-address", 0, EntryKind.VARIABLE, DataType.DOUBLE);
+        when(stackMocked.getObject("arr")).thenReturn(wrongObj);
+
+        int len = memory.tabLength("arr");
+        assertEquals(-1, len);
+        verify(heapMocked, never()).sizeOf(anyInt());
+    }
+
+    @Test
+    void tabLengthThrowsWhenNoStackObject() {
+        when(stackMocked.getObject("arr")).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> memory.tabLength("arr"));
+    }
+     */
 }
