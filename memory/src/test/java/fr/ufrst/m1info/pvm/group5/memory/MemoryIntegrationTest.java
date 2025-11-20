@@ -1,15 +1,27 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
+import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
+import fr.ufrst.m1info.pvm.group5.memory.heap.UnmappedMemoryAddressException;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 
@@ -430,7 +442,7 @@ class MemoryIntegrationTest {
 
         // Now declVarClass should throw because stack.hasObj(identifier) is true
         Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idOnStackOnly"));
-        assertTrue(ex.getMessage().contains("Stack") || ex.getMessage().contains("Stack"));
+        assertTrue(ex.getMessage().contains("Stack"));
     }
 
     @Test
@@ -517,5 +529,135 @@ class MemoryIntegrationTest {
         Memory mem = new Memory();
         mem.declVar("x", new Value(), ValueType.toDataType(ValueType.EMPTY));
         assertEquals(DataType.UNKNOWN,mem.dataTypeOf("x"));
+    }
+
+    @Test
+    void declTabBasic() {
+        Memory mem = new Memory();
+        Heap heap = mem.getHeap();
+        int initialHeapSize = heap.getAvailableSize();
+
+        // First, the initial size should be equal to the total size
+        assertEquals(initialHeapSize, heap.getTotalSize());
+        mem.declTab("arr", 5, DataType.INT);
+
+        // Array reference should be stocked as an int
+        assertEquals(DataType.INT, mem.dataTypeOf("arr"));
+
+        // We should now have less space than initially
+        assertTrue(initialHeapSize > heap.getAvailableSize());
+    }
+
+    @Test
+    void declTabPlusWithdraw() {
+        Memory mem = new Memory();
+        Heap heap = mem.getHeap();
+        int initialHeapSize = heap.getAvailableSize();
+
+        mem.declTab("arr", 5, DataType.INT);
+
+        // Array reference should be stocked as an int
+        assertEquals(DataType.INT, mem.dataTypeOf("arr"));
+        assertTrue(initialHeapSize > heap.getAvailableSize());
+
+        mem.withdrawDecl("arr");
+
+        java.lang.IllegalArgumentException ex = assertThrows(java.lang.IllegalArgumentException.class, () -> mem.val("arr"));
+        assertTrue(ex.getMessage().contains("Symbol not found"));
+
+        // After freeing the block, the available size of the heap should return to the total space
+        assertEquals(initialHeapSize, heap.getTotalSize());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {127, -127}) // TODO : Put back once heap corrected -> , 12345678, -12345678})
+    void valTandAffValT(int testValue) {
+        Memory mem = new Memory();
+
+        Value val = new Value(testValue);
+        int valInt = val.valueInt;
+
+        mem.declTab("arr", 5, DataType.INT);
+        mem.affectValT("arr", 0, val);
+
+        assertEquals(valInt, mem.valT("arr", 0).valueInt);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void valTAndAffValTBool(boolean valBool) {
+        Memory mem = new Memory();
+
+        Value val = new Value(valBool);
+
+        mem.declTab("arr", 5, DataType.BOOL);
+        mem.affectValT("arr", 0, val);
+
+        assertEquals(valBool, mem.valT("arr", 0).valueBool);
+    }
+
+    @Test
+    void heapIncorrectIndex() {
+        Memory mem = new Memory();
+        Value val = new Value(true);
+
+        mem.declTab("arr", 5, DataType.BOOL);
+
+        assertThrows(java.lang.ArrayIndexOutOfBoundsException.class, () -> mem.affectValT("arr", -1, val));
+        assertThrows(UnmappedMemoryAddressException.class, () -> mem.affectValT("arr", 6, val));
+    }
+
+    static Stream<Arguments> tabLengthTestProvider() {
+        return Stream.of(
+                Arguments.of(1, DataType.INT),
+                Arguments.of(5, DataType.INT),
+                Arguments.of(100, DataType.INT),
+                Arguments.of(200, DataType.INT),
+                Arguments.of(1, DataType.BOOL),
+                Arguments.of(5, DataType.BOOL),
+                Arguments.of(100, DataType.BOOL),
+                Arguments.of(200, DataType.BOOL)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("tabLengthTestProvider")
+    void tabLengthTest(int length, DataType dataType) {
+        Memory mem = new Memory();
+        mem.declTab("arr", length, dataType);
+        assertEquals(length, mem.tabLength("arr"));
+    }
+
+    @Test
+    void arrayFuncWithNoArrayThrows() {
+        Memory mem = new Memory();
+
+        assertThrows(java.lang.NullPointerException.class, () -> mem.tabLength("arr"));
+        assertThrows(java.lang.NullPointerException.class, () -> mem.affectValT("arr", 0, new Value(12)));
+        assertThrows(java.lang.NullPointerException.class, () -> mem.valT("arr", 0));
+    }
+
+    @Test
+    void aliasingBetweenArrayAndIntVariable() {
+        Memory mem = new Memory();
+
+        mem.declTab("a", 3, DataType.INT);
+        StackObject aObj = mem.stack.getObject("a");
+        assertNotNull(aObj);
+        assertEquals(DataType.INT, aObj.getDataType());
+
+        // Create an alias variable that stores the raw address
+        int address = (int) aObj.getValue();
+        mem.declVar("alias", address, DataType.INT);
+
+        // Write via original identifier
+        mem.affectValT("a", 0, new Value(42));
+        // Read via alias -> should see same value
+        assertEquals(42, mem.valT("alias", 0).valueInt);
+
+        // Write via alias
+        mem.affectValT("alias", 1, new Value(7));
+        // Read via original -> should see same value
+        assertEquals(7, mem.valT("a", 1).valueInt);
     }
 }

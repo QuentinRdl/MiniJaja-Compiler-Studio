@@ -530,7 +530,6 @@ public class Stack {
         return scopeDepth;
     }
 
-
     public void setMethod(String identifier, Object params, DataType returnType) {
         if (identifier == null || identifier.isEmpty()) {
             throw new IllegalArgumentException("Cannot define method with null or empty identifier");
@@ -545,6 +544,4 @@ public class Stack {
         );
         stackContent.push(obj);
     }
-
-
 }
