@@ -19,6 +19,10 @@ classe returns [ClassNode node]
     ;
 
 ident returns [IdentNode node]
+    : identifier {$node = $identifier.node; $node.setLine($identifier.start.getLine());}
+    ;
+
+identifier returns [IdentNode node]
     : id=IDENTIFIER {$node = new IdentNode($id.text);}
     ;
 
@@ -39,6 +43,10 @@ vars returns [ASTNode node]
     ;
 
 var returns [ASTNode node]
+    : variable {$node = $variable.node; $node.setLine($variable.start.getLine());}
+    ;
+
+variable returns [ASTNode node]
     : typemeth ident {$node = new VariableNode($typemeth.node, $ident.node, null);}
     (vexp {$node = new VariableNode($typemeth.node, $ident.node, $vexp.node);}
     )?
@@ -182,8 +190,11 @@ terme returns [ASTNode node]
     )*
     ;
 
-
 fact returns [ASTNode node]
+    : factor {$node = $factor.node; $node.setLine($factor.start.getLine());}
+    ;
+
+factor returns [ASTNode node]
     : ident1 {$node = $ident1.node;}
     | 'true' {$node = new BooleanNode(true);}
     | 'false' {$node = new BooleanNode(false);}
