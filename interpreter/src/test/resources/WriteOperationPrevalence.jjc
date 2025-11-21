@@ -1,0 +1,67 @@
+init
+new(x,INT,var,0)
+new(y,INT,var,0)
+new(z,INT,var,0)
+new(w,BOOL,var,0)
+new(v,BOOL,var,0)
+push(3)
+push(4)
+mul
+push(5)
+add
+store(x)
+push("x : ")
+write
+load(x)
+writeln
+push(5)
+push(3)
+push(4)
+mul
+add
+store(y)
+push("y : ")
+write
+load(y)
+writeln
+push(3)
+neg
+push(2)
+add
+store(z)
+push("z : ")
+write
+load(z)
+writeln
+push(jcfaux)
+not
+push(jcvrai)
+and
+store(w)
+push("w : ")
+write
+load(w)
+writeln
+push(jcvrai)
+push(jcfaux)
+or
+push(jcvrai)
+and
+store(v)
+push("v : ")
+write
+load(v)
+writeln
+push(0)
+swap
+pop
+swap
+pop
+swap
+pop
+swap
+pop
+swap
+pop
+pop
+jcstop

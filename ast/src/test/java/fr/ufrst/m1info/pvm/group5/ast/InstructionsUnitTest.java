@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.ast.instructions.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -250,6 +251,9 @@ class InstructionsUnitTest {
     void store_simple_int(){
         storage.add(new ASTMocks.Pair<>("test",new Value(1)));
         storage.add(new ASTMocks.Pair<>(".",new Value(5)));
+        doAnswer(invocationOnMock -> {
+            return ValueType.INT;
+        }).when(memory).valueTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);
@@ -264,6 +268,9 @@ class InstructionsUnitTest {
     void store_simple_bool(){
         storage.add(new ASTMocks.Pair<>("test",new Value(true)));
         storage.add(new ASTMocks.Pair<>(".",new Value(false)));
+        doAnswer(invocationOnMock -> {
+            return ValueType.BOOL;
+        }).when(memory).valueTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);
@@ -278,6 +285,9 @@ class InstructionsUnitTest {
     void store_simple_string(){
         storage.add(new ASTMocks.Pair<>("test",new Value("t1")));
         storage.add(new ASTMocks.Pair<>(".",new Value("t2")));
+        doAnswer(invocationOnMock -> {
+            return ValueType.STRING;
+        }).when(memory).valueTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
 

@@ -1,9 +1,11 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.StackObject;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -39,9 +41,15 @@ public class NewInstruction extends Instruction{
             v=new Value();
         }
         if (kind==EntryKind.VARIABLE){
+            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
+                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
+            }
             m.declVar(identifier,v,type);
         }
         else if (kind==EntryKind.CONSTANT){
+            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
+                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
+            }
             m.declCst(identifier,v,type);
             // todo : add entry kind method
         }else {

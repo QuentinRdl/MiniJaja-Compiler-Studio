@@ -65,13 +65,10 @@ public class InterpreterJajaCode implements Interpreter{
         int adress=1;
         int size=instructions.size();
         while (adress>0){
-            try{
-                adress = instructions.get(adress-1).execute(adress,mem);
-            } catch (Exception e) {
-                throw new RuntimeException("Line "+adress);
-            }
+            adress = instructions.get(adress-1).execute(adress,mem);
 
-            if (adress>size){
+
+            if (adress>size || adress==0){
                 throw new IndexOutOfBoundsException("Line "+adress+" not found");
             }
         }
