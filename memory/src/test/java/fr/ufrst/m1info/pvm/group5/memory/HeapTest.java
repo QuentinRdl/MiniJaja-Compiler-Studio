@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.Heap.*;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.heap.*;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,11 +10,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HeapTest {
+class HeapTest {
 
     @Test
     @DisplayName("Base constructor")
-    public void constructorTest() {
+    void constructorTest() {
         Heap heap = new Heap(512);
         assertEquals(512, heap.getTotalSize());
         assertEquals(512, heap.getAvailableSize());
@@ -26,7 +26,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Allocate")
-    public void allocateTest() {
+    void allocateTest() {
         Heap heap = new Heap(512);
         assertEquals(1, heap.allocate(12, DataType.INT));
         assertEquals(512, heap.getTotalSize());
@@ -40,14 +40,14 @@ public class HeapTest {
 
     @Test
     @DisplayName("Allocate - Not enough memory")
-    public void allocateNotEnoughMemoryTest() {
+    void allocateNotEnoughMemoryTest() {
         Heap heap = new Heap(512);
         assertThrows(InsufficientMemoryException.class, () -> heap.allocate(1000, DataType.INT));
     }
 
     @Test
     @DisplayName("Allocate - Not enough memory after allocation")
-    public void allocateNotEnoughMemoryAfterAllocationTest() {
+    void allocateNotEnoughMemoryAfterAllocationTest() {
         Heap heap = new Heap(512);
         heap.allocate(500, DataType.INT);
         assertThrows(InsufficientMemoryException.class, () -> heap.allocate(500, DataType.INT));
@@ -55,14 +55,14 @@ public class HeapTest {
 
     @Test
     @DisplayName("Allocate - Invalid size")
-    public void allocateInvalidSizeTest() {
+    void allocateInvalidSizeTest() {
         Heap heap = new Heap(512);
         assertThrows(IllegalArgumentException.class, () -> heap.allocate(-1, DataType.INT));
     }
 
     @Test
     @DisplayName("Allocate - Multiple")
-    public void allocateMultipleTest() {
+    void allocateMultipleTest() {
         Heap heap = new Heap(512);
         List<Heap.ElementRecord> result = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
@@ -76,7 +76,7 @@ public class HeapTest {
     // Free
     @Test
     @DisplayName("Free - Single")
-    public void freeTest() {
+    void freeTest() {
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.free(address);
@@ -87,7 +87,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Free - InvalidAddress")
-    public void freeInvalidAddressTest() {
+    void freeInvalidAddressTest() {
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         assertThrows(InvalidMemoryAddressException.class, () -> heap.free(address+1));
@@ -96,7 +96,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Free - In the middle")
-    public void freeInTheMiddleTest() {
+    void freeInTheMiddleTest() {
         Heap heap = new Heap(512);
         int b1 = heap.allocate(50,DataType.INT);
         int b2 = heap.allocate(50,DataType.INT);
@@ -108,7 +108,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Free - Multiple")
-    public void freeMultipleTest(){
+    void freeMultipleTest(){
         Heap heap = new Heap(512);
         List<Integer> addresses =  new ArrayList<>();
         for(int i = 0; i < 10; i++) {
@@ -127,7 +127,7 @@ public class HeapTest {
     // References
     @Test
     @DisplayName("Reference - Add then remove")
-    public void ReferenceAddAndRemoveTest(){
+    void ReferenceAddAndRemoveTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.addReference(address);
@@ -138,7 +138,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Reference - Add to invalid address")
-    public void ReferenceInvalidAddressTest(){
+    void ReferenceInvalidAddressTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         assertThrows(InvalidMemoryAddressException.class, () -> heap.addReference(address+1));
@@ -146,7 +146,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Reference - Remove to invalid address")
-    public void ReferenceInvalidAddressRemoveTest(){
+    void ReferenceInvalidAddressRemoveTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         assertThrows(InvalidMemoryAddressException.class, () -> heap.removeReference(address+1));
@@ -154,7 +154,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Reference - Two add one remove")
-    public void ReferenceTwoRemoveOneTest(){
+    void ReferenceTwoRemoveOneTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.addReference(address);
@@ -170,7 +170,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Reference - One add two remove")
-    public void ReferenceOneRemoveTwoTest(){
+    void ReferenceOneRemoveTwoTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.addReference(address);
@@ -181,7 +181,7 @@ public class HeapTest {
     // setValue
     @Test
     @DisplayName("SetValue")
-    public void SetValueTest(){
+    void SetValueTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.setValue(address, 2, new Value(5));
@@ -190,7 +190,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("SetValue - boolean")
-    public void SetValueBooleanTest(){
+    void SetValueBooleanTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.BOOL);
         heap.setValue(address, 2, new Value(true));
@@ -201,7 +201,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("SetValue - Middle of the array")
-    public void SetValueMiddleTest(){
+    void SetValueMiddleTest(){
         Heap heap = new Heap(512);
         heap.allocate(250, DataType.INT);
         var address = heap.allocate(12, DataType.INT);
@@ -212,21 +212,21 @@ public class HeapTest {
 
     @Test
     @DisplayName("SetValue - Set in UnAllocated block")
-    public void SetValueSetInUnAllocatedBlockTest(){
+    void SetValueSetInUnAllocatedBlockTest(){
         Heap heap = new Heap(512);
         assertThrows(InvalidMemoryAddressException.class, ()->heap.setValue(0,0, new Value(5)));
     }
 
     @Test
     @DisplayName("SetValue - InvalidAddress")
-    public void SetValueInvalidAddressTest(){
+    void SetValueInvalidAddressTest(){
         Heap heap = new Heap(512);
         assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(1,0, new Value(5)));
     }
 
     @Test
     @DisplayName("SetValue - Offset OOB")
-    public void SetValueOffsetOOBTest(){
+    void SetValueOffsetOOBTest(){
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.setValue(address, 11, new Value(5)); // 11 is still in bounds
@@ -236,7 +236,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("SetValue - AfterFree")
-    public void SetValueAfterFreeTest(){
+    void SetValueAfterFreeTest(){
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.free(address);
@@ -246,7 +246,7 @@ public class HeapTest {
     // GetValue
     @Test
     @DisplayName("GetValue")
-    public void getValueTest(){
+    void getValueTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
         heap.setValue(address, 2, new Value(5));
@@ -255,7 +255,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("GetValue - Bool")
-    public void getValueBooleanTest(){
+    void getValueBooleanTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.BOOL);
         heap.setValue(address, 2, new Value(true));
@@ -266,21 +266,21 @@ public class HeapTest {
 
     @Test
     @DisplayName("GetValue - Get in UnAllocated block")
-    public void GetValueGetInUnAllocatedBlockTest(){
+    void GetValueGetInUnAllocatedBlockTest(){
         Heap heap = new Heap(512);
         assertThrows(InvalidMemoryAddressException.class, ()->heap.getValue(0,0));
     }
 
     @Test
     @DisplayName("GetValue - InvalidAddress")
-    public void GetValueInvalidAddressTest(){
+    void GetValueInvalidAddressTest(){
         Heap heap = new Heap(512);
         assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(1,0));
     }
 
     @Test
     @DisplayName("GetValue - Offset OOB")
-    public void GetValueOffsetOOBTest(){
+    void GetValueOffsetOOBTest(){
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.getValue(address, 11); // 11 is still in bounds
@@ -291,7 +291,7 @@ public class HeapTest {
     // Heap Defragmentation
     @Test
     @DisplayName("Defragment")
-    public void DefragmentTest(){
+    void DefragmentTest(){
         Heap heap = new Heap(512);
         heap.allocate(150,DataType.INT);
         int a2 = heap.allocate(150,DataType.INT);
@@ -310,7 +310,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Defragment - With values")
-    public void DefragmentMovedTest(){
+    void DefragmentMovedTest(){
         Heap heap = new Heap(512);
         heap.allocate(150,DataType.INT);
         int a2 = heap.allocate(150,DataType.INT);
@@ -342,7 +342,7 @@ public class HeapTest {
 
     @Test
     @DisplayName("Defragment - Several free blocks")
-    public void DefragmentSeveralFreeTest(){
+    void DefragmentSeveralFreeTest(){
         Heap heap = new Heap(1024);
         int a1 = heap.allocate(128,DataType.INT);
         heap.allocate(128,DataType.INT);
@@ -370,19 +370,64 @@ public class HeapTest {
     // Sanitize
     @Test
     @DisplayName("Sanitize - Empty")
-    public void SanitizeTest(){
+    void SanitizeTest(){
         Heap heap = new Heap(512);
         assertEquals(0, heap.sanitize().size());
     }
 
     @Test
     @DisplayName("Sanitize - Allocated Blocks")
-    public void SanitizeAllocationTest(){
+    void SanitizeAllocationTest(){
         Heap heap = new Heap(512);
         heap.allocate(12,DataType.INT);
         int h1 = heap.allocate(12,DataType.INT);
         heap.allocate(12,DataType.INT);
         heap.free(h1);
         assertEquals(2, heap.sanitize().size());
+    }
+
+    // sizeof
+    @Test
+    @DisplayName("Sizeof")
+    void SizeofTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        assertEquals(12,heap.sizeOf(address));
+    }
+
+    @Test
+    @DisplayName("Sizeof - Invalid address")
+    void SizeofInvalidAddressTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        assertThrows(UnmappedMemoryAddressException.class, () -> heap.sizeOf(address + 1));
+    }
+
+    @Test
+    @DisplayName("Sizeof - Empty block")
+    void SizeofEmptyBlockTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        heap.allocate(12,DataType.INT);
+        heap.free(address);
+        assertThrows(InvalidMemoryAddressException.class, () -> heap.sizeOf(address));
+    }
+
+    // Dump
+    @Test
+    @DisplayName("dump")
+    void dumpTest(){
+        Heap heap = new Heap(512);
+        heap.allocate(150,DataType.INT);
+        heap.allocate(150,DataType.BOOL);
+        heap.allocate(150,DataType.INT);
+
+        // Setting values
+        heap.setValue(1, 0, new Value(1));
+        heap.setValue(1, 149, new Value(2));
+        heap.setValue(3, 0, new Value(3));
+        heap.setValue(3, 149, new Value(4));
+        
+        assertEquals(3, heap.getHeapDump().size());
     }
 }

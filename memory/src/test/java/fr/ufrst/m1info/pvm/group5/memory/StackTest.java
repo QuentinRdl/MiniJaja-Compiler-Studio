@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
 import java.lang.reflect.Field;
 import java.util.Deque;
@@ -17,7 +17,7 @@ import java.util.Deque;
 /**
  * Unit test for the Stack class
  */
-public class StackTest {
+class StackTest {
     private Stack stack;
     private DataType integ;
 
@@ -31,34 +31,34 @@ public class StackTest {
     }
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         assertTrue(stack.isEmpty());
         assertEquals(0, stack.size());
     }
 
     @Test
-    public void pushScope() {
+    void pushScope() {
         stack.pushScope();
         assertTrue(stack.isEmpty());
         // Even though we pushed a scope, as there are nothing in the scope it should still be empty
     }
 
     @Test
-    public void popScope() throws Stack.NoScopeException {
+    void popScope() throws Stack.NoScopeException {
         stack.pushScope();
         stack.popScope();
         assertTrue(stack.isEmpty());
     }
 
     @Test
-    public void testPopScopeWhenNoScopes() {
+    void testPopScopeWhenNoScopes() {
         assertThrows(Stack.NoScopeException.class, () -> {
             stack.popScope();
         });
     }
 
     @Test
-    public void setVar() {
+    void setVar() {
         stack.pushScope();
         assertEquals(0, stack.size());
         stack.setVar("x", 1234, DataType.INT);
@@ -67,7 +67,7 @@ public class StackTest {
     }
 
     @Test
-    public void setConst() {
+    void setConst() {
         stack.pushScope();
         assertEquals(0, stack.size());
         stack.setConst("x", 1234, DataType.INT);
@@ -76,9 +76,9 @@ public class StackTest {
     }
 
     @Test
-    public void getObject() {
+    void getObject() {
         stack.pushScope();
-        Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject constant = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         assertEquals(0, stack.size());
         stack.setConst("x", 1234, DataType.INT);
         assertEquals(1, stack.size());
@@ -89,24 +89,24 @@ public class StackTest {
     }
 
     @Test
-    public void isEqual() {
-        Stack_Object constant = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
-        Stack_Object constantTrue = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+    void isEqual() {
+        StackObject constant = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject constantTrue = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         assertTrue(constant.equals(constantTrue));
 
-        Stack_Object cstNotSameName = new Stack_Object("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject cstNotSameName = new StackObject("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         assertFalse(constant.equals(cstNotSameName));
 
-        Stack_Object cstNotSameVal = new Stack_Object("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject cstNotSameVal = new StackObject("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
         assertFalse(constant.equals(cstNotSameVal));
 
-        Stack_Object cstNotSameScope = new Stack_Object("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
+        StackObject cstNotSameScope = new StackObject("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
         assertFalse(constant.equals(cstNotSameScope));
 
-        Stack_Object cstNotSameType = new Stack_Object("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
+        StackObject cstNotSameType = new StackObject("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
         assertFalse(constant.equals(cstNotSameType));
 
-        Stack_Object cstNotSameKind = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
+        StackObject cstNotSameKind = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
         assertFalse(constant.equals(cstNotSameKind));
 
         int notSameObject = 3;
@@ -114,13 +114,13 @@ public class StackTest {
     }
 
     @Test
-    public void hashCode_differsWhenFieldsDiffer() {
-        Stack_Object base = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
-        Stack_Object diffName = new Stack_Object("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
-        Stack_Object diffVal = new Stack_Object("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
-        Stack_Object diffScope = new Stack_Object("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
-        Stack_Object diffKind = new Stack_Object("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
-        Stack_Object diffType = new Stack_Object("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
+    void hashCode_differsWhenFieldsDiffer() {
+        StackObject base = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject diffName = new StackObject("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject diffVal = new StackObject("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
+        StackObject diffScope = new StackObject("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
+        StackObject diffKind = new StackObject("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
+        StackObject diffType = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
 
         // Ensure objects are not equal
         assertNotEquals(base, diffName);
@@ -138,7 +138,7 @@ public class StackTest {
     }
 
     @Test
-    public void setVarMultipleVariables() {
+    void setVarMultipleVariables() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         stack.setVar("y", 2345, integ);
@@ -147,26 +147,26 @@ public class StackTest {
     }
 
     @Test
-    public void testTop() {
+    void testTop() {
         stack.pushScope();
         stack.setVar("a", 100, integ);
-        Stack_Object top = stack.top();
+        StackObject top = stack.top();
         assertEquals("a", top.getName());
         assertEquals(100, top.getValue());
     }
 
     @Test
-    public void testTopWhenEmpty() {
+    void testTopWhenEmpty() {
         assertThrows(java.util.EmptyStackException.class, () -> {
             stack.top();
         });
     }
 
     @Test
-    public void testPop() throws Stack.StackIsEmptyException {
+    void testPop() throws Stack.StackIsEmptyException {
         stack.pushScope();
         stack.setVar("x", 50, integ);
-        Stack_Object popped = stack.pop();
+        StackObject popped = stack.pop();
         assertEquals("x", popped.getName());
         assertEquals(50, popped.getValue());
         assertTrue(stack.isEmpty());
@@ -174,14 +174,14 @@ public class StackTest {
 
     @Test
     //(expected = Stack.StackIsEmptyException.class)
-    public void popWhenEmpty() throws Stack.StackIsEmptyException {
+    void popWhenEmpty() throws Stack.StackIsEmptyException {
         assertThrows(Stack.StackIsEmptyException.class, () -> {
             stack.pop();
         });
     }
 
     @Test
-    public void getVar() {
+    void getVar() {
         stack.pushScope();
         stack.setVar("x", 1234, DataType.INT);
         Object value = stack.getObjectValue("x");
@@ -189,7 +189,7 @@ public class StackTest {
     }
 
     @Test
-    public void getVarNotFound() {
+    void getVarNotFound() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         Object value = stack.getObject("y");
@@ -197,7 +197,7 @@ public class StackTest {
     }
 
     @Test
-    public void getVarDifferentScopes() {
+    void getVarDifferentScopes() {
         stack.pushScope();
         stack.setVar("x", 1, integ);
 
@@ -216,7 +216,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateVar() {
+    void updateVar() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean upd = stack.updateVar("x", 100);
@@ -225,7 +225,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateVarNotFound() {
+    void updateVarNotFound() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean updated = stack.updateVar("y", 100);
@@ -233,7 +233,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopVar() {
+    void updateTopVar() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         boolean updated = stack.updateTopVar(99);
@@ -242,13 +242,13 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopVarWhenEmpty() {
+    void updateTopVarWhenEmpty() {
         boolean updated = stack.updateTopVar(50);
         assertFalse(updated);
     }
 
     @Test
-    public void hasObj() {
+    void hasObj() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
         assertTrue(stack.hasObj("x"));
@@ -256,7 +256,7 @@ public class StackTest {
     }
 
     @Test
-    public void hasObjDifferentScopes() {
+    void hasObjDifferentScopes() {
         stack.pushScope();
         stack.setVar("x", 1234, integ);
 
@@ -266,7 +266,7 @@ public class StackTest {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         assertEquals(0, stack.size());
         stack.pushScope();
         stack.setVar("x", 10, integ);
@@ -276,7 +276,7 @@ public class StackTest {
     }
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         assertTrue(stack.isEmpty());
         stack.pushScope();
         stack.setVar("x", 11234, integ);
@@ -284,7 +284,7 @@ public class StackTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         stack.pushScope();
         stack.setVar("x", 10, integ);
         stack.setVar("y", 20, integ);
@@ -296,7 +296,7 @@ public class StackTest {
     }
 
     @Test
-    public void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
+    void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
         // Global scope
         stack.pushScope();
         stack.setVar("x", 5, integ);
@@ -326,7 +326,7 @@ public class StackTest {
     }
 
     @Test
-    public void multipleScopesWithSameVarName() throws Stack.NoScopeException {
+    void multipleScopesWithSameVarName() throws Stack.NoScopeException {
         stack.pushScope();
         stack.setVar("count", 0, integ);
         assertEquals(0, stack.getObjectValue("count"));
@@ -350,7 +350,7 @@ public class StackTest {
     }
 
     @Test
-    public void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
+    void popRemovesOnlyCurrentScopeVars() throws Stack.NoScopeException {
         stack.pushScope();
         stack.setVar("global", 1, DataType.INT);
 
@@ -368,24 +368,24 @@ public class StackTest {
     }
 
     @Test
-    public void emptyStack_toString() {
+    void emptyStack_toString() {
         Stack s = new Stack();
         assertEquals("Stack{scopeDepth=0, contents=[]}", s.toString());
     }
 
     @Test
-    public void nonEmptyStack_toString() throws Exception {
+    void nonEmptyStack_toString() throws Exception {
         Stack s = new Stack();
 
         // Construct Stack_Object instances (use constructor that accepts DataType)
-        Stack_Object a = new Stack_Object("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
-        Stack_Object b = new Stack_Object("y", 2, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject a = new StackObject("x", 1, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject b = new StackObject("y", 2, 0, EntryKind.VARIABLE, DataType.INT);
 
         // Use reflection to access the private deque and add elements in insertion order
-        Field f = Stack.class.getDeclaredField("stack_content");
+        Field f = Stack.class.getDeclaredField("stackContent");
         f.setAccessible(true);
         @SuppressWarnings("unchecked")
-        Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+        Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
 
         dq.addLast(a);
         dq.addLast(b);
@@ -395,7 +395,7 @@ public class StackTest {
     }
 
     @Test
-    public void constructorExceptionTest() {
+    void constructorExceptionTest() {
         String msg = "Invalid variable name";
         Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
 
@@ -404,18 +404,18 @@ public class StackTest {
 
 
     @Test
-    public void testSwap_sameIdentifier_noop_returnsTrue() {
+    void testSwap_sameIdentifier_noop_returnsTrue() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
         when(a.getName()).thenReturn("a");
         when(a.getScope()).thenReturn(0);
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
@@ -427,12 +427,12 @@ public class StackTest {
 
 
     @Test
-    public void testSwap_successful() {
+    void testSwap_successful() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object b = mock(Stack_Object.class);
-        Stack_Object c = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject b = mock(StackObject.class);
+        StackObject c = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(b.getName()).thenReturn("b");
@@ -443,10 +443,10 @@ public class StackTest {
         when(c.getScope()).thenReturn(0);
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
             dq.addLast(b);
             dq.addLast(c);
@@ -459,10 +459,10 @@ public class StackTest {
 
         // Verify order is now [b, a, c]
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             Object[] arr = dq.toArray();
             assertEquals(b, arr[0]);
             assertEquals(a, arr[1]);
@@ -473,22 +473,22 @@ public class StackTest {
     }
 
     @Test
-    public void testSwap_missingObject_returnsFalse() {
+    void testSwap_missingObject_returnsFalse() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
         when(a.getName()).thenReturn("a");
         when(a.getScope()).thenReturn(0);
 
-        Stack_Object b = mock(Stack_Object.class);
+        StackObject b = mock(StackObject.class);
         when(b.getName()).thenReturn("b");
         when(b.getScope()).thenReturn(0);
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
@@ -499,12 +499,12 @@ public class StackTest {
     }
 
     @Test
-    public void swapTop_successful() {
+    void swapTop_successful() {
         Stack s = new Stack();
 
         // Create mocked stack objects to avoid depending on other classes/constructors
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object b = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject b = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(b.getName()).thenReturn("b");
@@ -514,10 +514,10 @@ public class StackTest {
         when(b.getValue()).thenReturn(2);
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
 
             dq.addLast(b);
             dq.addLast(a);
@@ -531,15 +531,15 @@ public class StackTest {
 
         s.swap();
 
-        Stack_Object top = s.top();
+        StackObject top = s.top();
         assertEquals("a", top.getName());
         assertEquals(1, top.getValue());
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             Object[] arr = dq.toArray();
             assertEquals(a, arr[0]);
             assertEquals(b, arr[1]);
@@ -549,20 +549,20 @@ public class StackTest {
     }
 
     @Test
-    public void swapTop_notEnoughElements() {
+    void swapTop_notEnoughElements() {
         Stack s = new Stack();
         assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
 
         // Calling w/ 1 element should throw exception
-        Stack_Object only = mock(Stack_Object.class);
+        StackObject only = mock(StackObject.class);
         when(only.getName()).thenReturn("only");
         when(only.getScope()).thenReturn(0);
         when(only.getValue()).thenReturn(10);
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(only);
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
@@ -572,14 +572,14 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_emptyStack_returnsFalse() {
+    void updateTopValue_emptyStack_returnsFalse() {
         Stack s = new Stack();
         boolean res = s.updateTopValue(42);
         assertFalse(res);
     }
 
     @Test
-    public void updateTopValue_variable_success() {
+    void updateTopValue_variable_success() {
         stack.pushScope();
         stack.setVar("x", 1, DataType.INT);
         boolean res = stack.updateTopValue(2);
@@ -588,7 +588,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_typeMismatch_returnsFalse() {
+    void updateTopValue_typeMismatch_returnsFalse() {
         stack.pushScope();
         stack.setVar("x", 1, DataType.INT);
         // Attempt to update with a Double while variable is INT
@@ -599,7 +599,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantAlreadyAssigned_returnsFalse() {
+    void updateTopValue_constantAlreadyAssigned_returnsFalse() {
         stack.pushScope();
         stack.setConst("c", 10, DataType.INT);
         // constant already has a value -> updateTopValue should refuse
@@ -609,7 +609,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantUninitialized_canInitialize() {
+    void updateTopValue_constantUninitialized_canInitialize() {
         stack.pushScope();
         // declare constant without initial value
         stack.setConst("c", null, DataType.INT);
@@ -620,7 +620,7 @@ public class StackTest {
     }
 
     @Test
-    public void updateTopValue_constantUninitialized_typeMismatch_returnsFalse() {
+    void updateTopValue_constantUninitialized_typeMismatch_returnsFalse() {
         stack.pushScope();
         stack.setConst("c", null, DataType.INT);
         // attempt to initialize with wrong type
@@ -649,22 +649,22 @@ public class StackTest {
      */
 
     @Test
-    public void searchObject_returnsObjectWhenPresent() {
+    void searchObject_returnsObjectWhenPresent() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object b = mock(Stack_Object.class);
-        Stack_Object c = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject b = mock(StackObject.class);
+        StackObject c = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(b.getName()).thenReturn("b");
         when(c.getName()).thenReturn("c");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
             dq.addLast(b);
             dq.addLast(c);
@@ -672,78 +672,78 @@ public class StackTest {
             fail("Reflection setup failed: " + ex.getMessage());
         }
 
-        Stack_Object found = s.searchObject("b");
+        StackObject found = s.searchObject("b");
         assertSame(b, found);
     }
 
     @Test
-    public void searchObject_notFound_returnsNull() {
+    void searchObject_notFound_returnsNull() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
         when(a.getName()).thenReturn("a");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
         }
 
-        Stack_Object found = s.searchObject("missing");
+        StackObject found = s.searchObject("missing");
         assertNull(found);
     }
 
     @Test
-    public void searchObject_multipleMatches_returnsFirstEncountered() {
+    void searchObject_multipleMatches_returnsFirstEncountered() {
         Stack s = new Stack();
 
-        Stack_Object first = mock(Stack_Object.class);
-        Stack_Object second = mock(Stack_Object.class);
+        StackObject first = mock(StackObject.class);
+        StackObject second = mock(StackObject.class);
 
         when(first.getName()).thenReturn("dup");
         when(second.getName()).thenReturn("dup");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(first);
             dq.addLast(second);
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
         }
 
-        Stack_Object found = s.searchObject("dup");
+        StackObject found = s.searchObject("dup");
         assertSame(first, found);
     }
 
     @Test
-    public void removeObject_removesGivenObject() {
+    void removeObject_removesGivenObject() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object b = mock(Stack_Object.class);
-        Stack_Object c = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject b = mock(StackObject.class);
+        StackObject c = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(b.getName()).thenReturn("b");
         when(c.getName()).thenReturn("c");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
             dq.addLast(b);
             dq.addLast(c);
 
-            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", StackObject.class);
             m.setAccessible(true);
             m.invoke(s, b);
 
@@ -757,24 +757,24 @@ public class StackTest {
     }
 
     @Test
-    public void removeObject_onlyRemovesSpecifiedInstanceWhenDuplicatesExist() {
+    void removeObject_onlyRemovesSpecifiedInstanceWhenDuplicatesExist() {
         Stack s = new Stack();
 
-        Stack_Object first = mock(Stack_Object.class);
-        Stack_Object second = mock(Stack_Object.class);
+        StackObject first = mock(StackObject.class);
+        StackObject second = mock(StackObject.class);
 
         when(first.getName()).thenReturn("dup");
         when(second.getName()).thenReturn("dup");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(first);
             dq.addLast(second);
 
-            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", StackObject.class);
             m.setAccessible(true);
             m.invoke(s, second);
 
@@ -787,23 +787,23 @@ public class StackTest {
     }
 
     @Test
-    public void removeObject_noopWhenObjectNotPresent() {
+    void removeObject_noopWhenObjectNotPresent() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object notPresent = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject notPresent = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(notPresent.getName()).thenReturn("x");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
 
-            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", Stack_Object.class);
+            java.lang.reflect.Method m = Stack.class.getDeclaredMethod("removeObject", StackObject.class);
             m.setAccessible(true);
             m.invoke(s, notPresent);
 
@@ -817,22 +817,22 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_existing_movesToTop_andReturnsTrue() {
+    void putOnTop_existing_movesToTop_andReturnsTrue() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
-        Stack_Object b = mock(Stack_Object.class);
-        Stack_Object c = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
+        StackObject b = mock(StackObject.class);
+        StackObject c = mock(StackObject.class);
 
         when(a.getName()).thenReturn("a");
         when(b.getName()).thenReturn("b");
         when(c.getName()).thenReturn("c");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             // Initial order : [a, b, c]
             dq.addLast(a);
             dq.addLast(b);
@@ -853,17 +853,17 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_notFound_returnsFalse_andLeavesStackUnchanged() {
+    void putOnTop_notFound_returnsFalse_andLeavesStackUnchanged() {
         Stack s = new Stack();
 
-        Stack_Object a = mock(Stack_Object.class);
+        StackObject a = mock(StackObject.class);
         when(a.getName()).thenReturn("a");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             dq.addLast(a);
 
             boolean res = s.putOnTop("missing");
@@ -878,22 +878,22 @@ public class StackTest {
     }
 
     @Test
-    public void putOnTop_withDuplicates_movesFirstEncountered() {
+    void putOnTop_withDuplicates_movesFirstEncountered() {
         Stack s = new Stack();
 
-        Stack_Object other = mock(Stack_Object.class);
-        Stack_Object firstDup = mock(Stack_Object.class);
-        Stack_Object secondDup = mock(Stack_Object.class);
+        StackObject other = mock(StackObject.class);
+        StackObject firstDup = mock(StackObject.class);
+        StackObject secondDup = mock(StackObject.class);
 
         when(other.getName()).thenReturn("x");
         when(firstDup.getName()).thenReturn("dup");
         when(secondDup.getName()).thenReturn("dup");
 
         try {
-            Field f = Stack.class.getDeclaredField("stack_content");
+            Field f = Stack.class.getDeclaredField("stackContent");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Deque<Stack_Object> dq = (Deque<Stack_Object>) f.get(s);
+            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
             // Initial order : [x, firstDup, secondDup]
             dq.addLast(other);
             dq.addLast(firstDup);
@@ -915,9 +915,9 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
+    void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -932,7 +932,7 @@ public class StackTest {
     }
 
     @Test
-    public void validateType_validTypes_doNotThrow() throws Exception {
+    void validateType_validTypes_doNotThrow() throws Exception {
         Stack s = new Stack();
         java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, DataType.class);
         m.setAccessible(true);
@@ -975,9 +975,9 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
+    void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
 
         // BOOL expected, but provide Integer
@@ -1016,9 +1016,9 @@ public class StackTest {
 
     @Disabled
     @Test
-    public void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
+    void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
         Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType.class);
+        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
         m.setAccessible(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -1043,7 +1043,7 @@ public class StackTest {
     }
 
     @Test
-    public void getDataTypeFromGenericObjectTest() {
+    void getDataTypeFromGenericObjectTest() {
         DataType res;
         // INT
         int integer = 2;

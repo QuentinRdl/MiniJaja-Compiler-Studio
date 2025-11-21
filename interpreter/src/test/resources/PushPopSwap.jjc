@@ -1,0 +1,7 @@
+init
+push(0)
+push(jcvrai)
+swap
+pop
+pop
+jcstop

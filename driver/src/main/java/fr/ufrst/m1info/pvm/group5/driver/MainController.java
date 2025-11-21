@@ -384,7 +384,6 @@ public class MainController {
             console.getWriter().writeLine("[INFO] File saved " + file.getName());
 
         } catch (IOException e){
-            System.err.println("Error during saving : " + e.getMessage());
             console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
         }
     }

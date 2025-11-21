@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AbstractSyntaxTreeTest {
+class AbstractSyntaxTreeTest {
     Map<String, Value> memoryStorage;
     @Mock
     Memory memory;
@@ -23,7 +23,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Construction - Simple")
-    public void SimpleTree(){
+    void SimpleTree(){
         String input = "class C {"
                      + "  main{}"
                      + "}";
@@ -32,19 +32,19 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Construction - From file, simple")
-    public void FromFile() throws IOException {
+    void FromFile() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Simple.mjj");
     }
 
     @Test
     @DisplayName("Construction - Complex")
-    public void ComplexTree() throws IOException {
+    void ComplexTree() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
     }
 
     @Test
     @DisplayName("Evaluation - BasicOperations")
-    public void BasicOperations() throws Exception {
+    void BasicOperations() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/BasicOperations.mjj");
         AST.interpret(memory);
         assertEquals(8, memoryStorage.get("x").valueInt);
@@ -52,7 +52,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - OperationPrevalence")
-    public void OperationPrevalence() throws Exception {
+    void OperationPrevalence() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/OperationPrevalence.mjj");
         AST.interpret(memory);
         assertEquals(17, memoryStorage.get("x").valueInt);
@@ -64,7 +64,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Undefined Variable / sum")
-    public void UndefinedVariableSum() throws Exception {
+    void UndefinedVariableSum() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {x += y;}}");
         boolean success = false;
         try {
@@ -78,7 +78,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Undefined Variable / Inc")
-    public void UndefinedVariableInc() throws Exception {
+    void UndefinedVariableInc() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {x++;}}");
         boolean success = false;
         try {
@@ -92,7 +92,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Undefined Variable / Evaluation")
-    public void UndefinedVariableEval() throws Exception {
+    void UndefinedVariableEval() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {y = x;}}");
         boolean success = false;
         try {
@@ -106,7 +106,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Local Variables")
-    public void LocalVariables() throws Exception {
+    void LocalVariables() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/LocalVariables.mjj");
         try {
             AST.interpret(memory);
@@ -119,7 +119,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Conditionnals")
-    public void Conditionnals() throws Exception {
+    void Conditionnals() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Conditionals.mjj");
         try {
             AST.interpret(memory);
@@ -135,7 +135,7 @@ public class AbstractSyntaxTreeTest {
 
     @Test
     @DisplayName("Evaluation - Loops")
-    public void Loops() throws Exception {
+    void Loops() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Loops.mjj");
         try {
             AST.interpret(memory);
@@ -149,7 +149,7 @@ public class AbstractSyntaxTreeTest {
     // Confirmation test
     @Test
     @DisplayName("Evaluation - Unassigned variable usage")
-    public void UnassignedVar() throws IOException {
+    void UnassignedVar() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Unassigned.mjj");
         assertThrows(ASTInvalidMemoryException.class, () -> AST.interpret(memory));
     }

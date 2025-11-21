@@ -1,6 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
@@ -14,10 +13,10 @@ public class Event<T> {
     /**
      * Consumers subscribed to the event
      */
-    private final ConcurrentLinkedQueue<Consumer<T>> _subscribers;
+    private final ConcurrentLinkedQueue<Consumer<T>> subscribers;
 
     public Event() {
-        _subscribers = new ConcurrentLinkedQueue<>();
+        subscribers = new ConcurrentLinkedQueue<>();
     }
 
     /**
@@ -25,7 +24,7 @@ public class Event<T> {
      * @param subscriber function to add to the event
      */
     public void subscribe(Consumer<T> subscriber) {
-        _subscribers.add(subscriber);
+        subscribers.add(subscriber);
     }
 
     /**
@@ -33,7 +32,7 @@ public class Event<T> {
      * @param subscriber function to remove
      */
     public void unsubscribe(Consumer<T> subscriber) {
-        _subscribers.remove(subscriber);
+        subscribers.remove(subscriber);
     }
 
     /**
@@ -41,8 +40,8 @@ public class Event<T> {
      * /!\ This function should not be called by subscribers
      * @param eventData data of the event
      */
-    public void Trigger(T eventData){
-        for(Consumer<T> c : _subscribers){
+    public void trigger(T eventData){
+        for(Consumer<T> c : subscribers){
             c.accept(eventData);
         }
     }

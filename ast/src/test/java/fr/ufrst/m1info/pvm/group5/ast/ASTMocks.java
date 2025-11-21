@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.Nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory.MemoryIllegalArgException;
 /**
  * Static class to quickly create classes mocking Memory
  */
-public class ASTMocks {
+class ASTMocks {
 
     public record Pair<T,V>(T first, V second){}
 

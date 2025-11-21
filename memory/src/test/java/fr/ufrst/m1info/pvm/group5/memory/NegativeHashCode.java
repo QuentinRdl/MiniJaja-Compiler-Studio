@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
 //Negative hashcode is just here to test the hashMap
-public class NegativeHashCode {
+class NegativeHashCode {
     private int id;
 
     public NegativeHashCode(int id){

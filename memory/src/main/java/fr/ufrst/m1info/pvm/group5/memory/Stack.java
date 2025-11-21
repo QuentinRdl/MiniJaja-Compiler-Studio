@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.*;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.*;
 
 import java.io.Serial;
 import java.util.ArrayDeque;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Stack {
-    private Deque<Stack_Object> stack_content;
+    private Deque<StackObject> stackContent;
     private int scopeDepth;
     // private int size;
 
@@ -71,7 +71,7 @@ public class Stack {
      * Constructor
      */
     public Stack() {
-        this.stack_content = new ArrayDeque<>();
+        this.stackContent = new ArrayDeque<>();
         this.scopeDepth = 0;
         // this.size = 0;
     }
@@ -91,8 +91,8 @@ public class Stack {
         if(scopeDepth == 0) throw new NoScopeException("There are currently 0 scopes, cannot pop");
 
         // If we are here then no exception has been thrown, then we can remove all vars from current scope
-        while(!stack_content.isEmpty() && stack_content.peek().getScope() == scopeDepth) {
-            stack_content.pop();
+        while(!stackContent.isEmpty() && stackContent.peek().getScope() == scopeDepth) {
+            stackContent.pop();
         }
 
         scopeDepth--;
@@ -113,8 +113,8 @@ public class Stack {
             validateType(value, type);
         }
 
-        Stack_Object var = new Stack_Object(name, value, scopeDepth, EntryKind.VARIABLE, type);
-        stack_content.push(var);
+        StackObject var = new StackObject(name, value, scopeDepth, EntryKind.VARIABLE, type);
+        stackContent.push(var);
     }
 
 
@@ -134,8 +134,8 @@ public class Stack {
             validateType(value, type);
         }
 
-        Stack_Object constant = new Stack_Object(name, value, scopeDepth, EntryKind.CONSTANT, type);
-        stack_content.push(constant);
+        StackObject constant = new StackObject(name, value, scopeDepth, EntryKind.CONSTANT, type);
+        stackContent.push(constant);
     }
 
 
@@ -144,9 +144,9 @@ public class Stack {
      * @return Object the top object
      * @throws EmptyStackException if stack empty
      */
-    public Stack_Object top() {
-        if (stack_content.isEmpty()) throw new EmptyStackException();
-        return stack_content.peek();
+    public StackObject top() {
+        if (stackContent.isEmpty()) throw new EmptyStackException();
+        return stackContent.peek();
     }
 
 
@@ -155,9 +155,9 @@ public class Stack {
      * @return Stack_Object the object on top of the stack
      * @throws StackIsEmptyException if the stack is empty
      */
-    public Stack_Object pop() throws StackIsEmptyException {
-        if(stack_content.isEmpty()) throw new StackIsEmptyException("The stack is empty, cannot pop");
-        return stack_content.pop();
+    public StackObject pop() throws StackIsEmptyException {
+        if(stackContent.isEmpty()) throw new StackIsEmptyException("The stack is empty, cannot pop");
+        return stackContent.pop();
     }
 
 
@@ -165,8 +165,8 @@ public class Stack {
      * @param name the name of the object we are looking for
      * @return Object, the Object if found, null otherwise
      */
-     public Stack_Object getObject(String name) {
-         for(Stack_Object obj : stack_content) {
+     public StackObject getObject(String name) {
+         for(StackObject obj : stackContent) {
              if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
                  return obj;
              }
@@ -180,7 +180,7 @@ public class Stack {
      * @return Object, the value if found, null otherwise
      */
     public Object getObjectValue(String name) {
-        for(Stack_Object obj : stack_content) {
+        for(StackObject obj : stackContent) {
             if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
                 return obj.getValue();
             }
@@ -195,7 +195,7 @@ public class Stack {
      * @return true if var updated, false otherwise
      */
     public boolean updateVar(String name, Object value) {
-        for(Stack_Object var : stack_content) {
+        for(StackObject var : stackContent) {
             if(var.getEntryKind() != EntryKind.VARIABLE) {
                 // TODO : Should we throw an error ? this way if false is returned then the var is not found
                 // And if exception, we now that it is not because the object is not a var
@@ -218,11 +218,11 @@ public class Stack {
      * @return true if var updated, false otherwise
      */
     public boolean updateTopVar(Object value) {
-        if (stack_content.isEmpty()) {
+        if (stackContent.isEmpty()) {
             return false;
         }
 
-        Stack_Object topVar = stack_content.peek();
+        StackObject topVar = stackContent.peek();
 
         if(topVar.getEntryKind() != EntryKind.VARIABLE) {
             return false; // Not a var
@@ -239,12 +239,12 @@ public class Stack {
      * @return true if object updated, false otherwise
      */
     public boolean updateTopValue(Object value) {
-        if (stack_content.isEmpty()) {
+        if (stackContent.isEmpty()) {
             return false;
         }
 
         DataType valueDt = getDataTypeFromGenericObject(value);
-        Stack_Object topObj = stack_content.peek();
+        StackObject topObj = stackContent.peek();
         if(topObj == null) return false;
         if(topObj.getEntryKind() == EntryKind.CONSTANT) {
             // Can only reassign constant if value == null
@@ -264,7 +264,7 @@ public class Stack {
      * @return true if the var exists, false otherwise
      */
     public boolean hasObj(String name) {
-        for(Stack_Object obj : stack_content) {
+        for(StackObject obj : stackContent) {
             if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
                 return true;
             }
@@ -277,7 +277,7 @@ public class Stack {
      * @return int nb of vars
      */
     public int size() {
-        return stack_content.size();
+        return stackContent.size();
     }
 
     /**
@@ -285,14 +285,14 @@ public class Stack {
      * @return true if no vars, false otherwise
      */
     public boolean isEmpty() {
-        return stack_content.isEmpty();
+        return stackContent.isEmpty();
     }
 
     /**
      * Clears all vars and reset the scope
      */
     public void clear() {
-        stack_content.clear();
+        stackContent.clear();
         scopeDepth = 0;
     }
 
@@ -302,7 +302,7 @@ public class Stack {
         sb.append("Stack{scopeDepth=").append(scopeDepth).append(", contents=");
         sb.append('[');
         boolean first = true;
-        for (Stack_Object obj : stack_content) {
+        for (StackObject obj : stackContent) {
             if (!first) sb.append(", ");
             sb.append(obj.toString());
             first = false;
@@ -317,8 +317,8 @@ public class Stack {
      * @param identifier the name of the Object we are looking for
      * @return Object if found, null otherwise
      */
-    public Stack_Object searchObject(String identifier) {
-        for(Stack_Object obj : stack_content) {
+    public StackObject searchObject(String identifier) {
+        for(StackObject obj : stackContent) {
             if(Objects.equals(obj.getName(), identifier)) {
                 return obj; // Object found
             }
@@ -330,8 +330,8 @@ public class Stack {
      * Will remove the given Stack_Object given, MUST BE SURE IT EXISTS
      * @param object the Stack_Object to remove
      */
-    public void removeObject(Stack_Object object) {
-        stack_content.remove(object);
+    public void removeObject(StackObject object) {
+        stackContent.remove(object);
     }
 
     /**
@@ -340,13 +340,13 @@ public class Stack {
      * @return true if successful, false otherwise
      */
     public boolean putOnTop(String identifier) {
-        Stack_Object obj = searchObject(identifier);
+        StackObject obj = searchObject(identifier);
         if(obj == null) return false; // Object does not exist in the stack
         // We remove the Stack_Object from the stack
         removeObject(obj);
 
         // We put the object back on top of the stack
-        stack_content.push(obj);
+        stackContent.push(obj);
         return true;
     }
 
@@ -403,7 +403,7 @@ public class Stack {
      * @param obj2 2nd Object
      * @return True if swapped, false otherwise
      */
-    public boolean swap(Stack_Object obj1, Stack_Object obj2) {
+    public boolean swap(StackObject obj1, StackObject obj2) {
         // Validate arguments
         if (obj1 == null || obj2 == null) {
             throw new Memory.MemoryIllegalArgException("Swap requires non-null Stack_Object arguments");
@@ -420,10 +420,10 @@ public class Stack {
         if (id1.equals(id2)) return true;
 
         // Convert deque to list to find indices and swap
-        List<Stack_Object> list = new ArrayList<>(stack_content);
+        List<StackObject> list = new ArrayList<>(stackContent);
         int idx1 = -1, idx2 = -1;
         for (int i = 0; i < list.size(); i++) {
-            Stack_Object so = list.get(i);
+            StackObject so = list.get(i);
             if (idx1 == -1 && Objects.equals(so.getName(), id1)) {
                 idx1 = i;
             }
@@ -439,14 +439,14 @@ public class Stack {
         }
 
         // Swap in list
-        Stack_Object tmp = list.get(idx1);
+        StackObject tmp = list.get(idx1);
         list.set(idx1, list.get(idx2));
         list.set(idx2, tmp);
 
         // Rebuild deque preserving the new order
-        stack_content.clear();
-        for (Stack_Object so : list) {
-            stack_content.addLast(so);
+        stackContent.clear();
+        for (StackObject so : list) {
+            stackContent.addLast(so);
         }
 
         return true;
@@ -457,15 +457,15 @@ public class Stack {
      */
     public void swap() {
         // private Deque<Stack_Object> stack_content;
-        if(stack_content.size() < 2) {
+        if(stackContent.size() < 2) {
             throw new Memory.MemoryIllegalArgException("Not enough elements to swap (need at least 2)");
         }
 
         // Pop top two elements and push them back in reversed order
-        Stack_Object first = stack_content.pop();
-        Stack_Object second = stack_content.pop();
-        stack_content.push(first);
-        stack_content.push(second);
+        StackObject first = stackContent.pop();
+        StackObject second = stackContent.pop();
+        stackContent.push(first);
+        stackContent.push(second);
     }
 
     /**
@@ -505,7 +505,7 @@ public class Stack {
      * @param value value to assign the object
      * @return true if value affected, false otherwise
      */
-    public boolean initializeConst(Stack_Object obj, Object value) {
+    public boolean initializeConst(StackObject obj, Object value) {
         if(obj == null || value == null) return false;
         if(obj.getEntryKind() != EntryKind.CONSTANT) {
             throw new Memory.MemoryIllegalArgException("initializeConst must be called with a const !");
@@ -530,19 +530,18 @@ public class Stack {
         return scopeDepth;
     }
 
-
     public void setMethod(String identifier, Object params, DataType returnType) {
         if (identifier == null || identifier.isEmpty()) {
             throw new IllegalArgumentException("Cannot define method with null or empty identifier");
         }
-        Stack_Object obj = new Stack_Object(
+
+        StackObject obj = new StackObject(
                 identifier,
                 params,
                 this.getCurrentScope(),
                 EntryKind.METHOD,
                 DataType.UNKNOWN
         );
-        stack_content.push(obj);
+        stackContent.push(obj);
     }
-
 }

@@ -1,0 +1,4 @@
+init
+push(0)
+pop
+jcstop

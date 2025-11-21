@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 
-public class CompilerTest {
+class CompilerTest {
     Compiler comp;
 
     @BeforeEach
@@ -15,7 +15,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile Code Without Error")
-    public void CompileCodeNoError()  {
+    void CompileCodeNoError()  {
         String input = "class C {"
                 + "  main{}"
                 + "}";
@@ -25,14 +25,14 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File BasicOperations")
-    public void CompileBasicOperations()  {
+    void CompileBasicOperations()  {
         String res= comp.compileFile("src/test/resources/BasicOperations.mjj");
         Assertions.assertEquals("init\nnew(x,INT,var,0)\npush(3)\npush(4)\nadd\nstore(x)\npush(1)\ninc(x)\npush(0)\nswap\npop\npop\njcstop",res);
     }
 
     @Test
     @DisplayName("Compile File Complex")
-    public void CompileComplex()  {
+    void CompileComplex()  {
         String res= comp.compileFile("src/test/resources/Complex.mjj");
         String expected = "init\n" +
                 "new(x,INT,var,0)\n" +
@@ -88,7 +88,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File Conditionals")
-    public void CompileConditionals()  {
+    void CompileConditionals()  {
         String res= comp.compileFile("src/test/resources/Conditionals.mjj");
         String expected = "init\n" +
                 "push(5)\n" +
@@ -147,7 +147,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File LocalVariables")
-    public void CompileLocalVariables()  {
+    void CompileLocalVariables()  {
         String res= comp.compileFile("src/test/resources/LocalVariables.mjj");
         String expected = "init\n" +
                 "push(4)\n" +
@@ -178,7 +178,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File Loops")
-    public void CompileLoops()  {
+    void CompileLoops()  {
         String res= comp.compileFile("src/test/resources/Loops.mjj");
         String expected = "init\n" +
                 "push(0)\n" +
@@ -201,7 +201,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File OperationPrevalence")
-    public void CompileOperationPrevalence()  {
+    void CompileOperationPrevalence()  {
         String res= comp.compileFile("src/test/resources/OperationPrevalence.mjj");
         String expected = "init\n" +
                 "new(x,INT,var,0)\n" +
@@ -255,14 +255,14 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile File Simple")
-    public void CompileSimple()  {
+    void CompileSimple()  {
         String res= comp.compileFile("src/test/resources/Simple.mjj");
         Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
     }
 
     @Test
     @DisplayName("Compile File Write")
-    public void CompileWrite()  {
+    void CompileWrite()  {
         String res= comp.compileFile("src/test/resources/Write.mjj");
         String expected = "init\n" +
                 "push(3)\n" +
@@ -289,7 +289,7 @@ public class CompilerTest {
 
     @Test
     @DisplayName("Compile Number")
-    public void number() {
+    void number() {
         String res=comp.compileCode("class C { main{10;}}");
         Assertions.assertNull(res);
     }

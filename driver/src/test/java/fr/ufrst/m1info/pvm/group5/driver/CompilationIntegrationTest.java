@@ -18,7 +18,7 @@ import static fr.ufrst.m1info.pvm.group5.driver.MainControllerTest.createTestFil
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ApplicationExtension.class)
-public class CompilationIntegrationTest extends ApplicationTest {
+class CompilationIntegrationTest extends ApplicationTest {
 
     private MainController controller;
 
@@ -101,7 +101,6 @@ public class CompilationIntegrationTest extends ApplicationTest {
         interact(() -> {
             controller.onCompileClicked();
         });
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -131,7 +130,6 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
         clickOn("#btnCompile");
 
-        Thread.sleep(50);
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -139,21 +137,21 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorWorks() throws Exception {
+    void compilatorWorks() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
-    public void compilatorButtonWorks() throws Exception {
+    void compilatorButtonWorks() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
     }
 
 
     @Test
-    public void compilerDoesNotWork() throws Exception {
+    void compilerDoesNotWork() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
@@ -161,7 +159,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilerDoesNotWorkActualBtn() throws Exception {
+    void compilerDoesNotWorkActualBtn() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentIncorrect);
         assertTrue(consoleText.contains("[ERROR]"));
         assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
@@ -169,7 +167,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorOutputsCorrect() throws Exception {
+    void compilatorOutputsCorrect() throws Exception {
 
         String consoleText = createFileLoadCompileAndGetConsole("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
@@ -186,7 +184,7 @@ public class CompilationIntegrationTest extends ApplicationTest {
 
 
     @Test
-    public void compilatorButtonOutputsCorrect() throws Exception {
+    void compilatorButtonOutputsCorrect() throws Exception {
         String consoleText = createFileLoadCompileAndGetConsoleByButton("test.mjj", contentValid);
         assertTrue(consoleText.contains("[INFO] Compilation successful!"));
 

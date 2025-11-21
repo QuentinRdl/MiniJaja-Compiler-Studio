@@ -18,14 +18,14 @@ public class Console {
         textArea = new TextArea();
         textArea.setEditable(false);
         writer = new Writer();
-        writer.TextAddedEvent.subscribe(e -> textArea.appendText(e.diff()));
+        writer.textAddedEvent.subscribe(e -> textArea.appendText(e.diff()));
     }
 
     public Console(TextArea textArea){
         this.textArea = textArea;
         this.textArea.setEditable(false);
         writer = new Writer();
-        writer.TextAddedEvent.subscribe(e -> Platform.runLater(() -> textArea.appendText(e.diff())));
+        writer.textAddedEvent.subscribe(e -> Platform.runLater(() -> textArea.appendText(e.diff())));
     }
 
     /**

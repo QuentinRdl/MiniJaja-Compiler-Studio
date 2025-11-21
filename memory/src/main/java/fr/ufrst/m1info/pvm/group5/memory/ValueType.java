@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 
 /**
  * Types of values found during the interpretation of the AST.

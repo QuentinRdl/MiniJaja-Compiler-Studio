@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit test for simple App.
  */
-public class HashMapTest
+class HashMapTest
 {
 
     @Test
-    public void testSize()
+    void testSize()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -22,7 +22,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testIsEmpty()
+    void testIsEmpty()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -30,7 +30,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testGet()
+    void testGet()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -38,7 +38,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testGetIncorrectType()
+    void testGetIncorrectType()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -46,7 +46,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testContainsKey()
+    void testContainsKey()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -54,7 +54,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testContainsKeyIncorrectType()
+    void testContainsKeyIncorrectType()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -62,7 +62,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testPutFirstElementInteger()
+    void testPutFirstElementInteger()
     {
         HashMap<Integer, Integer> map=new HashMap<Integer, Integer>();
         java.util.HashMap<Integer, Integer> oldMap=new java.util.HashMap<Integer, Integer>();
@@ -75,7 +75,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testPutFirstElementStringAndInteger()
+    void testPutFirstElementStringAndInteger()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -88,7 +88,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testPutSecondElement()
+    void testPutSecondElement()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -102,7 +102,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testPutSecondElementAndReplaceFirstElement()
+    void testPutSecondElementAndReplaceFirstElement()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -117,7 +117,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testPutManyElements()
+    void testPutManyElements()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -196,7 +196,7 @@ public class HashMapTest
 
 
     @Test
-    public void testRemoveExistingElement()
+    void testRemoveExistingElement()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -211,7 +211,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testRemoveNotExistingElement()
+    void testRemoveNotExistingElement()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -226,7 +226,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testRemoveManyElements()
+    void testRemoveManyElements()
     {
         HashMap<String, Integer> map=new HashMap<String, Integer>();
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
@@ -305,7 +305,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testRemoveSameHashCode(){
+    void testRemoveSameHashCode(){
         HashMap<NegativeHashCode,Integer> map=new HashMap<>(8);
         java.util.HashMap<NegativeHashCode, Integer> oldMap=new java.util.HashMap<>();
         assertEquals(oldMap.put(new NegativeHashCode(81),81),map.put(new NegativeHashCode(81),81));
@@ -317,7 +317,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testClear()
+    void testClear()
     {
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
         oldMap.put("OP",81);
@@ -393,7 +393,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testValues()
+    void testValues()
     {
         java.util.HashMap<String, Integer> oldMap=new java.util.HashMap<String, Integer>();
         oldMap.put("OP",81);
@@ -430,7 +430,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testNegativeHashCode(){
+    void testNegativeHashCode(){
         HashMap<NegativeHashCode,Integer> map=new HashMap<>(8);
         java.util.HashMap<NegativeHashCode, Integer> oldMap=new java.util.HashMap<>();
         assertEquals(oldMap.put(new NegativeHashCode(81),81),map.put(new NegativeHashCode(81),81));
@@ -446,7 +446,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testKeyNull(){
+    void testKeyNull(){
         HashMap<NegativeHashCode,Integer> map=new HashMap<>(8);
         java.util.HashMap<NegativeHashCode, Integer> oldMap=new java.util.HashMap<>();
         assertEquals(oldMap.put(null,0),map.put(null,0));
@@ -457,7 +457,7 @@ public class HashMapTest
     }
 
     @Test
-    public void testValuesEmpty()
+    void testValuesEmpty()
     {
         HashMap<String,Integer> map=new HashMap<>();
         Collection<Integer> colMap=map.values();
@@ -466,13 +466,13 @@ public class HashMapTest
     }
 
     @Test
-    public void testConstructorExceptionCapacity()
+    void testConstructorExceptionCapacity()
     {
         assertThrows(IllegalArgumentException.class, () -> new HashMap<String, Integer>(-5,0.75F));
     }
 
     @Test
-    public void testConstructorExceptionLoadFactor()
+    void testConstructorExceptionLoadFactor()
     {
         assertThrows(IllegalArgumentException.class, () -> new HashMap<String, Integer>(3,-1.0F));
     }
