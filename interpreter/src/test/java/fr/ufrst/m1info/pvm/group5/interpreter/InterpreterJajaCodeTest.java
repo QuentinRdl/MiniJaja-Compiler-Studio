@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
@@ -212,7 +213,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret Push Without Value")
     void InterpretPushWithoutValue() {
-        String input = "init\npush\npop\njcstop\n";
+        String input = "init\npush\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -221,7 +222,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret Inc Without Value")
     void InterpretIncWithoutValue() {
-        String input = "init\npush(1)\ninc\njcstop\n";
+        String input = "init\npush(1)\ninc\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -230,7 +231,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret Load Without Value")
     void InterpretLoadWithoutValue() {
-        String input = "init\nload\njcstop\n";
+        String input = "init\nload\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -239,7 +240,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret Store Without Value")
     void InterpretStoreWithoutValue() {
-        String input = "init\nstore\njcstop\n";
+        String input = "init\nstore\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -248,7 +249,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret New Without Value")
     void InterpretNewWithoutValue() {
-        String input = "init\npush\npop\njcstop\n";
+        String input = "init\npush\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -257,7 +258,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret GoTo Without Value")
     void InterpretGoTOWithoutValue() {
-        String input = "init\ngoto\njcstop\n";
+        String input = "init\ngoto\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
@@ -266,10 +267,55 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret If Without Value")
     void InterpretIfWithoutValue() {
-        String input = "init\npush(jcvrai)\nif\njcstop\n";
+        String input = "init\npush(jcvrai)\nif\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret If Int")
+    void InterpretIfInt() {
+        String input = "init\npush(8)\nif(5)\ngoto(5)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret New Var Int Value Bool")
+    void InterpretNewVarIntValueBool() {
+        String input = "init\npush(jcvrai)\nnew(x,INT,var,0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret New Cst Int Value Bool")
+    void InterpretNewCstIntValueBool() {
+        String input = "init\npush(jcvrai)\nnew(x,INT,cst,0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret New Var Bool Value Int")
+    void InterpretNewVarBoolValueInt() {
+        String input = "init\npush(8)\nnew(x,BOOL,var,0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret New Cst Bool Value Int")
+    void InterpretNewCstBoolValueInt() {
+        String input = "init\npush(8)\nnew(x,BOOL,cst,0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
 }
