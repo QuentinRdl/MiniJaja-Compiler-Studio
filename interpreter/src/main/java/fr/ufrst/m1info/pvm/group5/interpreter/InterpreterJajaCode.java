@@ -71,7 +71,7 @@ public class InterpreterJajaCode implements Interpreter{
                 throw new RuntimeException("Line "+adress);
             }
 
-            if (adress>size){
+            if (adress>size || adress==0){
                 throw new IndexOutOfBoundsException("Line "+adress+" not found");
             }
         }

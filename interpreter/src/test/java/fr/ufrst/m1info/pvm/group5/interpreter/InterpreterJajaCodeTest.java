@@ -156,9 +156,63 @@ public class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret If Out Of Bounds")
+    void InterpretIfOutOfBounds() {
+        String input = "init\npush(jcvrai)\nif(7)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(IndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret GoTo Out Of Bounds")
+    void InterpretGoToOutOfBounds() {
+        String input = "init\ngoto(6)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(IndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret If Zero")
+    void InterpretIfZero() {
+        String input = "init\npush(jcvrai)\nif(0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(IndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret GoTo Zero")
+    void InterpretGoToZero() {
+        String input = "init\ngoto(0)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(IndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret If Negative")
+    void InterpretIfNegative() {
+        String input = "init\npush(jcvrai)\nif(-1)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret GoTo Negative")
+    void InterpretGoToNegative() {
+        String input = "init\ngoto(-1)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
     @DisplayName("Interpret Push Without Value")
     void InterpretPushWithoutValue() {
-        String input = "init\npush()\npop";
+        String input = "init\npush()\npop\njcstop\n";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
