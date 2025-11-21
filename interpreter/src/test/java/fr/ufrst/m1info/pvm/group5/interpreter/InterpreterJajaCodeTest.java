@@ -285,7 +285,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret New Var Int Value Bool")
     void InterpretNewVarIntValueBool() {
-        String input = "init\npush(jcvrai)\nnew(x,INT,var,0)\npush(0)\npop\njcstop";
+        String input = "init\npush(jcvrai)\nnew(x,INT,var,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -294,7 +294,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret New Cst Int Value Bool")
     void InterpretNewCstIntValueBool() {
-        String input = "init\npush(jcvrai)\nnew(x,INT,cst,0)\npush(0)\npop\njcstop";
+        String input = "init\npush(jcvrai)\nnew(x,INT,cst,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -303,7 +303,7 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret New Var Bool Value Int")
     void InterpretNewVarBoolValueInt() {
-        String input = "init\npush(8)\nnew(x,BOOL,var,0)\npush(0)\npop\njcstop";
+        String input = "init\npush(8)\nnew(x,BOOL,var,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
@@ -312,7 +312,43 @@ public class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret New Cst Bool Value Int")
     void InterpretNewCstBoolValueInt() {
-        String input = "init\npush(8)\nnew(x,BOOL,cst,0)\npush(0)\npop\njcstop";
+        String input = "init\npush(8)\nnew(x,BOOL,cst,0)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Store Var Int Push Bool")
+    void InterpretStoreVarIntPushBool() {
+        String input = "init\npush(8)\nnew(x,INT,var,0)\npush(jcvrai)\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Store Var Bool Push Int")
+    void InterpretStoreVarBoolPushInt() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(8)\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Store Var Int Load Bool")
+    void InterpretStoreVarIntLoadBool() {
+        String input = "init\npush(8)\nnew(x,INT,var,0)\npush(jcvrai)\nnew(y,BOOL,var,0)\nload(y)\nstore(x)\npush(0)\nswap\npop\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Store Var Bool Load Int")
+    void InterpretStoreVarBoolLoadInt() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(8)\nnew(y,INT,var,0)\nload(y)\nstore(x)\npush(0)\nswap\npop\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
