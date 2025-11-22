@@ -16,7 +16,7 @@ List<Instruction> instrList = new ArrayList();
 
 eval returns [List<Instruction> instructions]
     @init{$instructions = instrList;}
-    : (instr)+
+    : (instr)+ EOF
     ;
 
 instr
