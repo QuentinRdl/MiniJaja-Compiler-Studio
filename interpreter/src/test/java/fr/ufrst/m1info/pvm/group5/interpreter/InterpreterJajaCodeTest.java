@@ -428,4 +428,76 @@ public class InterpreterJajaCodeTest {
         Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Test
+    @DisplayName("Interpret Div Bool Variable")
+    void InterpretDivBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\ndiv\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Div Bool Value")
+    void InterpretDivBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\ndiv\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Bool Variable")
+    void InterpretMulBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nmul\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Bool Value")
+    void InterpretMulBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nmul\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Neg Bool Variable")
+    void InterpretNegBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\nneg\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Neg Bool Value")
+    void InterpretNegBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\nneg\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Bool Variable")
+    void InterpretSubBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nsub\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Bool Value")
+    void InterpretSubBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nsub\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
 }
