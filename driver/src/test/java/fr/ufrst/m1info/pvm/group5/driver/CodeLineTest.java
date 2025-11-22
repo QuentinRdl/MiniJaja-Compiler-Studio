@@ -18,12 +18,12 @@ class CodeLineTest {
 
     @Test
     void getLineNumber(){
-        assertEquals(codeLine.getLineNumber(), 1);
+        assertEquals(1, codeLine.getLineNumber());
     }
 
     @Test
     void getCode(){
-        assertEquals(codeLine.getCode(), "var x = 10;");
+        assertEquals("var x = 10;", codeLine.getCode());
     }
 
     @Test
@@ -40,9 +40,9 @@ class CodeLineTest {
 
     @Test
     void setCode(){
-        assertEquals(codeLine.getCode(), "var x = 10;");
+        assertEquals("var x = 10;", codeLine.getCode());
         codeLine.setCode("String hello = 'Hello';");
-        assertEquals(codeLine.getCode(), "String hello = 'Hello';");
+        assertEquals("String hello = 'Hello';", codeLine.getCode());
     }
 
     @Test
