@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.interpreter;
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
@@ -389,6 +390,42 @@ public class InterpreterJajaCodeTest {
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Inc Bool Variable")
+    void InterpretIncBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\ninc(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Inc Bool Value")
+    void InterpretIncBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\ninc(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Add Bool Variable")
+    void InterpretAddBoolVar() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nadd\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Add Bool Value")
+    void InterpretAddBoolValue() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nadd\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
 }
