@@ -518,4 +518,58 @@ public class InterpreterJajaCodeTest {
         Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Test
+    @DisplayName("Interpret And Int Variable")
+    void InterpretAndIntVar() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(jcvrai)\nand\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret And Int Value")
+    void InterpretAndIntValue() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\nand\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Not Int Variable")
+    void InterpretNotIntVar() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\nnot\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Not Int Value")
+    void InterpretNotIntValue() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\nnot\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Or Int Variable")
+    void InterpretOrIntVar() {
+        String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(jcvrai)\nor\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Or Int Value")
+    void InterpretOrIntValue() {
+        String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\nor\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
 }
