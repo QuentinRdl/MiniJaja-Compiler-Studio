@@ -26,7 +26,6 @@ public class ExpListNode extends ASTNode {
         if (tail != null) {
             jajacodes.addAll(tail.compile(address + jajacodes.size()));
         }
-
         return jajacodes;
     }
 

@@ -11,30 +11,43 @@ classe returns [ClassNode node]
     : 'class' ident '{'
     (decls {declsflag = true;}
     )?
-    methmain '}' {$node = new ClassNode($ident.node, (declsflag)?$decls.node:null, $methmain.node);}
+    methmain '}' {
+        $node = new ClassNode($ident.node, (declsflag)?$decls.node:null, $methmain.node);
+        $node.setLine($ident.start.getLine());
+        $methmain.node.setLine($methmain.start.getLine());
+    } EOF
     ;
 
 ident returns [IdentNode node]
+    : identifier {$node = $identifier.node; $node.setLine($identifier.start.getLine());}
+    ;
+
+identifier returns [IdentNode node]
     : id=IDENTIFIER {$node = new IdentNode($id.text);}
     ;
 
 decls returns [ASTNode node]
     : decl ';' {$node = new DeclarationsNode($decl.node, null);}
     (decls {$node = new DeclarationsNode($decl.node, $decls.node);}
-    )?
+    )? {$node.setLine($decl.start.getLine());}
     ;
 
 decl returns [ASTNode node]
     : var {$node = $var.node;}
+    | methode {$node = $methode.node;}
     ;
 
 vars returns [ASTNode node]
     : var ';' {$node = new VariablesNode($var.node, null);}
     (vars {$node = new VariablesNode($var.node, $vars.node);}
-    )?
+    )? {$node.setLine($var.start.getLine()); $var.node.setLine($var.start.getLine());}
     ;
 
 var returns [ASTNode node]
+    : variable {$node = $variable.node; $node.setLine($variable.start.getLine());}
+    ;
+
+variable returns [ASTNode node]
     : typemeth ident {$node = new VariableNode($typemeth.node, $ident.node, null);}
     (vexp {$node = new VariableNode($typemeth.node, $ident.node, $vexp.node);}
     )?
@@ -67,6 +80,7 @@ methode returns [ASTNode node]
               (varsFlag)?$vars.node:null,
               (instrsFlag)?$instrs.node:null
           );
+          $node.setLine($typemeth.start.getLine());
       }
     ;
 
@@ -82,30 +96,30 @@ methmain returns [MainNode node]
     ;
 
 entete returns [ASTNode node]
-    : type ident
-      {
-          $node = new ParamNode($type.node, $ident.node);
-      }
+    : type ident { $node = new ParamNode($type.node, $ident.node); $node.setLine($type.start.getLine());}
     ;
 
 
 entetes returns [ParamListNode node]
     : e1=entete {$node = new ParamListNode((ParamNode)$e1.node, null);}
-      ( ',' e2=entetes {$node = new ParamListNode((ParamNode)$e1.node, $e2.node);} )?
+      ( ',' e2=entetes {$node = new ParamListNode((ParamNode)$e1.node, $e2.node);}
+      )? {$node.setLine($e1.start.getLine());}
     ;
+
 instrs returns [InstructionsNode node]
     : instr ';' {$node = new InstructionsNode($instr.node, null);}
     (instrs {$node = new InstructionsNode($instr.node, $instrs.node);}
-    )?
+    )? {$node.setLine($instr.start.getLine()); $instr.node.setLine($instr.start.getLine());}
     ;
 
 instr returns [ASTNode node]
-    @init{boolean instrsflag1 = false; boolean instrsflag2 = false;}
+    @init{boolean instrsflag1 = false; boolean instrsflag2 = false; boolean listexpflag = false;}
     : 'while' '(' exp ')' '{'
     (instrs {instrsflag1 = true;}
     )?
     '}' {$node = new WhileNode($exp.node, (instrsflag1)?$instrs.node:null);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
+    | ident '(' (listexp {listexpflag = true;})? ')' {$node = new AppelINode($ident.node, (listexpflag)?$listexp.node:null);}
     | ident1 {$node = $ident1.node;}
     ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
     | '+=' exp {$node = new SumNode((IdentNode)$node, $exp.node);}
@@ -126,18 +140,21 @@ instr returns [ASTNode node]
     ) ')'
     | 'writeln' '('
     ( ident {$node = new WriteLineNode($ident.node);}
-    | ident '(' listexp ')' {$node = new AppelINode($ident.node, $listexp.node);}
     | e=string {$node = new WriteLineNode($e.str);}
     ) ')'
     ;
 
 listexp returns [ASTNode node]
-    : exp {$node = $exp.node;}
-    (',' exp {$node = new ExpListNode($node, $exp.node);}
+    : e1=exp {$node = $e1.node; $node.setLine($e1.start.getLine());}
+    (',' e2=exp {$node = new ExpListNode($node, $exp.node); $node.setLine($e2.start.getLine());}
     )*
     ;
 
 exp returns [ASTNode node]
+    : expression {$node = $expression.node; $expression.node.setLine($expression.start.getLine());}
+    ;
+
+expression returns [ASTNode node]
     : '!' exp1 {$node = new NotNode($exp1.node);}
     ( '&&' exp1 {$node = new AndNode($node, $exp1.node);}
     | '||' exp1 {$node = new OrNode($node, $exp1.node);}
@@ -174,12 +191,14 @@ terme returns [ASTNode node]
     )*
     ;
 
-
 fact returns [ASTNode node]
-    : id=ident
-          ( '(' (l=listexp)? ')' {$node = new AppelENode($id.node, $l.node);}
-          | {$node = $id.node;}
-          )
+    : factor {$node = $factor.node; $node.setLine($factor.start.getLine());}
+    ;
+
+factor returns [ASTNode node]
+    @init{boolean listexpflag = false;}
+    : ident1 {$node = $ident1.node;}
+    | id=ident '(' (l=listexp {listexpflag = true;})? ')' {$node = new AppelENode($id.node, (listexpflag)?$l.node:null);}
     | 'true' {$node = new BooleanNode(true);}
     | 'false' {$node = new BooleanNode(false);}
     | n=NOMBRE {$node = new NumberNode(Integer.parseInt($n.text));}

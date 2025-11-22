@@ -1,52 +1,73 @@
 {
   "ClassNode" : {
+    "line" : 1,
     "IdentNode" : {
+      "line" : 1,
       "identifier" : "C"
     },
     "DeclarationsNode" : {
+      "line" : 2,
       "VariableNode" : {
+        "line" : 2,
         "type" : "INT",
         "IdentNode" : {
+          "line" : 2,
           "identifier" : "x"
         }
       },
       "DeclarationsNode" : {
+        "line" : 3,
         "VariableNode" : {
+          "line" : 3,
           "type" : "INT",
           "IdentNode" : {
+            "line" : 3,
             "identifier" : "y"
           },
           "NumberNode" : {
+            "line" : 3,
             "value" : "10"
           }
         },
         "DeclarationsNode" : {
+          "line" : 4,
           "FinalNode" : {
+            "line" : 4,
             "type" : "INT",
             "IdentNode" : {
+              "line" : 4,
               "identifier" : "VAL"
             },
             "NumberNode" : {
+              "line" : 4,
               "value" : "5"
             }
           },
           "DeclarationsNode" : {
+            "line" : 5,
             "VariableNode" : {
+              "line" : 5,
               "type" : "BOOL",
               "IdentNode" : {
+                "line" : 5,
                 "identifier" : "b1"
               },
               "BooleanNode" : {
+                "line" : 5,
                 "value" : "true"
               }
             },
             "DeclarationsNode" : {
+              "line" : 6,
               "VariableNode" : {
+                "line" : 6,
                 "type" : "BOOL",
                 "IdentNode" : {
+                  "line" : 6,
                   "identifier" : "b2"
                 },
                 "BooleanNode" : {
+                  "line" : 6,
                   "value" : "false"
                 }
               }
@@ -56,102 +77,147 @@
       }
     },
     "MainNode" : {
+      "line" : 8,
       "InstructionsNode" : {
+        "line" : 9,
         "IfNode" : {
+          "line" : 9,
           "AndNode" : {
+            "line" : 9,
             "IdentNode" : {
+              "line" : 9,
               "identifier" : "b1"
             },
             "OrNode" : {
+              "line" : 9,
               "IdentNode" : {
+                "line" : 9,
                 "identifier" : "b1"
               },
               "NotNode" : {
+                "line" : 9,
                 "IdentNode" : {
+                  "line" : 9,
                   "identifier" : "b2"
                 }
               }
             }
           },
           "InstructionsNode" : {
+            "line" : 10,
             "AffectationNode" : {
+              "line" : 10,
               "IdentNode" : {
+                "line" : 10,
                 "identifier" : "x"
               },
               "BinMinusNode" : {
+                "line" : 10,
                 "AddNode" : {
+                  "line" : 0,
                   "IdentNode" : {
+                    "line" : 10,
                     "identifier" : "VAL"
                   },
                   "IdentNode" : {
+                    "line" : 10,
                     "identifier" : "y"
                   }
                 },
                 "NumberNode" : {
+                  "line" : 10,
                   "value" : "0"
                 }
               }
             }
           },
           "InstructionsNode" : {
+            "line" : 12,
             "IncNode" : {
+              "line" : 12,
               "IdentNode" : {
+                "line" : 12,
                 "identifier" : "x"
               }
             }
           }
         },
         "InstructionsNode" : {
+          "line" : 14,
           "WriteNode" : {
+            "line" : 14,
             "text" : "x (15) = "
           },
           "InstructionsNode" : {
+            "line" : 15,
             "WriteLineNode" : {
+              "line" : 15,
               "IdentNode" : {
+                "line" : 15,
                 "identifier" : "x"
               }
             },
             "InstructionsNode" : {
+              "line" : 16,
               "AffectationNode" : {
+                "line" : 16,
                 "IdentNode" : {
+                  "line" : 16,
                   "identifier" : "x"
                 },
                 "MulNode" : {
+                  "line" : 16,
                   "IdentNode" : {
+                    "line" : 16,
                     "identifier" : "y"
                   },
                   "IdentNode" : {
+                    "line" : 16,
                     "identifier" : "z"
                   }
                 }
               },
               "InstructionsNode" : {
+                "line" : 17,
                 "AffectationNode" : {
+                  "line" : 17,
                   "IdentNode" : {
+                    "line" : 17,
                     "identifier" : "x"
                   },
                   "DivNode" : {
+                    "line" : 17,
                     "IdentNode" : {
+                      "line" : 17,
                       "identifier" : "x"
                     },
                     "IdentNode" : {
+                      "line" : 17,
                       "identifier" : "z"
                     }
                   }
                 },
                 "InstructionsNode" : {
+                  "line" : 18,
                   "IncNode" : {
+                    "line" : 18,
                     "IdentNode" : {
+                      "line" : 18,
                       "identifier" : "x"
                     }
                   },
                   "InstructionsNode" : {
+                    "line" : 19,
                     "WriteNode" : {
+                      "line" : 19,
                       "text" : "x (11) = "
                     },
                     "InstructionsNode" : {
+                      "line" : 20,
                       "WriteLineNode" : {
+                        "line" : 20,
                         "IdentNode" : {
+                          "line" : 20,
                           "identifier" : "x"
                         }
                       }

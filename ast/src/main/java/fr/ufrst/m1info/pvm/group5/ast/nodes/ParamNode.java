@@ -7,6 +7,7 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ParamNode extends ASTNode implements WithdrawalNode {
     public final TypeNode type;
@@ -26,6 +27,11 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     @Override
     protected List<ASTNode> getChildren() {
         return List.of(ident);
+    }
+
+    @Override
+    protected Map<String, String> getProperties(){
+        return Map.ofEntries(Map.entry("type", type.toString()));
     }
 
     @Override

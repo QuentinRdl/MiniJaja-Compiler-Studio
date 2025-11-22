@@ -11,6 +11,19 @@ import java.util.Map;
 // Useless comment so i can commit something
 
 public abstract class ASTNode {
+    /**
+     * Line of the token in the file
+     */
+    private int line;
+
+    // Getters/setter for the line attribute
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getLine() {
+        return line;
+    }
 
     /**
      * Compile the node and its descendants
@@ -45,8 +58,11 @@ public abstract class ASTNode {
      */
     protected String dumpProperties(int depth){
         Map<String,String> props = getProperties();
-        if(props==null) return "";
         StringBuilder sb = new StringBuilder();
+        addTabDepth(sb,depth);
+        sb.append("\"line\" : ").append(getLine());
+        if(props!=null)sb.append(",\n");
+        if(props==null) return sb.toString();
         var iterator = props.entrySet().iterator();
         while(iterator.hasNext()){
             var e = iterator.next();

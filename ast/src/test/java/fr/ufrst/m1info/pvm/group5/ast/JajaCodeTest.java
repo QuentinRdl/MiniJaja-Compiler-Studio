@@ -40,6 +40,9 @@ class JajaCodeTest {
         assertTrue(instrs.get(9) instanceof PopInstruction);
         assertTrue(instrs.get(10) instanceof PopInstruction);
         assertTrue(instrs.get(11) instanceof JcstopInstruction);
+        for(int i = 0; i < instrs.size(); i++){
+            assertEquals(i+1, instrs.get(i).getLine());
+        }
     }
 
 }
