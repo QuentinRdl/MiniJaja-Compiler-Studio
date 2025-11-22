@@ -84,6 +84,7 @@
                     "line" : 8,
                     "ParamNode" : {
                       "line" : 8,
+                      "type" : "INT",
                       "IdentNode" : {
                         "line" : 8,
                         "identifier" : "max"
@@ -181,6 +182,7 @@
                       "line" : 18,
                       "ParamNode" : {
                         "line" : 18,
+                        "type" : "INT",
                         "IdentNode" : {
                           "line" : 18,
                           "identifier" : "a"
@@ -190,6 +192,7 @@
                         "line" : 18,
                         "ParamNode" : {
                           "line" : 18,
+                          "type" : "INT",
                           "IdentNode" : {
                             "line" : 18,
                             "identifier" : "b"
@@ -228,6 +231,7 @@
                         "line" : 22,
                         "ParamNode" : {
                           "line" : 22,
+                          "type" : "INT",
                           "IdentNode" : {
                             "line" : 22,
                             "identifier" : "z"
