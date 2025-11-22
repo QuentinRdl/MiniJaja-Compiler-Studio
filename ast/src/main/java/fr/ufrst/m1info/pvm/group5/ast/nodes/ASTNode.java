@@ -175,7 +175,7 @@ public abstract class ASTNode {
             case DIRECT:
                 return;
             case BREAKPOINTS:
-                if(m.isBreakpoint(this.line))
+                if(!m.isBreakpoint(this.line))
                     return;
             case STEP_BY_STEP:
                 InterpretationStoppedEvent.triggerAsync(new InterpretationStoppedData(line, false, this));

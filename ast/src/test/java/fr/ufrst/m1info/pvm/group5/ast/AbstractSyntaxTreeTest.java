@@ -1,14 +1,14 @@
 package fr.ufrst.m1info.pvm.group5.ast;
-import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -159,10 +159,8 @@ class AbstractSyntaxTreeTest {
         assertEquals(104, memoryStorage.get("x").valueInt);
     }
 
-
-    /* Tests for step by step */
     @Test
-    @DisplayName("Step by step - Simple")
+    @DisplayName("Step by step")
     void SBS_BasicOperations() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/BasicOperations.mjj");
         int[] stepCount = {0};
@@ -174,6 +172,33 @@ class AbstractSyntaxTreeTest {
         interpretationThread.join();
         assertEquals(2, stepCount[0]);
         assertEquals(8, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    @DisplayName("Breakpoints")
+    void BP_ComplexTree() throws Exception {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
+        List<Integer> breakPoints = List.of(15,17);
+        ASTMocks.addBreakPointsToMock(memory, breakPoints);
+        int[] breakPointValue = {0,0};
+        List<Integer> stoppedby = new ArrayList<>();
+
+        AST.interprtationStoppedEvent.subscribe(d -> {
+            stoppedby.add(d.line());
+            if(d.line() == 15){
+                breakPointValue[0] = memoryStorage.get("x").valueInt;
+            }
+            if(d.line() == 17){
+                breakPointValue[1] = memoryStorage.get("x").valueInt;
+            }
+            d.node().resumeInterpretation();
+        });
+        startInterpretation(AST, InterpretationMode.BREAKPOINTS, memory);
+        interpretationThread.join();
+        assertEquals(15, breakPointValue[0]);
+        assertEquals(10, breakPointValue[1]);
+        assertEquals(11, memoryStorage.get("x").valueInt);
+        assertEquals(breakPoints, stoppedby);
     }
 
     // Confirmation test

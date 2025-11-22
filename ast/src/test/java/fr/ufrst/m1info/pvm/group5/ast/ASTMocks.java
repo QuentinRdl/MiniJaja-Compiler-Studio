@@ -116,6 +116,14 @@ class ASTMocks {
         return mock;
     }
 
+    public static Memory addBreakPointsToMock(Memory mock, List<Integer> breakPoints){
+        doAnswer(invocationOnMock -> {
+            int breakPoint =  invocationOnMock.getArgument(0);
+            return breakPoints.contains(breakPoint);
+        }).when(mock).isBreakpoint(any(Integer.class));
+        return mock;
+    }
+
     /**
      * Creates a mock that mimics memory by using a stack, with the purpose to test jajacode instructions
      * @param storage stack used to store the mock's data
