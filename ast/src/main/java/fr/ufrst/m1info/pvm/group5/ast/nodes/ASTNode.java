@@ -13,7 +13,7 @@ public abstract class ASTNode {
      */
     private int line;
 
-    private static InterpretationMode interpretationMode;
+    private static InterpretationMode interpretationMode = InterpretationMode.DIRECT;
 
     public static final Event<InterpretationStoppedData> InterpretationStoppedEvent = new Event<>();
 
