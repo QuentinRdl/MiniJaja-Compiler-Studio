@@ -1,9 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
@@ -588,6 +585,24 @@ public class InterpreterJajaCodeTest {
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret If Int Value")
+    void InterpretIfIntValue() {
+        String input = "init\npush(3)\nif(4)\ngoto(4)\npush(0)\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Div By Zero")
+    void InterpretDivByZero() {
+        String input = "init\npush(4)\nnew(x,INT,var,0)\npush(3)\npush(0)\ndiv\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
+        String errMessage= ijc.interpretCode(input);
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
 }
