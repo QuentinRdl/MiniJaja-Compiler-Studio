@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MethodeNode extends ASTNode {
+public class MethodeNode extends ASTNode implements WithdrawalNode {
     public final TypeNode returnType;
     public final IdentNode ident;
     public final ASTNode params;
@@ -78,5 +79,15 @@ public class MethodeNode extends ASTNode {
     @Override
     protected Map<String, String> getProperties(){
         return Map.ofEntries(Map.entry("type", returnType.toString()));
+    }
+
+    @Override
+    public void withdrawInterpret(Memory m) {
+        m.withdrawDecl(ident.identifier);
+    }
+
+    @Override
+    public List<String> withdrawCompile(int address) {
+        return List.of("swap","pop");
     }
 }

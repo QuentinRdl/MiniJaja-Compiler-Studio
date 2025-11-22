@@ -15,7 +15,7 @@ classe returns [ClassNode node]
         $node = new ClassNode($ident.node, (declsflag)?$decls.node:null, $methmain.node);
         $node.setLine($ident.start.getLine());
         $methmain.node.setLine($methmain.start.getLine());
-    }
+    } EOF
     ;
 
 ident returns [IdentNode node]
@@ -34,6 +34,7 @@ decls returns [ASTNode node]
 
 decl returns [ASTNode node]
     : var {$node = $var.node;}
+    | methode {$node = $methode.node;}
     ;
 
 vars returns [ASTNode node]
@@ -118,6 +119,7 @@ instr returns [ASTNode node]
     )?
     '}' {$node = new WhileNode($exp.node, (instrsflag1)?$instrs.node:null);}
     | 'return' exp {$node = new ReturnNode($exp.node);}
+    | ident '(' (listexp {listexpflag = true;})? ')' {$node = new AppelINode($ident.node, (listexpflag)?$listexp.node:null);}
     | ident1 {$node = $ident1.node;}
     ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
     | '+=' exp {$node = new SumNode((IdentNode)$node, $exp.node);}
@@ -138,7 +140,6 @@ instr returns [ASTNode node]
     ) ')'
     | 'writeln' '('
     ( ident {$node = new WriteLineNode($ident.node);}
-    | ident '(' (listexp {listexpflag = true;})? ')' {$node = new AppelINode($ident.node, (listexpflag)?$listexp.node:null);}
     | e=string {$node = new WriteLineNode($e.str);}
     ) ')'
     ;
