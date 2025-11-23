@@ -12,7 +12,7 @@ import java.nio.file.NoSuchFileException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InterpreterJajaCodeTest {
+class InterpreterJajaCodeTest {
     InterpreterJajaCode ijc;
     Writer writer;
 

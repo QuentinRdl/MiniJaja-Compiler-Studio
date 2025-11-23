@@ -1356,7 +1356,7 @@ class MainControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         String out = controller.output.getText();
-        assertTrue(out.contains("[INFO] Interpretation successfully completed"));
+        assertTrue(out.contains("[INFO] MiniJaja interpretation successfully completed"));
     }
 
     @Test
@@ -1378,4 +1378,26 @@ class MainControllerTest extends ApplicationTest {
         assertTrue(controller.getEditorTabPane().getTabs().contains(controller.getCompiledTab()));
         assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
     }
+
+    @Test
+    void getCompiledCode() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "}", "}" );
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals("init\npush(0)\npop\njcstop", controller.getCompiledCode());
+    }
+
+    @Test
+    void getCompiledCodeEmpty() throws Exception {
+        File testFile = createTestFile("empty.mjj", "");
+        interact(() -> controller.loadFile(testFile));
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals("", controller.getCompiledCode());
+    }
+
+
 }
