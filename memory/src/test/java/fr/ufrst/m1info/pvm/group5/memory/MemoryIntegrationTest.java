@@ -32,6 +32,8 @@ class MemoryIntegrationTest {
 
     Memory mem;
 
+    String goldenFilePath = "/fr/ufrst/m1info/pvm/group5/memory/golden/";
+
     @BeforeEach
     public void setUp() {
         mem = new Memory();
@@ -673,13 +675,13 @@ class MemoryIntegrationTest {
         assertNotNull(res);
         assertEquals(2, res.length);
 
-        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/heap.toStringTab.golden")) {
+        try (InputStream is = getClass().getResourceAsStream(goldenFilePath + "heap.toStringTab.golden")) {
             assertNotNull(is); // Make sure file is loaded
             String expectedHeap = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertEquals(expectedHeap, res[0]);
         }
 
-        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.toStringTab.golden")) {
+        try (InputStream is = getClass().getResourceAsStream(goldenFilePath + "stack.toStringTab.golden")) {
             assertNotNull(is); // Make sure file is loaded
             String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertEquals(expectedStack, res[1]);
@@ -698,13 +700,13 @@ class MemoryIntegrationTest {
         assertNotNull(res);
         assertEquals(2, res.length);
 
-        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/heap.allocated5.toStringTab.golden")) {
+        try (InputStream is = getClass().getResourceAsStream(goldenFilePath + "heap.allocated5.toStringTab.golden")) {
             assertNotNull(is); // Make suire file is loaded
             String expectedHeap = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertEquals(expectedHeap, res[0]);
         }
 
-        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.allocated5.toStringTab.golden")) {
+        try (InputStream is = getClass().getResourceAsStream(goldenFilePath + "stack.allocated5.toStringTab.golden")) {
             assertNotNull(is); // Make sure file is loaded
             String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertEquals(expectedStack, res[1]);
@@ -723,7 +725,7 @@ class MemoryIntegrationTest {
         assertNotNull(res);
         assertEquals(2, res.length);
 
-        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.allocated5.toStringTab.golden")) {
+        try (InputStream is = getClass().getResourceAsStream(goldenFilePath + "stack.allocated5.toStringTab.golden")) {
             assertNotNull(is); // Make sure file is loaded
             String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertEquals(expectedStack, res[1]);
