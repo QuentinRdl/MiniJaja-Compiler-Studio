@@ -14,6 +14,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -641,8 +644,8 @@ class MemoryIntegrationTest {
     void aliasingBetweenArrayAndIntVariable() {
         Memory mem = new Memory();
 
-        mem.declTab("a", 3, DataType.INT);
-        StackObject aObj = mem.stack.getObject("a");
+        mem.declTab("tab", 3, DataType.INT);
+        StackObject aObj = mem.stack.getObject("tab");
         assertNotNull(aObj);
         assertEquals(DataType.INT, aObj.getDataType());
 
@@ -651,13 +654,79 @@ class MemoryIntegrationTest {
         mem.declVar("alias", address, DataType.INT);
 
         // Write via original identifier
-        mem.affectValT("a", 0, new Value(42));
+        mem.affectValT("tab", 0, new Value(42));
         // Read via alias -> should see same value
         assertEquals(42, mem.valT("alias", 0).valueInt);
 
         // Write via alias
         mem.affectValT("alias", 1, new Value(7));
         // Read via original -> should see same value
-        assertEquals(7, mem.valT("a", 1).valueInt);
+        assertEquals(7, mem.valT("tab", 1).valueInt);
+    }
+
+    @Test
+    void toStringTabGolden() throws Exception {
+        Memory mem = new Memory();
+        mem.setHeap(new Heap(16));
+
+        String[] res = mem.toStringTab();
+        assertNotNull(res);
+        assertEquals(2, res.length);
+
+        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/heap.toStringTab.golden")) {
+            assertNotNull(is); // Make sure file is loaded
+            String expectedHeap = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertEquals(expectedHeap, res[0]);
+        }
+
+        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.toStringTab.golden")) {
+            assertNotNull(is); // Make sure file is loaded
+            String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertEquals(expectedStack, res[1]);
+        }
+    }
+
+    @Test
+    void toStringTabAfterDeclTab() throws Exception {
+        Memory mem = new Memory();
+        mem.setHeap(new Heap(16));
+
+        // Declare an array of 5 ints
+        mem.declTab("arr", 5, DataType.INT);
+
+        String[] res = mem.toStringTab();
+        assertNotNull(res);
+        assertEquals(2, res.length);
+
+        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/heap.allocated5.toStringTab.golden")) {
+            assertNotNull(is); // Make suire file is loaded
+            String expectedHeap = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertEquals(expectedHeap, res[0]);
+        }
+
+        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.allocated5.toStringTab.golden")) {
+            assertNotNull(is); // Make sure file is loaded
+            String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertEquals(expectedStack, res[1]);
+        }
+    }
+
+    @Test
+    void toStringTabAfterWrite() throws Exception {
+        Memory mem = new Memory();
+        mem.setHeap(new Heap(16));
+
+        mem.declTab("arr", 5, DataType.INT);
+        mem.affectValT("arr", 0, new Value(7));
+
+        String[] res = mem.toStringTab();
+        assertNotNull(res);
+        assertEquals(2, res.length);
+
+        try (InputStream is = getClass().getResourceAsStream("/fr/ufrst/m1info/pvm/group5/memory/golden/stack.allocated5.toStringTab.golden")) {
+            assertNotNull(is); // Make sure file is loaded
+            String expectedStack = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertEquals(expectedStack, res[1]);
+        }
     }
 }
