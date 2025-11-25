@@ -3,8 +3,17 @@ package fr.ufrst.m1info.pvm.group5.interpreter;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationMode;
 import fr.ufrst.m1info.pvm.group5.memory.Event;
 
+import java.util.List;
+
 public interface Interpreter {
     public Event<InterpretationHaltedData> interpretationHaltedEvent = new Event<>();
+
+    /**
+     * Defines the breakpoints for the interpretation
+     *
+     * @param breakpoints list of breakpoints to use
+     */
+    void setBreakpoints(List<Integer> breakpoints);
 
     /**
      * Interpret the given code
@@ -15,13 +24,13 @@ public interface Interpreter {
     String interpretCode(String code);
 
     /**
-     * Interpret the given code in a given mode
+     * Asynchronously starts the interpretation in a given mode
      *
      * @param code the code we want to interpret
      * @param mode interpretation mode
      * @return error messages
      */
-    String interpretCode(String code, InterpretationMode mode);
+    String startCodeInterpretation(String code, InterpretationMode mode);
 
     /**
      * Interpret the given file
@@ -32,13 +41,13 @@ public interface Interpreter {
     String interpretFile(String path);
 
     /**
-     * Interpret the given file in a given mode
+     * Asynchronously starts the interpretation the given file in a given mode
      *
      * @param path path to the file we want to interpret
      * @param mode interpretation mode
      * @return error messages
      */
-     String interpretFile(String path, InterpretationMode mode);
+     String startFileInterpretation(String path, InterpretationMode mode);
 
     /**
      * Stops the current interpretation

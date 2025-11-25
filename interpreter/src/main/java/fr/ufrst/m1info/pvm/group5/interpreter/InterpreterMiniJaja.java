@@ -1,12 +1,23 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 
-
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationMode;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 public class InterpreterMiniJaja implements Interpreter{
     Writer output;
+    AbstractSyntaxTree ast;
+    Thread interpretationThread;
+    ASTNode currentNode;
+    List<Integer> breakpoints;
 
     protected InterpreterMiniJaja(){
         output = new Writer();
@@ -14,6 +25,11 @@ public class InterpreterMiniJaja implements Interpreter{
 
     public InterpreterMiniJaja(Writer output) {
         this.output = output;
+    }
+
+    @Override
+    public void setBreakpoints(List<Integer> breakpoints) {
+        this.breakpoints = breakpoints;
     }
 
     /**
@@ -35,6 +51,37 @@ public class InterpreterMiniJaja implements Interpreter{
         return errMessage;
     }
 
+    @Override
+    public String startCodeInterpretation(String code, InterpretationMode mode) {
+        Memory mem = new Memory(output);
+        String errMessage= null;
+
+        // Building the AST
+        try {
+             this.ast = AbstractSyntaxTree.fromString(code);
+        } catch (Exception e){
+            errMessage=e.getClass()+" : "+e.getMessage();
+        }
+
+        // Subscribing to the event of the ast
+        ast.interprtationStoppedEvent.subscribe(d -> {
+            this.currentNode = d.node();
+            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, ""));
+        });
+
+        // Starting the Thread
+        interpretationThread = new Thread(() -> {
+            try {
+                ast.interpret(mem, mode);
+            } catch (Exception e) {
+                interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage()));
+            }
+        });
+
+        interpretationThread.start();
+        return errMessage;
+    }
+
     /**
      * Interpret the given file
      *
@@ -52,5 +99,39 @@ public class InterpreterMiniJaja implements Interpreter{
             errMessage=e.getClass()+" : "+e.getMessage();
         }
         return errMessage;
+    }
+
+    @Override
+    public String startFileInterpretation(String path, InterpretationMode mode) {
+        String fileContent;
+        try {
+            fileContent = FileUtils.readFileToString(new File(path), Charset.defaultCharset());
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return startCodeInterpretation(fileContent, mode);
+    }
+
+    @Override
+    public void stopInterpretation() {
+        if(interpretationThread == null || !interpretationThread.isAlive())
+            return;
+        interpretationThread.interrupt();
+    }
+
+    @Override
+    public void resumeInterpretation(InterpretationMode mode) {
+        if(interpretationThread == null || !interpretationThread.isAlive())
+            return;
+        currentNode.resumeInterpretation();
+    }
+
+    @Override
+    public void waitInterpretation() {
+        if(interpretationThread == null || !interpretationThread.isAlive())
+            return;
+        try {
+            interpretationThread.join();
+        }catch (InterruptedException _){}
     }
 }
