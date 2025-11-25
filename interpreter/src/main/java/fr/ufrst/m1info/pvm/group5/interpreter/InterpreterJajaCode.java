@@ -11,7 +11,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InterpreterJajaCode implements Interpreter{
+public class InterpreterJajaCode extends Interpreter{
     Writer output;
     List<Integer> breakpoints = new ArrayList<>();
     Thread interpretationThread;
