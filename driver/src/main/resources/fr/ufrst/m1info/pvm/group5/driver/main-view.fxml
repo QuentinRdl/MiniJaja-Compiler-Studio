@@ -23,7 +23,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.pvm.group5.driver.MainController">
 
   <top>
