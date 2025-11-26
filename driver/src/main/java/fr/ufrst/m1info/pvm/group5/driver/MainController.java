@@ -894,4 +894,25 @@ public class MainController {
             editorTabPane.getSelectionModel().select(compiledTab);
         }
     }
+
+    /**
+     * Starts debugging the current code when the "Run" debug button is clicked
+     */
+    public void onClickRunDebug(){
+        //TODO
+    }
+
+    /**
+     * Stops the current debugging session when the "Stop" debug button is clicked
+     */
+    public void onClickStopDebug(){
+        //TODO
+    }
+
+    /**
+     * Executes the next instruction in the debugging session when the "Next" debug button is clicked
+     */
+    public void onClickNextDebug(){
+        //TODO
+    }
 }
