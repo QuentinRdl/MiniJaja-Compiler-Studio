@@ -43,6 +43,7 @@ instruction returns [Instruction inst]
     | 'neg' {$inst = new NegInstruction();}
     | 'not' {$inst = new NotInstruction();}
     | 'inc' '(' i=IDENTIFIER ')' {$inst = new IncInstruction($i.text);}
+    | 'invoke' '(' i=IDENTIFIER ')' {$inst = new InvokeInstruction($i.text);}
     | 'write' {$inst = new WriteInstruction();}
     | 'writeln' {$inst = new WritelnInstruction();}
     | 'init' {$inst = new InitInstruction();}
