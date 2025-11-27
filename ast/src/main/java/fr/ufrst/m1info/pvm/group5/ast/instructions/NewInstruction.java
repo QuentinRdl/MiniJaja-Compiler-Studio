@@ -51,8 +51,13 @@ public class NewInstruction extends Instruction{
                 throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
             }
             m.declCst(identifier,v,type);
-            // todo : add entry kind method
-        }else {
+        }else if (kind==EntryKind.METHOD){
+            if (v.type!=ValueType.INT){
+                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Value must be of type int.");
+            }
+            m.declCst(identifier,v,type);
+        }
+        else {
             throw new ASTBuildException("new line ("+(address+1)+") : Entry kind must be var or const");
         }
         return address+1;
