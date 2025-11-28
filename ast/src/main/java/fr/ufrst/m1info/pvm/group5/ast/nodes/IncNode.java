@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
+import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
@@ -52,18 +53,19 @@ public class IncNode extends ASTNode{
             }
             int index = indexVal.valueInt;
             Value currentVal = m.valT(arrayIdent.identifier, index);
-            if (currentVal == null) {
-                throw new ASTInvalidMemoryException("Array " + arrayIdent.identifier + " at index " + index + " not found in memory");
+            if (currentVal == null || currentVal.type == ValueType.EMPTY) {
+                throw new ASTInvalidMemoryException("Array " + arrayIdent.identifier + " at index " + index + " is not assigned a value");
             }
             Value newVal = new Value(currentVal.valueInt + 1);
             m.affectValT(arrayIdent.identifier, index, newVal);
         } else {
-            Value v = (Value) m.val(((IdentNode)ident).identifier);
-            if (v == null) {
-                throw new ASTInvalidMemoryException("Variable " + ((IdentNode)ident).identifier + " not found in memory");
+            String varName = ((IdentNode)ident).identifier;
+            Value v = (Value) m.val(varName);
+            if (v == null || v.type == fr.ufrst.m1info.pvm.group5.memory.ValueType.EMPTY) {
+                throw new ASTInvalidMemoryException("Variable " + varName + " is not assigned a value");
             }
             Value res = new Value(v.valueInt + 1);
-            m.affectValue(((IdentNode)ident).identifier, res);
+            m.affectValue(varName, res);
         }
     }
 
