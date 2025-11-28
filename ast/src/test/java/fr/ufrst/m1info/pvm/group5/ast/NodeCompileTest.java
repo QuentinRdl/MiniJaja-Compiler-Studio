@@ -83,6 +83,80 @@ class NodeCompileTest {
         AffectationNode tested = new AffectationNode(ident,exp);
         assertEquals(List.of("push(5)", "store(x)"), tested.compile(1));
     }
+    @Test
+    @DisplayName("AffectationNode - compile() with array access and constant index")
+    void testAffectationNode_CompileArrayAccess_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        ASTNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(2)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        assertEquals(List.of("push(2)", "push(10)", "astore(tab)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("AffectationNode - compile() with array access and variable index")
+    void testAffectationNode_CompileArrayAccess_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("data");
+        ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(i)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(42)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        assertEquals(List.of("load(i)", "push(42)", "astore(data)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("AffectationNode - compile() with array access and different addresses")
+    void testAffectationNode_CompileArrayAccess_DifferentAddresses() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        ASTNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(0)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        List<String> expected = List.of("push(0)", "push(5)", "astore(tab)");
+        assertEquals(expected, tested.compile(0));
+        assertEquals(expected, tested.compile(10));
+        assertEquals(expected, tested.compile(100));
+    }
+
+    @Test
+    @DisplayName("AffectationNode - compile() with array access and boolean value")
+    void testAffectationNode_CompileArrayAccess_BooleanValue() {
+        IdentNode arrayIdent = new IdentNode("boolArr");
+        ASTNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(3)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(BooleanNode.class, null, i -> List.of("push(jcvrai)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        assertEquals(List.of("push(3)", "push(jcvrai)", "astore(boolArr)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("AffectationNode - compile() with array access and variable value")
+    void testAffectationNode_CompileArrayAccess_VariableValue() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(j)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(x)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        assertEquals(List.of("load(j)", "load(x)", "astore(arr)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("AffectationNode - compile() with nested array access index")
+    void testAffectationNode_CompileArrayAccess_NestedIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(0)", "aload(indices)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(99)"));
+        AffectationNode tested = new AffectationNode(tabNode, valueExpr);
+        assertEquals(List.of("push(0)", "aload(indices)", "push(99)", "astore(arr)"), tested.compile(0));
+    }
 
     @Test
     void BooleanNodeTrue(){
@@ -276,6 +350,124 @@ class NodeCompileTest {
         IdentNode ident = new IdentNode("x");
         IncNode tested = new IncNode(ident);
         assertEquals(List.of("push(1)","inc(x)"),tested.compile(1));
+    }
+    @Test
+    @DisplayName("IncNode - compile() with array access and constant index")
+    void testIncNode_CompileArrayAccess_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        ASTNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(2)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IncNode tested = new IncNode(tabNode);
+
+        assertEquals(List.of("push(2)", "push(1)", "painc(tab)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("IncNode - compile() with array access and variable index")
+    void testIncNode_CompileArrayAccess_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(i)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IncNode tested = new IncNode(tabNode);
+
+        assertEquals(List.of("load(i)", "push(1)", "painc(arr)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("IncNode - compile() with array access and complex index expression")
+    void testIncNode_CompileArrayAccess_ComplexIndex() {
+        IdentNode arrayIdent = new IdentNode("matrix");
+        ASTNode indexExpr = ASTMocks.createNode(AddNode.class, null, i -> List.of("load(i)", "push(5)", "add"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IncNode tested = new IncNode(tabNode);
+
+        assertEquals(List.of("load(i)", "push(5)", "add", "push(1)", "painc(matrix)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("IncNode - compile() with nested array access")
+    void testIncNode_CompileArrayAccess_NestedExpression() {
+        IdentNode arrayIdent = new IdentNode("data");
+        ASTNode indexExpr = ASTMocks.createNode(MulNode.class, null, i -> List.of("load(x)", "push(2)", "mul"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IncNode tested = new IncNode(tabNode);
+
+        assertEquals(List.of("load(x)", "push(2)", "mul", "push(1)", "painc(data)"), tested.compile(0));
+    }
+    @Test
+    @DisplayName("SumNode - compile() with simple variable")
+    void testSumNode_SimpleVariable() {
+        IdentNode ident = new IdentNode("x");
+        ASTNode expr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
+        SumNode tested = new SumNode(ident, expr);
+
+        assertEquals(List.of("push(5)", "inc(x)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("SumNode - compile() with array access and constant index")
+    void testSumNode_CompileArrayAccess_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        ASTNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(2)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
+        SumNode tested = new SumNode(tabNode, valueExpr);
+
+        assertEquals(List.of("push(2)", "push(10)", "ainc(tab)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("SumNode - compile() with array access and variable index")
+    void testSumNode_CompileArrayAccess_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(i)"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(x)"));
+        SumNode tested = new SumNode(tabNode, valueExpr);
+
+        assertEquals(List.of("load(i)", "load(x)", "ainc(arr)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("SumNode - compile() with array access and complex index expression")
+    void testSumNode_CompileArrayAccess_ComplexIndex() {
+        IdentNode arrayIdent = new IdentNode("matrix");
+        ASTNode indexExpr = ASTMocks.createNode(AddNode.class, null, i -> List.of("load(i)", "push(5)", "add"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(MulNode.class, null, i -> List.of("load(a)", "push(2)", "mul"));
+        SumNode tested = new SumNode(tabNode, valueExpr);
+
+        assertEquals(List.of("load(i)", "push(5)", "add", "load(a)", "push(2)", "mul", "ainc(matrix)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("SumNode - compile() with nested array access")
+    void testSumNode_CompileArrayAccess_NestedExpression() {
+        IdentNode arrayIdent = new IdentNode("data");
+        ASTNode indexExpr = ASTMocks.createNode(MulNode.class, null, i -> List.of("load(x)", "push(2)", "mul"));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        ASTNode valueExpr = ASTMocks.createNode(AddNode.class, null, i -> List.of("load(y)", "push(3)", "add"));
+        SumNode tested = new SumNode(tabNode, valueExpr);
+
+        assertEquals(List.of("load(x)", "push(2)", "mul", "load(y)", "push(3)", "add", "ainc(data)"), tested.compile(0));
+    }
+
+    @Test
+    @DisplayName("SumNode - compile() with variable and complex expression")
+    void testSumNode_ComplexExpression() {
+        IdentNode ident = new IdentNode("count");
+        ASTNode expr = ASTMocks.createNode(AddNode.class, null, i -> List.of("load(a)", "load(b)", "add"));
+        SumNode tested = new SumNode(ident, expr);
+
+        assertEquals(List.of("load(a)", "load(b)", "add", "inc(count)"), tested.compile(0));
     }
 
     @Test
@@ -787,6 +979,7 @@ class NodeCompileTest {
     }
 
 
+
     @Test
     public void AppelENode_CompileWithArgs() {
         IdentNode ident = new IdentNode("foo");
@@ -801,6 +994,154 @@ class NodeCompileTest {
 
         List<String> code = node.compile(0);
         assertEquals(List.of("push(1)", "push(2)", "invoke(foo)", "swap", "pop"), code);
+    }
+    @Test
+    @DisplayName("ArrayNode - compile() generates correct instructions for int array")
+    void testArrayNode_Compile_IntArray() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("push(5)", "newarray(arr, int)"), code);
+    }
+
+    @Test
+    @DisplayName("ArrayNode - compile() generates correct instructions for bool array")
+    void testArrayNode_Compile_BoolArray() {
+        TypeNode typeNode = new TypeNode(ValueType.BOOL);
+        IdentNode ident = new IdentNode("flags");
+        NumberNode sizeExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("push(10)", "newarray(flags, bool)"), code);
+    }
+
+    @Test
+    @DisplayName("ArrayNode - compile() with complex size expression")
+    void testArrayNode_Compile_ComplexSizeExpression() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("matrix");
+        ASTNode sizeExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(5)", "push(3)", "add"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("push(5)", "push(3)", "add", "newarray(matrix, int)"), code);
+    }
+
+    @Test
+    @DisplayName("ArrayNode - compile() with variable as size")
+    void testArrayNode_Compile_VariableSize() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("data");
+        IdentNode sizeIdent = new IdentNode("n");
+        ASTNode sizeExpr = ASTMocks.createNode(IdentNode.class, null, i -> List.of("load(n)"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("load(n)", "newarray(data, int)"), code);
+    }
+
+    @Test
+    @DisplayName("ArrayNode - withdrawCompile() generates swap and pop")
+    void testArrayNode_WithdrawCompile() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(5)"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        List<String> code = node.withdrawCompile(0);
+
+        assertEquals(List.of("swap", "pop"), code);
+    }
+
+    @Test
+    @DisplayName("ArrayNode - withdrawCompile() always returns same instructions regardless of address")
+    void testArrayNode_WithdrawCompile_DifferentAddresses() {
+        TypeNode typeNode = new TypeNode(ValueType.BOOL);
+        IdentNode ident = new IdentNode("flags");
+        NumberNode sizeExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(10)"));
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+
+        List<String> code1 = node.withdrawCompile(0);
+        List<String> code2 = node.withdrawCompile(5);
+        List<String> code3 = node.withdrawCompile(100);
+
+        assertEquals(List.of("swap", "pop"), code1);
+        assertEquals(List.of("swap", "pop"), code2);
+        assertEquals(List.of("swap", "pop"), code3);
+    }
+
+    @Test
+    @DisplayName("TabNode - compile() with constant index")
+    void testTabNode_Compile_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        NumberNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(3)"));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("push(3)", "aload(arr)"), code);
+    }
+
+    @Test
+    @DisplayName("TabNode - compile() with variable index")
+    void testTabNode_Compile_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("data");
+        IdentNode indexIdent = new IdentNode("i");
+        ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, addr -> List.of("load(i)"));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("load(i)", "aload(data)"), code);
+    }
+
+    @Test
+    @DisplayName("TabNode - compile() with complex index expression")
+    void testTabNode_Compile_ComplexIndexExpression() {
+        IdentNode arrayIdent = new IdentNode("matrix");
+        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(2)", "push(3)", "add"));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+        List<String> code = node.compile(0);
+
+        assertEquals(List.of("push(2)", "push(3)", "add", "aload(matrix)"), code);
+    }
+
+    @Test
+    @DisplayName("TabNode - compile() with different starting addresses")
+    void testTabNode_Compile_DifferentAddresses() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        NumberNode indexExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(0)"));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+
+        List<String> code1 = node.compile(0);
+        List<String> code2 = node.compile(10);
+        List<String> code3 = node.compile(100);
+        assertEquals(List.of("push(0)", "aload(arr)"), code1);
+        assertEquals(List.of("push(0)", "aload(arr)"), code2);
+        assertEquals(List.of("push(0)", "aload(arr)"), code3);
+    }
+
+    @Test
+    @DisplayName("TabNode - compile() with nested array access")
+    void testTabNode_Compile_NestedArrayAccess() {
+        IdentNode arrayIdent = new IdentNode("nestedArr");
+        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("load(i)", "push(1)", "add"));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+        List<String> code = node.compile(5);
+
+        assertEquals(List.of("load(i)", "push(1)", "add", "aload(nestedArr)"), code);
     }
 
 
