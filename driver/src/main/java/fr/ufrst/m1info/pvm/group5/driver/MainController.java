@@ -932,7 +932,11 @@ public class MainController {
         }
     }
 
-    //
+    /**
+     * Displays a memory tab in the editor if it is not already visible
+     *
+     * @param memoryTab the Tab representing the memory view
+     */
     public void showMemoryTab(Tab memoryTab){
         if(editorTabPane != null && memoryTab != null){
             if(!editorTabPane.getTabs().contains(memoryTab)){
@@ -941,16 +945,22 @@ public class MainController {
         }
     }
 
+    /**
+     * Hides the memory tab from the editor tab pane
+     *
+     * @param memoryTab the Tab representing the memory view
+     */
     public void hideMemoryTab(Tab memoryTab){
         if(editorTabPane != null && memoryTab != null){
             editorTabPane.getTabs().remove(memoryTab);
         }
     }
 
-    private boolean isMemoryTab(){
-        return editorTabPane != null && (editorTabPane.getSelectionModel().getSelectedItem() == memoryTabMinijaja || editorTabPane.getSelectionModel().getSelectedItem() == memoryTabJajacode);
-    }
-
+    /**
+     * Clears the contents of the memory visualisation
+     *
+     * @param memoryVisualisation the MemoryVisualisation instance to clear
+     */
     private void clearMemoryVisualisation(MemoryVisualisation memoryVisualisation){
         if(memoryVisualisation != null){
             memoryVisualisation.clear();

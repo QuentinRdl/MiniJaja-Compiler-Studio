@@ -75,6 +75,7 @@ public class InterpreterJajaCode implements Interpreter{
         }
     }
 
+
     public Memory getMemory(){
         return this.mem;
     }

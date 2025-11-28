@@ -4,7 +4,20 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+/**
+ * Visual representation of a stack variable block in the memory visualisation
+ * Each block shows the variable's name, kind, type and current value
+ */
 public class StackBlockView extends VBox {
+
+    /**
+     * Constructs a visual block for a stack variable
+     *
+     * @param name the variable name
+     * @param kind the kind of variable (VARIABLE, CONSTANT...)
+     * @param type the date type of the variable (INT, STRING...)
+     * @param value the current value of the variable
+     */
     public StackBlockView(String name, String kind, String type, String value){
         super();
         setPadding(new Insets(8));
