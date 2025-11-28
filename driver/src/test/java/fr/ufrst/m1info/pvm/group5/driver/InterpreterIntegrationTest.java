@@ -58,7 +58,7 @@ class InterpreterIntegrationTest extends ApplicationTest {
         );
 
         String consoleText = createFileLoadRunAndGetConsole("test.mjj", content);
-        assertTrue(consoleText.contains("[INFO] Interpretation successfully completed"));
+        assertTrue(consoleText.contains("[INFO] MiniJaja interpretation successfully completed"));
     }
 
 
@@ -75,7 +75,7 @@ class InterpreterIntegrationTest extends ApplicationTest {
         );
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("test.mjj", content);
-        assertTrue(consoleText.contains("[INFO] Interpretation successfully completed"));
+        assertTrue(consoleText.contains("[INFO] MiniJaja interpretation successfully completed"));
     }
 
 
@@ -194,10 +194,66 @@ class InterpreterIntegrationTest extends ApplicationTest {
         assertFalse(consoleText.contains("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)"));
     }
 
+    @Test
+    void interpreterJajacodeWorks() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "   int x;",
+                "   main {",
+                "       x = 3 + 4;",
+                "       x++;",
+                "       writeln(x);",
+                "   }",
+                "}");
+        String consoleText = createFileLoadCompileRunAndGetConsole("test.mjj", content);
+        assertTrue(consoleText.contains("8"));
+        assertTrue(consoleText.contains("[INFO] JajaCode interpretation successfully completed"));
+    }
+
+    @Test
+    void interpreterJajacodeWorksByButton() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "   int x;",
+                "   main {",
+                "       x = 3 + 4;",
+                "       x++;",
+                "       writeln(x);",
+                "   }",
+                "}");
+        String consoleText = createFileLoadCompileRunAndGetConsoleByButton("test.mjj", content);
+        assertTrue(consoleText.contains("8"));
+        assertTrue(consoleText.contains("[INFO] JajaCode interpretation successfully completed"));
+    }
+
+    @Test
+    void interpreterJajacodeDoesNotWorkByButton() throws Exception {
+        String content = String.join("\n",
+                "class C {",
+                "   main {",
+                "       x = 3 + 4;",
+                "       x++;",
+                "   }",
+                "}");
+        String consoleText = createFileLoadCompileRunAndGetConsoleByButton("test.mjj", content);
+        assertTrue(consoleText.contains("[ERROR]"));
+        assertTrue(consoleText.contains("Symbol not found: x"));
+    }
+
+    @Test
+    void interpreterJajacodeEmptyFileByButton() throws Exception {
+        String content = " \n ";
+        String consoleText = createFileLoadCompileRunAndGetConsoleByButton("empty.mjj", content);
+        assertTrue(consoleText.contains("[ERROR] No code to compile !"));
+        assertTrue(consoleText.contains("[ERROR] No code to interpret !"));
+    }
+
 
 
     /**
      * This automates a good part of the Interpreter -> IDE tests
+     *
+     * This method is used for MiniJaja interpretations.
      *
      * @param filename name of the file to create in the test temp directory
      * @param content full file content
@@ -255,4 +311,75 @@ class InterpreterIntegrationTest extends ApplicationTest {
 
         return controller.output.getText();
     }
+
+    /**
+     * This method is used for JajaCode interpretations.
+     *
+     * This method creates a file, loads it into the graphical interface, compiles it,
+     * interprets the compiled code, and retrieves the console from the graphical interface.
+     *
+     * @param filename name of the file to create in the test temp directory
+     * @param content full file content
+     * @return the text currently present in the controller's output TextArea (console)
+     * @throws Exception Exception
+     */
+    private String createFileLoadCompileRunAndGetConsole(String filename, String content) throws Exception {
+        String[] lines;
+        if (content == null || content.isEmpty()){
+            lines = new String[0];
+        } else {
+            lines = content.split("\\R", -1);
+        }
+
+        File testFile = createTestFile(filename, lines);
+
+        interact(() -> {
+            controller.loadFile(testFile);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() ->
+                controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> {
+            controller.onRunClicked();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        return controller.output.getText();
+    }
+
+    /**
+     * Just like createFileLoadCompileRunAndGetConsole but triggers the actual Compile button (#btnCompile) and Run button (#btnRun)
+     *
+     * @param filename name of the file to create in the test temp directory
+     * @param content full file content
+     * @return the text currently present in the controller's output TextArea (console)
+     * @throws Exception Exception
+     */
+    private String createFileLoadCompileRunAndGetConsoleByButton(String filename, String content) throws Exception {
+        String[] lines;
+        if (content == null || content.isEmpty()){
+            lines = new String[0];
+        } else {
+            lines = content.split("\\R", -1);
+        }
+
+        File testFile = createTestFile(filename, lines);
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnCompile");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnRun");
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        return controller.output.getText();
+    }
+
+
 }

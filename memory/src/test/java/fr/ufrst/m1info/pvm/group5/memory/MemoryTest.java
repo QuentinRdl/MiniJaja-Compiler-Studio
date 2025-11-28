@@ -57,7 +57,7 @@ class MemoryTest {
 
     @Test
     void constructor() {
-         // Memory should have non-null fields (we'll replace them with mocks in setUp)
+        // Memory should have non-null fields (we'll replace them with mocks in setUp)
         assertNotNull(memory);
         assertNotNull(memory.stack);
         assertNotNull(memory.symbolTable);
@@ -153,31 +153,27 @@ class MemoryTest {
     }
 
 
-
     /**
-    @Test
-    void affectValueUpdatesSymbolTableEntry() {
-        SymbolTableEntry mockedEntry = mock(SymbolTableEntry.class);
-
-        when(symbolTableMocked.lookup("v")).thenReturn(mockedEntry);
-        memory.affectValue("v", 555);
-
-        verify(symbolTableMocked, times(1)).lookup("v");
-        verify(mockedEntry, times(1)).setReference(555);
-    }
-
-    @Test
-    void valReturnsReferenceFromSymbolTable() {
-        SymbolTableEntry realEntry = new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.INT);
-        realEntry.setReference(777);
-        when(symbolTableMocked.lookup("y")).thenReturn(realEntry);
-
-        Object result = memory.val("y");
-
-        assertEquals(777, result);
-        verify(symbolTableMocked, times(1)).lookup("y");
-    }
-    */
+     * @Test void affectValueUpdatesSymbolTableEntry() {
+     * SymbolTableEntry mockedEntry = mock(SymbolTableEntry.class);
+     * <p>
+     * when(symbolTableMocked.lookup("v")).thenReturn(mockedEntry);
+     * memory.affectValue("v", 555);
+     * <p>
+     * verify(symbolTableMocked, times(1)).lookup("v");
+     * verify(mockedEntry, times(1)).setReference(555);
+     * }
+     * @Test void valReturnsReferenceFromSymbolTable() {
+     * SymbolTableEntry realEntry = new SymbolTableEntry("y", EntryKind.VARIABLE, DataType.INT);
+     * realEntry.setReference(777);
+     * when(symbolTableMocked.lookup("y")).thenReturn(realEntry);
+     * <p>
+     * Object result = memory.val("y");
+     * <p>
+     * assertEquals(777, result);
+     * verify(symbolTableMocked, times(1)).lookup("y");
+     * }
+     */
 
     @Test
     void swapDelegatesToStack() {
@@ -382,5 +378,29 @@ class MemoryTest {
     void tabLengthThrowsWhenNoStackObject() {
         when(stackMocked.getObject("arr")).thenReturn(null);
         assertThrows(NullPointerException.class, () -> memory.tabLength("arr"));
+    }
+
+    @Test
+    void toStringTest() {
+        when(stackMocked.toString()).thenReturn("STACK-STR");
+        when(heapMocked.toString()).thenReturn("HEAP-STR");
+
+        String res = memory.toString();
+
+        assertNotNull(res);
+        assertTrue(res.contains("STACK-STR"));
+        assertTrue(res.contains("HEAP-STR"));
+    }
+
+    @Test
+    void toStringTabTest() {
+        when(stackMocked.toString()).thenReturn("STACK-STR");
+        when(heapMocked.toString()).thenReturn("HEAP-STR");
+
+        String[] res = {null, null};
+        res = memory.toStringTab();
+
+        assertTrue(res[0].contains("HEAP-STR"));
+        assertTrue(res[1].contains("STACK-STR"));
     }
 }

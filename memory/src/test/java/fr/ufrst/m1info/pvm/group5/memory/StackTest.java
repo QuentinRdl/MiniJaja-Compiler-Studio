@@ -85,32 +85,32 @@ class StackTest {
         assertEquals(1234, stack.getObjectValue("x"));
 
         Object constant2 = stack.getObject("x");
-        assertTrue(constant.equals(constant2));
+        assertEquals(constant, constant2);
     }
 
     @Test
     void isEqual() {
         StackObject constant = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
         StackObject constantTrue = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.INT);
-        assertTrue(constant.equals(constantTrue));
+        assertEquals(constant, constantTrue);
 
         StackObject cstNotSameName = new StackObject("y", 1234, 1, EntryKind.CONSTANT, DataType.INT);
-        assertFalse(constant.equals(cstNotSameName));
+        assertNotEquals(constant, cstNotSameName);
 
         StackObject cstNotSameVal = new StackObject("x", 4321, 1, EntryKind.CONSTANT, DataType.INT);
-        assertFalse(constant.equals(cstNotSameVal));
+        assertNotEquals(constant, cstNotSameVal);
 
         StackObject cstNotSameScope = new StackObject("x", 1234, 2, EntryKind.CONSTANT, DataType.INT);
-        assertFalse(constant.equals(cstNotSameScope));
+        assertNotEquals(constant, cstNotSameScope);
 
         StackObject cstNotSameType = new StackObject("x", 1234, 1, EntryKind.VARIABLE, DataType.INT);
-        assertFalse(constant.equals(cstNotSameType));
+        assertNotEquals(constant, cstNotSameType);
 
         StackObject cstNotSameKind = new StackObject("x", 1234, 1, EntryKind.CONSTANT, DataType.DOUBLE);
-        assertFalse(constant.equals(cstNotSameKind));
+        assertNotEquals(constant, cstNotSameKind);
 
         int notSameObject = 3;
-        assertFalse(constant.equals(notSameObject));
+        assertNotEquals(constant, notSameObject);
     }
 
     @Test
@@ -370,7 +370,10 @@ class StackTest {
     @Test
     void emptyStack_toString() {
         Stack s = new Stack();
-        assertEquals("Stack{scopeDepth=0, contents=[]}", s.toString());
+        System.out.println(s.toString());
+        String val = s.toString();
+        String exp = "Stack{scopeDepth=0, size=0, contents=\n}";
+        assertEquals(exp, val);
     }
 
     @Test
@@ -390,7 +393,10 @@ class StackTest {
         dq.addLast(a);
         dq.addLast(b);
 
-        String expected = "Stack{scopeDepth=0, contents=[x_0=1, y_0=2]}";
+        String expected = "Stack{scopeDepth=0, size=2, contents=\n" +
+                "  [0] x_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
+                "  [1] y_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(2)\n" +
+                "}";
         assertEquals(expected, s.toString());
     }
 

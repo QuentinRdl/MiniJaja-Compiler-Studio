@@ -441,4 +441,46 @@ public class Heap {
         }while(current != start);
         return errors;
     }
+
+    /**
+     * Returns a multi-line textual representation of the whole heap
+     * Includes every block (allocated and free) and shows the raw bytes stored in each block
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Heap(total=").append(totalSize).append(", available=").append(availableSize).append(")\n");
+        if(currentElement == null) return sb.toString();
+
+        HeapElement first = getFirstElement();
+        HeapElement curr = first;
+        do {
+            // Header for the block
+            sb.append(curr == currentElement ? "* " : "  ");
+            sb.append("ext@").append(curr.externalAddress)
+              .append(" ")
+              .append("int@").append(curr.internalAddress)
+              .append(" size=").append(curr.size())
+              .append(" ")
+              .append(curr.isFree() ? "Free" : ("Allocated(" + curr.getStorageType() + ")"))
+              .append(" refs=").append(curr.references)
+              .append("\n");
+
+            // Bytes contained in the block (w/ free blocks)
+            sb.append("    bytes: [");
+            List<String> values = new ArrayList<>();
+            for(int i = 0; i < curr.size(); i++){
+                int idx = curr.internalAddress + i;
+                // Defensive check (shouldn't happen) to avoid OOB
+                if(idx < 0 || idx >= storage.length) values.add("<oob>");
+                else values.add(Byte.toString(storage[idx]));
+            }
+            sb.append(String.join(", ", values));
+            sb.append("]\n");
+
+            curr = curr.next;
+        } while(curr != first);
+
+        return sb.toString();
+    }
 }

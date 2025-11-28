@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
+import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterJajaCode;
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
 import fr.ufrst.m1info.pvm.group5.compiler.Compiler;
 
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.MenuItem;
@@ -27,6 +29,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.materialdesign.MaterialDesign;
 
 
 /**
@@ -72,6 +79,12 @@ public class MainController {
     private Button btnCompile;
     @FXML
     private Button btnRunCompile;
+    @FXML
+    private Button btnDebugRun;
+    @FXML
+    private Button btnDebugStop;
+    @FXML
+    private Button btnDebugNext;
 
 
     /**
@@ -129,10 +142,33 @@ public class MainController {
             }
         });
 
+        FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
+        playIcon.setIconColor(Color.DARKBLUE);
+        playIcon.setIconSize(12);
+
+        FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
+        stopIcon.setIconColor(Color.DARKRED);
+        stopIcon.setIconSize(12);
+
+        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
+        nextIcon.setIconColor(Color.DARKGREEN);
+        nextIcon.setIconSize(12);
+
+        btnDebugRun.setGraphic(playIcon);
+        btnDebugRun.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+
+        btnDebugStop.setGraphic(stopIcon);
+        btnDebugStop.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+
+        btnDebugNext.setGraphic(nextIcon);
+        btnDebugNext.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+
+
         hideCompileTab();
         deactiveButtons();
         setupOutputContextMenu();
         setupKeyboardShortcuts();
+
     }
 
 
@@ -318,6 +354,16 @@ public class MainController {
      */
     public ObservableList<CodeLine> getCompiledCodeLines(){
         return compiledCodeLines;
+    }
+
+    /**
+     * Returns the compiled code as a single string,
+     * joining all CodeLine entries with newline characters
+     *
+     * @return the compiled JajaCode as text
+     */
+    public String getCompiledCode(){
+        return compiledCodeLines.stream().map(CodeLine::getCode).collect(Collectors.joining("\n"));
     }
 
     /**
@@ -545,12 +591,11 @@ public class MainController {
 
 
     /**
-     * Executes the current code when the "Run" button is clicked
-     * Retrieves the code from the editor and passes it to the InterpreterMiniJaja for interpretation
-     * After interpretation, logs either a success message or an error message to the console
+     * Handles the "Run" button click
+     * Determines the file type and launches the appropriate interpretation (MiniJaja or JajaCode)
+     * Displays an error if interpretation is not allowed
      */
     public void onRunClicked() {
-        //if(!isMinijajaFile() && !isJajaCode){
         boolean miniJaja = isMinijajaFile();
         boolean jajaCode = isJajaCode();
 
@@ -563,6 +608,20 @@ public class MainController {
             return;
         }
 
+        if(!isCompiledTab()){
+            interpretationMinijaja();
+        } else {
+            interpretationJajacode();
+        }
+
+    }
+
+    /**
+     * Interprets the current MiniJaja code
+     * Retrieves edited code, checks validity, runs the MiniJaja interpreter,
+     * and prints either a success or an error message
+     */
+    public void interpretationMinijaja(){
         String code = getModifiedCode();
 
         // If the code is just empty chars, do not run it
@@ -572,21 +631,38 @@ public class MainController {
         }
 
         String err = null;
-
-        if(miniJaja) {
-            InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
-            err = interpreterMiniJaja.interpretCode(code);
-        } else if (jajaCode) {
-            // TODO : Write jajaCode interpretation
-            console.getWriter().writeLine("[ERROR] JJC Interpretation not implemented yet");
-        }
+        InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+        err = interpreterMiniJaja.interpretCode(code);
 
         if(err == null){
-            console.getWriter().writeLine("[INFO] Interpretation successfully completed");
+            console.getWriter().writeLine("[INFO] MiniJaja interpretation successfully completed");
         } else {
             console.getWriter().writeLine("[ERROR] " + err);
         }
+    }
 
+    /**
+     * Interprets the current JajaCode code
+     * Retrieves compiled code, checks validity, runs the JajaCode interpreter,
+     * and prints either a success or an error message
+     */
+    public void interpretationJajacode(){
+        String compiledCode = getCompiledCode();
+
+        if(compiledCode.isEmpty() || isCodeEmptyChars(compiledCode)){
+            console.getWriter().writeLine("[ERROR] No code to interpret !");
+            return;
+        }
+
+        String err = null;
+        InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
+        err = interpreterJajaCode.interpretCode(compiledCode);
+
+        if(err == null){
+            console.getWriter().writeLine("[INFO] JajaCode interpretation successfully completed");
+        } else {
+            console.getWriter().writeLine("[ERROR] " + err);
+        }
     }
 
     /**
@@ -709,12 +785,46 @@ public class MainController {
         }
 
         Compiler compiler = new Compiler(console.getWriter());
-        String res = compiler.compileCode(getModifiedCode());
+        String res = compiler.compileCode(code);
 
         if (res != null){
             showCompiledTab();
             loadCompiledCodeToListView(res);
             console.getWriter().writeLine("[INFO] Compilation successful!");
+        }
+    }
+
+    /**
+     * Compiles and immediately runs the current MiniJaja code
+     * Validates the code, compiles it, loads the compiled result into the compiled tab,
+     * then interprets it and logs either success or error message
+     */
+    public void onCompileAndRunClicked(){
+        String code = getModifiedCode();
+        if(code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[ERROR] No code to compile and run !");
+            return;
+        }
+
+        if(!isMinijajaFile()){
+            console.getWriter().writeLine("[ERROR] Compilation and interpretation is only available for MiniJaja (.mjj) files");
+        }
+
+        Compiler compiler = new Compiler(console.getWriter());
+        String compiledCode = compiler.compileCode(code);
+
+        if(compiledCode != null){
+            showCompiledTab();
+            loadCompiledCodeToListView(compiledCode);
+            String err = null;
+            InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
+            err = interpreterJajaCode.interpretCode(compiledCode);
+
+            if(err == null){
+                console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
+            } else {
+                console.getWriter().writeLine("[ERROR] " + err);
+            }
         }
     }
 
@@ -818,5 +928,26 @@ public class MainController {
             }
             editorTabPane.getSelectionModel().select(compiledTab);
         }
+    }
+
+    /**
+     * Starts debugging the current code when the "Run" debug button is clicked
+     */
+    public void onClickRunDebug(){
+        //TODO
+    }
+
+    /**
+     * Stops the current debugging session when the "Stop" debug button is clicked
+     */
+    public void onClickStopDebug(){
+        //TODO
+    }
+
+    /**
+     * Executes the next instruction in the debugging session when the "Next" debug button is clicked
+     */
+    public void onClickNextDebug(){
+        //TODO
     }
 }
