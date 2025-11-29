@@ -248,6 +248,33 @@ class InstructionsUnitTest {
         assertThrows(ASTInvalidDynamicTypeException.class,() -> newaInstr.execute(1,memory));
     }
 
+    @Test
+    void newarray_size_negative() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(-1));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidOperationException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_empty_stack() throws Exception {
+        doAnswer(invocationOnMock -> {
+            throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
+        }).when(memory).pop();
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        assertThrows(StackIsEmptyException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_no_lambda_value() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newInstr = new NewInstruction("y", DataType.INT,EntryKind.CONSTANT,0);
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        pushInstr.execute(1,memory);
+        newInstr.execute(1,memory);
+        assertThrows(ASTInvalidMemoryException.class,() -> newaInstr.execute(1,memory));
+    }
+
     //push
     @Test
     void push_simple_int(){
