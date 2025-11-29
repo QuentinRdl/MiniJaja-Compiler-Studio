@@ -18,12 +18,13 @@ public class InvokeInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
         Value vMeth = (Value) m.val(ident);
-        if (vMeth.type == ValueType.EMPTY){
-            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+" : Variable "+ident+" has no value");
-
+        if (vMeth==null) {
+            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+" : Method "+ident+" is undefined");
         }
-        if (vMeth.type != ValueType.INT){
-            throw new ASTInvalidTypeException("invoke line ("+(address+1)+" : Type error: invoke operator expects INT value, but received " + vMeth.type + ".");
+        try {
+            m.getMethod("x");
+        } catch (Exception e) {
+            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+" : "+ident+" is not a method");
         }
         int newAdr=vMeth.valueInt;
         if (newAdr<1){

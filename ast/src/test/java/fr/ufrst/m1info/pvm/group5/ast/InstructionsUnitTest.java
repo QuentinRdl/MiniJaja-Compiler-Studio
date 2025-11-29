@@ -275,6 +275,50 @@ class InstructionsUnitTest {
         assertThrows(ASTInvalidMemoryException.class,() -> newaInstr.execute(1,memory));
     }
 
+    @Test
+    void invoke_method() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        assertEquals(18,invokeInstr.execute(3,memory));
+
+    }
+
+    @Test
+    void invoke_var() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.VARIABLE,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        doAnswer(invocationOnMock -> {
+            String identifier =invocationOnMock.getArgument(0);
+            throw new IllegalArgumentException(identifier + " is not a method");
+        }).when(memory).getMethod(any(String.class));
+        assertThrows(ASTInvalidMemoryException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
+    @Test
+    void invoke_method_negative_address() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(-18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        assertThrows(IndexOutOfBoundsException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
+    @Test
+    void invoke_undefined_method() throws Exception {
+        Instruction invokeInstr = new InvokeInstruction("x");
+        assertThrows(ASTInvalidMemoryException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
     //push
     @Test
     void push_simple_int(){
