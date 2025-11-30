@@ -820,7 +820,7 @@ public class MainController {
         }
 
         // Disable compile button while compilation is in progress
-        if (btnCompile != null) btnCompile.setDisable(true);
+        // if (btnCompile != null) btnCompile.setDisable(true);
 
         Task<String> compileTask = new Task<>(){
             @Override
@@ -837,13 +837,13 @@ public class MainController {
                 loadCompiledCodeToListView(res);
                 console.getWriter().writeLine("[INFO] Compilation successful!");
             }
-            if (btnCompile != null) btnCompile.setDisable(false);
+            // if (btnCompile != null) btnCompile.setDisable(false);
         });
 
         compileTask.setOnFailed(e -> {
             Throwable ex = compileTask.getException();
             console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
-            if (btnCompile != null) btnCompile.setDisable(false);
+            // if (btnCompile != null) btnCompile.setDisable(false);
         });
 
         Thread t = new Thread(compileTask, "Compiler-Thread");
@@ -869,8 +869,8 @@ public class MainController {
         }
 
         // Disable compiler and run buttons while compilation is in progress
-        if (btnCompile != null) btnCompile.setDisable(true);
-        if (btnRunCompile != null) btnRunCompile.setDisable(true);
+        // if (btnCompile != null) btnCompile.setDisable(true);
+        // if (btnRunCompile != null) btnRunCompile.setDisable(true);
 
         // Create task to call later
         Task<String> compileAndRunTask = new Task<>() {
@@ -906,8 +906,8 @@ public class MainController {
         compileAndRunTask.setOnFailed(e -> {
             Throwable ex = compileAndRunTask.getException();
             console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
-            if (btnCompile != null) btnCompile.setDisable(false);
-            if (btnRunCompile != null) btnRunCompile.setDisable(false);
+            //if (btnCompile != null) btnCompile.setDisable(false);
+            //if (btnRunCompile != null) btnRunCompile.setDisable(false);
         });
 
         Thread t = new Thread(compileAndRunTask, "Compiler-Run-Thread");
