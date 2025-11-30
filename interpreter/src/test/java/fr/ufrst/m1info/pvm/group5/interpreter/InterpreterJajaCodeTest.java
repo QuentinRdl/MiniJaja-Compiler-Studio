@@ -67,6 +67,12 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File Method")
+    void Method() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Method.jjc"));
+    }
+
+    @Test
     @DisplayName("Interpret File OperationPrevalence")
     void OperationPrevalence() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/OperationPrevalence.jjc"));
@@ -124,6 +130,16 @@ class InterpreterJajaCodeTest {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteLoops.jjc"));
         writer.textChangedEvent.subscribe(e -> {
             assertEquals("x : 0\nx : 8\nx : 16\nx : 24\nx : 32\nx : 40\nx : 48\nx : 56\nx : 64\nx : 72\nx : 80\nx : 88\nx : 96\nx : 104\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteMethod")
+    void WriteMethod() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteMethod.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 1\ny : 100\nop2 : 100\nop1 : 1\nx : 101\n", e.oldText());
         });
         writer.write("");
     }
