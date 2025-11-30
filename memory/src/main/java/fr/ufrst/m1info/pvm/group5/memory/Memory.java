@@ -113,11 +113,15 @@ public class Memory {
     }
 
     /**
-     * Removes the top of the stack
+     * Removes the element at the top of the stack
      */
     public Object pop() throws Stack.StackIsEmptyException {
         StackObject top = stack.pop();
         if (top != null && !top.getName().equals(".")) {
+            SymbolTableEntry ste = symbolTable.lookup(top.getName());
+            if (ste!=null && ste.getKind()==EntryKind.ARRAY){
+                heap.removeReference((int) top.getValue());
+            }
             symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
         }
         return top.getValue();
