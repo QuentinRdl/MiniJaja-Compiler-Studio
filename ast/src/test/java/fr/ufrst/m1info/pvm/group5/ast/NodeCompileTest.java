@@ -986,8 +986,10 @@ class NodeCompileTest {
         ASTNode args = new ASTNode() {
             @Override public List<ASTNode> getChildren() { return List.of(); }
             @Override public List<String> compile(int address) { return List.of("push(1)", "push(2)"); }
-            @Override public void interpret(Memory m) {}
-            @Override public String checkType(Memory m) { return "int"; }
+            @Override
+            public void interpret(Memory m) {}
+            @Override
+            public String checkType(Memory m) { return "int"; }
         };
 
         AppelENode node = new AppelENode(ident, args);

@@ -152,6 +152,165 @@ class InstructionsUnitTest {
         assertThrows(ASTBuildException.class,() -> newInstr.execute(1,memory));
     }
 
+    @Test
+    void new_string() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(false));
+        Instruction newInstr = new NewInstruction("x", DataType.STRING, EntryKind.VARIABLE,0);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+    }
+
+    @Test
+    void new_method_empty_stack() throws Exception {
+        doAnswer(invocationOnMock -> {
+            throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
+        }).when(memory).pop();
+        Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.METHOD,0);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+    }
+
+    @Test
+    void new_method_value_bool() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(false));
+        Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.METHOD,0);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+    }
+
+    @Test
+    void new_method_bool() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.METHOD,0);
+        pushInstr.execute(1,memory);
+        assertEquals(3,newInstr.execute(2,memory));
+        assertEquals(3,((Value) memory.val("x")).valueInt);
+    }
+
+    @Test
+    void new_method_int() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,0);
+        pushInstr.execute(1,memory);
+        assertEquals(3,newInstr.execute(2,memory));
+        assertEquals(3,((Value) memory.val("x")).valueInt);
+    }
+
+    @Test
+    void new_var_int_swap() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction pushInstr2 = new PushInstruction(new Value(5));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,1);
+        pushInstr.execute(1,memory);
+        pushInstr2.execute(1,memory);
+        assertEquals(3,newInstr.execute(2,memory));
+        assertEquals(3,((Value) memory.val("x")).valueInt);
+    }
+
+    @Test
+    void newarray_int() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        pushInstr.execute(1,memory);
+        assertEquals(3,newaInstr.execute(2,memory));
+        assertNotEquals(null,memory.val("x"));
+    }
+
+    @Test
+    void newarray_bool() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.BOOL);
+        pushInstr.execute(1,memory);
+        assertEquals(3,newaInstr.execute(2,memory));
+        assertNotEquals(null,memory.val("x"));
+    }
+
+    @Test
+    void newarray_string() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.STRING);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_size_bool() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(true));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.BOOL);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidDynamicTypeException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_size_negative() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(-1));
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        pushInstr.execute(1,memory);
+        assertThrows(ASTInvalidOperationException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_empty_stack() throws Exception {
+        doAnswer(invocationOnMock -> {
+            throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
+        }).when(memory).pop();
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        assertThrows(StackIsEmptyException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void newarray_no_lambda_value() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(3));
+        Instruction newInstr = new NewInstruction("y", DataType.INT,EntryKind.CONSTANT,0);
+        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
+        pushInstr.execute(1,memory);
+        newInstr.execute(1,memory);
+        assertThrows(ASTInvalidMemoryException.class,() -> newaInstr.execute(1,memory));
+    }
+
+    @Test
+    void invoke_method() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        assertEquals(18,invokeInstr.execute(3,memory));
+
+    }
+
+    @Test
+    void invoke_var() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.VARIABLE,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        doAnswer(invocationOnMock -> {
+            String identifier =invocationOnMock.getArgument(0);
+            throw new IllegalArgumentException(identifier + " is not a method");
+        }).when(memory).getMethod(any(String.class));
+        assertThrows(ASTInvalidMemoryException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
+    @Test
+    void invoke_method_negative_address() throws Exception {
+        Instruction pushInstr = new PushInstruction(new Value(-18));
+        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,0);
+        Instruction invokeInstr = new InvokeInstruction("x");
+        pushInstr.execute(1,memory);
+        newInstr.execute(2,memory);
+        assertThrows(IndexOutOfBoundsException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
+    @Test
+    void invoke_undefined_method() throws Exception {
+        Instruction invokeInstr = new InvokeInstruction("x");
+        assertThrows(ASTInvalidMemoryException.class,() -> invokeInstr.execute(1,memory));
+
+    }
+
     //push
     @Test
     void push_simple_int(){

@@ -1,20 +1,32 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.*;
+import fr.ufrst.m1info.pvm.group5.memory.Event;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
 import java.util.List;
 import java.util.Map;
 
-// Useless comment so i can commit something
+// Yet another useless line so i can push
 
 public abstract class ASTNode {
     /**
      * Line of the token in the file
      */
     private int line;
+
+    private static InterpretationMode interpretationMode = InterpretationMode.DIRECT;
+
+    public static final Event<InterpretationStoppedData> InterpretationStoppedEvent = new Event<>();
+
+
+    /**
+     * Defines the way the interpretation of the program should be done
+     * @param interpretationMode interpretation mode of the program
+     */
+    public void setInterpretationMode(InterpretationMode interpretationMode) {
+        ASTNode.interpretationMode = interpretationMode;
+    }
 
     // Getters/setter for the line attribute
     public void setLine(int line) {
@@ -134,5 +146,42 @@ public abstract class ASTNode {
             addTabDepth(sb,depth);
         sb.append("}");
         return sb.toString();
+    }
+
+    /**
+     * Utility function to call "wait" without having to use the "try/catch" everytime
+     */
+    private synchronized void doWait(){
+        try{
+            wait();
+        }
+        catch (InterruptedException e){
+            throw new RuntimeException("Program interpretation interrupted");
+        }
+    }
+
+    public synchronized void resumeInterpretation(){
+        notifyAll();
+    }
+
+    /**
+     * Halts the program or not depending on the interpretation mode :
+     *  - Direct : the program is not interrupted
+     *  - Breakpoints : the program is interrupted if a breakpoint is present on the current line
+     *  - Step by step : the program is interrupted
+     * Tiggers the [InterpretationStoppedEvent] if the program has stopped
+     * @param m Memory the program is being executed on
+     */
+    protected synchronized void halt(Memory m){
+        switch (interpretationMode){
+            case DIRECT:
+                return;
+            case BREAKPOINTS:
+                if(!m.isBreakpoint(this.line))
+                    return;
+            case STEP_BY_STEP:
+                InterpretationStoppedEvent.triggerAsync(new InterpretationStoppedData(line, false, this));
+                doWait();
+        }
     }
 }

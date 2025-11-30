@@ -83,8 +83,8 @@
 .tab-pane .tab {
     -fx-padding: 5 10;
     -fx-background-color: white;
-     -fx-border-color: transparent;
-     -fx-border-width: 0 0 2px 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2px 0;
 }
 
 .tab-pane .tab:selected {
@@ -92,4 +92,8 @@
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0;
     -fx-border-color: transparent transparent #2196F3 transparent;
+}
+
+.tab-pane .tab-content-area {
+    -fx-background-color: white;
 }

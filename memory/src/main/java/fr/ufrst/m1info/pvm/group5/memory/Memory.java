@@ -6,7 +6,9 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTable;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 
+import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.List;
 
 /**
  * API class for the Memory interface
@@ -17,6 +19,8 @@ public class Memory {
     Stack stack = new Stack();
     SymbolTable symbolTable = new SymbolTable();
     private Heap heap = new Heap();
+
+    private List<Integer> breakpoints = new ArrayList<>();
 
     private String identifierVarClass;
     /**
@@ -81,7 +85,7 @@ public class Memory {
         if(kind == null || type == null || value == null || identifier == null) {
             throw new MemoryIllegalArgException("One of the following arguments are not compatible with this function call : identifier = " + identifier + " value = " + value + " type = " + type + " kind = " + kind);
         }
-        if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT) {
+        if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT && kind != EntryKind.METHOD) {
             // TODO : Implement for different EntryKind
             throw new MemoryIllegalArgException("Pushing with " + kind + " as en EntryKind is invalid !");
         }
@@ -99,15 +103,25 @@ public class Memory {
             symbolTable.addEntry(entry);
         }
 
+        if(kind == EntryKind.METHOD) {
+            stack.setMeth(identifier, value, type);
+            SymbolTableEntry entry = new SymbolTableEntry(identifier, kind, type);
+            symbolTable.addEntry(entry);
+        }
+
         // TODO : Implement other kinds
     }
 
     /**
-     * Removes the top of the stack
+     * Removes the element at the top of the stack
      */
     public Object pop() throws Stack.StackIsEmptyException {
         StackObject top = stack.pop();
         if (top != null && !top.getName().equals(".")) {
+            SymbolTableEntry ste = symbolTable.lookup(top.getName());
+            if (ste!=null && ste.getKind()==EntryKind.ARRAY){
+                heap.removeReference((int) top.getValue());
+            }
             symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
         }
         return top.getValue();
@@ -494,5 +508,42 @@ public class Memory {
 
         int address = (int) addressObj.getValue();
         return heap.sizeOf(address);
+    }
+
+    /**
+     * Prints the content of the Memory (heap + stack)
+     * @return String -> the Memory
+     */
+    @Override
+    public String toString() {
+        String res = heap.toString();
+        res += stack.toString();
+        return res;
+    }
+
+    /**
+     * Alternate func for toString, returns the Memory (heap + stack)
+     * @return tab of str with at index 0 the heap, index 1 the stack
+     */
+    public String[] toStringTab() {
+        String[] res = {null, null};
+
+        res[0] = heap.toString();
+        res[1] = stack.toString();
+
+        return res;
+    }
+
+    /* Breakpoints related operations */
+    public void setBreakpoints(List<Integer> breakpoints) {
+        this.breakpoints = breakpoints;
+    }
+
+    public List<Integer> getBreakpoints() {
+        return breakpoints;
+    }
+
+    public boolean isBreakpoint(int address) {
+        return breakpoints.contains(address);
     }
 }

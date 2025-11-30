@@ -5,7 +5,9 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +16,17 @@ class AbstractSyntaxTreeTest {
     Map<String, Value> memoryStorage;
     @Mock
     Memory memory;
+    Thread interpretationThread;
+
+    void startInterpretation(AbstractSyntaxTree ast, InterpretationMode mode, Memory m){
+        interpretationThread = new Thread(() -> {
+            try{
+                ast.interpret(m, mode);
+            }
+            catch (Exception e){}
+        });
+        interpretationThread.start();
+    }
 
     @BeforeEach
     public void setup(){
@@ -144,6 +157,48 @@ class AbstractSyntaxTreeTest {
             fail(e.getMessage());
         }
         assertEquals(104, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    @DisplayName("Step by step")
+    void SBS_BasicOperations() throws Exception {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/BasicOperations.mjj");
+        int[] stepCount = {0};
+        AST.interpretationStoppedEvent.subscribe(d -> {
+            stepCount[0]++;
+            d.node().resumeInterpretation();
+        });
+        startInterpretation(AST, InterpretationMode.STEP_BY_STEP, memory);
+        interpretationThread.join();
+        assertEquals(2, stepCount[0]);
+        assertEquals(8, memoryStorage.get("x").valueInt);
+    }
+
+    @Test
+    @DisplayName("Breakpoints")
+    void BP_ComplexTree() throws Exception {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
+        List<Integer> breakPoints = List.of(15,17);
+        ASTMocks.addBreakPointsToMock(memory, breakPoints);
+        int[] breakPointValue = {0,0};
+        List<Integer> stoppedby = new ArrayList<>();
+
+        AST.interpretationStoppedEvent.subscribe(d -> {
+            stoppedby.add(d.line());
+            if(d.line() == 15){
+                breakPointValue[0] = memoryStorage.get("x").valueInt;
+            }
+            if(d.line() == 17){
+                breakPointValue[1] = memoryStorage.get("x").valueInt;
+            }
+            d.node().resumeInterpretation();
+        });
+        startInterpretation(AST, InterpretationMode.BREAKPOINTS, memory);
+        interpretationThread.join();
+        assertEquals(15, breakPointValue[0]);
+        assertEquals(10, breakPointValue[1]);
+        assertEquals(11, memoryStorage.get("x").valueInt);
+        assertEquals(breakPoints, stoppedby);
     }
 
     // Confirmation test

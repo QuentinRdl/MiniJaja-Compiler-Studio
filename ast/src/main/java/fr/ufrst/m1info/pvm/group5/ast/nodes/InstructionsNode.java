@@ -32,6 +32,7 @@ public class InstructionsNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
+        halt(m);
         instruction.interpret(m);
         if(otherInstructions!=null)
             otherInstructions.interpret(m);

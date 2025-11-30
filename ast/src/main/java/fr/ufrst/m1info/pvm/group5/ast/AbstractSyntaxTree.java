@@ -1,5 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.memory.Event;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaLexer;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaParser;
@@ -18,7 +20,11 @@ public class AbstractSyntaxTree {
      */
     public ClassNode root;
 
-    private AbstractSyntaxTree() {}
+    public Event<InterpretationStoppedData> interpretationStoppedEvent = new Event<>();
+
+    private AbstractSyntaxTree() {
+        ASTNode.InterpretationStoppedEvent.subscribe(d -> interpretationStoppedEvent.trigger(d));
+    }
 
     /**
      * Generate a new AST from a text input.
@@ -70,6 +76,16 @@ public class AbstractSyntaxTree {
      * @return memory resulting from the evaluation of the tree
      */
     public Memory interpret() throws Exception{
+        return interpret(InterpretationMode.DIRECT);
+    }
+
+    /**
+     * Interprets the tree in a given interpretation mode and returns the resulting memory.
+     * @param mode interpretation mode used for the interpretation
+     * @return memory resulting from the interpretation of the tree
+     */
+    public Memory interpret(InterpretationMode mode) throws Exception{
+        root.setInterpretationMode(mode);
         Memory m = new Memory();
         interpret(m);
         return m;
@@ -83,9 +99,30 @@ public class AbstractSyntaxTree {
      * @return memory after the interpretation
      */
     public Memory interpret(Memory m) throws Exception{
+        return interpret(m, InterpretationMode.DIRECT);
+    }
+
+    /**
+     * Interprets the tree from an existing memory, and returns the resulting memory.
+     * The memory passed in parameter will be used for the evaluation, and therefor modified.
+     * The returned object will be the same as the inputted one.
+     * @param m memory before the interpretation
+     * @param mode interpretation mode to use for the interpretation
+     * @return memory after the interpretation
+     */
+    public Memory interpret(Memory m, InterpretationMode mode) throws Exception{
+        root.setInterpretationMode(mode);
         root.checkType(new Memory());
         root.interpret(m);
         return m;
+    }
+
+    /**
+     * Allows to change the interpretation mode of the AST, event during an interpretation
+     * @param mode new interpretation mode
+     */
+    public void changeInterpretationMode(InterpretationMode mode){
+        root.setInterpretationMode(mode);
     }
 
     /**

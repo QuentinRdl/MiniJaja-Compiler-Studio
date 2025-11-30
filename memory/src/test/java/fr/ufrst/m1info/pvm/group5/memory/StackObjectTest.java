@@ -68,7 +68,7 @@ class StackObjectTest {
     @Test
     void constructNonVarWithDataType_throws() {
         assertThrows(Stack.InvalidStackObjectConstructionException.class, () ->
-            new StackObject("m", "val", 1, EntryKind.METHOD, DataType.INT)
+            new StackObject("m", "val", 1, EntryKind.OTHER, DataType.INT)
         );
     }
 }

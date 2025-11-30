@@ -138,6 +138,21 @@ public class Stack {
         stackContent.push(constant);
     }
 
+    /**
+     * Pushes a new method in the stack
+     * @param name name of the method
+     * @param value value of the method
+     */
+    public void setMeth(String name, Object value, DataType type) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidNameException("Method name cannot be null or empty");
+        }
+
+
+        StackObject method = new StackObject(name, value, 0, EntryKind.METHOD, type);
+        stackContent.push(method);
+    }
+
 
     /**
      * Returns the top object from the stack
@@ -299,15 +314,44 @@ public class Stack {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Stack{scopeDepth=").append(scopeDepth).append(", contents=");
-        sb.append('[');
-        boolean first = true;
+        sb.append("Stack{scopeDepth=").append(scopeDepth)
+          .append(", size=").append(stackContent.size())
+          .append(", contents=\n");
+
+        int idx = 0;
         for (StackObject obj : stackContent) {
-            if (!first) sb.append(", ");
-            sb.append(obj.toString());
-            first = false;
+            sb.append("  [").append(idx++).append("] ");
+
+            // Basic identity
+            String name = obj.getName();
+            sb.append(name == null ? "<anon>" : name).append("_").append(obj.getScope());
+
+            // Entry kind and declared DataType
+            sb.append(" \tkind=").append(obj.getEntryKind())
+              .append(" \tdataType=").append(obj.getDataType());
+
+            // Value description
+            Object val = obj.getValue();
+            sb.append(" \tvalue=");
+            if (val == null) {
+                sb.append("null");
+            } else if (val instanceof Value) {
+                Value v = (Value) val;
+                sb.append("Value(type=").append(v.type).append("){").append(v.toString()).append("}");
+            } else {
+                // For other objects, show runtime class and toString()
+                String cls = val.getClass().getSimpleName();
+                sb.append(cls).append("(").append(val.toString()).append(")");
+            }
+
+            // If the object is a constant and currently uninitialized, mark it
+            if (obj.getEntryKind() == fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind.CONSTANT && obj.getValue() == null) {
+                sb.append(" [const:uninitialized]");
+            }
+
+            sb.append('\n');
         }
-        sb.append(']');
+
         sb.append('}');
         return sb.toString();
     }

@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.interpreter;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,16 @@ class InterpreterJajaCodeTest {
         String input = "init\n"
                 + "jcstop";
         Assertions.assertNull(ijc.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Pop Array")
+    void InterpretPopArray() {
+        String input = "init\npush(3)\nnewarray(xa,INT)\npop\n"
+                + "jcstop";
+        Assertions.assertNull(ijc.interpretCode(input));
+        Heap h=ijc.getMemory().getHeap();
+        assertEquals(h.getTotalSize(),h.getAvailableSize());
     }
 
     @Test
@@ -64,6 +75,12 @@ class InterpreterJajaCodeTest {
     @DisplayName("Interpret File Loops")
     void Loops() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Loops.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Method")
+    void Method() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Method.jjc"));
     }
 
     @Test
@@ -124,6 +141,16 @@ class InterpreterJajaCodeTest {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteLoops.jjc"));
         writer.textChangedEvent.subscribe(e -> {
             assertEquals("x : 0\nx : 8\nx : 16\nx : 24\nx : 32\nx : 40\nx : 48\nx : 56\nx : 64\nx : 72\nx : 80\nx : 88\nx : 96\nx : 104\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File WriteMethod")
+    void WriteMethod() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/WriteMethod.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 1\ny : 100\nop2 : 100\nop1 : 1\nx : 101\n", e.oldText());
         });
         writer.write("");
     }

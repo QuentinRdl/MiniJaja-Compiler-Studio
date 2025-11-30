@@ -5,6 +5,8 @@ import org.junit.jupiter.api.*;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 
 import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
+import java.util.List;
 
 class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
@@ -850,5 +852,60 @@ class InterpreterMiniJajaTest {
     void nullFilepath() {
         String errMessage=imj.interpretFile(null);
         Assertions.assertNotEquals(null,errMessage);
+    }
+
+    /* Step by step // Breakpoints */
+    @Test
+    @DisplayName("Interpret -  step by step")
+    void stepByStep() {
+        int[] steps = {0};
+        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
+        imj.interpretationHaltedEvent.subscribe(event -> {
+            steps[0]++;
+            imj.resumeInterpretation(im);
+        });
+        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imj.waitInterpretation();
+        Assertions.assertTrue(steps[0] >= 5); // 5 steps + end event trigger potentially triggered
+    }
+
+    @Test
+    @DisplayName("Interpret -  breakpoints")
+    void breakpoints() throws InterruptedException {
+        int[] steps = {0};
+        InterpretationMode im = InterpretationMode.BREAKPOINTS;
+        imj.interpretationHaltedEvent.subscribe(event -> {
+            steps[0]++;
+            if(event.isPursuable())
+                imj.resumeInterpretation(im);
+        });
+        imj.setBreakpoints(List.of(14,16));
+        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imj.waitInterpretation();
+        Assertions.assertTrue(steps[0] >= 2); // 2 breakpoints + end event trigger potentially triggered
+    }
+
+    @Test
+    @DisplayName("Interpret - error during step by step")
+    void errorDuringStepByStep() {
+        int[] steps = {0};
+        List<String> errors = new ArrayList<>();
+        // Creating result
+        List<String> expectedErrors = new ArrayList<>();
+        expectedErrors.add(null);
+        expectedErrors.add(null);
+        expectedErrors.add("Variable b is undefined");
+
+        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
+        imj.interpretationHaltedEvent.subscribe(event -> {
+            steps[0]++;
+            errors.add(event.error());
+            imj.resumeInterpretation(im);
+        });
+
+        imj.startCodeInterpretation("class C { int a = 1; int b; main{a++; b++;}}", im);
+        imj.waitInterpretation();
+        Assertions.assertTrue(steps[0] >= 2);
+        Assertions.assertTrue(errors.containsAll(expectedErrors));
     }
 }

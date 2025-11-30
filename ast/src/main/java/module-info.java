@@ -6,5 +6,7 @@ module fr.ufrst.m1info.pvm.group5.ast {
     exports fr.ufrst.m1info.pvm.group5.ast;
     opens fr.ufrst.m1info.pvm.group5.ast.nodes;
 
+    exports fr.ufrst.m1info.pvm.group5.ast.nodes;
+
     exports fr.ufrst.m1info.pvm.group5.ast.instructions;
 }

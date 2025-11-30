@@ -43,12 +43,14 @@ instruction returns [Instruction inst]
     | 'neg' {$inst = new NegInstruction();}
     | 'not' {$inst = new NotInstruction();}
     | 'inc' '(' i=IDENTIFIER ')' {$inst = new IncInstruction($i.text);}
+    | 'invoke' '(' i=IDENTIFIER ')' {$inst = new InvokeInstruction($i.text);}
     | 'write' {$inst = new WriteInstruction();}
     | 'writeln' {$inst = new WritelnInstruction();}
     | 'init' {$inst = new InitInstruction();}
     | 'jcstop' {$inst = new JcstopInstruction();}
     | 'if' '(' n=NOMBRE ')' {$inst = new IfInstruction(Integer.parseInt($n.text));}
     | 'new' '(' id=IDENTIFIER ',' type ',' entrykind ',' scope=NOMBRE ')' {$inst = new NewInstruction($id.text,$type.dt,$entrykind.ek,Integer.parseInt($scope.text));}
+    | 'newarray' '(' id=IDENTIFIER ',' type ')' {$inst = new NewarrayInstruction($id.text,$type.dt);}
     ;
 
 valeur returns [Value v]
@@ -78,6 +80,7 @@ type returns [DataType dt]
 entrykind returns [EntryKind ek]
      : 'var' {$ek = EntryKind.VARIABLE;}
      | 'cst' {$ek = EntryKind.CONSTANT;}
+     | 'meth' {$ek = EntryKind.METHOD;}
      ;
 
 IDENTIFIER

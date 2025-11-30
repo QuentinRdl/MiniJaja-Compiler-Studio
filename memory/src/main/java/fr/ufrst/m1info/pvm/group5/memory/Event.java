@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
@@ -44,5 +45,18 @@ public class Event<T> {
         for(Consumer<T> c : subscribers){
             c.accept(eventData);
         }
+    }
+
+    /**
+     * Trigger the event with the event data
+     * /!\ This function should not be called by subscribers
+     * @param eventData data of the event
+     */
+    public void triggerAsync(T eventData){
+        CompletableFuture.runAsync(() -> {
+            for (Consumer<T> c : subscribers) {
+                c.accept(eventData);
+            }
+        });
     }
 }

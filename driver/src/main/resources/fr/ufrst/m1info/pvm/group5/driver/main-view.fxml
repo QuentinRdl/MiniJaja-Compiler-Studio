@@ -20,6 +20,8 @@
 <?import javafx.scene.control.SplitPane.Divider?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.Region?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.pvm.group5.driver.MainController">
 
   <top>
@@ -28,9 +30,20 @@
       <Button text="Open" fx:id="btnOpen" onAction="#selectFileButton"/>
       <Button text="Save" fx:id="btnSave" onAction="#saveButton"/>
       <Button text="Save As" fx:id="btnSaveAs" onAction="#saveAsButton"/>
+
+      <Region fx:id="spacer1" prefWidth="20"/>
+
       <Button text="Run" fx:id="btnRun" onAction="#onRunClicked"/>
       <Button text="Compile" fx:id="btnCompile" onAction="#onCompileClicked"/>
       <Button text="Compile and run" fx:id="btnRunCompile" onAction="#onCompileAndRunClicked"/>
+
+      <Region fx:id="spacer2" prefWidth="50"/>
+
+      <Label text="Debug : "/>
+      <Button text="Run" fx:id="btnDebugRun" onAction="#onClickRunDebug"/>
+      <Button text="Next" fx:id="btnDebugNext" onAction="#onClickNextDebug"/>
+      <Button text="Stop" fx:id="btnDebugStop" onAction="#onClickStopDebug"/>
+
     </ToolBar>
   </top>
 
@@ -53,9 +66,11 @@
           <Tab text="Source Code" closable="false">
             <ListView fx:id="codeListView"/>
           </Tab>
-          <Tab fx:id="compiledTab" text="Compiled Code" closable="true">
+          <Tab fx:id="compiledTab" text="Compiled Code">
             <ListView fx:id="compiledCodeListView"/>
           </Tab>
+          <Tab fx:id="memoryTabMinijaja" text="MiniJaja Memory Visualisation"/>
+          <Tab fx:id="memoryTabJajacode" text="JajaCode Memory Visualisation"/>
         </TabPane>
 
         <TextArea fx:id="output" editable="false" prefHeight="150"/>
