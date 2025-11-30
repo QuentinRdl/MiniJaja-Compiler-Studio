@@ -26,16 +26,16 @@ public class StackObject {
      * @param dataType dataType of the object
      */
     public StackObject(String name, Object value, int scope, EntryKind kind, DataType dataType) {
-        if (kind == EntryKind.VARIABLE || kind == EntryKind.CONSTANT) {
+        if (kind == EntryKind.VARIABLE || kind == EntryKind.CONSTANT || kind == EntryKind.METHOD) {
             if (dataType == null) {
                 throw new Stack.InvalidStackObjectConstructionException(
-                        "VARIABLE or CONSTANT must specify a valid DataType"
+                        "VARIABLE, CONSTANT or METHOD must specify a valid DataType"
                 );
             }
         } else if(dataType != DataType.UNKNOWN) {
             if (dataType != null) {
                 throw new Stack.InvalidStackObjectConstructionException(
-                        "Non-variable/non-constant objects should not specify DataType"
+                        "Non-variable/non-constant/non-method objects should not specify DataType"
                 );
             }
         }

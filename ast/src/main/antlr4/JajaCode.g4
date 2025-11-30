@@ -80,6 +80,7 @@ type returns [DataType dt]
 entrykind returns [EntryKind ek]
      : 'var' {$ek = EntryKind.VARIABLE;}
      | 'cst' {$ek = EntryKind.CONSTANT;}
+     | 'meth' {$ek = EntryKind.METHOD;}
      ;
 
 IDENTIFIER

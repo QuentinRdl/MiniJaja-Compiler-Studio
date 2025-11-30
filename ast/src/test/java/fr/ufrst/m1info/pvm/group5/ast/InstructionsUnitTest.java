@@ -207,14 +207,6 @@ class InstructionsUnitTest {
     }
 
     @Test
-    void new_var_int_swap_empty_stack() throws Exception {
-        Instruction pushInstr = new PushInstruction(new Value(3));
-        Instruction newInstr = new NewInstruction("x", DataType.INT, EntryKind.METHOD,1);
-        pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidMemoryException.class,() -> newInstr.execute(1,memory));
-    }
-
-    @Test
     void newarray_int() throws Exception {
         Instruction pushInstr = new PushInstruction(new Value(3));
         Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
