@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.interpreter;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,16 @@ class InterpreterJajaCodeTest {
         String input = "init\n"
                 + "jcstop";
         Assertions.assertNull(ijc.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Pop Array")
+    void InterpretPopArray() {
+        String input = "init\npush(3)\nnewarray(xa,INT)\npop\n"
+                + "jcstop";
+        Assertions.assertNull(ijc.interpretCode(input));
+        Heap h=ijc.getMemory().getHeap();
+        assertEquals(h.getTotalSize(),h.getAvailableSize());
     }
 
     @Test
