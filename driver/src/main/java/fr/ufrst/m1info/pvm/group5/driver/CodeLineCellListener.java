@@ -36,4 +36,6 @@ public interface CodeLineCellListener {
      */
     void onDownPressed(int index);
 
+    void onModified();
+
 }

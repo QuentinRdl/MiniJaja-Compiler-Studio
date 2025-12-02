@@ -80,6 +80,9 @@ public class MainController {
 
     private MemoryVisualisation memoryVisualisationJajaCode;
 
+    private boolean isModified = false;
+    private boolean isLoadingFile = false;
+
     @FXML
     private Button btnSave;
     @FXML
@@ -119,11 +122,13 @@ public class MainController {
                 @Override
                 public void onEnterPressed(CodeLine codeLine) {
                     handleEnterPressed(codeLine);
+                    markAsModified();
                 }
 
                 @Override
                 public void onDeletePressed(CodeLine codeLine) {
                     handleDeleteEmptyLine(codeLine);
+                    markAsModified();
                 }
 
                 @Override
@@ -131,6 +136,12 @@ public class MainController {
 
                 @Override
                 public void onDownPressed(int index) { handleDownPressed(index);}
+
+                @Override
+                public void onModified(){
+                    if(isLoadingFile) return;
+                    markAsModified();
+                }
             });
             return cell;
         });
@@ -267,6 +278,7 @@ public class MainController {
         }
 
         try {
+            isLoadingFile = true;
             // Delete old cells
             codeLines.clear();
 
@@ -282,6 +294,7 @@ public class MainController {
 
             currentFile = selectedFile;
 
+            isModified = false;
             sourceTab.setText(currentFile.getName());
 
             compiledCodeLines.clear();
@@ -290,6 +303,10 @@ public class MainController {
             hideMemoryTab(memoryTabMinijaja);
             clearMemoryVisualisation(memoryVisualisationJajaCode);
             hideMemoryTab(memoryTabJajacode);
+
+            Platform.runLater(() -> {
+                isLoadingFile = false;
+            });
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -435,9 +452,9 @@ public class MainController {
      */
     public void saveAs(File file){
         if (file != null){
-          saveToFile(file);
-          currentFile = file;
-          sourceTab.setText(currentFile.getName());
+            currentFile = file;
+            saveToFile(file);
+            sourceTab.setText(currentFile.getName());
         }
     }
 
@@ -453,6 +470,8 @@ public class MainController {
             Files.write(file.toPath(), lines , StandardCharsets.UTF_8);
 
             console.getWriter().writeLine("[INFO] File saved " + file.getName());
+            isModified = false;
+            sourceTab.setText(currentFile.getName());
 
         } catch (IOException e){
             console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
@@ -760,6 +779,7 @@ public class MainController {
         codeLines.add(new CodeLine(1, ""));
         codeListView.getSelectionModel().select(0);
         currentFile = null;
+        isModified = false;
         sourceTab.setText("Untitled");
 
         compiledCodeLines.clear();
@@ -1072,5 +1092,18 @@ public class MainController {
      */
     public void onClickNextDebug(){
         //TODO
+    }
+
+    private void markAsModified(){
+        if(!isModified){
+            isModified = true;
+
+            if(currentFile != null){
+                sourceTab.setText(currentFile.getName() + " •");
+            } else {
+                sourceTab.setText("Untitled •");
+            }
+        }
+
     }
 }
