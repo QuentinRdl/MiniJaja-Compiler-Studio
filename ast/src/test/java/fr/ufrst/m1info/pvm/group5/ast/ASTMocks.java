@@ -71,7 +71,8 @@ class ASTMocks {
 
         doAnswer( invocation -> {
                     String ident = invocation.getArgument(0);
-                    storage.put(ident, new Value(invocation.getArgument(1)));
+                    int size = invocation.getArgument(1);
+                    storage.put(ident, new Value(size));
                     return null;
                 }
         ).when(result).declTab(any(String.class), anyInt(), any(DataType.class));

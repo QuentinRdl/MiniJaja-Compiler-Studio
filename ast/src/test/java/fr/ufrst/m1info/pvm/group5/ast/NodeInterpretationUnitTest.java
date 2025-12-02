@@ -103,6 +103,7 @@ class NodeInterpretationUnitTest {
         assertThrows(ASTBuildException.class, () -> new AffectationNode(lop, null));
     }
 
+
     /**
      * And Node
      */
@@ -595,6 +596,164 @@ class NodeInterpretationUnitTest {
         inc.interpret(memory);
         assertEquals(6, memoryStorage.get("x").valueInt);
     }
+    @Test
+    @DisplayName("IncNode - interpret() with array access and constant index")
+    void IncNode_ArrayAccess_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(2));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("tab".equals(ident) && index == 2) {
+                return new Value(10);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        IncNode inc = new IncNode(tabNode);
+        inc.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(11, capturedValue[0].valueInt);
+        verify(memory).valT("tab", 2);
+        verify(memory).affectValT(eq("tab"), eq(2), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("IncNode - interpret() with array access and variable index")
+    void IncNode_ArrayAccess_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        IdentNode indexExpr = new IdentNode("i");
+        memoryStorage.put("i", new Value(5));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("arr".equals(ident) && index == 5) {
+                return new Value(42);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        final int[] capturedIndex = new int[1];
+        doAnswer(invocation -> {
+            capturedIndex[0] = invocation.getArgument(1);
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        IncNode inc = new IncNode(tabNode);
+        inc.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(43, capturedValue[0].valueInt);
+        assertEquals(5, capturedIndex[0]);
+        verify(memory).valT("arr", 5);
+        verify(memory).affectValT(eq("arr"), eq(5), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("IncNode - interpret() with array access and expression index")
+    void IncNode_ArrayAccess_ExpressionIndex() {
+        IdentNode arrayIdent = new IdentNode("data");
+        IdentNode varIdent = new IdentNode("i");
+        NumberNode oneNode = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(1));
+        AddNode indexExpr = new AddNode(varIdent, oneNode);
+        memoryStorage.put("i", new Value(3));
+
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("data".equals(ident) && index == 4) {
+                return new Value(100);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        IncNode inc = new IncNode(tabNode);
+        inc.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(101, capturedValue[0].valueInt);
+        verify(memory).valT("data", 4);
+        verify(memory).affectValT(eq("data"), eq(4), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("IncNode - interpret() fails with non-integer index")
+    void IncNode_ArrayAccess_NonIntegerIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        BooleanNode indexExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IncNode inc = new IncNode(tabNode);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> inc.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("IncNode - interpret() with array access at index 0")
+    void IncNode_ArrayAccess_IndexZero() {
+        IdentNode arrayIdent = new IdentNode("values");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(0));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("values".equals(ident) && index == 0) {
+                return new Value(999);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        IncNode inc = new IncNode(tabNode);
+        inc.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(1000, capturedValue[0].valueInt);
+        verify(memory).valT("values", 0);
+        verify(memory).affectValT(eq("values"), eq(0), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("IncNode - interpret() with negative initial value")
+    void IncNode_ArrayAccess_NegativeValue() {
+        IdentNode arrayIdent = new IdentNode("numbers");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(1));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("numbers".equals(ident) && index == 1) {
+                return new Value(-5);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        IncNode inc = new IncNode(tabNode);
+        inc.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(-4, capturedValue[0].valueInt);
+        verify(memory).valT("numbers", 1);
+        verify(memory).affectValT(eq("numbers"), eq(1), any(Value.class));
+    }
 
     /**
      * InstructionsNode
@@ -849,6 +1008,191 @@ class NodeInterpretationUnitTest {
         assertThrows(ASTBuildException.class, () -> new SumNode(null, rop));
         ASTNode newrop = mock(ASTNode.class);
         assertThrows(ASTBuildException.class, () -> new SumNode(lop, null));
+    }
+    @Test
+    @DisplayName("SumNode - interpret() with array access and constant index")
+    void SumNode_ArrayAccess_ConstantIndex() {
+        IdentNode arrayIdent = new IdentNode("tab");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(2));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(10));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("tab".equals(ident) && index == 2) {
+                return new Value(20);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        sumNode.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(30, capturedValue[0].valueInt);
+        verify(memory).valT("tab", 2);
+        verify(memory).affectValT(eq("tab"), eq(2), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() with array access and variable index")
+    void SumNode_ArrayAccess_VariableIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        IdentNode indexExpr = new IdentNode("i");
+        memoryStorage.put("i", new Value(5));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IdentNode valueExpr = new IdentNode("x");
+        memoryStorage.put("x", new Value(7));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("arr".equals(ident) && index == 5) {
+                return new Value(42);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        final int[] capturedIndex = new int[1];
+        doAnswer(invocation -> {
+            capturedIndex[0] = invocation.getArgument(1);
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        sumNode.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(49, capturedValue[0].valueInt);
+        assertEquals(5, capturedIndex[0]);
+        verify(memory).valT("arr", 5);
+        verify(memory).affectValT(eq("arr"), eq(5), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() with array access and expression index")
+    void SumNode_ArrayAccess_ExpressionIndex() {
+        IdentNode arrayIdent = new IdentNode("data");
+        IdentNode varIdent = new IdentNode("i");
+        NumberNode oneNode = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(1));
+        AddNode indexExpr = new AddNode(varIdent, oneNode);
+        memoryStorage.put("i", new Value(3));
+
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        IdentNode valueExpr = new IdentNode("y");
+        memoryStorage.put("y", new Value(15));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("data".equals(ident) && index == 4) {
+                return new Value(100);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        sumNode.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(115, capturedValue[0].valueInt);
+        verify(memory).valT("data", 4);
+        verify(memory).affectValT(eq("data"), eq(4), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() fails with non-integer index")
+    void SumNode_ArrayAccess_NonIntegerIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        BooleanNode indexExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(5));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() fails with non-integer value")
+    void SumNode_ArrayAccess_NonIntegerValue() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(2));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        BooleanNode valueExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() with array access at index 0")
+    void SumNode_ArrayAccess_IndexZero() {
+        IdentNode arrayIdent = new IdentNode("values");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(0));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(50));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("values".equals(ident) && index == 0) {
+                return new Value(999);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        sumNode.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(1049, capturedValue[0].valueInt);
+        verify(memory).valT("values", 0);
+        verify(memory).affectValT(eq("values"), eq(0), any(Value.class));
+    }
+
+    @Test
+    @DisplayName("SumNode - interpret() with negative values")
+    void SumNode_ArrayAccess_NegativeValues() {
+        IdentNode arrayIdent = new IdentNode("numbers");
+        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(1));
+        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
+
+        NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(-10));
+        doAnswer(invocation -> {
+            String ident = invocation.getArgument(0);
+            int index = invocation.getArgument(1);
+            if ("numbers".equals(ident) && index == 1) {
+                return new Value(5);
+            }
+            throw new ASTInvalidMemoryException("Array access error");
+        }).when(memory).valT(any(String.class), any(Integer.class));
+        final Value[] capturedValue = new Value[1];
+        doAnswer(invocation -> {
+            capturedValue[0] = invocation.getArgument(2);
+            return null;
+        }).when(memory).affectValT(any(String.class), any(Integer.class), any(Value.class));
+
+        SumNode sumNode = new SumNode(tabNode, valueExpr);
+        sumNode.interpret(memory);
+        assertNotNull(capturedValue[0]);
+        assertEquals(-5, capturedValue[0].valueInt);
+        verify(memory).valT("numbers", 1);
+        verify(memory).affectValT(eq("numbers"), eq(1), any(Value.class));
     }
 
     /**
@@ -1362,6 +1706,258 @@ class NodeInterpretationUnitTest {
         IdentNode ident = new IdentNode("anyFunc");
         AppelENode node = new AppelENode(ident, null);
         assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
+    }
+    @Test
+    @DisplayName("ArrayNode.interpret() - declares int array with correct size")
+    public void testArrayNode_Interpret_IntArray() throws Exception {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = new NumberNode(5);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertDoesNotThrow(() -> node.interpret(memory));
+
+        verify(memory).declTab(eq("arr"), eq(5), eq(DataType.INT));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.interpret() - declares bool array with correct size")
+    public void testArrayNode_Interpret_BoolArray() throws Exception {
+        TypeNode typeNode = new TypeNode(ValueType.BOOL);
+        IdentNode ident = new IdentNode("flags");
+        NumberNode sizeExpr = new NumberNode(10);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertDoesNotThrow(() -> node.interpret(memory));
+
+        verify(memory).declTab(eq("flags"), eq(10), eq(DataType.BOOL));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.interpret() - evaluates size expression correctly")
+    public void testArrayNode_Interpret_ExpressionSize() throws Exception {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("matrix");
+        NumberNode left = new NumberNode(5);
+        NumberNode right = new NumberNode(3);
+        AddNode sizeExpr = new AddNode(left, right);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertDoesNotThrow(() -> node.interpret(memory));
+
+        verify(memory).declTab(eq("matrix"), eq(8), eq(DataType.INT));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.interpret() - throws exception for non-int size")
+    public void testArrayNode_Interpret_NonIntSize() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        BooleanNode sizeExpr = new BooleanNode(true);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.interpret() - throws exception for negative size")
+    public void testArrayNode_Interpret_NegativeSize() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = new NumberNode(-5);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.interpret() - throws exception for zero size")
+    public void testArrayNode_Interpret_ZeroSize() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = new NumberNode(0);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.withdrawInterpret() - withdraws array declaration")
+    public void testArrayNode_WithdrawInterpret() {
+        TypeNode typeNode = new TypeNode(ValueType.INT);
+        IdentNode ident = new IdentNode("arr");
+        NumberNode sizeExpr = new NumberNode(5);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertDoesNotThrow(() -> node.withdrawInterpret(memory));
+
+        verify(memory).withdrawDecl(eq("arr"));
+    }
+
+    @Test
+    @DisplayName("ArrayNode.withdrawInterpret() - works for bool array")
+    public void testArrayNode_WithdrawInterpret_BoolArray() {
+        TypeNode typeNode = new TypeNode(ValueType.BOOL);
+        IdentNode ident = new IdentNode("flags");
+        NumberNode sizeExpr = new NumberNode(10);
+
+        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
+        assertDoesNotThrow(() -> node.withdrawInterpret(memory));
+
+        verify(memory).withdrawDecl(eq("flags"));
+    }
+
+    @Test
+    @DisplayName("TabNode.interpret() - throws exception (not interpretable)")
+    public void testTabNode_Interpret_ThrowsException() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(0);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - returns value at valid index")
+    public void testTabNode_Eval_ValidIndex() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(2);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+        when(memory.valT("arr", 2)).thenReturn(new Value(42));
+
+        TabNode node = new TabNode(ident, indexExpr);
+        Value result = node.eval(memory);
+
+        assertEquals(ValueType.INT, result.type);
+        assertEquals(42, result.valueInt);
+        verify(memory).valT(eq("arr"), eq(2));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - returns bool value at valid index")
+    public void testTabNode_Eval_ValidBoolIndex() {
+        IdentNode ident = new IdentNode("flags");
+        NumberNode indexExpr = new NumberNode(0);
+
+        when(memory.tabLength("flags")).thenReturn(3);
+        when(memory.valT("flags", 0)).thenReturn(new Value(true));
+
+        TabNode node = new TabNode(ident, indexExpr);
+        Value result = node.eval(memory);
+
+        assertEquals(ValueType.BOOL, result.type);
+        assertTrue(result.valueBool);
+        verify(memory).valT(eq("flags"), eq(0));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - works with expression as index")
+    public void testTabNode_Eval_ExpressionIndex() {
+        IdentNode arrayIdent = new IdentNode("arr");
+        NumberNode left = new NumberNode(2);
+        NumberNode right = new NumberNode(3);
+        AddNode indexExpr = new AddNode(left, right);
+
+        when(memory.tabLength("arr")).thenReturn(10);
+        when(memory.valT("arr", 5)).thenReturn(new Value(123));
+
+        TabNode node = new TabNode(arrayIdent, indexExpr);
+        Value result = node.eval(memory);
+
+        assertEquals(ValueType.INT, result.type);
+        assertEquals(123, result.valueInt);
+        verify(memory).valT(eq("arr"), eq(5));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - throws exception for negative index")
+    public void testTabNode_Eval_NegativeIndex() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(-1);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - throws exception for index out of bounds")
+    public void testTabNode_Eval_IndexOutOfBounds() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(10);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - throws exception for index equal to array length")
+    public void testTabNode_Eval_IndexEqualToLength() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(5);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - throws exception for non-int index")
+    public void testTabNode_Eval_NonIntIndex() {
+        IdentNode ident = new IdentNode("arr");
+        BooleanNode indexExpr = new BooleanNode(true);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.eval(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - throws exception for non-evaluable index")
+    public void testTabNode_Eval_NonEvaluableIndex() {
+        IdentNode ident = new IdentNode("arr");
+        ASTNode indexExpr = mock(ASTNode.class);
+
+        TabNode node = new TabNode(ident, indexExpr);
+        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - accesses first element (index 0)")
+    public void testTabNode_Eval_FirstElement() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(0);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+        when(memory.valT("arr", 0)).thenReturn(new Value(100));
+
+        TabNode node = new TabNode(ident, indexExpr);
+        Value result = node.eval(memory);
+
+        assertEquals(ValueType.INT, result.type);
+        assertEquals(100, result.valueInt);
+    }
+
+    @Test
+    @DisplayName("TabNode.eval() - accesses last element")
+    public void testTabNode_Eval_LastElement() {
+        IdentNode ident = new IdentNode("arr");
+        NumberNode indexExpr = new NumberNode(4);
+
+        when(memory.tabLength("arr")).thenReturn(5);
+        when(memory.valT("arr", 4)).thenReturn(new Value(200));
+
+        TabNode node = new TabNode(ident, indexExpr);
+        Value result = node.eval(memory);
+
+        assertEquals(ValueType.INT, result.type);
+        assertEquals(200, result.valueInt);
     }
 
 }
