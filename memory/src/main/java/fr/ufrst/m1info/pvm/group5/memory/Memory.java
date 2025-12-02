@@ -86,7 +86,6 @@ public class Memory {
             throw new MemoryIllegalArgException("One of the following arguments are not compatible with this function call : identifier = " + identifier + " value = " + value + " type = " + type + " kind = " + kind);
         }
         if(kind != EntryKind.VARIABLE && kind != EntryKind.CONSTANT && kind != EntryKind.METHOD) {
-            // TODO : Implement for different EntryKind
             throw new MemoryIllegalArgException("Pushing with " + kind + " as en EntryKind is invalid !");
         }
 
@@ -108,8 +107,6 @@ public class Memory {
             SymbolTableEntry entry = new SymbolTableEntry(identifier, kind, type);
             symbolTable.addEntry(entry);
         }
-
-        // TODO : Implement other kinds
     }
 
     /**
@@ -122,7 +119,7 @@ public class Memory {
             if (ste!=null && ste.getKind()==EntryKind.ARRAY){
                 heap.removeReference((int) top.getValue());
             }
-            symbolTable.removeEntry(top.getName()); // TODO : Check in unit tests
+            symbolTable.removeEntry(top.getName());
         }
         return top.getValue();
     }
@@ -233,19 +230,6 @@ public class Memory {
             throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
         }
 
-        // Ensure declared type matches given value type
-        /* TODO :
-        DataType declared = entry.getDataType();
-        if (declared != givenDataType) {
-            if(declared == DataType.UNKNOWN) {
-                // This is the first declaration, we change the type, and continue
-                entry.setDataType(givenDataType);
-            } else {
-                throw new IllegalArgumentException("Type mismatch when affecting value to '" + identifier + "' : declared=" + declared + " given=" + givenDataType);
-            }
-        }
-        */
-
         // Handle according to the kind
         if(entry.getKind() == EntryKind.ARRAY) {
             // Remove the reference from old array
@@ -272,7 +256,6 @@ public class Memory {
             return;
         }
 
-        // TODO : For other kinds, we don't support assignment yet
         throw new MemoryIllegalArgException("affectValue is not supported YET for EntryKind: " + entry.getKind());
     }
 
