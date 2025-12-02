@@ -68,6 +68,9 @@ public class MainController {
     private TabPane editorTabPane;
 
     @FXML
+    private Tab sourceTab;
+
+    @FXML
     private Tab compiledTab;
 
     @FXML
@@ -283,6 +286,8 @@ public class MainController {
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
             activeButtons();
+
+            sourceTab.setText(currentFile.getName());
 
             compiledCodeLines.clear();
             hideCompileTab();
@@ -764,6 +769,7 @@ public class MainController {
         activeButtons();
         currentFile = null;
         fileLabel.setText("New file");
+        sourceTab.setText("Untitled");
 
         compiledCodeLines.clear();
         hideCompileTab();
@@ -833,6 +839,7 @@ public class MainController {
         compileTask.setOnSucceeded(e -> {
             String res = compileTask.getValue();
             if (res != null){
+                compiledTab.setText(getBaseFileName(currentFile.getName()) + ".jjc");
                 showCompiledTab();
                 loadCompiledCodeToListView(res);
                 console.getWriter().writeLine("[INFO] Compilation successful!");
@@ -884,6 +891,7 @@ public class MainController {
         compileAndRunTask.setOnSucceeded(e -> {
             String compiledCode = compileAndRunTask.getValue();
             if(compiledCode != null) {
+                compiledTab.setText(getBaseFileName(currentFile.getName()) + ".jjc");
                 showCompiledTab();
                 loadCompiledCodeToListView(compiledCode);
 

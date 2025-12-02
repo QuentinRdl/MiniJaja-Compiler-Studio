@@ -63,7 +63,7 @@
 
       <SplitPane fx:id="splitPane">
         <TabPane fx:id="editorTabPane">
-          <Tab text="Source Code" closable="false">
+          <Tab fx:id="sourceTab" text="Source Code" closable="false">
             <ListView fx:id="codeListView"/>
           </Tab>
           <Tab fx:id="compiledTab" text="Compiled Code">
