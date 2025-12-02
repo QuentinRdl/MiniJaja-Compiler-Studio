@@ -560,23 +560,26 @@ class StackTest {
     }
 
 
-
-    /* TODO : Replace with the correct format
-    @Test(expected = Stack.InvalidNameException.class)
+    @Test
     public void setVar_nullName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
-        s.setVar(null, 42, DataType.INT);
+
+        assertThrows(Stack.InvalidNameException.class, () -> {
+            s.setVar(null, 42, DataType.INT);
+        });
     }
 
-    @Test(expected = Stack.InvalidNameException.class)
+
+    @Test
     public void setVar_emptyName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
-        s.setVar("", 42, DataType.INT);
+        assertThrows(Stack.InvalidNameException.class, () -> {
+            s.setVar("", 42, DataType.INT);
+        });
     }
 
-     */
 
     @Test
     void searchObject_returnsObjectWhenPresent() {
