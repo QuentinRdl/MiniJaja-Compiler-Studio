@@ -1051,9 +1051,9 @@ class MainControllerTest extends ApplicationTest {
 
         // Check that the console prints the right error
         // We want :
-        // - "[ERROR] No code to compile !" <- for compiler
-        // - "[ERROR] No code to interpret !" <- for interpreter
-        assertTrue(controller.output.getText().contains("[ERROR] No code to interpret !"));
+        // - "[INFO] No code to compile !" <- for compiler
+        // - "[INFO] No code to interpret !" <- for interpreter
+        assertTrue(controller.output.getText().contains("[INFO] No code to interpret !"));
     }
 
 
@@ -1063,12 +1063,12 @@ class MainControllerTest extends ApplicationTest {
      */
     static Stream<Arguments> notVisibleCharsTests() {
         return Stream.of(
-                Arguments.of("blank_run", "   \n   ", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
-                Arguments.of("blank_run_oneSpace", " ", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
-                Arguments.of("blank_run_tab", "\t   \t", (Consumer<MainController>) (MainController::onRunClicked), "[ERROR] No code to interpret !"),
-                Arguments.of("blank_compile", " ", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
-                Arguments.of("blank_compile", "   \n    ", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
-                Arguments.of("blank_compile_tab", "\t   \t", (Consumer<MainController>) (MainController::onCompileClicked), "[ERROR] No code to compile !"),
+                Arguments.of("blank_run", "   \n   ", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
+                Arguments.of("blank_run_oneSpace", " ", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
+                Arguments.of("blank_run_tab", "\t   \t", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
+                Arguments.of("blank_compile", " ", (Consumer<MainController>) (MainController::onCompileClicked), "[INFO] No code to compile !"),
+                Arguments.of("blank_compile", "   \n    ", (Consumer<MainController>) (MainController::onCompileClicked), "[INFO] No code to compile !"),
+                Arguments.of("blank_compile_tab", "\t   \t", (Consumer<MainController>) (MainController::onCompileClicked), "[INFO] No code to compile !"),
                 Arguments.of("valid_run", "class C { main { int x = 1; }}", (Consumer<MainController>) (MainController::onRunClicked), ""),
                 Arguments.of("valid_compile", "class C { main { int x = 1; }}", (Consumer<MainController>) (MainController::onCompileClicked), "")
         );
