@@ -131,9 +131,10 @@ public class MainController {
         });
 
         hideCompileTab();
-        deactiveButtons();
         setupOutputContextMenu();
         setupKeyboardShortcuts();
+
+        createNewFile();
     }
 
 
@@ -224,7 +225,6 @@ public class MainController {
 
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
-            activeButtons();
 
             compiledCodeLines.clear();
             hideCompileTab();
@@ -696,7 +696,6 @@ public class MainController {
         codeLines.clear();
         codeLines.add(new CodeLine(1, ""));
         codeListView.getSelectionModel().select(0);
-        activeButtons();
         currentFile = null;
         fileLabel.setText("New file");
 
