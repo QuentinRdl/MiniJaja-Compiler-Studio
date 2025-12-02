@@ -63,7 +63,11 @@ public class HashMap<K,V>
         if (key==null){
             return 0;
         }
-        return Math.abs(key.hashCode()) % capacity;
+        //return Math.abs(key.hashCode()) % capacity; => Provokes a sonarQube issue so we do the .abs value ourselves
+        // because just removing the .abs makes errors in the tests
+        int res = key.hashCode() % capacity;
+        if(res < 0) return -res;
+        return res;
     }
 
     /**

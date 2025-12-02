@@ -417,7 +417,9 @@ public class Heap {
         }
         // If the defragment method was called, at least one allocated and unallocated element were seen
         // Therefor, the following calls are safe
+        if(prev == null) return;
         prev.next = freeElements; // Chaining the last allocated element to the free one
+        if(freeElements == null) return;
         freeElements.prev = prev;
         freeElements.tryMerge(); // Merging all unallocated elements
         freeElements.internalAddress = lastAvailableAddress;

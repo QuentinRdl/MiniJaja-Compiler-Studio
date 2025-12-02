@@ -11,6 +11,8 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
+import java.util.Objects;
+
 public class NewarrayInstruction extends Instruction {
     String identifier;
     DataType type;
@@ -23,7 +25,7 @@ public class NewarrayInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
         StackObject top = m.top();
-        if (top.getName()!="."){
+        if (!Objects.equals(top.getName(), ".")){
             throw new ASTInvalidMemoryException("newarray line ("+(address+1)+") : Stack has no value");
         }
         Value v = ((Value) m.pop());
