@@ -542,7 +542,7 @@ class NodeCompileTest {
     }
     @Test
     @DisplayName("ParamListNode - withdrawCompile() generates correct pop order")
-    public void testParamListNodeWithdrawCompile() {
+    void testParamListNodeWithdrawCompile() {
         ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("x"));
         ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("flag"));
         ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
@@ -553,7 +553,7 @@ class NodeCompileTest {
     }
     @Test
     @DisplayName("ParamListNode - compile() with non-zero starting address")
-    public void testParamListNodeCompileWithOffset() {
+    void testParamListNodeCompileWithOffset() {
         ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("a"));
         ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("b"));
 
@@ -748,7 +748,7 @@ class NodeCompileTest {
     }
     @Test
     @DisplayName("AppelENode.compile() - with arguments")
-    public void testAppelENodeCompileWithArgs() {
+     void testAppelENodeCompileWithArgs() {
         IdentNode ident = new IdentNode("myFunc");
         ASTNode args = ASTMocks.createNode(
                 ExpListNode.class,
@@ -766,7 +766,7 @@ class NodeCompileTest {
 
     @Test
     @DisplayName("AppelENode.compile() - without arguments")
-    public void testAppelENodeCompileWithoutArgs() {
+    void testAppelENodeCompileWithoutArgs() {
         IdentNode ident = new IdentNode("myFunc");
         AppelENode node = new AppelENode(ident, null);
 
@@ -778,7 +778,7 @@ class NodeCompileTest {
 
     @Test
     @DisplayName("AppelENode.compile() - minimal case")
-    public void testAppelENodeCompileMinimal() {
+    void testAppelENodeCompileMinimal() {
         IdentNode ident = new IdentNode("foo");
         AppelENode node = new AppelENode(ident, null);
 
@@ -788,7 +788,7 @@ class NodeCompileTest {
 
 
     @Test
-    public void AppelENode_CompileWithArgs() {
+     void AppelENode_CompileWithArgs() {
         IdentNode ident = new IdentNode("foo");
         ASTNode args = new ASTNode() {
             @Override public List<ASTNode> getChildren() { return List.of(); }

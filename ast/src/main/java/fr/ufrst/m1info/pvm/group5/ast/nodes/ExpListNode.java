@@ -58,16 +58,16 @@ public class ExpListNode extends ASTNode {
             throws ASTInvalidOperationException, ASTInvalidMemoryException, ASTInvalidDynamicTypeException {
         List<Value> values = new ArrayList<>();
 
-        if (head instanceof EvaluableNode) {
-            values.add(((EvaluableNode) head).eval(m));
+        if (head instanceof EvaluableNode evaluableHead) {
+            values.add(evaluableHead.eval(m));
         } else {
             throw new ASTInvalidOperationException("Head of ExpListNode is not evaluable.");
         }
 
-        if (tail instanceof ExpListNode) {
-            values.addAll(((ExpListNode) tail).evalList(m));
-        } else if (tail instanceof EvaluableNode) {
-            values.add(((EvaluableNode) tail).eval(m));
+        if (tail instanceof ExpListNode expListNode) {
+            values.addAll(expListNode.evalList(m));
+        } else if (tail instanceof EvaluableNode evaluableTail) {
+            values.add(evaluableTail.eval(m));
         }
 
         return values;
