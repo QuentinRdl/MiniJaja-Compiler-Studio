@@ -17,7 +17,6 @@ public class InterpreterMiniJaja extends Interpreter{
     AbstractSyntaxTree ast;
     Thread interpretationThread;
     ASTNode currentNode;
-    List<Integer> breakpoints;
     private Memory mem;
 
     protected InterpreterMiniJaja(){
@@ -32,7 +31,7 @@ public class InterpreterMiniJaja extends Interpreter{
 
     @Override
     public void setBreakpoints(List<Integer> breakpoints) {
-        this.breakpoints = breakpoints;
+        mem.setBreakpoints(breakpoints);
     }
 
     /**
@@ -55,10 +54,7 @@ public class InterpreterMiniJaja extends Interpreter{
 
     @Override
     public String startCodeInterpretation(String code, InterpretationMode mode) {
-        Memory mem = new Memory(output);
         String errMessage= null;
-
-        mem.setBreakpoints(breakpoints);
 
         // Building the AST
         try {
