@@ -1,0 +1,13 @@
+init
+new(x,INT,var,0)
+push(3)
+push(4)
+add
+store(x)
+push(1)
+inc(x)
+push(0)
+swap
+pop
+pop
+jcstop

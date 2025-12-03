@@ -9,6 +9,10 @@ public class GotoInstruction extends Instruction {
         this.address = address;
     }
 
+    public int getAddress() {
+        return address;
+    }
+
     @Override
     public int execute(int address, Memory m) {
         return this.address;
