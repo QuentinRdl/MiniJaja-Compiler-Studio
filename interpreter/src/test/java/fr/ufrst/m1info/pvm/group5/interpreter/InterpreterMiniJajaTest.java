@@ -855,7 +855,6 @@ class InterpreterMiniJajaTest {
     }
 
     /* Step by step // Breakpoints */
-    @Disabled
     @Test
     @DisplayName("Interpret -  step by step")
     void stepByStep() {
@@ -863,6 +862,7 @@ class InterpreterMiniJajaTest {
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
         imj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
+            System.out.println(event);
             imj.resumeInterpretation(im);
         });
         imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
@@ -870,7 +870,6 @@ class InterpreterMiniJajaTest {
         Assertions.assertTrue(steps[0] >= 5); // 5 steps + end event trigger potentially triggered
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret -  breakpoints")
     void breakpoints() throws InterruptedException {
@@ -887,7 +886,6 @@ class InterpreterMiniJajaTest {
         Assertions.assertTrue(steps[0] >= 2); // 2 breakpoints + end event trigger potentially triggered
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret - error during step by step")
     void errorDuringStepByStep() {
