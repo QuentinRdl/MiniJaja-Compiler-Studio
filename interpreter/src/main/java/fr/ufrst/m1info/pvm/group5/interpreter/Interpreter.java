@@ -9,6 +9,14 @@ public abstract class Interpreter {
     Event<InterpretationHaltedData> interpretationHaltedEvent = new Event<>();
 
     /**
+     * Public accessor for the interpretation halted event so external modules
+     * can subscribe without accessing package-private fields (module safety).
+     */
+    public Event<InterpretationHaltedData> getInterpretationHaltedEvent() {
+        return interpretationHaltedEvent;
+    }
+
+    /**
      * Defines the breakpoints for the interpretation
      *
      * @param breakpoints list of breakpoints to use

@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterJajaCode;
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
 import fr.ufrst.m1info.pvm.group5.compiler.Compiler;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationMode;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -1052,24 +1053,115 @@ public class MainController {
         }
     }
 
+    InterpreterMiniJaja debugInterpreter = null;
+    boolean debugHalted = false;
+    int debugCurrentLine = -1;
+
+
     /**
      * Starts debugging the current code when the "Run" debug button is clicked
      */
     public void onClickRunDebug(){
-        //TODO
+        // Only allow MiniJaja step-by-step debugging
+        if(!isMinijajaFile()){
+            console.getWriter().writeLine("[ERROR] Step-by-step debugging is only available for MiniJaja files (.mjj)");
+            return;
+        }
+
+        // Get code from editor
+        String code = getModifiedCode();
+        if(code == null || code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[INFO] No code to debug !");
+            return;
+        }
+
+        // Clean previous debug state
+        if(debugInterpreter != null){
+            try { debugInterpreter.stopInterpretation(); } catch (Exception _){ }
+            debugInterpreter = null;
+        }
+        debugHalted = false;
+        debugCurrentLine = -1;
+
+        // Create interpreter and subscribe to halted events
+        debugInterpreter = new InterpreterMiniJaja(console.getWriter());
+        debugInterpreter.getInterpretationHaltedEvent().subscribe(event -> {
+             // event runs on a worker thread (triggerAsync). Update controller state and print current line.
+             debugHalted = event.isPursuable();
+             debugCurrentLine = event.line();
+
+             // Retrieve the line text if possible (line numbers are 1-based)
+             String lineText = "";
+             int lineIdx = debugCurrentLine - 1;
+             if(lineIdx >= 0 && lineIdx < codeLines.size()){
+                 lineText = codeLines.get(lineIdx).getCode();
+             }
+
+             console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
+
+             // Show memory and update its view on the JavaFX thread
+             showMemoryTab(memoryTabMinijaja);
+             Platform.runLater(() -> {
+                 if(debugInterpreter != null && memoryVisualisationMiniJaja != null){
+                     memoryVisualisationMiniJaja.updateMemory(debugInterpreter.getMemory().toStringTab());
+                 }
+                 // Enable Next button when halted and pursuable
+                 if(btnDebugNext != null) btnDebugNext.setDisable(!debugHalted);
+                 if(btnDebugStop != null) btnDebugStop.setDisable(false);
+             });
+         });
+
+        // Start interpretation in STEP_BY_STEP mode
+        String err = debugInterpreter.startCodeInterpretation(code, InterpretationMode.STEP_BY_STEP);
+        if(err != null){
+            console.getWriter().writeLine("[ERROR] " + err);
+            // cleanup
+            debugInterpreter = null;
+            debugHalted = false;
+            if(btnDebugNext != null) btnDebugNext.setDisable(true);
+            if(btnDebugStop != null) btnDebugStop.setDisable(true);
+            return;
+        }
+
+        console.getWriter().writeLine("[INFO] MiniJaja step-by-step interpretation started");
+        if(btnDebugNext != null) btnDebugNext.setDisable(true); // will be enabled when first halt occurs
+        if(btnDebugStop != null) btnDebugStop.setDisable(false);
     }
 
     /**
      * Stops the current debugging session when the "Stop" debug button is clicked
      */
     public void onClickStopDebug(){
-        //TODO
+        if(debugInterpreter != null){
+            debugInterpreter.stopInterpretation();
+            debugInterpreter = null;
+        }
+        debugHalted = false;
+        debugCurrentLine = -1;
+
+        if(btnDebugNext != null) btnDebugNext.setDisable(true);
+        if(btnDebugStop != null) btnDebugStop.setDisable(true);
+        hideMemoryTab(memoryTabMinijaja);
+        console.getWriter().writeLine("[INFO] Debugging stopped");
     }
 
     /**
      * Executes the next instruction in the debugging session when the "Next" debug button is clicked
      */
     public void onClickNextDebug(){
-        //TODO
+        if(debugInterpreter == null){
+            console.getWriter().writeLine("[DEBUG] No active debugging session");
+            return;
+        }
+
+        if(!debugHalted){
+            console.getWriter().writeLine("[DEBUG] Interpreter is not halted yet");
+            return;
+        }
+
+        // Clear the halted flag and resume interpretation for one step
+        debugHalted = false;
+        if(btnDebugNext != null) btnDebugNext.setDisable(true);
+        debugInterpreter.resumeInterpretation(InterpretationMode.STEP_BY_STEP);
     }
 }
