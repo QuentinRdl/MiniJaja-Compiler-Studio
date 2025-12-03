@@ -51,6 +51,8 @@ variable returns [ASTNode node]
     : typemeth ident {$node = new VariableNode($typemeth.node, $ident.node, null);}
     (vexp {$node = new VariableNode($typemeth.node, $ident.node, $vexp.node);}
     )?
+    | typemeth ident '[' exp ']'
+              {$node = new ArrayNode($typemeth.node, $ident.node, $exp.node);}
     | 'final' type ident {$node = new FinalNode($type.node, $ident.node, null);}
     (vexp {$node = new FinalNode($type.node, $ident.node, $vexp.node);}
     )?
@@ -207,6 +209,7 @@ factor returns [ASTNode node]
 
 ident1 returns [ASTNode node]
     : ident {$node = $ident.node;}
+     | ident '[' exp ']' {$node = new TabNode($ident.node, $exp.node);}
     ;
 
 typemeth returns [TypeNode node]

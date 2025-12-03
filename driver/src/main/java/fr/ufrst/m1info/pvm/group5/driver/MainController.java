@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.concurrent.Task;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -187,10 +188,10 @@ public class MainController {
 
 
         hideCompileTab();
-        deactiveButtons();
         setupOutputContextMenu();
         setupKeyboardShortcuts();
 
+        createNewFile();
     }
 
 
@@ -281,7 +282,6 @@ public class MainController {
 
             fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
-            activeButtons();
 
             compiledCodeLines.clear();
             hideCompileTab();
@@ -713,7 +713,6 @@ public class MainController {
             }
 
             Platform.runLater(this::focusSelectedCell);
-
         }
     }
 
@@ -761,7 +760,6 @@ public class MainController {
         codeLines.clear();
         codeLines.add(new CodeLine(1, ""));
         codeListView.getSelectionModel().select(0);
-        activeButtons();
         currentFile = null;
         fileLabel.setText("New file");
 
@@ -819,14 +817,36 @@ public class MainController {
             return;
         }
 
-        Compiler compiler = new Compiler(console.getWriter());
-        String res = compiler.compileCode(code);
+        // Disable compile button while compilation is in progress
+        // if (btnCompile != null) btnCompile.setDisable(true);
 
-        if (res != null){
-            showCompiledTab();
-            loadCompiledCodeToListView(res);
-            console.getWriter().writeLine("[INFO] Compilation successful!");
-        }
+        Task<String> compileTask = new Task<>(){
+            @Override
+            protected String call() {
+                Compiler compiler = new Compiler(console.getWriter());
+                return compiler.compileCode(code);
+            }
+        };
+
+        compileTask.setOnSucceeded(e -> {
+            String res = compileTask.getValue();
+            if (res != null){
+                showCompiledTab();
+                loadCompiledCodeToListView(res);
+                console.getWriter().writeLine("[INFO] Compilation successful!");
+            }
+            // if (btnCompile != null) btnCompile.setDisable(false);
+        });
+
+        compileTask.setOnFailed(e -> {
+            Throwable ex = compileTask.getException();
+            console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
+            // if (btnCompile != null) btnCompile.setDisable(false);
+        });
+
+        Thread t = new Thread(compileTask, "Compiler-Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
@@ -843,24 +863,54 @@ public class MainController {
 
         if(!isMinijajaFile()){
             console.getWriter().writeLine("[ERROR] Compilation and interpretation is only available for MiniJaja (.mjj) files");
+            return;
         }
 
-        Compiler compiler = new Compiler(console.getWriter());
-        String compiledCode = compiler.compileCode(code);
+        // Disable compiler and run buttons while compilation is in progress
+        // if (btnCompile != null) btnCompile.setDisable(true);
+        // if (btnRunCompile != null) btnRunCompile.setDisable(true);
 
-        if(compiledCode != null){
-            showCompiledTab();
-            loadCompiledCodeToListView(compiledCode);
-            String err = null;
-            InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
-            err = interpreterJajaCode.interpretCode(compiledCode);
-
-            if(err == null){
-                console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
-            } else {
-                console.getWriter().writeLine("[ERROR] " + err);
+        // Create task to call later
+        Task<String> compileAndRunTask = new Task<>() {
+            @Override
+            protected String call() {
+                Compiler compiler = new Compiler(console.getWriter());
+                return compiler.compileCode(code);
             }
-        }
+        };
+
+        compileAndRunTask.setOnSucceeded(e -> {
+            String compiledCode = compileAndRunTask.getValue();
+            if(compiledCode != null) {
+                showCompiledTab();
+                loadCompiledCodeToListView(compiledCode);
+
+                // Interpret compiled code
+                String err = null;
+                InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
+                err = interpreterJajaCode.interpretCode(compiledCode);
+
+                if(err == null){
+                    console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
+                } else {
+                    console.getWriter().writeLine("[ERROR] " + err);
+                }
+            }
+
+            if (btnCompile != null) btnCompile.setDisable(false);
+            if (btnRunCompile != null) btnRunCompile.setDisable(false);
+        });
+
+        compileAndRunTask.setOnFailed(e -> {
+            Throwable ex = compileAndRunTask.getException();
+            console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
+            //if (btnCompile != null) btnCompile.setDisable(false);
+            //if (btnRunCompile != null) btnRunCompile.setDisable(false);
+        });
+
+        Thread t = new Thread(compileAndRunTask, "Compiler-Run-Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
