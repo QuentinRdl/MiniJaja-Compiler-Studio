@@ -443,13 +443,9 @@ class HeapTest {
     @Test
     @DisplayName("toString")
     void toStringTest() {
-        // TODO : Add assertion w/ Golden Files
         Heap heap = new Heap(512);
 
-        System.out.println(heap.toString());
         heap.allocate(150,DataType.INT);
-        System.out.println("-----------------");
-        System.out.println(heap.toString());
         heap.allocate(150,DataType.BOOL);
         heap.allocate(150,DataType.INT);
 
@@ -458,7 +454,5 @@ class HeapTest {
         heap.setValue(1, 149, new Value(2));
         heap.setValue(3, 0, new Value(3));
         heap.setValue(3, 149, new Value(4));
-
-        //System.out.println(heap.toString());
     }
 }
