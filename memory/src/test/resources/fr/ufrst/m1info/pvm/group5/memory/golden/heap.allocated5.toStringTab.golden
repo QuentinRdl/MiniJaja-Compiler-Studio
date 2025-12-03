@@ -1,5 +1,5 @@
 Heap(total=16, available=11)
   ext@1 int@0 size=5 Allocated(INT) refs=1
-    bytes: [0, 0, 0, 0, 0]
+    data: [0, 0, 0, 0, 0]
 * ext@0 int@5 size=11 Free refs=0
-    bytes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

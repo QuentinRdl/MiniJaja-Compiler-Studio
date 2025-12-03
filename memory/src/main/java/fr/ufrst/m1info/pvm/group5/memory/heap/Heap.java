@@ -49,7 +49,7 @@ public class Heap {
     /**
      * Array used as a storage for the array.
      */
-    private final byte[] storage;
+    private final int[] storage;
     /**
      * Map allowing to transcribe external addresses to blocks.
      */
@@ -79,7 +79,7 @@ public class Heap {
      * Returns an array containing a snapshot of the storage at the current instant
      * @return Array equal to the current memory of the heap
      */
-    public byte[] getStorageSnapshot(){
+    public int[] getStorageSnapshot(){
         return storage.clone();
     }
 
@@ -153,7 +153,7 @@ public class Heap {
     public Heap(int totalSize) {
         this.totalSize = totalSize;
         this.availableSize = totalSize;
-        this.storage = new byte[totalSize];
+        this.storage = new int[totalSize];
         externalAddresses = new HashMap<>();
         currentElement = new HeapElement(0, newExtAddress(), totalSize);
         externalAddresses.put(0, currentElement);
@@ -295,12 +295,12 @@ public class Heap {
     }
 
     /**
-     * Translates a byte of the array to a value of a given type
-     * @param b byte of the memory
+     * Translates an element of the array to a value of a given type
+     * @param b element of the memory
      * @param type target type of the translation
      * @return value matching the given type
      */
-    private Value translate(byte b, DataType type){
+    private Value translate(int b, DataType type){
         return switch (type){
             case INT -> new Value(b);
             case BOOL -> new Value(b == 1);
@@ -321,7 +321,7 @@ public class Heap {
             throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
         if(target.isFree())
             throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
-        byte val = storage[target.internalAddress + offset];
+        int val = storage[target.internalAddress + offset];
         return translate(val, target.getStorageType());
     }
 
@@ -339,8 +339,8 @@ public class Heap {
         if(target.isFree())
             throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
         storage[target.internalAddress + offset] = switch (target.getStorageType()){
-            case INT -> (byte) value.valueInt;
-            case BOOL -> (byte)((value.valueBool)? 1 : 0);
+            case INT -> value.valueInt;
+            case BOOL -> ((value.valueBool)? 1 : 0);
             default -> 0;
         };
     }
@@ -417,7 +417,9 @@ public class Heap {
         }
         // If the defragment method was called, at least one allocated and unallocated element were seen
         // Therefor, the following calls are safe
+        if(prev == null) return;
         prev.next = freeElements; // Chaining the last allocated element to the free one
+        if(freeElements == null) return;
         freeElements.prev = prev;
         freeElements.tryMerge(); // Merging all unallocated elements
         freeElements.internalAddress = lastAvailableAddress;
@@ -436,7 +438,7 @@ public class Heap {
         HeapElement start = current;
         do{
             if(!current.isFree())
-                errors.add(current.size() + " bytes still allocated at address " + current.externalAddress);
+                errors.add(current.size()*4 + " bytes still allocated at address " + current.externalAddress);
             current = current.getNext();
         }while(current != start);
         return errors;
@@ -444,7 +446,7 @@ public class Heap {
 
     /**
      * Returns a multi-line textual representation of the whole heap
-     * Includes every block (allocated and free) and shows the raw bytes stored in each block
+     * Includes every block (allocated and free) and shows the raw content stored in each block
      */
     @Override
     public String toString() {
@@ -466,14 +468,14 @@ public class Heap {
               .append(" refs=").append(curr.references)
               .append("\n");
 
-            // Bytes contained in the block (w/ free blocks)
-            sb.append("    bytes: [");
+            // Content contained in the block (w/ free blocks)
+            sb.append("    data: [");
             List<String> values = new ArrayList<>();
             for(int i = 0; i < curr.size(); i++){
                 int idx = curr.internalAddress + i;
                 // Defensive check (shouldn't happen) to avoid OOB
                 if(idx < 0 || idx >= storage.length) values.add("<oob>");
-                else values.add(Byte.toString(storage[idx]));
+                else values.add(Integer.toString(storage[idx]));
             }
             sb.append(String.join(", ", values));
             sb.append("]\n");

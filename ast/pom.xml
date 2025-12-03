@@ -28,11 +28,13 @@
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
 
     <dependencies>
         <dependency>

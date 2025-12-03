@@ -652,7 +652,7 @@ public class MainController {
 
         // If the code is just empty chars, do not run it
         if (code.isEmpty() || isCodeEmptyChars(code)){
-            console.getWriter().writeLine("[ERROR] No code to interpret !");
+            console.getWriter().writeLine("[INFO] No code to interpret !");
             return;
         }
 
@@ -808,7 +808,7 @@ public class MainController {
         String code = getModifiedCode();
 
         if(code.isEmpty() || isCodeEmptyChars(code)){
-            console.getWriter().writeLine("[ERROR] No code to compile !");
+            console.getWriter().writeLine("[INFO] No code to compile !");
             return;
         }
 
@@ -857,7 +857,7 @@ public class MainController {
     public void onCompileAndRunClicked(){
         String code = getModifiedCode();
         if(code.isEmpty() || isCodeEmptyChars(code)){
-            console.getWriter().writeLine("[ERROR] No code to compile and run !");
+            console.getWriter().writeLine("[INFO] No code to compile and run !");
             return;
         }
 

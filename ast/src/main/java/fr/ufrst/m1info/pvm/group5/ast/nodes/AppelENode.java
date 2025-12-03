@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppelENode extends ASTNode implements EvaluableNode {
+    private static final String METHOD_PREFIX = "Method ";
     private final IdentNode ident;
     private final ASTNode args;
 
@@ -39,12 +40,12 @@ public class AppelENode extends ASTNode implements EvaluableNode {
 
         try {
             Object result = m.val(m.identVarClass());
-            if (result instanceof Value) {
-                return (Value) result;
+            if (result instanceof Value value) {
+                return value;
             }
-            throw new ASTInvalidOperationException("Method " + ident.identifier + " returned an invalid type.");
+            throw new ASTInvalidOperationException(METHOD_PREFIX + ident.identifier + " returned an invalid type.");
         } catch (Exception e) {
-            throw new ASTInvalidOperationException("Method " + ident.identifier + " did not return a value.");
+            throw new ASTInvalidOperationException(METHOD_PREFIX + ident.identifier + " did not return a value.");
         }
     }
 
@@ -57,7 +58,6 @@ public class AppelENode extends ASTNode implements EvaluableNode {
             code.addAll(args.compile(address));
         }
         code.add("invoke(" + ident.identifier + ")");
-        // Add withdrawal instructions to remove the method return value from the stack
         code.add("swap");
         code.add("pop");
         return code;
@@ -90,9 +90,9 @@ public class AppelENode extends ASTNode implements EvaluableNode {
             case BOOL:
                 return "bool";
             case VOID:
-                throw new ASTInvalidDynamicTypeException("Method " + ident.identifier + " is of type void and cannot be used as an expression.");
+                throw new ASTInvalidDynamicTypeException(METHOD_PREFIX + ident.identifier + " is of type void and cannot be used as an expression.");
             default:
-                throw new ASTInvalidDynamicTypeException("Method " + ident.identifier + " has unsupported return type: " + dt);
+                throw new ASTInvalidDynamicTypeException(METHOD_PREFIX + ident.identifier + " has unsupported return type: " + dt);
         }
     }
 }

@@ -189,6 +189,15 @@ class HeapTest {
     }
 
     @Test
+    @DisplayName("SetValue")
+    void SetValueMaxIntTest(){
+        Heap heap = new Heap(512);
+        int address = heap.allocate(12,DataType.INT);
+        heap.setValue(address, 2, new Value(2147483646));
+        assertEquals(2147483646, heap.getStorageSnapshot()[2]);
+    }
+
+    @Test
     @DisplayName("SetValue - boolean")
     void SetValueBooleanTest(){
         Heap heap = new Heap(512);

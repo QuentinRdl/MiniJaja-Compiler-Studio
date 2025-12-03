@@ -153,23 +153,24 @@ public class InterpreterJajaCode extends Interpreter{
         interpretationThread = new Thread(() -> {
            while(currentInstruction==null || (!(currentInstruction instanceof JcstopInstruction))){
                if(address[0]>instructions.size() || address[0]<=0){
-                    interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, "Address "+address[0]+" not found"));
+                    int line = (currentInstruction == null)?-1:currentInstruction.getLine();
+                    interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, "Address "+address[0]+" not found",line));
                     return;
                }
                currentInstruction = instructions.get(address[0]);
                if(mode == InterpretationMode.STEP_BY_STEP || (
                        mode == InterpretationMode.BREAKPOINTS && mem.isBreakpoint(currentInstruction.getLine()))){
-                   interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null));
+                   interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, currentInstruction.getLine()));
                    try{
                        currentInstruction.wait();
                    }catch (InterruptedException e){
-                       interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage()));
+                       interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentInstruction.getLine()));
                        return;
                    }
                }
                address[0] = currentInstruction.execute(address[0], mem);
            }
-           interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null));
+           interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null, currentInstruction.getLine()));
         });
 
         // Starting the thread

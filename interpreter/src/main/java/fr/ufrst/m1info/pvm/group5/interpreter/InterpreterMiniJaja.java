@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+
 public class InterpreterMiniJaja extends Interpreter{
     Writer output;
     AbstractSyntaxTree ast;
@@ -70,7 +71,7 @@ public class InterpreterMiniJaja extends Interpreter{
         // Subscribing to the event of the ast
         ast.interpretationStoppedEvent.subscribe(d -> {
             this.currentNode = d.node();
-            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null));
+            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, currentNode.getLine()));
         });
 
         // Creating a secondary thread that will trigger an event once the interpretation stops
@@ -78,7 +79,7 @@ public class InterpreterMiniJaja extends Interpreter{
             try {
                 interpretationThread.join();
             } catch (InterruptedException _) { return; }
-            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null));
+            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null, currentNode.getLine()));
         });
 
         // Creating the main thread
@@ -87,7 +88,7 @@ public class InterpreterMiniJaja extends Interpreter{
                 ast.interpret(mem, mode);
             } catch (Exception e) {
                 secondaryThread.interrupt();
-                interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage()));
+                interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentNode.getLine()));
             }
         });
 
