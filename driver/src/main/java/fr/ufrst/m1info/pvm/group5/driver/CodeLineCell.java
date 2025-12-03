@@ -38,6 +38,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
     private boolean editable = true;
 
+    private boolean isUpdating = false; //indicates that the cell is being updated
+
     /**
      * Creates a new CodeLineCell and initializes its layout.
      * The cell includes a line number label, an optional breakpoint indicator,
@@ -85,6 +87,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
             }
             if (newValue != null && !newValue.isEmpty()){
                 wasEmptyOnLastBackspace = false;
+            }
+
+            if(listener != null && !isUpdating && oldValue != null && !oldValue.equals(newValue)) {
+                listener.onModified();
             }
         });
 
@@ -206,6 +212,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
     protected void updateItem(CodeLine item, boolean empty){
         super.updateItem(item, empty);
 
+        isUpdating = true;
+
         if (empty || item == null){
             setGraphic(null);
         } else {
@@ -224,6 +232,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
             setGraphic(container);
         }
+
+        isUpdating = false;
     }
 
     /**
