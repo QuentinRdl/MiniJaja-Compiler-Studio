@@ -7,7 +7,6 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTable;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.List;
 
 /**
