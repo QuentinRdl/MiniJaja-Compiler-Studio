@@ -709,7 +709,7 @@ class NodeCompileTest {
         ParamNode param = new ParamNode(type, ident);
 
         List<String> result = param.compile(0);
-        assertEquals(List.of("new(x," + type + ",param,0)"), result);
+        assertEquals(List.of("new(x," + type + ",var,0)"), result);
     }
     @Test
     void testParamNode_WithdrawCompile() {
@@ -755,8 +755,8 @@ class NodeCompileTest {
 
         assertEquals(
                 List.of(
-                        "new(a," + p1.type + ",param,0)",
-                        "new(b," + p2.type + ",param,0)"
+                        "new(a," + p1.type + ",var,0)",
+                        "new(b," + p2.type + ",var,0)"
                 ),
                 result
         );

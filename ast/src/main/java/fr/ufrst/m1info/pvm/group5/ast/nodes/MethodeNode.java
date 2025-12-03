@@ -73,6 +73,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m) {
+        if (params != null) params.checkType(m);
         if (instrs != null) instrs.checkType(m);
         return returnType.getValueType().name().toLowerCase();
     }

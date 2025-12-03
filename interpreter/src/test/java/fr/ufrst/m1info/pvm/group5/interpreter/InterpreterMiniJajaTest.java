@@ -70,6 +70,12 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Method")
+    void Method() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Method.mjj"));
+    }
+
+    @Test
     @DisplayName("Interpret File OperationPrevalence")
     void OperationPrevalence() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/OperationPrevalence.mjj"));
