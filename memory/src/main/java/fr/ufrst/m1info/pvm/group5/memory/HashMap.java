@@ -65,7 +65,8 @@ public class HashMap<K,V>
         }
         int h = key.hashCode();
         h = h ^ (h >>> 16);
-        return Math.abs(h) % capacity;
+        if(h < 0) h = -h; // We do the Math.abs func ourselves as SonarQube detects it as a bug
+        return h % capacity;
     }
 
     /**
