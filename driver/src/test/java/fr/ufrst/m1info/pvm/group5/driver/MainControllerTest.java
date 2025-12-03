@@ -1438,5 +1438,166 @@ class MainControllerTest extends ApplicationTest {
         assertEquals("", controller.getCompiledCode());
     }
 
+    @Test
+    void testFileNotMarkedAsModifiedInitially() {
+        assertEquals("Untitled", controller.getSourceTab().getText());
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileNotMarkedAsModifiedAfterLoadingFile() throws Exception{
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testNewFileNotMarkedAsModified(){
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals("Untitled", controller.getSourceTab().getText());
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileMarkedAsModifiedWhenTyping() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+
+        TextField firstField = getTextFieldForLine(0);
+        assertNotNull(firstField);
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        type(KeyCode.K);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileMarkedAsModifiedWhenAddingLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+        assertEquals(1, controller.getCodeLines().size());
+
+        TextField firstField = getTextFieldForLine(0);
+        assertNotNull(firstField);
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.ENTER);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertTrue(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileMarkedAsModifiedWhenDeletingLine() throws Exception {
+        File testFile = createTestFile("test.mjj", "", "int x = 10;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+        assertEquals(2, controller.getCodeLines().size());
+
+        TextField firstField = getTextFieldForLine(0);
+        assertNotNull(firstField);
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(1, controller.getCodeLines().size());
+        assertTrue(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileNotMarkedAsModifiedAfterSave() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+
+        TextField firstField = getTextFieldForLine(0);
+        assertNotNull(firstField);
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.BACK_SPACE);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(2, controller.getCodeLines().size());
+        assertTrue(controller.getSourceTab().getText().contains("•"));
+
+        clickOn("#btnSave");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testFileNotMarkedAsModifiedAfterResizing() throws Exception {
+        File testFile = createTestFile("test.mjj", "int x = 10;", "x++;");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+
+        // Force refresh to recreate the list view cells
+        interact(() -> controller.getCodeListView().refresh());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+    }
+
+    @Test
+    void testSaveAsRemovesModificationMark() {
+        assertEquals(1, controller.getCodeLines().size());
+
+        TextField firstField = getTextFieldForLine(0);
+        assertNotNull(firstField);
+
+        clickOn(firstField);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        type(KeyCode.A);
+        type(KeyCode.B);
+        type(KeyCode.C);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getSourceTab().getText().contains("•"));
+
+        File newFile = tempDir.resolve("test.mjj").toFile();
+
+        interact(() -> controller.saveAs(newFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getSourceTab().getText().contains("•"));
+        assertEquals("test.mjj", controller.getSourceTab().getText());
+        assertEquals(1, controller.getCodeLines().size());
+        assertEquals("abc", controller.getCodeLines().getFirst().getCode());
+    }
+
+
+
 
 }
