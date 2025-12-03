@@ -59,4 +59,15 @@ public class Event<T> {
             }
         });
     }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Event ");
+        sb.append(super.toString()).append("{\n");
+        for(Consumer<T> c : subscribers){
+            sb.append("\t").append(c.toString()).append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

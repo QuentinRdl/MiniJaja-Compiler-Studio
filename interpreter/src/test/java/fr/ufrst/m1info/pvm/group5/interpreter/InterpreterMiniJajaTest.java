@@ -859,15 +859,15 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret -  step by step")
     void stepByStep() {
         int[] steps = {0};
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
-            System.out.println(event);
-            imj.resumeInterpretation(im);
+            imjj.resumeInterpretation(im);
         });
-        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 5); // 5 steps + end event trigger potentially triggered
+        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 5 || steps[0] == 6); // 5 steps + end event trigger potentially triggered
     }
 
     @Test
@@ -875,15 +875,16 @@ class InterpreterMiniJajaTest {
     void breakpoints() throws InterruptedException {
         int[] steps = {0};
         InterpretationMode im = InterpretationMode.BREAKPOINTS;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
             if(event.isPursuable())
-                imj.resumeInterpretation(im);
+                imjj.resumeInterpretation(im);
         });
-        imj.setBreakpoints(List.of(14,16));
-        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 2); // 2 breakpoints + end event trigger potentially triggered
+        imjj.setBreakpoints(List.of(14,16));
+        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 2 || steps[0] == 3); // 2 breakpoints + end event trigger potentially triggered
     }
 
     @Test
@@ -891,22 +892,22 @@ class InterpreterMiniJajaTest {
     void errorDuringStepByStep() {
         int[] steps = {0};
         List<String> errors = new ArrayList<>();
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
         // Creating result
         List<String> expectedErrors = new ArrayList<>();
         expectedErrors.add(null);
         expectedErrors.add(null);
-        expectedErrors.add("Variable b is undefined");
+        expectedErrors.add("Variable b is not assigned a value");
 
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
             errors.add(event.error());
-            imj.resumeInterpretation(im);
+            imjj.resumeInterpretation(im);
         });
-
-        imj.startCodeInterpretation("class C { int a = 1; int b; main{a++; b++;}}", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 2);
+        imjj.startCodeInterpretation("class C { int a = 1; int b; main{a++; b++;}}", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 2 || steps[0] == 3);
         Assertions.assertTrue(errors.containsAll(expectedErrors));
     }
 }
