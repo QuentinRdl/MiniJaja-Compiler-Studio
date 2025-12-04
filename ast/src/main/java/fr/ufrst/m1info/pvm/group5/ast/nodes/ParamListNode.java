@@ -44,11 +44,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     @Override
     public String checkType(Memory m)
             throws ASTInvalidDynamicTypeException {
-        if (param.type.valueType == ValueType.VOID) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Parameter " + param.ident.identifier + " cannot have type void"
-            );
-        }
+        param.checkType(m);
         if (next != null) {
             next.checkType(m);
         }

@@ -39,6 +39,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
         try{
             dataType = m.dataTypeOf(identifier);
         } catch (Exception e) {
+            System.out.println(m.toString());
             throw new ASTInvalidMemoryException(e.getMessage());
         }
 

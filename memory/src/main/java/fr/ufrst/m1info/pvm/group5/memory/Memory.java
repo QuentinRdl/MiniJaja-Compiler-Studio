@@ -393,7 +393,7 @@ public class Memory {
         entry.setReference(params);
         symbolTable.addEntry(entry);
         stack.setMethod(identifier, params, returnType);
-        stack.pushScope();
+        //stack.pushScope();
     }
 
     /**
