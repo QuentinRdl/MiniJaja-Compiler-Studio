@@ -244,8 +244,8 @@ class InterpreterIntegrationTest extends ApplicationTest {
     void interpreterJajacodeEmptyFileByButton() throws Exception {
         String content = " \n ";
         String consoleText = createFileLoadCompileRunAndGetConsoleByButton("empty.mjj", content);
-        assertTrue(consoleText.contains("[ERROR] No code to compile !"));
-        assertTrue(consoleText.contains("[ERROR] No code to interpret !"));
+        assertTrue(consoleText.contains("[INFO] No code to compile !"));
+        assertTrue(consoleText.contains("[INFO] No code to interpret !"));
     }
 
 

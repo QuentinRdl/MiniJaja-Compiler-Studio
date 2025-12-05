@@ -156,6 +156,7 @@ public abstract class ASTNode {
             wait();
         }
         catch (InterruptedException e){
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Program interpretation interrupted");
         }
     }

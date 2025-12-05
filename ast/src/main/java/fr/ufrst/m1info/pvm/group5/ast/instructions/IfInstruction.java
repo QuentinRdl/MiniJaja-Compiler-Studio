@@ -13,6 +13,9 @@ public class IfInstruction extends Instruction{
         this.addressIf = addressIf;
     }
 
+    public int getAddressIf() {
+        return addressIf;
+    }
 
     @Override
     public int execute(int address, Memory m) {

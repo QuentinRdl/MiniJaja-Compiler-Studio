@@ -161,7 +161,6 @@ class CompilationIntegrationTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnCompile");
-
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -189,7 +188,6 @@ class CompilationIntegrationTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnRunCompile");
-
         WaitForAsyncUtils.waitForFxEvents();
 
         return controller.output.getText();
@@ -321,13 +319,13 @@ class CompilationIntegrationTest extends ApplicationTest {
     @Test
     void compileAndRunEmptyFile() throws Exception {
         String consoleText = createFileLoadCompileAndRunAndGetConsole("empty.mjj", "");
-        assertTrue(consoleText.contains("[ERROR] No code to compile and run !"));
+        assertTrue(consoleText.contains("[INFO] No code to compile and run !"));
     }
 
     @Test
     void compileAndRunEmptyFileByButton() throws Exception {
         String consoleText = createFileLoadCompileAndRunAndGetConsoleByButton("empty.mjj", " \n\t ");
-        assertTrue(consoleText.contains("[ERROR] No code to compile and run !"));
+        assertTrue(consoleText.contains("[INFO] No code to compile and run !"));
     }
 
     @Test

@@ -48,8 +48,8 @@ class MemoryIntegrationTest {
         return Stream.of(
                 org.junit.jupiter.params.provider.Arguments.of("id_int", 2, DataType.INT),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_true", true, DataType.BOOL),
-                org.junit.jupiter.params.provider.Arguments.of("id_bool_false", false, DataType.BOOL)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
+                org.junit.jupiter.params.provider.Arguments.of("id_bool_false", false, DataType.BOOL),
+                org.junit.jupiter.params.provider.Arguments.of("id_str", "blabla", DataType.STRING)
         );
     }
 
@@ -58,7 +58,6 @@ class MemoryIntegrationTest {
                 org.junit.jupiter.params.provider.Arguments.of("id_int", 2, DataType.INT, 4),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_true", true, DataType.BOOL, false),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_false", false, DataType.BOOL, true)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
         );
     }
 
@@ -67,7 +66,6 @@ class MemoryIntegrationTest {
                 org.junit.jupiter.params.provider.Arguments.of("id_int", null, DataType.INT, 4),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_true", null, DataType.BOOL, false),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_false", null, DataType.BOOL, true)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
         );
     }
     static Stream<org.junit.jupiter.params.provider.Arguments> typeOfVarsNull2() {
@@ -75,27 +73,14 @@ class MemoryIntegrationTest {
                 org.junit.jupiter.params.provider.Arguments.of("id_int", 2, DataType.INT, null),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_true", true, DataType.BOOL, null),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_false", false, DataType.BOOL, null)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
         );
     }
-
-    static Stream<org.junit.jupiter.params.provider.Arguments> typeOfIdNull() {
-        return Stream.of(
-                org.junit.jupiter.params.provider.Arguments.of(null, 2, DataType.INT, null),
-                org.junit.jupiter.params.provider.Arguments.of(null, true, DataType.BOOL, null),
-                org.junit.jupiter.params.provider.Arguments.of(null, false, DataType.BOOL, null)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
-        );
-    }
-
-
 
     static Stream<org.junit.jupiter.params.provider.Arguments> affectValueMultiple() {
         return Stream.of(
                 org.junit.jupiter.params.provider.Arguments.of("id_int", 2, DataType.INT, 23, 234, 2345),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_true", true, DataType.BOOL, false, true, true),
                 org.junit.jupiter.params.provider.Arguments.of("id_bool_false", false, DataType.BOOL, false, true, true)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
         );
     }
 
@@ -106,10 +91,8 @@ class MemoryIntegrationTest {
                 org.junit.jupiter.params.provider.Arguments.of("blabla"),
                 org.junit.jupiter.params.provider.Arguments.of(true),
                 org.junit.jupiter.params.provider.Arguments.of(false)
-                // TODO : org.junit.jupiter.params.provider.Arguments.of("id_float", 3.14, DataType.FLOAT)
         );
     }
-
 
     @ParameterizedTest
     @MethodSource("typeOfVars")
@@ -149,26 +132,28 @@ class MemoryIntegrationTest {
 
         assertInstanceOf(Value.class, ret);
         Value ret_val = (Value) ret;
-        if(type == DataType.BOOL) {
+        if (type == DataType.BOOL) {
             assertEquals(value, ret_val.valueBool);
-        }
-        else if(type == DataType.INT) {
+        } else if (type == DataType.INT) {
             assertEquals(value, ret_val.valueInt);
+        } else if (type == DataType.STRING) {
+            assertEquals(value, ret_val.valueString);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
         mem.affectValue(id, newValue);
 
         ret = mem.val(id);
         ret_val = (Value) ret;
 
-        if(type == DataType.BOOL) {
+        if (type == DataType.BOOL) {
             assertEquals(newValue, ret_val.valueBool);
-        }
-        else if(type == DataType.INT) {
+        } else if (type == DataType.INT) {
             assertEquals(newValue, ret_val.valueInt);
+        } else if (type == DataType.STRING) {
+            assertEquals(newValue, ret_val.valueString);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
     }
 
@@ -188,7 +173,7 @@ class MemoryIntegrationTest {
         else if(type == DataType.INT) {
             assertEquals(value, ret_val.valueInt);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
 
         mem.affectValue(id, newValue);
@@ -202,7 +187,7 @@ class MemoryIntegrationTest {
         else if(type == DataType.INT) {
             assertEquals(newValue, ret_val.valueInt);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
 
         mem.affectValue(id, newValue1);
@@ -216,7 +201,7 @@ class MemoryIntegrationTest {
         else if(type == DataType.INT) {
             assertEquals(newValue1, ret_val.valueInt);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
 
         mem.affectValue(id, newValue2);
@@ -230,7 +215,7 @@ class MemoryIntegrationTest {
         else if(type == DataType.INT) {
             assertEquals(newValue2, ret_val.valueInt);
         } else {
-            return; // TODO : Do other DataTypes
+            return;
         }
     }
 
@@ -273,9 +258,6 @@ class MemoryIntegrationTest {
             mem.affectValue(id, newValue);
         });
     }
-
-
-
 
     @ParameterizedTest
     @MethodSource("typeOfVarsNull")
@@ -377,28 +359,6 @@ class MemoryIntegrationTest {
         obj = mem.stack.getObject("val");
         assertEquals(4, obj.getValue());
     }
-
-    /* TODO : Put back later
-    @Disabled
-    @Test
-    void affVarClassReaffectDiffType() {
-        mem.declVarClass("val");
-        String ret = mem.identVarClass();
-        Stack_Object obj = mem.stack.getObject("val");
-        assertEquals("val", ret);
-        assertNull(obj.getValue());
-        mem.affVarClass(2); // We affect the var class to 2
-        obj = mem.stack.getObject("val");
-        assertEquals(2, obj.getValue());
-
-        // Reaffect with different type should throw an error
-
-        assertThrows(java.lang.IllegalArgumentException.class, () -> {
-            mem.affVarClass("mismatch");
-        });
-    }
-
-     */
 
     /**
      * We test with calling with no declared class var, and with null arg

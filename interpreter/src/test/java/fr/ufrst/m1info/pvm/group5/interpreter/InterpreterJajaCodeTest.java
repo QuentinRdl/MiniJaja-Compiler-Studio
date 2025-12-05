@@ -631,5 +631,4 @@ class InterpreterJajaCodeTest {
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
-
 }

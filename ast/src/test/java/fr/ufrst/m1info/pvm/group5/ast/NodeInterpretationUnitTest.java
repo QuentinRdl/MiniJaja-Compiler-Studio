@@ -94,13 +94,15 @@ class NodeInterpretationUnitTest {
     }
 
     @Test
-    void AffectationNode_InvalidOperand() {
+    void AffectationNode_InvalidOperand_NullRightOperand() {
         IdentNode lop = new IdentNode("x");
+        assertThrows(ASTBuildException.class, () -> new AffectationNode(lop, null));
+    }
+
+    @Test
+    void AffectationNode_InvalidOperand_NullLeftOperand() {
         NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(5));
-        assertThrows(ASTBuildException.class, () -> new AffectationNode(lop, null));
         assertThrows(ASTBuildException.class, () -> new AffectationNode(null, rop));
-        ASTNode newrop = mock(ASTNode.class);
-        assertThrows(ASTBuildException.class, () -> new AffectationNode(lop, null));
     }
 
 
@@ -1001,13 +1003,15 @@ class NodeInterpretationUnitTest {
     }
 
     @Test
-    void SumNode_InvalidOperand() {
+    void SumNode_InvalidOperand_NullRightOperand() {
         IdentNode lop = new IdentNode("x");
+        assertThrows(ASTBuildException.class, () -> new SumNode(lop, null));
+    }
+
+    @Test
+    void SumNode_InvalidOperand_NullLeftOperand() {
         NumberNode rop = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(5));
-        assertThrows(ASTBuildException.class, () -> new SumNode(lop, null));
         assertThrows(ASTBuildException.class, () -> new SumNode(null, rop));
-        ASTNode newrop = mock(ASTNode.class);
-        assertThrows(ASTBuildException.class, () -> new SumNode(lop, null));
     }
     @Test
     @DisplayName("SumNode - interpret() with array access and constant index")
@@ -1680,7 +1684,7 @@ class NodeInterpretationUnitTest {
 
         m.interpret(mem);
 
-        verify(mem).declMethod(eq("isReady"), eq(DataType.BOOL), eq(m));
+        verify(mem).declMethod("isReady", DataType.BOOL, m);
     }
 
     @Test
@@ -1697,7 +1701,7 @@ class NodeInterpretationUnitTest {
 
         m.interpret(mem);
 
-        verify(mem).declMethod(eq("reset"), eq(DataType.VOID), eq(m));
+        verify(mem).declMethod("reset", DataType.VOID, m);
     }
 
     @Test

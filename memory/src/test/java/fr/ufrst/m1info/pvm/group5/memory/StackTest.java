@@ -426,82 +426,6 @@ class StackTest {
         } catch (Exception ex) {
             fail("Reflection setup failed: " + ex.getMessage());
         }
-
-        boolean res = s.swap(a, a);
-        assertTrue(res);
-    }
-
-
-    @Test
-    void testSwap_successful() {
-        Stack s = new Stack();
-
-        StackObject a = mock(StackObject.class);
-        StackObject b = mock(StackObject.class);
-        StackObject c = mock(StackObject.class);
-
-        when(a.getName()).thenReturn("a");
-        when(b.getName()).thenReturn("b");
-        when(c.getName()).thenReturn("c");
-
-        when(a.getScope()).thenReturn(0);
-        when(b.getScope()).thenReturn(0);
-        when(c.getScope()).thenReturn(0);
-
-        try {
-            Field f = Stack.class.getDeclaredField("stackContent");
-            f.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
-            dq.addLast(a);
-            dq.addLast(b);
-            dq.addLast(c);
-        } catch (Exception ex) {
-            fail("Reflection setup failed: " + ex.getMessage());
-        }
-
-        boolean res = s.swap(a, b);
-        assertTrue(res);
-
-        // Verify order is now [b, a, c]
-        try {
-            Field f = Stack.class.getDeclaredField("stackContent");
-            f.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
-            Object[] arr = dq.toArray();
-            assertEquals(b, arr[0]);
-            assertEquals(a, arr[1]);
-            assertEquals(c, arr[2]);
-        } catch (Exception ex) {
-            fail("Reflection verification failed: " + ex.getMessage());
-        }
-    }
-
-    @Test
-    void testSwap_missingObject_returnsFalse() {
-        Stack s = new Stack();
-
-        StackObject a = mock(StackObject.class);
-        when(a.getName()).thenReturn("a");
-        when(a.getScope()).thenReturn(0);
-
-        StackObject b = mock(StackObject.class);
-        when(b.getName()).thenReturn("b");
-        when(b.getScope()).thenReturn(0);
-
-        try {
-            Field f = Stack.class.getDeclaredField("stackContent");
-            f.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Deque<StackObject> dq = (Deque<StackObject>) f.get(s);
-            dq.addLast(a);
-        } catch (Exception ex) {
-            fail("Reflection setup failed: " + ex.getMessage());
-        }
-
-        boolean res = s.swap(a, b);
-        assertFalse(res);
     }
 
     @Test
@@ -636,23 +560,26 @@ class StackTest {
     }
 
 
-
-    /* TODO : Replace with the correct format
-    @Test(expected = Stack.InvalidNameException.class)
+    @Test
     public void setVar_nullName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
-        s.setVar(null, 42, DataType.INT);
+
+        assertThrows(Stack.InvalidNameException.class, () -> {
+            s.setVar(null, 42, DataType.INT);
+        });
     }
 
-    @Test(expected = Stack.InvalidNameException.class)
+
+    @Test
     public void setVar_emptyName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
-        s.setVar("", 42, DataType.INT);
+        assertThrows(Stack.InvalidNameException.class, () -> {
+            s.setVar("", 42, DataType.INT);
+        });
     }
 
-     */
 
     @Test
     void searchObject_returnsObjectWhenPresent() {
@@ -917,135 +844,6 @@ class StackTest {
         } catch (Exception ex) {
             fail("Reflection/setup failed: " + ex.getMessage());
         }
-    }
-
-    @Disabled
-    @Test
-    void validateType_nullValue_throwsIllegalArgumentException() throws Exception {
-        Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
-        m.setAccessible(true);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, null, DataType.INT);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Test
-    void validateType_validTypes_doNotThrow() throws Exception {
-        Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, DataType.class);
-        m.setAccessible(true);
-
-        // BOOL
-        try {
-            m.invoke(s, Boolean.TRUE, DataType.BOOL);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            fail("validateType threw for BOOL: " + ite.getCause());
-        }
-
-        // INT
-        try {
-            m.invoke(s, Integer.valueOf(42), DataType.INT);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            fail("validateType threw for INT: " + ite.getCause());
-        }
-
-        // FLOAT
-        try {
-            m.invoke(s, Float.valueOf(3.14f), DataType.FLOAT);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            fail("validateType threw for FLOAT: " + ite.getCause());
-        }
-
-        // DOUBLE
-        try {
-            m.invoke(s, Double.valueOf(2.718), DataType.DOUBLE);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            fail("validateType threw for DOUBLE: " + ite.getCause());
-        }
-
-        // STRING
-        try {
-            m.invoke(s, "hello", DataType.STRING);
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            fail("validateType threw for STRING: " + ite.getCause());
-        }
-    }
-
-    @Disabled
-    @Test
-    void validateType_mismatchedType_throwsIllegalArgumentException() throws Exception {
-        Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
-        m.setAccessible(true);
-
-        // BOOL expected, but provide Integer
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, Integer.valueOf(1), DataType.BOOL);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        // INT expected, but provide Double
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, Double.valueOf(1.2), DataType.INT);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        // DOUBLE expected, but provide Float
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, Float.valueOf(1.2f), DataType.DOUBLE);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Disabled
-    @Test
-    void validateType_voidOrUnknown_throwsIllegalArgumentException() throws Exception {
-        Stack s = new Stack();
-        java.lang.reflect.Method m = Stack.class.getDeclaredMethod("validateType", Object.class, fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType.class);
-        m.setAccessible(true);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, Integer.valueOf(5), DataType.VOID);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                m.invoke(s, "something", DataType.UNKNOWN);
-            } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw (RuntimeException) ite.getCause();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     @Test

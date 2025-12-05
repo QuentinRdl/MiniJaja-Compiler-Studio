@@ -108,11 +108,6 @@ public class Stack {
             throw new InvalidNameException("Variable name cannot be null or empty");
         }
 
-        // Allow declarations without initial value: only validate when value is non-null
-        if (value != null) {
-            validateType(value, type);
-        }
-
         StackObject var = new StackObject(name, value, scopeDepth, EntryKind.VARIABLE, type);
         stackContent.push(var);
     }
@@ -126,12 +121,6 @@ public class Stack {
     public void setConst(String name, Object value, DataType type) {
         if (name == null || name.isEmpty()) {
             throw new InvalidNameException("Constant name cannot be null or empty");
-        }
-
-        // Constants may be declared without an initial value (value can be assigned later),
-        // so only validate when a non-null value is provided
-        if (value != null) {
-            validateType(value, type);
         }
 
         StackObject constant = new StackObject(name, value, scopeDepth, EntryKind.CONSTANT, type);
@@ -212,13 +201,10 @@ public class Stack {
     public boolean updateVar(String name, Object value) {
         for(StackObject var : stackContent) {
             if(var.getEntryKind() != EntryKind.VARIABLE) {
-                // TODO : Should we throw an error ? this way if false is returned then the var is not found
-                // And if exception, we now that it is not because the object is not a var
                 return false;
             }
             if(var.getName().equals(name) && var.getScope() == scopeDepth) {
                 // validate value against the variable's declared type
-                validateType(value, var.getDataType());
                 var.setValue(value);
                 return true;
             }
@@ -243,7 +229,6 @@ public class Stack {
             return false; // Not a var
         }
 
-        validateType(value, topVar.getDataType());
         topVar.setValue(value);
         return true;
     }
@@ -357,7 +342,7 @@ public class Stack {
     }
 
     /**
-     * Searches for the given Object in the stack // TODO : Unit tests !!!
+     * Searches for the given Object in the stack
      * @param identifier the name of the Object we are looking for
      * @return Object if found, null otherwise
      */
@@ -391,108 +376,6 @@ public class Stack {
 
         // We put the object back on top of the stack
         stackContent.push(obj);
-        return true;
-    }
-
-    /**
-     * Func to validate that a given value matches the declared DataType
-     * @param value we want to check the type of this value
-     * @param type we check that the object has this type
-     */
-    private void validateType(Object value, DataType type) {
-        if (true) {
-            return;
-        }
-        if (value == null) {
-            throw new Memory.MemoryIllegalArgException("Called with null value for type " + type);
-        }
-
-        switch (type) {
-            case BOOL:
-                if (!(value instanceof Boolean)) {
-                    throw new Memory.MemoryIllegalArgException("Called with BOOL DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case INT:
-                if (!(value instanceof Integer)) {
-                    throw new Memory.MemoryIllegalArgException("Called with INT DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case FLOAT:
-                if (!(value instanceof Float)) {
-                    throw new Memory.MemoryIllegalArgException("Called with FLOAT DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case DOUBLE:
-                if (!(value instanceof Double)) {
-                    throw new Memory.MemoryIllegalArgException("Called with DOUBLE DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case STRING:
-                if (!(value instanceof String)) {
-                    throw new Memory.MemoryIllegalArgException("Called with STRING DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case VOID:
-            case UNKNOWN:
-            default:
-                throw new Memory.MemoryIllegalArgException("Called with unvalid argument : " + value.getClass());
-        }
-    }
-
-    /**
-     * // TODO : Remove
-     * Will swap Objects obj1 & obj2 in the stack
-     * @param obj1 1st object
-     * @param obj2 2nd Object
-     * @return True if swapped, false otherwise
-     */
-    public boolean swap(StackObject obj1, StackObject obj2) {
-        // Validate arguments
-        if (obj1 == null || obj2 == null) {
-            throw new Memory.MemoryIllegalArgException("Swap requires non-null Stack_Object arguments");
-        }
-
-        String id1 = obj1.getName();
-        String id2 = obj2.getName();
-
-        if (id1 == null || id2 == null) {
-            throw new Memory.MemoryIllegalArgException("Swap requires Stack_Object instances with non-null names");
-        }
-
-        // If identifiers are equal, nothing to do
-        if (id1.equals(id2)) return true;
-
-        // Convert deque to list to find indices and swap
-        List<StackObject> list = new ArrayList<>(stackContent);
-        int idx1 = -1, idx2 = -1;
-        for (int i = 0; i < list.size(); i++) {
-            StackObject so = list.get(i);
-            if (idx1 == -1 && Objects.equals(so.getName(), id1)) {
-                idx1 = i;
-            }
-            if (idx2 == -1 && Objects.equals(so.getName(), id2)) {
-                idx2 = i;
-            }
-            if (idx1 != -1 && idx2 != -1) break;
-        }
-
-        if (idx1 == -1 || idx2 == -1) {
-            // One or both objects not found
-            return false;
-        }
-
-        // Swap in list
-        StackObject tmp = list.get(idx1);
-        list.set(idx1, list.get(idx2));
-        list.set(idx2, tmp);
-
-        // Rebuild deque preserving the new order
-        stackContent.clear();
-        for (StackObject so : list) {
-            stackContent.addLast(so);
-        }
-
         return true;
     }
 
@@ -534,39 +417,9 @@ public class Stack {
             return DataType.DOUBLE;
         }
 
-        /* TODO : How to handle null objects ??
-        if (obj == null) {
-            return DataType.VOID;
-        }
-         */
-
         return DataType.UNKNOWN;
     }
 
-    /**
-     * Puts a value on a const that has no affected value yet
-     * @param obj const object
-     * @param value value to assign the object
-     * @return true if value affected, false otherwise
-     */
-    public boolean initializeConst(StackObject obj, Object value) {
-        if(obj == null || value == null) return false;
-        if(obj.getEntryKind() != EntryKind.CONSTANT) {
-            throw new Memory.MemoryIllegalArgException("initializeConst must be called with a const !");
-        }
-
-        DataType dt = getDataTypeFromGenericObject(obj);
-        if(dt != obj.getDataType()) {
-            throw new Memory.MemoryIllegalArgException("Called intializeConst with incorrect data type");
-        }
-
-        if(obj.getValue() != null) {
-            throw new Memory.MemoryIllegalArgException("Called intializeConst with a const that is already affected");
-        }
-
-        obj.setValue(value);
-        return true;
-    }
     /**
      * Returns the depth of the current scope.
      */

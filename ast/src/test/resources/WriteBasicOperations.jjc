@@ -1,0 +1,21 @@
+init
+new(x,INT,var,0)
+push(3)
+push(4)
+add
+store(x)
+push("x : ")
+write
+load(x)
+writeln
+push(1)
+inc(x)
+push("x : ")
+write
+load(x)
+writeln
+push(0)
+swap
+pop
+pop
+jcstop
