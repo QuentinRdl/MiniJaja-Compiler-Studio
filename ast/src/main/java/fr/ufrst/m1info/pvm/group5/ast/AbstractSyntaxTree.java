@@ -115,7 +115,6 @@ public class AbstractSyntaxTree {
     public Memory interpret(Memory m, InterpretationMode mode) throws Exception{
         root.setInterpretationMode(mode);
         root.checkType(new Memory());
-        System.out.println(root.interpretationStoppedEvent());
         root.interpret(m);
         return m;
     }
