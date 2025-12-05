@@ -1063,6 +1063,7 @@ class MainControllerTest extends ApplicationTest {
      */
     static Stream<Arguments> notVisibleCharsTests() {
         return Stream.of(
+                Arguments.of("just_line_return", "\n", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
                 Arguments.of("blank_run", "   \n   ", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
                 Arguments.of("blank_run_oneSpace", " ", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
                 Arguments.of("blank_run_tab", "\t   \t", (Consumer<MainController>) (MainController::onRunClicked), "[INFO] No code to interpret !"),
