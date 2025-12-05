@@ -863,6 +863,7 @@ class InterpreterMiniJajaTest {
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
         imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
+            System.out.println(event);
             imjj.resumeInterpretation(im);
         });
         imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
