@@ -21,11 +21,15 @@ public abstract class ASTNode {
 
     // Root relative methods
 
+    public ASTNode getRoot(){
+        return root;
+    }
+
     public void setAsRoot(){
         this.root = null;
         this.InterpretationStoppedEvent = new Event<>();
         for(ASTNode child : getChildren()){
-            child.setRoot(root);
+            child.setRoot(this);
         }
     }
 
@@ -45,7 +49,7 @@ public abstract class ASTNode {
     public Event<InterpretationStoppedData> interpretationStoppedEvent(){
         if(this.InterpretationStoppedEvent == null){
             if(this.root == null){
-                throw new ASTBuildException("No root node has been set for the current tree");
+                throw new ASTBuildException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
             }
             return root.interpretationStoppedEvent();
         }
@@ -95,7 +99,7 @@ public abstract class ASTNode {
      * Get the children of the node within a list
      * @return List of the children of the node
      */
-    protected abstract List<ASTNode>getChildren();
+    public abstract List<ASTNode>getChildren();
 
     /**
      * Prints non-children properties of the node

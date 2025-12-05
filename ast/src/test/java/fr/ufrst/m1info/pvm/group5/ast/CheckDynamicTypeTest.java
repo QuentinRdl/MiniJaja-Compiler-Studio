@@ -2057,7 +2057,7 @@ class CheckDynamicTypeTest {
         @Override
         public String checkType(Memory m) { return "void"; }
         @Override
-        protected List<ASTNode> getChildren() {
+        public List<ASTNode> getChildren() {
             return List.of();
         }
     }

@@ -138,7 +138,7 @@ public class SumNode extends ASTNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of(identifier, expression);
     }
 }

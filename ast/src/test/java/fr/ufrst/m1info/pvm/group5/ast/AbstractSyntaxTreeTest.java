@@ -1,14 +1,12 @@
 package fr.ufrst.m1info.pvm.group5.ast;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,6 +51,26 @@ class AbstractSyntaxTreeTest {
     @DisplayName("Construction - Complex")
     void ComplexTree() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
+    }
+
+    @Test
+    @DisplayName("Construction - Root")
+    void RootedTree() throws IOException {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/Complex.mjj");
+        Stack<ASTNode> stack = new Stack<>();
+        stack.push(AST.root);
+        while (!stack.isEmpty()){
+            ASTNode current = stack.pop();
+            if(current == AST.root) {
+                assertNull(current.getRoot());
+            }
+            else{
+                if(current.getRoot() == null){
+                    fail("Expected node " + current.getClass().getSimpleName() +" at line "+current.getLine() +" to have a root");
+                }
+            }
+            stack.addAll(current.getChildren());
+        }
     }
 
     @Test

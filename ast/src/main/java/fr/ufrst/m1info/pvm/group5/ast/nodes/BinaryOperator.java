@@ -68,7 +68,7 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
     protected abstract Value mainOperation(Value leftOperand, Value rightOperand) throws ASTInvalidMemoryException, ASTInvalidOperationException;
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of(left,right);
     }
 

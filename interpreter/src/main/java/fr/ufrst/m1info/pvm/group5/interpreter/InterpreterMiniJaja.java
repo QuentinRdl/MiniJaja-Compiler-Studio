@@ -84,7 +84,12 @@ public class InterpreterMiniJaja extends Interpreter{
                 ast.interpret(mem, mode);
             } catch (Exception e) {
                 secondaryThread.interrupt();
-                interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentNode.getLine()));
+                interpretationHaltedEvent.triggerAsync(
+                        new InterpretationHaltedData(
+                                false,
+                                e.getMessage(),
+                                (currentNode == null)?-1:currentNode.getLine())
+                );
             }
         });
 

@@ -65,7 +65,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(param);
         if (next != null)

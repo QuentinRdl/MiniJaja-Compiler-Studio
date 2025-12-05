@@ -29,7 +29,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(ident);
         children.add(params);

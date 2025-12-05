@@ -24,7 +24,7 @@ public class AppelINode extends ASTNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(ident);
         if (args != null) children.add(args);

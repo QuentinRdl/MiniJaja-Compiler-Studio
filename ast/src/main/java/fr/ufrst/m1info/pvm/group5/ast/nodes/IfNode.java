@@ -74,7 +74,7 @@ public class IfNode extends ASTNode{
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(condition);
         if(instrThen != null)
