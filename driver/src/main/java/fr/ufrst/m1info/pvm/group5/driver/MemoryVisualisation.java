@@ -40,7 +40,7 @@ public class MemoryVisualisation extends HBox {
 
         stackContainer = new VBox(10);
         stackContainer.setPadding(new Insets(10));
-        stackContainer.setStyle("-fx-background-color: #333333; -fx-border-color: #1a1a1a; -fx-background-radius: 6;");
+        stackContainer.setStyle("-fx-background-color: #1d1d1d;");
 
         ScrollPane stackScrollPane = new ScrollPane(stackContainer);
         stackScrollPane.setFitToWidth(true);
@@ -60,7 +60,7 @@ public class MemoryVisualisation extends HBox {
 
         heapContainer = new VBox(10);
         heapContainer.setPadding(new Insets(10));
-        heapContainer.setStyle("-fx-background-color: #333333; -fx-border-color: #1a1a1a; -fx-background-radius: 6;");
+        heapContainer.setStyle("-fx-background-color: #1d1d1d;");
 
         ScrollPane heapScrollPane = new ScrollPane(heapContainer);
         heapScrollPane.setFitToWidth(true);

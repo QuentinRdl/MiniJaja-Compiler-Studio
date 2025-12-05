@@ -24,8 +24,13 @@ public class HeapBlockView extends VBox {
         super();
         setPadding(new Insets(8));
         setSpacing(4);
+        getStyleClass().add("heap-block");
 
-        setStyle("-fx-background-color: #EBEFF9; -fx-border-color: #516DC9; -fx-border-radius: 6; -fx-background-radius: 6;");
+        if (allocated){
+            setStyle(" -fx-border-color: #FFD270;");
+        } else {
+            setStyle(" -fx-border-color: #CC8B00;");
+        }
 
         Label addressLabel = new Label("Block @" + address + (allocated ? " - ALLOCATED" : " - FREE"));
         addressLabel.setStyle("-fx-font-weight: bold;");

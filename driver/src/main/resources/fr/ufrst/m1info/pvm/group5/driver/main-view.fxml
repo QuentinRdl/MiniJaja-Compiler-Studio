@@ -31,13 +31,13 @@
       <Button text="Save" fx:id="btnSave" onAction="#saveButton"/>
       <Button text="Save As" fx:id="btnSaveAs" onAction="#saveAsButton"/>
 
-      <Region fx:id="spacer1" prefWidth="20"/>
+      <Region fx:id="spacer1" prefWidth="30"/>
 
       <Button text="Run" fx:id="btnRun" onAction="#onRunClicked"/>
       <Button text="Compile" fx:id="btnCompile" onAction="#onCompileClicked"/>
       <Button text="Compile and run" fx:id="btnRunCompile" onAction="#onCompileAndRunClicked"/>
 
-      <Region fx:id="spacer2" prefWidth="50"/>
+      <Region fx:id="spacer2" prefWidth="60"/>
 
       <Label text="Debug : "/>
       <Button text="Run" fx:id="btnDebugRun" onAction="#onClickRunDebug"/>

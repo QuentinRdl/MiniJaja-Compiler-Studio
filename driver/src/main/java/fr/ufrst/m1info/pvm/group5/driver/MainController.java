@@ -180,15 +180,15 @@ public class MainController {
         hideMemoryTab(memoryTabJajacode);
 
         FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
-        playIcon.setIconColor(Color.DARKBLUE);
+        playIcon.setIconColor(Color.web("#398989"));
         playIcon.setIconSize(12);
 
         FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
-        stopIcon.setIconColor(Color.DARKRED);
+        stopIcon.setIconColor(Color.web("#BF2237"));
         stopIcon.setIconSize(12);
 
         FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
-        nextIcon.setIconColor(Color.DARKGREEN);
+        nextIcon.setIconColor(Color.web("#FFD270"));
         nextIcon.setIconSize(12);
 
         btnDebugRun.setGraphic(playIcon);
