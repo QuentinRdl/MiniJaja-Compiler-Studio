@@ -65,6 +65,9 @@ public class MainController {
     private TabPane editorTabPane;
 
     @FXML
+    private TabPane outputTabPane;
+
+    @FXML
     private Tab sourceTab;
 
     @FXML
@@ -177,15 +180,15 @@ public class MainController {
         hideMemoryTab(memoryTabJajacode);
 
         FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
-        playIcon.setIconColor(Color.DARKBLUE);
+        playIcon.setIconColor(Color.web("#398989"));
         playIcon.setIconSize(12);
 
         FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
-        stopIcon.setIconColor(Color.DARKRED);
+        stopIcon.setIconColor(Color.web("#BF2237"));
         stopIcon.setIconSize(12);
 
         FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
-        nextIcon.setIconColor(Color.DARKGREEN);
+        nextIcon.setIconColor(Color.web("#FFD270"));
         nextIcon.setIconSize(12);
 
         btnDebugRun.setGraphic(playIcon);
@@ -1044,9 +1047,9 @@ public class MainController {
      * @param memoryTab the Tab representing the memory view
      */
     public void showMemoryTab(Tab memoryTab){
-        if(editorTabPane != null && memoryTab != null){
-            if(!editorTabPane.getTabs().contains(memoryTab)){
-                editorTabPane.getTabs().add(memoryTab);
+        if(outputTabPane != null && memoryTab != null){
+            if(!outputTabPane.getTabs().contains(memoryTab)){
+                outputTabPane.getTabs().add(memoryTab);
             }
         }
     }
@@ -1057,8 +1060,8 @@ public class MainController {
      * @param memoryTab the Tab representing the memory view
      */
     public void hideMemoryTab(Tab memoryTab){
-        if(editorTabPane != null && memoryTab != null){
-            editorTabPane.getTabs().remove(memoryTab);
+        if(outputTabPane != null && memoryTab != null){
+            outputTabPane.getTabs().remove(memoryTab);
         }
     }
 
