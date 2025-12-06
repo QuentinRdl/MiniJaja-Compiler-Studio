@@ -36,11 +36,11 @@ public class MemoryVisualisation extends HBox {
 
         stackLabel = new Label("Stack");
         stackLabel.setFont(Font.font("System", 14));
-        stackLabel.setStyle("-fx-font-weight: bold;");
+        stackLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
 
         stackContainer = new VBox(10);
         stackContainer.setPadding(new Insets(10));
-        stackContainer.setStyle("-fx-background-color: #f5f2f2; -fx-border-color: #1a1a1a; -fx-background-radius: 6;");
+        stackContainer.setStyle("-fx-background-color: #1d1d1d;");
 
         ScrollPane stackScrollPane = new ScrollPane(stackContainer);
         stackScrollPane.setFitToWidth(true);
@@ -56,11 +56,11 @@ public class MemoryVisualisation extends HBox {
 
         heapLabel = new Label("Heap");
         heapLabel.setFont(Font.font("System", 14));
-        heapLabel.setStyle("-fx-font-weight: bold;");
+        heapLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
 
         heapContainer = new VBox(10);
         heapContainer.setPadding(new Insets(10));
-        heapContainer.setStyle("-fx-background-color: #f5f2f2; -fx-border-color: #1a1a1a; -fx-background-radius: 6;");
+        heapContainer.setStyle("-fx-background-color: #1d1d1d;");
 
         ScrollPane heapScrollPane = new ScrollPane(heapContainer);
         heapScrollPane.setFitToWidth(true);

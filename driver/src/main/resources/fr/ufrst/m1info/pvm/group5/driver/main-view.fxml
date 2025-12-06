@@ -31,13 +31,13 @@
       <Button text="Save" fx:id="btnSave" onAction="#saveButton"/>
       <Button text="Save As" fx:id="btnSaveAs" onAction="#saveAsButton"/>
 
-      <Region fx:id="spacer1" prefWidth="20"/>
+      <Region fx:id="spacer1" prefWidth="30"/>
 
       <Button text="Run" fx:id="btnRun" onAction="#onRunClicked"/>
       <Button text="Compile" fx:id="btnCompile" onAction="#onCompileClicked"/>
       <Button text="Compile and run" fx:id="btnRunCompile" onAction="#onCompileAndRunClicked"/>
 
-      <Region fx:id="spacer2" prefWidth="50"/>
+      <Region fx:id="spacer2" prefWidth="60"/>
 
       <Label text="Debug : "/>
       <Button text="Run" fx:id="btnDebugRun" onAction="#onClickRunDebug"/>
@@ -53,27 +53,23 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
       </padding>
 
-      <HBox alignment="CENTER" spacing="20.0">
-        <padding>
-          <Insets top="10.0"/>
-        </padding>
-
-        <Label text="No file selected" fx:id="fileLabel"/>
-      </HBox>
-
       <SplitPane fx:id="splitPane">
         <TabPane fx:id="editorTabPane">
-          <Tab text="Source Code" closable="false">
+          <Tab fx:id="sourceTab" text="Source Code" closable="false">
             <ListView fx:id="codeListView"/>
           </Tab>
           <Tab fx:id="compiledTab" text="Compiled Code">
             <ListView fx:id="compiledCodeListView"/>
           </Tab>
+        </TabPane>
+
+        <TabPane fx:id="outputTabPane">
+          <Tab fx:id="outputTab" text="Output" closable="false">
+            <TextArea fx:id="output" editable="false" prefHeight="150"/>
+          </Tab>
           <Tab fx:id="memoryTabMinijaja" text="MiniJaja Memory Visualisation"/>
           <Tab fx:id="memoryTabJajacode" text="JajaCode Memory Visualisation"/>
         </TabPane>
-
-        <TextArea fx:id="output" editable="false" prefHeight="150"/>
       </SplitPane>
 
     </VBox>

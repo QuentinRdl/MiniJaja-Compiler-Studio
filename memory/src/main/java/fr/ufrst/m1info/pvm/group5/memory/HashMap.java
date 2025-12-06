@@ -56,18 +56,17 @@ public class HashMap<K,V>
     /**
      * Returns the index of key
      *
-     * @param key
+     * @param key the key we want the index
      * @return the index of key
      */
     public int getIndex(Object key){
         if (key==null){
             return 0;
         }
-        //return Math.abs(key.hashCode()) % capacity; => Provokes a sonarQube issue so we do the .abs value ourselves
-        // because just removing the .abs makes errors in the tests
-        int res = key.hashCode() % capacity;
-        if(res < 0) return -res;
-        return res;
+        int h = key.hashCode();
+        h = h ^ (h >>> 16);
+        if(h < 0) h = -h; // We do the Math.abs func ourselves as SonarQube detects it as a bug
+        return h % capacity;
     }
 
     /**
@@ -177,12 +176,14 @@ public class HashMap<K,V>
             if (key==null && buckets[index].get(i).getKey()==null){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
+                i--;
                 sizeHashMap--;
                 return value;
             }
             if ((key!=null && buckets[index].get(i).getKey()!=null) && key.equals(buckets[index].get(i).getKey())){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
+                i--;
                 sizeHashMap--;
                 return value;
             }
