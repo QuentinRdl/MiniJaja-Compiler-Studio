@@ -1,0 +1,12 @@
+class C {
+    int x = 1;
+    int y = 100;
+
+    int addition(int op1,int op2){
+        return op1 + op2;
+    };
+
+    main{
+        x = addition(x,y);
+    }
+}

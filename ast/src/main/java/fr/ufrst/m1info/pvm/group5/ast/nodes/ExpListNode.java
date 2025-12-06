@@ -46,7 +46,7 @@ public class ExpListNode extends ASTNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(head);
         if (tail != null) {

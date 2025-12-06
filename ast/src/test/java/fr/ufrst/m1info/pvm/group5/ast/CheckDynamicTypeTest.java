@@ -1693,7 +1693,6 @@ class CheckDynamicTypeTest {
         ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
         String result = list.checkType(memoryMock);
         assertEquals("void", result);
-        verifyNoInteractions(memoryMock);
     }
 
     @Test
@@ -2057,7 +2056,7 @@ class CheckDynamicTypeTest {
         @Override
         public String checkType(Memory m) { return "void"; }
         @Override
-        protected List<ASTNode> getChildren() {
+        public List<ASTNode> getChildren() {
             return List.of();
         }
     }

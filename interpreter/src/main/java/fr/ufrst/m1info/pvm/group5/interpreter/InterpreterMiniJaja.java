@@ -18,7 +18,6 @@ public class InterpreterMiniJaja extends Interpreter{
     AbstractSyntaxTree ast;
     Thread interpretationThread;
     ASTNode currentNode;
-    List<Integer> breakpoints;
     private Memory mem;
 
     protected InterpreterMiniJaja(){
@@ -33,7 +32,7 @@ public class InterpreterMiniJaja extends Interpreter{
 
     @Override
     public void setBreakpoints(List<Integer> breakpoints) {
-        this.breakpoints = breakpoints;
+        mem.setBreakpoints(breakpoints);
     }
 
     /**
@@ -57,8 +56,6 @@ public class InterpreterMiniJaja extends Interpreter{
     @Override
     public String startCodeInterpretation(String code, InterpretationMode mode) {
         String errMessage= null;
-
-        mem.setBreakpoints(breakpoints);
 
         // Building the AST
         try {
@@ -87,7 +84,12 @@ public class InterpreterMiniJaja extends Interpreter{
                 ast.interpret(mem, mode);
             } catch (Exception e) {
                 secondaryThread.interrupt();
-                interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentNode.getLine()));
+                interpretationHaltedEvent.triggerAsync(
+                        new InterpretationHaltedData(
+                                false,
+                                e.getMessage(),
+                                (currentNode == null)?-1:currentNode.getLine())
+                );
             }
         });
 

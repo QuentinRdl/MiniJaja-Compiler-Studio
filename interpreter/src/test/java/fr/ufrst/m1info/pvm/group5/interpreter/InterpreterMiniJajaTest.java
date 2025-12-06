@@ -1,4 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
+import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
 
@@ -8,12 +9,16 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
+    Writer writer;
 
     @BeforeEach
     public void setup() {
-        imj=new InterpreterMiniJaja();
+        writer = new Writer();
+        imj=new InterpreterMiniJaja(writer);
     }
 
     @Test
@@ -68,6 +73,34 @@ class InterpreterMiniJajaTest {
     void Loops() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
     }
+
+    @Test
+    @DisplayName("Interpret File Method")
+    void Method() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Method.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodComplex")
+    void MethodComplex() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/MethodComplex.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("addition : 101\nsubstraction : -99\ninferior : true\nHello World\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodRecursive")
+    void MethodRecursive() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/MethodRecursive.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n4\n3\n2\n1\n0\n0\n1\n2\n3\n4\n5\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+
 
     @Test
     @DisplayName("Interpret File OperationPrevalence")
@@ -855,60 +888,60 @@ class InterpreterMiniJajaTest {
     }
 
     /* Step by step // Breakpoints */
-    @Disabled
     @Test
     @DisplayName("Interpret -  step by step")
     void stepByStep() {
         int[] steps = {0};
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
-            imj.resumeInterpretation(im);
+            System.out.println(event);
+            imjj.resumeInterpretation(im);
         });
-        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 5); // 5 steps + end event trigger potentially triggered
+        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 5 || steps[0] == 6); // 5 steps + end event trigger potentially triggered
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret -  breakpoints")
     void breakpoints() throws InterruptedException {
         int[] steps = {0};
         InterpretationMode im = InterpretationMode.BREAKPOINTS;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
             if(event.isPursuable())
-                imj.resumeInterpretation(im);
+                imjj.resumeInterpretation(im);
         });
-        imj.setBreakpoints(List.of(14,16));
-        imj.startFileInterpretation("src/test/resources/Complex.mjj", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 2); // 2 breakpoints + end event trigger potentially triggered
+        imjj.setBreakpoints(List.of(14,16));
+        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 2 || steps[0] == 3); // 2 breakpoints + end event trigger potentially triggered
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret - error during step by step")
     void errorDuringStepByStep() {
         int[] steps = {0};
         List<String> errors = new ArrayList<>();
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
         // Creating result
         List<String> expectedErrors = new ArrayList<>();
         expectedErrors.add(null);
         expectedErrors.add(null);
-        expectedErrors.add("Variable b is undefined");
+        expectedErrors.add("Variable b is not assigned a value");
 
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
-        imj.interpretationHaltedEvent.subscribe(event -> {
+        imjj.interpretationHaltedEvent.subscribe(event -> {
             steps[0]++;
             errors.add(event.error());
-            imj.resumeInterpretation(im);
+            imjj.resumeInterpretation(im);
         });
-
-        imj.startCodeInterpretation("class C { int a = 1; int b; main{a++; b++;}}", im);
-        imj.waitInterpretation();
-        Assertions.assertTrue(steps[0] >= 2);
+        imjj.startCodeInterpretation("class C { int a = 1; int b; main{a++; b++;}}", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 2 || steps[0] == 3);
         Assertions.assertTrue(errors.containsAll(expectedErrors));
     }
 }

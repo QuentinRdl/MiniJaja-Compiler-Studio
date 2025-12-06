@@ -65,7 +65,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of();
     }
 

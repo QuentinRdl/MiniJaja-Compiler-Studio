@@ -1,0 +1,35 @@
+class C {
+    int x = 1;
+    int y = 100;
+    int resInt;
+    boolean resBool;
+
+    int addition(int op1,int op2){
+        return op1 + op2;
+    };
+
+    int substraction(int op1,int op2){
+        return op1 - op2;
+    };
+
+    boolean inferior(int op1,int op2){
+        return op2 > op1;
+    };
+
+    void helloWorld(){
+        writeln("Hello World");
+    };
+
+    main{
+        write("addition : ");
+        resInt = addition(x,y);
+        writeln(resInt);
+        write("substraction : ");
+        resInt = substraction(x,y);
+        writeln(resInt);
+        write("inferior : ");
+        resBool = inferior(x,y);
+        writeln(resBool);
+        helloWorld();
+    }
+}

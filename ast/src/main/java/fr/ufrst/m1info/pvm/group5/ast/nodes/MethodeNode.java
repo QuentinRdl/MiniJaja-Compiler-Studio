@@ -18,8 +18,8 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     public final ASTNode instrs;
 
     public MethodeNode(TypeNode returnType, IdentNode ident, ASTNode params, ASTNode vars, ASTNode instrs) {
-        if (returnType == null || ident == null || params == null) {
-            throw new ASTBuildException("MethodeNode requires non-null returnType, ident, and params");
+        if (returnType == null || ident == null) {
+            throw new ASTBuildException("MethodeNode requires non-null returnType and ident");
         }
         this.returnType = returnType;
         this.ident = ident;
@@ -29,10 +29,10 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(ident);
-        children.add(params);
+        if (params != null) children.add(params);
         if (vars != null) children.add(vars);
         if (instrs != null) children.add(instrs);
         return children;
@@ -41,7 +41,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     @Override
     public List<String> compile(int address) {
         List<String> code = new ArrayList<>();
-        List<String> pens = params.compile(address + 3);
+        List<String> pens = params != null ?params.compile(address + 3) : List.of();
         List<String> pdvs = vars != null ? vars.compile(address + 3 + pens.size()) : List.of();
         List<String> piss = instrs != null ? instrs.compile(address + 3 + pens.size() + pdvs.size()) : List.of();
         List<String> prdvs = List.of();
@@ -73,7 +73,22 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m) {
+        DataType dataType = ValueType.toDataType(this.returnType.valueType);
+        m.declMethod(ident.identifier, dataType, this);
+        m.pushScope();
+        if (params != null) params.checkType(m);
         if (instrs != null) instrs.checkType(m);
+        if (params != null) {
+            if (params instanceof WithdrawalNode withdrawalNode) {
+                withdrawalNode.withdrawInterpret(m);
+            } else if (params instanceof ParamListNode paramListNode) {
+                List<ParamNode> formals = paramListNode.toList();
+                for (ParamNode p : formals) {
+                    m.withdrawDecl(p.ident.identifier);
+                }
+            }
+        }
+        m.popScope();
         return returnType.getValueType().name().toLowerCase();
     }
     @Override

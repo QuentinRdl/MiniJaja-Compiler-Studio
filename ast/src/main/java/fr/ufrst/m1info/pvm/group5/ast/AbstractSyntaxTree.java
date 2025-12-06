@@ -23,7 +23,6 @@ public class AbstractSyntaxTree {
     public Event<InterpretationStoppedData> interpretationStoppedEvent = new Event<>();
 
     private AbstractSyntaxTree() {
-        ASTNode.InterpretationStoppedEvent.subscribe(d -> interpretationStoppedEvent.trigger(d));
     }
 
     /**
@@ -68,6 +67,9 @@ public class AbstractSyntaxTree {
 
         AbstractSyntaxTree tree = new AbstractSyntaxTree();
         tree.root = parser.classe().node;
+
+        tree.root.setAsRoot();
+        tree.root.interpretationStoppedEvent().subscribe(d -> tree.interpretationStoppedEvent.trigger(d));
         return tree;
     }
 

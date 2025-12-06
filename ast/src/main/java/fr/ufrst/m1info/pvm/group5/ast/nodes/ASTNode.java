@@ -7,18 +7,56 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import java.util.List;
 import java.util.Map;
 
-// Yet another useless line so i can push
-
 public abstract class ASTNode {
     /**
      * Line of the token in the file
      */
     private int line;
 
+    private ASTNode root = null;
+
     private static InterpretationMode interpretationMode = InterpretationMode.DIRECT;
 
-    public static final Event<InterpretationStoppedData> InterpretationStoppedEvent = new Event<>();
+    private Event<InterpretationStoppedData> InterpretationStoppedEvent = null;
 
+    // Root relative methods
+
+    public ASTNode getRoot(){
+        return root;
+    }
+
+    public void setAsRoot(){
+        this.root = null;
+        this.InterpretationStoppedEvent = new Event<>();
+        for(ASTNode child : getChildren()){
+            child.setRoot(this);
+        }
+    }
+
+    private void setRoot(ASTNode root){
+        this.root = root;
+        this.InterpretationStoppedEvent = null;
+        for(ASTNode child : getChildren()){
+            child.setRoot(root);
+        }
+    }
+
+    /**
+     * Getter for interpretationStoppedEvent of the root of the tree the node is part of
+     * If no root has been set, an exception is thrown
+     * @return current tree interpretation stopped event
+     */
+    public Event<InterpretationStoppedData> interpretationStoppedEvent(){
+        if(this.InterpretationStoppedEvent == null){
+            if(this.root == null){
+                throw new ASTBuildException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
+            }
+            return root.interpretationStoppedEvent();
+        }
+        return this.InterpretationStoppedEvent;
+    }
+
+    // Interpretation
 
     /**
      * Defines the way the interpretation of the program should be done
@@ -61,7 +99,7 @@ public abstract class ASTNode {
      * Get the children of the node within a list
      * @return List of the children of the node
      */
-    protected abstract List<ASTNode>getChildren();
+    public abstract List<ASTNode>getChildren();
 
     /**
      * Prints non-children properties of the node
@@ -181,7 +219,7 @@ public abstract class ASTNode {
                 if(!m.isBreakpoint(this.line))
                     return;
             case STEP_BY_STEP:
-                InterpretationStoppedEvent.triggerAsync(new InterpretationStoppedData(line, false, this));
+                interpretationStoppedEvent().triggerAsync(new InterpretationStoppedData(line, false, this));
                 doWait();
         }
     }

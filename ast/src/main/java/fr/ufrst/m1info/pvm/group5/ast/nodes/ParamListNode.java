@@ -34,16 +34,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     @Override
     public void interpret(Memory m)
             throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        ValueType vt = param.type.valueType;
-
-        Value val;
-        switch (vt) {
-            case INT -> val = new Value(0);
-            case BOOL -> val = new Value(false);
-            default -> val = new Value();
-        }
-
-        m.declVar(param.ident.identifier, val, ValueType.toDataType(vt));
+        param.interpret(m);
 
         if (next != null) {
             next.interpret(m);
@@ -53,11 +44,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     @Override
     public String checkType(Memory m)
             throws ASTInvalidDynamicTypeException {
-        if (param.type.valueType == ValueType.VOID) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Parameter " + param.ident.identifier + " cannot have type void"
-            );
-        }
+        param.checkType(m);
         if (next != null) {
             next.checkType(m);
         }
@@ -65,7 +52,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(param);
         if (next != null)

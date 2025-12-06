@@ -13,7 +13,6 @@ import java.util.List;
 
 public class InterpreterJajaCode extends Interpreter{
     Writer output;
-    List<Integer> breakpoints = new ArrayList<>();
     Thread interpretationThread;
     Instruction currentInstruction;
     InterpretationMode mode;
@@ -32,7 +31,7 @@ public class InterpreterJajaCode extends Interpreter{
 
     @Override
     public void setBreakpoints(List<Integer> breakpoints) {
-        this.breakpoints = breakpoints;
+        mem.setBreakpoints(breakpoints);
     }
 
     /**
@@ -146,7 +145,6 @@ public class InterpreterJajaCode extends Interpreter{
 
     private void startInterpretation(List<Instruction> instructions){
         int[] address = {1}; // It is an array because Java.
-        mem.setBreakpoints(breakpoints);
 
         // Creating the Thread
         interpretationThread = new Thread(() -> {

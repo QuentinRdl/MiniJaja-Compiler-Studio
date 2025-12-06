@@ -64,8 +64,8 @@ public class AffectationNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+        String exprType = expression.checkType(m);
         try {
-            String exprType = expression.checkType(m);
 
             if (identifier instanceof TabNode) {
                 TabNode tabNode = (TabNode) identifier;
@@ -119,7 +119,7 @@ public class AffectationNode extends ASTNode{
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of(identifier,expression);
     }
 

@@ -25,7 +25,7 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of(ident);
     }
 
@@ -37,7 +37,7 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<>();
-        jajacodes.add("new(" + ident.identifier + "," + type + ",param,0)");
+        jajacodes.add("new(" + ident.identifier + "," + type + ",var,0)");
         return jajacodes;
     }
 
@@ -57,8 +57,12 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (type.valueType.equals(ValueType.VOID)) {
             throw new ASTInvalidDynamicTypeException("Parameter cannot be of type void");
+        }else if (type.valueType.equals(ValueType.INT)) {
+            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
         }
-        m.declVar(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
+        else if (type.valueType.equals(ValueType.BOOL)) {
+            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+        }
         return "void";
     }
 

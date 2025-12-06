@@ -73,9 +73,9 @@ public class WriteLineNode extends ASTNode{
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         if(ident != null)
             return List.of(ident);
-        return null;
+        return List.of();
     }
 }

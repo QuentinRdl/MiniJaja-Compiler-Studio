@@ -53,7 +53,7 @@ public class MainNode extends ASTNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         if(vars != null)
             children.add(vars);

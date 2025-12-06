@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterJajaCode;
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
+import fr.ufrst.m1info.pvm.group5.interpreter.InterpretationHaltedData;
 import fr.ufrst.m1info.pvm.group5.compiler.Compiler;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationMode;
 
@@ -191,13 +192,15 @@ public class MainController {
         nextIcon.setIconSize(12);
 
         btnDebugRun.setGraphic(playIcon);
-        btnDebugRun.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
 
         btnDebugStop.setGraphic(stopIcon);
-        btnDebugStop.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugStop.setDisable(true);
 
         btnDebugNext.setGraphic(nextIcon);
-        btnDebugNext.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugNext.setDisable(true);
 
 
         hideCompileTab();
@@ -1080,6 +1083,10 @@ public class MainController {
     boolean debugHalted = false;
     int debugCurrentLine = -1;
 
+    // Store event subscribers so we can unsubscribe them later
+    private java.util.function.Consumer<InterpretationHaltedData> debugMjjSubscriber = null;
+    private java.util.function.Consumer<InterpretationHaltedData> debugJjcSubscriber = null;
+
 
     /**
      * Runs the adequat interpreter on debug mode (InterpreterMiniJaja / InterpreterJajaCode)
@@ -1104,6 +1111,12 @@ public class MainController {
 
         // Clean previous debug state
         if(debugInterpreterMjj != null){
+            // Unsubscribe from the old event before stopping
+            if(debugMjjSubscriber != null){
+                System.out.println("DEBUG -> Unsubscribing mjj");
+                debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
+                debugMjjSubscriber = null;
+            }
             try {
                 debugInterpreterMjj.stopInterpretation();
             } catch (Exception _){
@@ -1113,6 +1126,12 @@ public class MainController {
         }
 
         if(debugInterpreterJjc != null){
+            // Unsubscribe from the old event before stopping
+            if(debugJjcSubscriber != null){
+                System.out.println("DEBUG -> Unsubscribing jjc");
+                debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
+                debugJjcSubscriber = null;
+            }
             try {
                 debugInterpreterJjc.stopInterpretation();
             } catch (Exception _){
@@ -1130,22 +1149,23 @@ public class MainController {
         if(mjj){
             debugInterpreterMjj = (InterpreterMiniJaja) interpreter;
 
-            debugInterpreterMjj.getInterpretationHaltedEvent().subscribe(event -> {
+            // Create and store the subscriber so we can unsubscribe later
+            debugMjjSubscriber = event -> {
                 // Event runs on a thread we must update the controller state
                 debugHalted = event.isPursuable();
                 debugCurrentLine = event.line();
 
-                // Get the line text if we can
-                String lineText = "";
-                int lineIdx = debugCurrentLine - 1;
-                if(lineIdx >= 0 && lineIdx < codeLines.size()){
-                    lineText = codeLines.get(lineIdx).getCode();
-                }
-                console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
-
                 // If the interpreter said that the halt is pursuable, we are paused and
                 // the user can request the next step. We must get the memory and enable next step button
                 if(event.isPursuable()) {
+                    // Get the line text if we can
+                    String lineText = "";
+                    int lineIdx = debugCurrentLine - 1;
+                    if(lineIdx >= 0 && lineIdx < codeLines.size()){
+                        lineText = codeLines.get(lineIdx).getCode();
+                    }
+                    console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
+
                     String[] currMemoryState = null;
                     try {
                         if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
@@ -1222,8 +1242,11 @@ public class MainController {
                     debugInterpreterMjj.stopInterpretation(); // FIXME : Thread is not apparently not alive shown by debugging stopIntrepretation
                 }
 
-                debugInterpreterMjj = null;
-            });
+                //debugInterpreterMjj = null;
+            };
+
+            // Subscribe the handler to the event
+            debugInterpreterMjj.getInterpretationHaltedEvent().subscribe(debugMjjSubscriber);
 
             // Start interpretation in set by step mode
             String err = debugInterpreterMjj.startCodeInterpretation(code, InterpretationMode.STEP_BY_STEP);
@@ -1250,19 +1273,20 @@ public class MainController {
         } else { // JajaCode
             debugInterpreterJjc = (InterpreterJajaCode) interpreter;
 
-            debugInterpreterJjc.getInterpretationHaltedEvent().subscribe(event -> {
+            // Create and store the subscriber so we can unsubscribe later
+            debugJjcSubscriber = event -> {
                 debugHalted = event.isPursuable();
                 debugCurrentLine = event.line();
 
-                // Retrieve the line text if possible
-                String lineText = "";
-                int lineIdx = debugCurrentLine - 1;
-                if(lineIdx >= 0 && lineIdx < compiledCodeLines.size()) {
-                    lineText = compiledCodeLines.get(lineIdx).getCode();
-                }
-                console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
-
                 if(event.isPursuable()) {
+                    // Retrieve the line text if possible
+                    String lineText = "";
+                    int lineIdx = debugCurrentLine - 1;
+                    if(lineIdx >= 0 && lineIdx < compiledCodeLines.size()) {
+                        lineText = compiledCodeLines.get(lineIdx).getCode();
+                    }
+                    console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
+
                     try {
                         if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
                             // Get memory
@@ -1325,7 +1349,10 @@ public class MainController {
                         // Ignore errors
                     }
                 }
-            });
+            };
+
+            // Subscribe the handler to the event
+            debugInterpreterJjc.getInterpretationHaltedEvent().subscribe(debugJjcSubscriber);
 
             // Start interpretation in STEP_BY_STEP mode
             String err = debugInterpreterJjc.startCodeInterpretation(code, InterpretationMode.STEP_BY_STEP);
@@ -1347,7 +1374,6 @@ public class MainController {
             if(btnDebugNext != null) btnDebugNext.setDisable(true);
             if(btnDebugStop != null) btnDebugStop.setDisable(false);
         }
-
     }
 
 
@@ -1378,15 +1404,33 @@ public class MainController {
      */
     public void onClickStopDebug(){
         if(debugInterpreterMjj != null){
+            // Unsubscribe from the event before stopping
+            if(debugMjjSubscriber != null){
+                debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
+                debugMjjSubscriber = null;
+            }
             debugInterpreterMjj.stopInterpretation();
             debugInterpreterMjj = null;
         }
+
+        if(debugInterpreterJjc != null){
+            // Unsubscribe from the event before stopping
+            if(debugJjcSubscriber != null){
+                debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
+                debugJjcSubscriber = null;
+            }
+            debugInterpreterJjc.stopInterpretation();
+            debugInterpreterJjc = null;
+        }
+
         debugHalted = false;
         debugCurrentLine = -1;
 
         if(btnDebugNext != null) btnDebugNext.setDisable(true);
         if(btnDebugStop != null) btnDebugStop.setDisable(true);
         hideMemoryTab(memoryTabMinijaja);
+        hideMemoryTab(memoryTabJajacode);
+        if(btnDebugRun != null) btnDebugRun.setDisable(false);
         console.getWriter().writeLine("[INFO] Debugging stopped");
     }
 
@@ -1443,6 +1487,5 @@ public class MainController {
                 sourceTab.setText("Untitled •");
             }
         }
-
     }
 }

@@ -67,7 +67,7 @@ public class ClassNode extends ASTNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         List<ASTNode> children = new ArrayList<>();
         children.add(ident);
         if(decls!=null)

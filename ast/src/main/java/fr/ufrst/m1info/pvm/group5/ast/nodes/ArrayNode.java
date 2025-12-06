@@ -80,7 +80,7 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    protected List<ASTNode> getChildren() {
+    public List<ASTNode> getChildren() {
         return List.of(ident, sizeExp);
     }
 
