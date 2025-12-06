@@ -145,7 +145,6 @@ public class InterpreterJajaCode extends Interpreter{
     }
 
     private void startInterpretation(List<Instruction> instructions){
-        Memory mem = new Memory(output);
         int[] address = {1}; // It is an array because Java.
         mem.setBreakpoints(breakpoints);
 

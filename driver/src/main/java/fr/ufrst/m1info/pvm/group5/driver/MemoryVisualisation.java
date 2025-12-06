@@ -96,6 +96,7 @@ public class MemoryVisualisation extends HBox {
 
             //TODO: replace with actual values (step-by-step implementation)
 
+            /*
             String stackExample = "Stack{scopeDepth=0, size=1, contents=\n" +
                     "  [0] arr_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
                     "  [1] alias_0\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
@@ -108,8 +109,9 @@ public class MemoryVisualisation extends HBox {
                     "    bytes: [0, 0, 0, 0, 0]\n" +
                     "* ext@0 int@5 size=11 Free refs=0\n" +
                     "    bytes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-            updateStack(stackExample);
-            updateHeap(heapExample);
+             */
+            updateStack(stack);
+            updateHeap(heap);
 
         });
     }
@@ -160,7 +162,7 @@ public class MemoryVisualisation extends HBox {
                 String value = extract(line, "value=", "");
 
                 // Add a StackBlockView at the top of the stack container
-                stackContainer.getChildren().addFirst(new StackBlockView(name, kind, type, value));
+                stackContainer.getChildren().add(new StackBlockView(name, kind, type, value));
             }
         }
     }
@@ -171,6 +173,7 @@ public class MemoryVisualisation extends HBox {
      * @param heap string representation of the heap
      */
     private void updateHeap(String heap){
+        System.out.println("Heap string : " + heap);
         heapContainer.getChildren().clear();
 
         if(heap == null || heap.trim().isEmpty()){
@@ -184,12 +187,13 @@ public class MemoryVisualisation extends HBox {
         // Ignore the first line (general heap info like total/available memory)
         for(int i = 1; i < lines.length; i++){
             String line = lines[i].trim();
+            System.out.println("Line " + i + " : " + line);
             if(line.isEmpty()) continue; // Skip empty lines
 
-            if(line.contains("bytes:")){
-                String bytes = line.replace("bytes:", "").trim();
+            if(line.contains("data:")){
+                String data = line.replace("data:", "").trim();
                 HeapBlockView lastBlock = (HeapBlockView) heapContainer.getChildren().getLast();
-                lastBlock.setBytesLabel(bytes); // Update the bytes label of the last block
+                lastBlock.setDataLabel(data); // Update the data label of the last block
             } else {
                 int address = extractInt(line, "ext@", "int@");
                 int size = extractInt(line, "size=", (line.contains("Allocated") ? "Allocated" : "Free"));

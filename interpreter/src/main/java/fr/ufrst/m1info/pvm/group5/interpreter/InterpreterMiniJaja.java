@@ -56,7 +56,6 @@ public class InterpreterMiniJaja extends Interpreter{
 
     @Override
     public String startCodeInterpretation(String code, InterpretationMode mode) {
-        Memory mem = new Memory(output);
         String errMessage= null;
 
         mem.setBreakpoints(breakpoints);

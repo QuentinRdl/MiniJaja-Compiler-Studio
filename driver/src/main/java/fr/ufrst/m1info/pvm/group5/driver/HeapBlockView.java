@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
  * Each block shows its address, allocation status, size, reference count, and content bytes
  */
 public class HeapBlockView extends VBox {
-    private Label bytesLabel;
+    private Label dataLabel;
 
     /**
      * Constructs a visual block for a heap memory segment
@@ -39,11 +39,11 @@ public class HeapBlockView extends VBox {
 
         Label refsLabel = new Label("Refs : " + refs);
 
-        bytesLabel = new Label();
-        bytesLabel.setWrapText(true);
-        bytesLabel.setMaxWidth(260);
+        dataLabel = new Label();
+        dataLabel.setWrapText(true);
+        dataLabel.setMaxWidth(260);
 
-        getChildren().addAll(addressLabel, sizeLabel, refsLabel, bytesLabel);
+        getChildren().addAll(addressLabel, sizeLabel, refsLabel, dataLabel);
     }
 
     /**
@@ -51,7 +51,7 @@ public class HeapBlockView extends VBox {
      *
      * @param bytes the string representating the block's bytes
      */
-    public void setBytesLabel(String bytes){
-        bytesLabel.setText("Bytes : " + bytes);
+    public void setDataLabel(String bytes){
+        dataLabel.setText("Bytes : " + bytes);
     }
 }

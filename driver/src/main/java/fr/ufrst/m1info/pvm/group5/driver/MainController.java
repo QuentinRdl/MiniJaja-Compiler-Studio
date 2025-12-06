@@ -1149,18 +1149,26 @@ public class MainController {
                     String[] currMemoryState = null;
                     try {
                         if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
-                            // TODO : Get memory
+                            currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
                         }
                     } catch(Exception _ex) {
                         // ignore errors
                     }
 
+                    if(currMemoryState != null){
+                        System.out.println(currMemoryState[0]);
+                        System.out.println(currMemoryState[1]);
+                    }
+                    final String[] finalMemoryState = currMemoryState;
+
                     Platform.runLater(() -> {
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
-                        if(memoryVisualisationMiniJaja != null) {
-                            // TODO : Show memory
+                        showMemoryTab(memoryTabMinijaja);
+
+                        if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                            memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
                         }
                     });
 
@@ -1171,11 +1179,14 @@ public class MainController {
                 String[] currMemoryState = null;
                 try {
                     if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
-                        // TODO : Update memory
+                        currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
+
                     }
                 } catch (Exception _ex) {
                     // ignore errors
                 }
+
+                final String[] finalMemoryState = currMemoryState;
 
                 // Stop the interpreter and clear reference
                 try {
@@ -1195,8 +1206,10 @@ public class MainController {
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
-                    if(memoryVisualisationMiniJaja != null) {
-                        // TODO : Show memory
+                    showMemoryTab(memoryTabMinijaja);
+
+                    if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                        memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
                     }
                 });
 
