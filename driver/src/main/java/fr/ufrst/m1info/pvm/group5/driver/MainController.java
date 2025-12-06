@@ -192,13 +192,15 @@ public class MainController {
         nextIcon.setIconSize(12);
 
         btnDebugRun.setGraphic(playIcon);
-        btnDebugRun.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
 
         btnDebugStop.setGraphic(stopIcon);
-        btnDebugStop.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugStop.setDisable(true);
 
         btnDebugNext.setGraphic(nextIcon);
-        btnDebugNext.setContentDisplay(javafx.scene.control.ContentDisplay.LEFT);
+        btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugNext.setDisable(true);
 
 
         hideCompileTab();
@@ -1359,7 +1361,6 @@ public class MainController {
             if(btnDebugNext != null) btnDebugNext.setDisable(true);
             if(btnDebugStop != null) btnDebugStop.setDisable(false);
         }
-
     }
 
 
