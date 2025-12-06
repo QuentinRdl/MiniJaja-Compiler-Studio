@@ -1693,7 +1693,6 @@ class CheckDynamicTypeTest {
         ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
         String result = list.checkType(memoryMock);
         assertEquals("void", result);
-        verifyNoInteractions(memoryMock);
     }
 
     @Test

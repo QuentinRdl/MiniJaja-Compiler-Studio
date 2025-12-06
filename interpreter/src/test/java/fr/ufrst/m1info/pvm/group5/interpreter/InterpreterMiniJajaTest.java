@@ -1,4 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
+import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
 
@@ -8,12 +9,16 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class InterpreterMiniJajaTest {
     InterpreterMiniJaja imj;
+    Writer writer;
 
     @BeforeEach
     public void setup() {
-        imj=new InterpreterMiniJaja();
+        writer = new Writer();
+        imj=new InterpreterMiniJaja(writer);
     }
 
     @Test
@@ -68,6 +73,34 @@ class InterpreterMiniJajaTest {
     void Loops() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Loops.mjj"));
     }
+
+    @Test
+    @DisplayName("Interpret File Method")
+    void Method() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Method.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodComplex")
+    void MethodComplex() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/MethodComplex.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("addition : 101\nsubstraction : -99\ninferior : true\nHello World\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodRecursive")
+    void MethodRecursive() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/MethodRecursive.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n4\n3\n2\n1\n0\n0\n1\n2\n3\n4\n5\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+
 
     @Test
     @DisplayName("Interpret File OperationPrevalence")

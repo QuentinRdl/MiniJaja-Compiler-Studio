@@ -376,7 +376,7 @@ public class Memory {
         entry.setReference(params);
         symbolTable.addEntry(entry);
         stack.setMethod(identifier, params, returnType);
-        stack.pushScope();
+        //stack.pushScope();
     }
 
     /**
@@ -414,19 +414,21 @@ public class Memory {
         if (obj != null) {
             stack.removeObject(obj);
         }
-        try {
+        /*try {
             stack.popScope();
         } catch (Stack.NoScopeException e) {
-        }
+        }*/
     }
 
     public void pushScope() {
         stack.pushScope();
+        symbolTable=symbolTable.createChildScope();
     }
 
     public void popScope() {
         try {
             stack.popScope();
+            symbolTable=symbolTable.getParentScope();
         } catch (Stack.NoScopeException ignored) {
         }
     }
