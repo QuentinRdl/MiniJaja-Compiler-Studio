@@ -78,7 +78,6 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         m.pushScope();
         if (params != null) params.checkType(m);
         if (instrs != null) instrs.checkType(m);
-        m.popScope();
         if (params != null) {
             if (params instanceof WithdrawalNode withdrawalNode) {
                 withdrawalNode.withdrawInterpret(m);
@@ -89,6 +88,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
                 }
             }
         }
+        m.popScope();
         return returnType.getValueType().name().toLowerCase();
     }
     @Override
