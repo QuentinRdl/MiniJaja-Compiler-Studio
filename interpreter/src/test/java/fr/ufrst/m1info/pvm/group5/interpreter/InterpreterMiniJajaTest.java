@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import fr.ufrst.m1info.pvm.group5.memory.heap.HeapElement;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
 
@@ -154,7 +155,6 @@ class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File Synonymie")
     void Synonymie() {
@@ -907,6 +907,45 @@ class InterpreterMiniJajaTest {
         String errMessage=imj.interpretCode("class C { main{writeln(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Index")
+    void BooleanIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[false]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Index")
+    void NegativeIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[-1]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ArrayIndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Out Of Bounds Index")
+    void OutOfBoundsIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[20]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Array Size")
+    void BooleanArraySize() {
+        String errMessage=imj.interpretCode("class C { boolean t[false]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Array Size")
+    void NegativeArraySize() {
+        String errMessage=imj.interpretCode("class C { int t[-20]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test

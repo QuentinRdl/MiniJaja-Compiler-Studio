@@ -237,8 +237,8 @@ public class Memory {
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
-            heap.addReference((int)value);
-            obj.setValue(value);
+            heap.addReference(((Value) value).valueInt);
+            obj.setValue(((Value) value).valueInt);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
