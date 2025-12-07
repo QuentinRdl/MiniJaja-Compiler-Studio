@@ -1078,6 +1078,74 @@ public class MainController {
         }
     }
 
+    /**
+     * Returns a set of line numbers where breakpoints are currently set
+     * This can be used by the interpreter to know where to halt execution
+     *
+     * @return a Set containing all line numbers with breakpoints
+     */
+    public java.util.Set<Integer> getBreakpointLines(){
+        return codeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of line numbers where breakpoints are set in the compiled code
+     * This can be used by the JajaCode interpreter
+     *
+     * @return a Set containing all line numbers with breakpoints in compiled code
+     */
+    public java.util.Set<Integer> getCompiledBreakpointLines(){
+        return compiledCodeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Checks if a breakpoint is set at a specific line number
+     *
+     * @param lineNumber the line number to check
+     * @return true if a breakpoint is set at the given line, false otherwise
+     */
+    public boolean hasBreakpointAt(int lineNumber){
+        return codeLines.stream()
+                .anyMatch(line -> line.getLineNumber() == lineNumber && line.isBreakpoint());
+    }
+
+    /**
+     * Clears all breakpoints from the source code
+     */
+    public void clearAllBreakpoints(){
+        codeLines.forEach(line -> line.setBreakpoint(false));
+        codeListView.refresh();
+    }
+
+    /**
+     * Clears all breakpoints from the compiled code
+     */
+    public void clearCompiledBreakpoints(){
+        compiledCodeLines.forEach(line -> line.setBreakpoint(false));
+        compiledCodeListView.refresh();
+    }
+
+    /**
+     * Toggles a breakpoint at the specified line number
+     *
+     * @param lineNumber the line number where to toggle the breakpoint
+     */
+    public void toggleBreakpointAt(int lineNumber){
+        codeLines.stream()
+                .filter(line -> line.getLineNumber() == lineNumber)
+                .findFirst()
+                .ifPresent(line -> {
+                    line.setBreakpoint(!line.isBreakpoint());
+                    codeListView.refresh();
+                });
+    }
+
     InterpreterMiniJaja debugInterpreterMjj = null;
     InterpreterJajaCode debugInterpreterJjc = null;
     boolean debugHalted = false;
@@ -1113,7 +1181,6 @@ public class MainController {
         if(debugInterpreterMjj != null){
             // Unsubscribe from the old event before stopping
             if(debugMjjSubscriber != null){
-                System.out.println("DEBUG -> Unsubscribing mjj");
                 debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
                 debugMjjSubscriber = null;
             }
@@ -1128,7 +1195,6 @@ public class MainController {
         if(debugInterpreterJjc != null){
             // Unsubscribe from the old event before stopping
             if(debugJjcSubscriber != null){
-                System.out.println("DEBUG -> Unsubscribing jjc");
                 debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
                 debugJjcSubscriber = null;
             }
@@ -1148,6 +1214,13 @@ public class MainController {
         // Setup interpreter and subscribe to halted events
         if(mjj){
             debugInterpreterMjj = (InterpreterMiniJaja) interpreter;
+
+            // Configure breakpoints for MiniJaja code
+            java.util.Set<Integer> breakpoints = getBreakpointLines();
+            if(!breakpoints.isEmpty()){
+                debugInterpreterMjj.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                console.getWriter().writeLine("[INFO] Breakpoints set at lines: " + breakpoints);
+            }
 
             // Create and store the subscriber so we can unsubscribe later
             debugMjjSubscriber = event -> {
@@ -1221,11 +1294,10 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                console.getWriter().writeLine("[INFO] Debugging stopped (final halt)");
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
-                    System.out.println("Trying to shut down the thread");
                     debugInterpreterMjj.stopInterpretation(); // FIXME : Thread is not apparently not alive shown by debugging stopIntrepretation
                 }
 
@@ -1259,6 +1331,13 @@ public class MainController {
 
         } else { // JajaCode
             debugInterpreterJjc = (InterpreterJajaCode) interpreter;
+
+            // Configure breakpoints for JajaCode
+            java.util.Set<Integer> breakpoints = getCompiledBreakpointLines();
+            if(!breakpoints.isEmpty()){
+                debugInterpreterJjc.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                console.getWriter().writeLine("[INFO] Breakpoints set at lines: " + breakpoints);
+            }
 
             // Create and store the subscriber so we can unsubscribe later
             debugJjcSubscriber = event -> {
@@ -1415,6 +1494,7 @@ public class MainController {
 
         if(btnDebugNext != null) btnDebugNext.setDisable(true);
         if(btnDebugStop != null) btnDebugStop.setDisable(true);
+
         hideMemoryTab(memoryTabMinijaja);
         hideMemoryTab(memoryTabJajacode);
         if(btnDebugRun != null) btnDebugRun.setDisable(false);
