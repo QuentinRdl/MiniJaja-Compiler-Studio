@@ -12,14 +12,14 @@ import java.util.Map;
 
 public class WriteLineNode extends ASTNode{
     String text;
-    IdentNode ident;
+    ASTNode ident;
 
     public WriteLineNode(String text){
         this.text = text;
-        this.ident = null;
+        this.ident = null;;
     }
 
-    public WriteLineNode(IdentNode ident){
+    public WriteLineNode(ASTNode ident){
         this.ident = ident;
         this.text = null;
     }
@@ -27,7 +27,10 @@ public class WriteLineNode extends ASTNode{
     @Override
     public List<String> compile(int address) {
         List<String> jjcodes = new ArrayList<>();
-        if(text == null){
+        if(ident instanceof IdentNode){
+            jjcodes.addAll(ident.compile(address));
+        }
+        else if(ident instanceof TabNode){
             jjcodes.addAll(ident.compile(address));
         }
         else {
@@ -39,10 +42,16 @@ public class WriteLineNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        if(text == null){
-            Value v = ident.eval(m);
+        if(ident instanceof IdentNode iNode){
+            Value v = iNode.eval(m);
             if(v == null)
-                throw new ASTInvalidMemoryException("Unknown variable : " + ident.identifier);
+                throw new ASTInvalidMemoryException("Unknown variable : " + iNode.identifier);
+            m.writeLine(v.toString());
+        }
+        else if(ident instanceof TabNode tab){
+            Value v = tab.eval(m);
+            if(v == null)
+                throw new ASTInvalidMemoryException("Unknown array : " + tab.ident.identifier);
             m.writeLine(v.toString());
         }
         else{
@@ -52,14 +61,24 @@ public class WriteLineNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        if(text == null){
+        if(ident instanceof IdentNode iNode){
             try {
-                Value v = (Value) m.val(ident.identifier);
+                Value v = (Value) m.val(iNode.identifier);
                 if(v == null)
-                    throw new ASTInvalidMemoryException("Variable " + ident.identifier +" is not defined");
+                    throw new ASTInvalidMemoryException("Variable " + iNode.identifier +" is not defined");
             }
             catch (Exception e) {
-                throw new ASTInvalidMemoryException("Variable " + ident.identifier +" is not defined");
+                throw new ASTInvalidMemoryException("Variable " + iNode.identifier +" is not defined");
+            }
+        }
+        else if(ident instanceof TabNode tab){
+            try {
+                Value v = (Value) m.val(tab.ident.identifier);
+                if(v == null)
+                    throw new ASTInvalidMemoryException("Array " + tab.ident.identifier +" is not defined");
+            }
+            catch (Exception e) {
+                throw new ASTInvalidMemoryException("Array " + tab.ident.identifier +" is not defined");
             }
         }
         return "void";

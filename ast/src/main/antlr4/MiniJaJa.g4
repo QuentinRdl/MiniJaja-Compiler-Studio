@@ -123,9 +123,9 @@ instr returns [ASTNode node]
     | 'return' exp {$node = new ReturnNode($exp.node);}
     | ident '(' (listexp {listexpflag = true;})? ')' {$node = new AppelINode($ident.node, (listexpflag)?$listexp.node:null);}
     | ident1 {$node = $ident1.node;}
-    ( '=' exp {$node = new AffectationNode((IdentNode)$node, $exp.node);}
-    | '+=' exp {$node = new SumNode((IdentNode)$node, $exp.node);}
-    | '++' {$node = new IncNode((IdentNode)$node);}
+    ( '=' exp {$node = new AffectationNode($node, $exp.node);}
+    | '+=' exp {$node = new SumNode($node, $exp.node);}
+    | '++' {$node = new IncNode($node);}
     )
     | 'if' '(' exp ')' '{'
     (i1=instrs {instrsflag1 = true;}
@@ -137,11 +137,11 @@ instr returns [ASTNode node]
     '}' {$node = new IfNode($exp.node,(instrsflag1)?$i1.node:null,(instrsflag2)?$i2.node:null);}
     )?
     | 'write' '('
-    ( ident {$node = new WriteNode($ident.node);}
+    ( ident1 {$node = new WriteNode($ident1.node);}
     | e=string {$node = new WriteNode($e.str);}
     ) ')'
     | 'writeln' '('
-    ( ident {$node = new WriteLineNode($ident.node);}
+    ( ident1 {$node = new WriteLineNode($ident1.node);}
     | e=string {$node = new WriteLineNode($e.str);}
     ) ')'
     ;
@@ -205,6 +205,7 @@ factor returns [ASTNode node]
     | 'false' {$node = new BooleanNode(false);}
     | n=NOMBRE {$node = new NumberNode(Integer.parseInt($n.text));}
     | '(' exp ')' {$node = $exp.node;}
+    | 'length' '(' id=ident ')' {$node = new LengthNode($id.node);}
     ;
 
 ident1 returns [ASTNode node]

@@ -55,7 +55,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
         lineNumberLabel.getStyleClass().add("line-number");
 
         breakpointCircle = new Circle(6);
-        breakpointCircle.setFill(Color.web("#850606"));
+        breakpointCircle.setFill(Color.web("#BF2237"));
         breakpointCircle.setVisible(false);
 
         lineNumberContainer = new StackPane();
@@ -215,15 +215,23 @@ public class CodeLineCell extends ListCell<CodeLine> {
         isUpdating = true;
 
         if (empty || item == null){
+            getStyleClass().remove("debug-current-line");
             setGraphic(null);
         } else {
             codeField.setText(item.getCode());
+
+            if(item.isCurrentDebugLine()){
+                if(!getStyleClass().contains("debug-current-line")){
+                    getStyleClass().add("debug-current-line");
+                }
+            } else {
+                getStyleClass().remove("debug-current-line");
+            }
 
             // Display breakpoint
             if (item.isBreakpoint()){
                 lineNumberLabel.setVisible(false);
                 breakpointCircle.setVisible(true);
-
             } else {
                 lineNumberLabel.setText(String.valueOf(item.getLineNumber()));
                 lineNumberLabel.setVisible(true);

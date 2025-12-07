@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.junit.jupiter.params.provider.ValueSource;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.matcher.control.LabeledMatchers;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -1607,6 +1608,98 @@ class MainControllerTest extends ApplicationTest {
         verifyThat("#btnDebugStop", isDisabled());
         verifyThat("#btnDebugNext", isDisabled());
     }
+
+    @Test
+    void testNoHighlightInitially() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "int x = 10;", "x++;", "writeln(x);", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for(CodeLine line : controller.getCodeLines()){
+            assertFalse(line.isCurrentDebugLine());
+        }
+    }
+
+    @Test
+    void testLineHighlightedCorrectly() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "int x = 10;", "x++;", "writeln(x);", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.highlightDebugLine(2, controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for(int i = 0; i < controller.getCodeLines().size(); i++){
+            if(i == 2){
+                assertTrue(controller.getCodeLines().get(i).isCurrentDebugLine());
+            } else {
+                assertFalse(controller.getCodeLines().get(i).isCurrentDebugLine());
+            }
+        }
+    }
+
+    @Test
+    void testHighlightMovesCorrectly() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "int x = 10;", "x++;", "writeln(x);", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.highlightDebugLine(2, controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertTrue(controller.getCodeLines().get(2).isCurrentDebugLine());
+
+        interact(() -> controller.highlightDebugLine(3, controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertFalse(controller.getCodeLines().get(2).isCurrentDebugLine());
+        assertTrue(controller.getCodeLines().get(3).isCurrentDebugLine());
+
+        int highlightedCount = 0;
+        for(CodeLine line : controller.getCodeLines()){
+            if(line.isCurrentDebugLine()){
+                highlightedCount++;
+            }
+        }
+        assertEquals(1, highlightedCount);
+    }
+
+    @Test
+    void testClearRemovesAllHighlights() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "int x = 10;", "x++;", "writeln(x);", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.highlightDebugLine(2, controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertTrue(controller.getCodeLines().get(2).isCurrentDebugLine());
+
+        interact(() ->  controller.clearDebugHighlight(controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for(CodeLine line : controller.getCodeLines()){
+            assertFalse(line.isCurrentDebugLine());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 10})
+    void testInvalidIndexes(int invalidIndex) throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "main {", "int x = 10;", "x++;", "writeln(x);", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.highlightDebugLine(invalidIndex, controller.getCodeLines(), controller.getCodeListView()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for(CodeLine line : controller.getCodeLines()){
+            assertFalse(line.isCurrentDebugLine());
+        }
+    }
+
+
+
+
+
+>>>>>>> driver/src/test/java/fr/ufrst/m1info/pvm/group5/driver/MainControllerTest.java
 
     @Test
     void testStartDebugOnSimpleMiniJajaFile() throws Exception {

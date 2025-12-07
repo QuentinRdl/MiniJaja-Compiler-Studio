@@ -237,8 +237,8 @@ public class Memory {
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
-            heap.addReference((int)value);
-            obj.setValue(value);
+            heap.addReference(((Value) value).valueInt);
+            obj.setValue(((Value) value).valueInt);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
@@ -493,6 +493,19 @@ public class Memory {
 
         int address = (int) addressObj.getValue();
         return heap.sizeOf(address);
+    }
+
+    /**
+     * Returns the type of the given array
+     * @param identifier id of the array
+     * @return type of the given array
+     */
+    public DataType tabType(String identifier) {
+        SymbolTableEntry arr = symbolTable.lookup(identifier);
+        if (arr.getKind()!= EntryKind.ARRAY){
+            throw new IllegalArgumentException(identifier +" is not a array");
+        }
+        return arr.getDataType();
     }
 
     /**

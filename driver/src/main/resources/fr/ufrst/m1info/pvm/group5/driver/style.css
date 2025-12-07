@@ -198,5 +198,10 @@
     -fx-background-color: transparent;
 }
 
+.list-cell.debug-current-line {
+    -fx-background-color : rgba(191, 34, 55, 0.2) !important;
+
+}
+
 
 

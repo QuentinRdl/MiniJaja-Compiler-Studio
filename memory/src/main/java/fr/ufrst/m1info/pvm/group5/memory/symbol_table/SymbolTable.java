@@ -162,7 +162,7 @@ public class SymbolTable {
      * @return {@code true} if the symbol exists, {@code false} otherwise
      */
     public boolean contains(String name) {
-        return table.containsKey(name);
+        return table.containsKey(name) || (parentScope!=null && parentScope.contains(name));
     }
 
 }

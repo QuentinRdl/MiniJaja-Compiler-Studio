@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import fr.ufrst.m1info.pvm.group5.memory.heap.HeapElement;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
 
@@ -45,6 +46,26 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File One")
+    void FileOne() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/1.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 8\nx : 11\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File Array")
+    void Array() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Array.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4\n33\n81\nfalse\ntrue\nfalse\nfalse\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File BasicOperations")
     void BasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
@@ -60,6 +81,16 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret File Conditionals")
     void Conditionals() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Conditionals.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Fact")
+    void Fact() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Fact.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 7\nres : 5040\n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -109,9 +140,29 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Quicksort")
+    void Quicksort() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Quick_sort.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4,81,63,12,33,22,16,44,55,23,27,5,14,18,6,30,87,31,10,43, \n4,5,6,10,12,14,16,18,22,23,27,30,31,33,43,44,55,63,81,87, \n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Simple")
     void Simple() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Synonymie")
+    void Synonymie() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Synonymie.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -856,6 +907,45 @@ class InterpreterMiniJajaTest {
         String errMessage=imj.interpretCode("class C { main{writeln(y);}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Index")
+    void BooleanIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[false]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Index")
+    void NegativeIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[-1]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ArrayIndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Out Of Bounds Index")
+    void OutOfBoundsIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[20]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Array Size")
+    void BooleanArraySize() {
+        String errMessage=imj.interpretCode("class C { boolean t[false]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Array Size")
+    void NegativeArraySize() {
+        String errMessage=imj.interpretCode("class C { int t[-20]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test

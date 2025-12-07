@@ -171,7 +171,7 @@ public class Stack {
      */
      public StackObject getObject(String name) {
          for(StackObject obj : stackContent) {
-             if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
+             if(obj.getName().equals(name) && (obj.getScope() == scopeDepth || obj.getScope() == 0)) {
                  return obj;
              }
          }
@@ -185,7 +185,7 @@ public class Stack {
      */
     public Object getObjectValue(String name) {
         for(StackObject obj : stackContent) {
-            if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
+            if(obj.getName().equals(name) && (obj.getScope() == scopeDepth || obj.getScope() == 0)) {
                 return obj.getValue();
             }
         }
