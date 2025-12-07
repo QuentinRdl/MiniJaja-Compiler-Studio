@@ -269,7 +269,7 @@ class MemoryTest {
         StackObject obj = new StackObject("arr", oldRef, 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.searchObject("arr")).thenReturn(obj);
 
-        memory.affectValue("arr", 200);
+        memory.affectValue("arr", new Value(200));
 
         verify(symbolTableMocked, times(1)).lookup("arr");
         verify(stackMocked, times(1)).searchObject("arr");

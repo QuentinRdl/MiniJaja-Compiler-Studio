@@ -154,7 +154,6 @@ class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
-    @Disabled
     @Test
     @DisplayName("Interpret File Synonymie")
     void Synonymie() {
