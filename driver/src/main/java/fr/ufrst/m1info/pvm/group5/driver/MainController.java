@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.concurrent.Task;
+import javafx.scene.text.TextFlow;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,7 +53,7 @@ public class MainController {
     private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
-    TextArea output;
+    ColoredTextFlow output;
 
     private Console console;
 
