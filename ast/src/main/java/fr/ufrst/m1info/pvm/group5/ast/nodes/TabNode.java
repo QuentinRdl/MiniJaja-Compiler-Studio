@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class TabNode extends ASTNode implements EvaluableNode {
 
-    private final IdentNode ident;
+    IdentNode ident;
     private final ASTNode indexExp;
 
     public TabNode(IdentNode ident, ASTNode indexExp) {

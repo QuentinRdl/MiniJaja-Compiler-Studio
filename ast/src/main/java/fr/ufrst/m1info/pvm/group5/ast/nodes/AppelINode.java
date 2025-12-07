@@ -116,6 +116,9 @@ public class AppelINode extends ASTNode {
     }
 
     private void executeMethodBody(Memory m, MethodeNode methodNode) {
+        if (methodNode.vars != null) {
+            methodNode.vars.interpret(m);
+        }
         if (methodNode.instrs != null) {
             methodNode.instrs.interpret(m);
         }

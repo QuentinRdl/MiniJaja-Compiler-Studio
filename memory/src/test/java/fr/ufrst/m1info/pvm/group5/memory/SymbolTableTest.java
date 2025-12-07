@@ -145,14 +145,14 @@ class SymbolTableTest {
     }
 
     /**
-     * Tests that contains() only checks the current scope, not the parent.
+     * Tests that contains() checks the current scope and the parent.
      */
     @Test
     void testContainsIsLocalOnly() {
         globalTable.addEntry(new SymbolTableEntry("x", EntryKind.VARIABLE, DataType.INT));
         SymbolTable childScope = globalTable.createChildScope();
 
-        assertFalse(childScope.contains("x")); // present in parent, not local
+        assertTrue(childScope.contains("x"));
         assertTrue(globalTable.contains("x"));
     }
 

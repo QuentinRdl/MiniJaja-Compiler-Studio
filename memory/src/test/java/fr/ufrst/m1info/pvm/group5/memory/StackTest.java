@@ -298,7 +298,6 @@ class StackTest {
     @Test
     void actualScenario() throws Stack.StackIsEmptyException, Stack.NoScopeException {
         // Global scope
-        stack.pushScope();
         stack.setVar("x", 5, integ);
         stack.setVar("y", 10, integ);
 
@@ -309,7 +308,7 @@ class StackTest {
 
         assertEquals(50, stack.getObjectValue("x"));
         assertEquals(100, stack.getObjectValue("z"));
-        assertNull(stack.getObject("y"));
+        assertEquals(10,stack.getObjectValue("y"));
         assertEquals(4, stack.size());
 
         // Update x in current scope

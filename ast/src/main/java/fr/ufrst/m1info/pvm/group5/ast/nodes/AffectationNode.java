@@ -77,7 +77,7 @@ public class AffectationNode extends ASTNode{
                             "AffectationNode: array index must be of type int, got " + indexType
                     );
                 }
-                DataType arrayDataType = m.dataTypeOf(arrayIdent.identifier);
+                DataType arrayDataType = m.tabType(arrayIdent.identifier);
                 String arrayTypeStr;
                 if (arrayDataType == DataType.INT) arrayTypeStr = "int";
                 else if (arrayDataType == DataType.BOOL) arrayTypeStr = "bool";

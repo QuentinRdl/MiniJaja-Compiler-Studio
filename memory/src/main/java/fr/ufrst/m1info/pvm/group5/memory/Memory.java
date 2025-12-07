@@ -496,6 +496,19 @@ public class Memory {
     }
 
     /**
+     * Returns the type of the given array
+     * @param identifier id of the array
+     * @return type of the given array
+     */
+    public DataType tabType(String identifier) {
+        SymbolTableEntry arr = symbolTable.lookup(identifier);
+        if (arr.getKind()!= EntryKind.ARRAY){
+            throw new IllegalArgumentException(identifier +" is not a array");
+        }
+        return arr.getDataType();
+    }
+
+    /**
      * Prints the content of the Memory (heap + stack)
      * @return String -> the Memory
      */

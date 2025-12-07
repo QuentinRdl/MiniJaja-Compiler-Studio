@@ -1,0 +1,46 @@
+class quicksort {
+    int t[4];
+    int taille = 4;
+
+    void afficher(int taille){
+        int i = 0;
+        int a = 0;
+
+        while(taille>i){
+            a = t[i];
+            write(a);
+            write(",");
+            i++;
+        };
+        writeln(" ");
+    };
+
+    void f(int x){
+        int t1[10];
+        int i=0;
+
+        while(10>i){
+            t1[i]=x;
+            i++;
+        };
+        t=t1;
+        t[x]=taille;
+    };
+
+    void pause(){
+    };
+
+    main{
+        int i=0;
+        while(4>i){
+            t[i]=taille-1;
+            i++;
+        };
+        f(3);
+        afficher(10);
+        pause();
+        f(7);
+        afficher(10);
+        pause();
+    }
+}

@@ -77,6 +77,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         m.declMethod(ident.identifier, dataType, this);
         m.pushScope();
         if (params != null) params.checkType(m);
+        if (vars != null) vars.checkType(m);
         if (instrs != null) instrs.checkType(m);
         if (params != null) {
             if (params instanceof WithdrawalNode withdrawalNode) {
