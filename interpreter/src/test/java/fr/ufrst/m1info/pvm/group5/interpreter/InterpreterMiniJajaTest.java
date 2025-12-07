@@ -154,6 +154,17 @@ class InterpreterMiniJajaTest {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
     }
 
+    @Disabled
+    @Test
+    @DisplayName("Interpret File Synonymie")
+    void Synonymie() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Synonymie.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
+        });
+        writer.write("");
+    }
+
     @Test
     @DisplayName("Interpret Undefined Variable / sum")
     void UndefinedVariableSum() {
