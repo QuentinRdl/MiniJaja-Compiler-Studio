@@ -83,6 +83,16 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Fact")
+    void Fact() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Fact.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 7\nres : 5040\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Local Variables")
     void LocalVariables() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/LocalVariables.mjj"));
