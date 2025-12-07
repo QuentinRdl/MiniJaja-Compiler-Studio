@@ -64,7 +64,7 @@ class MainControllerTest extends ApplicationTest {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ufrst/m1info/pvm/group5/driver/main-view.fxml"));
-        Scene scene = new Scene(loader.load(), 800, 600);
+        Scene scene = new Scene(loader.load(), 1200, 720);
         controller = loader.getController();
 
         stage.setScene(scene);
@@ -1600,6 +1600,7 @@ class MainControllerTest extends ApplicationTest {
 
     @Test
     void testDebugButtonsInitialState(){
+        WaitForAsyncUtils.waitForFxEvents();
         System.out.println("first works");
         verifyThat("#btnDebugRun", isVisible());
         System.out.println("second works");

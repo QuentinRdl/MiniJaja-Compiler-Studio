@@ -179,48 +179,25 @@ public class MainController {
         }
         hideMemoryTab(memoryTabJajacode);
 
-        // Explicitly set IDs for TestFX compatibility
-        if(btnDebugRun != null) {
-            btnDebugRun.setId("btnDebugRun");
-            try {
-                FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
-                playIcon.setIconColor(Color.web("#398989"));
-                playIcon.setIconSize(12);
-                btnDebugRun.setGraphic(playIcon);
-                btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
-            } catch (Exception e) {
-                // Icon loading failed, continue without icon
-            }
-        }
+        FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
+        playIcon.setIconColor(Color.web("#398989"));
+        playIcon.setIconSize(12);
+        btnDebugRun.setGraphic(playIcon);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
 
-        if(btnDebugStop != null) {
-            btnDebugStop.setId("btnDebugStop");
-            try {
-                FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
-                stopIcon.setIconColor(Color.web("#BF2237"));
-                stopIcon.setIconSize(12);
-                btnDebugStop.setGraphic(stopIcon);
-                btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
-            } catch (Exception e) {
-                // Icon loading failed, continue without icon
-            }
-            btnDebugStop.setDisable(true);
-        }
+        FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
+        stopIcon.setIconColor(Color.web("#BF2237"));
+        stopIcon.setIconSize(12);
+        btnDebugStop.setGraphic(stopIcon);
+        btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugStop.setDisable(true);
 
-        if(btnDebugNext != null) {
-            btnDebugNext.setId("btnDebugNext");
-            try {
-                FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
-                nextIcon.setIconColor(Color.web("#FFD270"));
-                nextIcon.setIconSize(12);
-                btnDebugNext.setGraphic(nextIcon);
-                btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
-            } catch (Exception e) {
-                // Icon loading failed, continue without icon
-            }
-            btnDebugNext.setDisable(true);
-        }
-
+        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
+        nextIcon.setIconColor(Color.web("#FFD270"));
+        nextIcon.setIconSize(12);
+        btnDebugNext.setGraphic(nextIcon);
+        btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugNext.setDisable(true);
 
         hideCompileTab();
         setupOutputContextMenu();
