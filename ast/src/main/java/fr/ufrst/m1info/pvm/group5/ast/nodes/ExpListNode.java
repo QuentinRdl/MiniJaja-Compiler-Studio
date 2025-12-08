@@ -72,4 +72,26 @@ public class ExpListNode extends ASTNode {
 
         return values;
     }
+
+    /**
+     * Compile the withdrawal of arguments when a method is invoked
+     *
+     * @param code the list of jajacodes instruction
+     */
+    public void compileWithdraw(List<String> code) {
+        if (head instanceof ExpListNode ehead){
+            ehead.compileWithdraw(code);
+        }else{
+            code.add("swap");
+            code.add("pop");
+        }
+        if (tail != null){
+            if (tail instanceof ExpListNode etail){
+                etail.compileWithdraw(code);
+            }else{
+                code.add("swap");
+                code.add("pop");
+            }
+        }
+    }
 }

@@ -24,11 +24,25 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<>();
-        jajacodes.addAll(param.compile(address));
-        if (next != null) {
-            jajacodes.addAll(next.compile(address + jajacodes.size()));
-        }
+        compileParam(jajacodes);
         return jajacodes;
+    }
+
+    /**
+     * compile the param list with the use of a counter
+     *
+     * @param jajacodes the list of jajacodes instruction
+     * @return the counter
+     */
+    private int compileParam(List<String> jajacodes) {
+        int k;
+        if (next != null){
+            k=next.compileParam(jajacodes) + 1;
+        }else{
+            k=1;
+        }
+        jajacodes.add("new(" + param.ident.identifier + "," + param.type + ",var,"+k+")");
+        return k;
     }
 
     @Override

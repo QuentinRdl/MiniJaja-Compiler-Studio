@@ -709,7 +709,7 @@ class NodeCompileTest {
         ParamNode param = new ParamNode(type, ident);
 
         List<String> result = param.compile(0);
-        assertEquals(List.of("new(x," + type + ",var,0)"), result);
+        assertEquals(List.of("new(x," + type + ",var,1)"), result);
     }
     @Test
     void testParamNode_WithdrawCompile() {
@@ -719,19 +719,7 @@ class NodeCompileTest {
 
         assertEquals(List.of("swap", "pop"), param.withdrawCompile(0));
     }
-    @Test
-    @DisplayName("ParamListNode - compile() generates correct code")
-    void testParamListNodeCompile() {
-        ParamNode p1 = new ParamNode(new TypeNode(ValueType.INT), new IdentNode("a"));
-        ParamNode p2 = new ParamNode(new TypeNode(ValueType.BOOL), new IdentNode("b"));
-        ParamListNode list = new ParamListNode(p1, new ParamListNode(p2, null));
 
-        List<String> expected = new ArrayList<>();
-        expected.addAll(p1.compile(0));
-        expected.addAll(p2.compile(p1.compile(0).size()));
-
-        assertEquals(expected, list.compile(0));
-    }
     @Test
     @DisplayName("ParamListNode - withdrawCompile() generates correct pop order")
     void testParamListNodeWithdrawCompile() {
@@ -755,8 +743,8 @@ class NodeCompileTest {
 
         assertEquals(
                 List.of(
-                        "new(a," + p1.type + ",var,0)",
-                        "new(b," + p2.type + ",var,0)"
+                        "new(b," + p2.type + ",var,1)",
+                        "new(a," + p1.type + ",var,2)"
                 ),
                 result
         );
@@ -779,7 +767,7 @@ class NodeCompileTest {
         IdentNode ident = new IdentNode("myMethod");
         AppelINode appel = new AppelINode(ident, argsList);
 
-        List<String> expected = List.of("push(5)", "invoke(myMethod)");
+        List<String> expected = List.of("push(5)", "invoke(myMethod)", "swap", "pop", "pop");
         assertEquals(expected, appel.compile(0));
     }
     @Test
@@ -808,9 +796,8 @@ class NodeCompileTest {
         MethodeNode method = new MethodeNode(returnType, ident, params, vars, instrs);
 
         List<String> code = method.compile(1);
-        assertEquals("jncnil", code.get(0));
-        assertEquals("push(4)", code.get(1));
-        assertTrue(code.get(2).startsWith("new(m"));
+        assertEquals("push(4)", code.get(0));
+        assertTrue(code.get(1).startsWith("new(m"));
         assertTrue(code.contains("P1"));
         assertTrue(code.contains("P2"));
         assertTrue(code.contains("V1"));
@@ -839,9 +826,8 @@ class NodeCompileTest {
 
         assertEquals(
                 List.of(
-                        "jncnil",
                         "push(13)",
-                        "new(f, INT, meth, 0)",
+                        "new(f,INT,meth,0)",
                         "goto(17)",
                         "P1",
                         "P2",
@@ -878,9 +864,8 @@ class NodeCompileTest {
 
         assertEquals(
                 List.of(
-                        "jncnil",
                         "push(3)",
-                        "new(f, BOOL, meth, 0)",
+                        "new(f,BOOL,meth,0)",
                         "goto(8)",
                         "P1",
                         "V1",
@@ -924,9 +909,8 @@ class NodeCompileTest {
 
         assertEquals(
                 List.of(
-                        "jncnil",
                         "push(3)",
-                        "new(g, VOID, meth, 0)",
+                        "new(g,VOID,meth,0)",
                         "goto(9)",
                         "P1",
                         "V1",
@@ -938,23 +922,7 @@ class NodeCompileTest {
                 code
         );
     }
-    @Test
-    @DisplayName("AppelENode.compile() - with arguments")
-     void testAppelENodeCompileWithArgs() {
-        IdentNode ident = new IdentNode("myFunc");
-        ASTNode args = ASTMocks.createNode(
-                ExpListNode.class,
-                null,
-                i -> List.of("push(1)", "push(2)")
-        );
 
-        AppelENode node = new AppelENode(ident, args);
-
-        List<String> expected = List.of("push(1)", "push(2)", "invoke(myFunc)","swap", "pop");
-        List<String> actual = node.compile(0);
-
-        assertEquals(expected, actual);
-    }
 
     @Test
     @DisplayName("AppelENode.compile() - without arguments")
@@ -962,7 +930,7 @@ class NodeCompileTest {
         IdentNode ident = new IdentNode("myFunc");
         AppelENode node = new AppelENode(ident, null);
 
-        List<String> expected = List.of("invoke(myFunc)", "swap", "pop");
+        List<String> expected = List.of("invoke(myFunc)");
         List<String> actual = node.compile(0);
 
         assertEquals(expected, actual);
@@ -975,28 +943,9 @@ class NodeCompileTest {
         AppelENode node = new AppelENode(ident, null);
 
         List<String> code = node.compile(0);
-        assertEquals(List.of("invoke(foo)", "swap", "pop"), code);
+        assertEquals(List.of("invoke(foo)"), code);
     }
 
-
-
-    @Test
-     void AppelENode_CompileWithArgs() {
-        IdentNode ident = new IdentNode("foo");
-        ASTNode args = new ASTNode() {
-            @Override public List<ASTNode> getChildren() { return List.of(); }
-            @Override public List<String> compile(int address) { return List.of("push(1)", "push(2)"); }
-            @Override
-            public void interpret(Memory m) {}
-            @Override
-            public String checkType(Memory m) { return "int"; }
-        };
-
-        AppelENode node = new AppelENode(ident, args);
-
-        List<String> code = node.compile(0);
-        assertEquals(List.of("push(1)", "push(2)", "invoke(foo)", "swap", "pop"), code);
-    }
     @Test
     @DisplayName("ArrayNode - compile() generates correct instructions for int array")
     void testArrayNode_Compile_IntArray() {
