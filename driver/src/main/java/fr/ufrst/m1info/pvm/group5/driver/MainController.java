@@ -1303,11 +1303,7 @@ public class MainController {
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
-<<<<<<< HEAD
-                    debugInterpreterMjj.stopInterpretation(); // FIXME : Thread is not apparently not alive shown by debugging stopIntrepretation
-=======
                     debugInterpreterMjj.stopInterpretation();
->>>>>>> origin/dev
                 }
             };
 
