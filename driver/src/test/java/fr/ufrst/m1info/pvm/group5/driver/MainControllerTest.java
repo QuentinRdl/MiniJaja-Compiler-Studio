@@ -1696,12 +1696,16 @@ class MainControllerTest extends ApplicationTest {
         }
     }
 
-
-
-
-
->>>>>>> driver/src/test/java/fr/ufrst/m1info/pvm/group5/driver/MainControllerTest.java
-
+    @Test
+    void testGetBreakpointLines_Empty() throws IOException {
+        File testFile = createTestFile("breakpoint_test.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 10;",
+                "        x = 20;",
+                "    }",
+                "}");
         interact(() -> controller.loadFile(testFile));
         WaitForAsyncUtils.waitForFxEvents();
 
