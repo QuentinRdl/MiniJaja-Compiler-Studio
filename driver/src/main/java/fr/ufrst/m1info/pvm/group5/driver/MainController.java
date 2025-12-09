@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.concurrent.Task;
+import javafx.scene.text.TextFlow;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,7 +53,7 @@ public class MainController {
     private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
-    TextArea output;
+    ColoredTextFlow output;
 
     private Console console;
 
@@ -121,6 +122,7 @@ public class MainController {
         // allows ListView to know how to create its cells
         codeListView.setCellFactory(lv -> {
             CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(true); // Source code is MiniJaja
             cell.setListener(new CodeLineCellListener() {
                 @Override
                 public void onEnterPressed(CodeLine codeLine) {
@@ -153,6 +155,7 @@ public class MainController {
         compiledCodeListView.setItems(compiledCodeLines);
         compiledCodeListView.setCellFactory(lv -> {
             CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(false); // Compiled code is JajaCode
             cell.setCodeEditable(false);
             return cell;
         });

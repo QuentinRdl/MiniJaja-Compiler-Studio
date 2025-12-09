@@ -13,6 +13,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 
 /**
@@ -27,7 +28,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private HBox container;
     private StackPane lineNumberContainer;
     private Label lineNumberLabel;
-    private TextField codeField;
+    private InlineCssTextArea codeField;
     private Circle breakpointCircle;
 
     // Listener used to handle user interactions (Enter ou Delete key events)
@@ -39,6 +40,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private boolean editable = true;
 
     private boolean isUpdating = false; //indicates that the cell is being updated
+
+    private boolean isMiniJaja = true; // Track whether this is MiniJaja or JajaCode for syntax highlighting
 
     /**
      * Creates a new CodeLineCell and initializes its layout.
@@ -64,8 +67,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
         lineNumberContainer.getStyleClass().add("line-number-container");
         lineNumberContainer.getChildren().addAll(breakpointCircle, lineNumberLabel);
 
-        codeField = new TextField();
-        codeField.getStyleClass().add("code-field");
+        codeField = new InlineCssTextArea();
+        codeField.getStyleClass().addAll("styled-text-area", "code-field");
+        codeField.setWrapText(false);
+        codeField.setPrefHeight(30);
         HBox.setHgrow(codeField, Priority.ALWAYS);
 
 
@@ -80,17 +85,39 @@ public class CodeLineCell extends ListCell<CodeLine> {
             }
         });
 
-        // listens for changes in the text field to synchronise the changes
+        // listens for changes in the text field to synchronise the changes and apply syntax highlighting
         codeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(getItem() != null){
-                getItem().setCode(newValue);
+            if (isUpdating) return; // prevent reacting to programmatic updates
+
+            // Normalize the text: remove any newline characters that may have been inserted
+            String cleaned = newValue;
+            if (cleaned != null && (cleaned.contains("\n") || cleaned.contains("\r"))) {
+                cleaned = cleaned.replace("\r", "").replace("\n", "");
+                // update the text area and avoid re-entering the listener
+                isUpdating = true;
+                int caret = codeField.getCaretPosition();
+                codeField.replaceText(cleaned);
+                // restore caret position (clamped)
+                final int pos = Math.min(caret, cleaned.length());
+                codeField.moveTo(pos);
+                isUpdating = false;
             }
-            if (newValue != null && !newValue.isEmpty()){
+
+            if(getItem() != null){
+                getItem().setCode(cleaned);
+            }
+
+            if (cleaned != null && !cleaned.isEmpty()){
                 wasEmptyOnLastBackspace = false;
             }
 
-            if(listener != null && !isUpdating && oldValue != null && !oldValue.equals(newValue)) {
+            if(listener != null && !isUpdating && oldValue != null && !oldValue.equals(cleaned)) {
                 listener.onModified();
+            }
+
+            // Apply syntax highlighting
+            if (!isUpdating && cleaned != null) {
+                applySyntaxHighlighting(cleaned);
             }
         });
 
@@ -103,7 +130,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
             if(listener == null) return;
 
             switch (code) {
-                case KeyCode.ENTER -> listener.onEnterPressed(getItem());
+                case KeyCode.ENTER -> {
+                    listener.onEnterPressed(getItem());
+                    event.consume(); // Prevent InlineCssTextArea from adding newline
+                }
                 case KeyCode.BACK_SPACE -> {
                     String currentText = codeField.getText();
                     int caretPos = codeField.getCaretPosition();
@@ -130,6 +160,12 @@ public class CodeLineCell extends ListCell<CodeLine> {
             }
         });
 
+        // Also consume Enter in KEY_TYPED phase to prevent newline insertion in InlineCssTextArea
+        codeField.setOnKeyTyped(event -> {
+            if (event.getCharacter().equals("\r") || event.getCharacter().equals("\n")) {
+                event.consume();
+            }
+        });
 
         container = new HBox();
         container.getStyleClass().add("code-line");
@@ -159,9 +195,9 @@ public class CodeLineCell extends ListCell<CodeLine> {
     /**
      * Returns the text field where the code for this line is displayed and edited
      *
-     * @return the TextField for editing the code
+     * @return the InlineCssTextArea for editing the code
      */
-    public TextField getCodeField(){
+    public InlineCssTextArea getCodeField(){
         return codeField;
     }
 
@@ -218,7 +254,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
             getStyleClass().remove("debug-current-line");
             setGraphic(null);
         } else {
-            codeField.setText(item.getCode());
+            codeField.replaceText(item.getCode());
 
             if(item.isCurrentDebugLine()){
                 if(!getStyleClass().contains("debug-current-line")){
@@ -242,6 +278,11 @@ public class CodeLineCell extends ListCell<CodeLine> {
         }
 
         isUpdating = false;
+
+        // Apply syntax highlighting after updating (important for loaded files)
+        if (!empty && item != null && !item.getCode().isEmpty()) {
+            applySyntaxHighlighting(item.getCode());
+        }
     }
 
     /**
@@ -252,12 +293,38 @@ public class CodeLineCell extends ListCell<CodeLine> {
         if (codeField != null){
             codeField.requestFocus();
             Platform.runLater(() -> {
-                codeField.end();
+                codeField.moveTo(codeField.getText().length());
                 if (codeField.getText().isEmpty()){
                     wasEmptyOnLastBackspace = true;
                 }
             });
-
         }
+    }
+
+    /**
+     * Sets whether this cell is for MiniJaja or JajaCode
+     * This determines which syntax highlighting rules to apply
+     *
+     * @param isMiniJaja true for MiniJaja, false for JajaCode
+     */
+    public void setMiniJaja(boolean isMiniJaja) {
+        this.isMiniJaja = isMiniJaja;
+        // Reapply syntax highlighting with new language mode
+        if (codeField != null && !codeField.getText().isEmpty()) {
+            applySyntaxHighlighting(codeField.getText());
+        }
+    }
+
+    /**
+     * Applies syntax highlighting to the current text
+     *
+     * @param text the text to highlight
+     */
+    private void applySyntaxHighlighting(String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+
+        SyntaxHighlighter.applySyntaxHighlighting(codeField, text, isMiniJaja);
     }
 }
