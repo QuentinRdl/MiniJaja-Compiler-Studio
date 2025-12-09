@@ -44,16 +44,15 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         List<String> pens = params != null ?params.compile(address + 3) : List.of();
         List<String> pdvs = vars != null ? vars.compile(address + 3 + pens.size()) : List.of();
         List<String> piss = instrs != null ? instrs.compile(address + 3 + pens.size() + pdvs.size()) : List.of();
-        List<String> prdvs = List.of();
+        List<String> prdvs = vars != null && vars instanceof WithdrawalNode wvars ? wvars.withdrawCompile(address + 3 + pens.size() + pdvs.size() + piss.size()) : List.of();
 
         int n = address;
         int nens = pens.size();
         int ndvs = pdvs.size();
         int niss = piss.size();
         int nrdvs = prdvs.size();
-        code.add("jncnil");
         code.add("push(" + (n + 3) + ")");
-        code.add("new(" + ident.identifier + ", " + returnType + ", meth, 0)");
+        code.add("new(" + ident.identifier + "," + returnType + ",meth,0)");
         code.add("goto(" + (n + nens + ndvs + niss + nrdvs + 5) + ")");
         code.addAll(pens);
         code.addAll(pdvs);

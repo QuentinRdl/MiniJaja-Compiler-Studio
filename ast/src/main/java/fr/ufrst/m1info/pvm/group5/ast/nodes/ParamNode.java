@@ -37,7 +37,7 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     @Override
     public List<String> compile(int address) {
         List<String> jajacodes = new ArrayList<>();
-        jajacodes.add("new(" + ident.identifier + "," + type + ",var,0)");
+        jajacodes.add("new(" + ident.identifier + "," + type + ",var,1)");
         return jajacodes;
     }
 
