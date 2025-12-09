@@ -182,26 +182,22 @@ public class MainController {
         FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
         playIcon.setIconColor(Color.web("#398989"));
         playIcon.setIconSize(12);
+        btnDebugRun.setGraphic(playIcon);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
 
         FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
         stopIcon.setIconColor(Color.web("#BF2237"));
         stopIcon.setIconSize(12);
-
-        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
-        nextIcon.setIconColor(Color.web("#FFD270"));
-        nextIcon.setIconSize(12);
-
-        btnDebugRun.setGraphic(playIcon);
-        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
-
         btnDebugStop.setGraphic(stopIcon);
         btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
         btnDebugStop.setDisable(true);
 
+        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
+        nextIcon.setIconColor(Color.web("#FFD270"));
+        nextIcon.setIconSize(12);
         btnDebugNext.setGraphic(nextIcon);
         btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
         btnDebugNext.setDisable(true);
-
 
         hideCompileTab();
         setupOutputContextMenu();
@@ -1307,10 +1303,12 @@ public class MainController {
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
+<<<<<<< HEAD
                     debugInterpreterMjj.stopInterpretation(); // FIXME : Thread is not apparently not alive shown by debugging stopIntrepretation
+=======
+                    debugInterpreterMjj.stopInterpretation();
+>>>>>>> origin/dev
                 }
-
-                //debugInterpreterMjj = null;
             };
 
             // Subscribe the handler to the event

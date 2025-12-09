@@ -24,6 +24,125 @@ class CompilerTest {
     }
 
     @Test
+    @DisplayName("Compile File One")
+    void CompileFileOne()  {
+        String res= comp.compileFile("src/test/resources/1.mjj");
+        String expected = "init\n" +
+                "new(x,INT,var,0)\n" +
+                "push(10)\n" +
+                "new(y,INT,var,0)\n" +
+                "push(5)\n" +
+                "new(VAL,INT,cst,0)\n" +
+                "push(jcvrai)\n" +
+                "new(b1,BOOL,var,0)\n" +
+                "push(jcfaux)\n" +
+                "new(b2,BOOL,var,0)\n" +
+                "push(14)\n" +
+                "new(somme,INT,meth,0)\n" +
+                "goto(34)\n" +
+                "new(max,INT,var,1)\n" +
+                "load(VAL)\n" +
+                "new(t,INT,var,0)\n" +
+                "load(max)\n" +
+                "push(0)\n" +
+                "sup\n" +
+                "not\n" +
+                "if(29)\n" +
+                "load(max)\n" +
+                "inc(t)\n" +
+                "load(max)\n" +
+                "push(1)\n" +
+                "sub\n" +
+                "store(max)\n" +
+                "goto(17)\n" +
+                "load(t)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "return\n" +
+                "push(37)\n" +
+                "new(test,BOOL,meth,0)\n" +
+                "goto(44)\n" +
+                "new(b,INT,var,1)\n" +
+                "new(a,INT,var,2)\n" +
+                "load(a)\n" +
+                "load(b)\n" +
+                "sup\n" +
+                "swap\n" +
+                "return\n" +
+                "push(47)\n" +
+                "new(f,VOID,meth,0)\n" +
+                "goto(60)\n" +
+                "new(z,INT,var,1)\n" +
+                "load(y)\n" +
+                "load(z)\n" +
+                "mul\n" +
+                "store(x)\n" +
+                "load(x)\n" +
+                "load(z)\n" +
+                "div\n" +
+                "store(x)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "swap\n" +
+                "return\n" +
+                "load(y)\n" +
+                "push(9)\n" +
+                "invoke(test)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "load(b1)\n" +
+                "load(b2)\n" +
+                "not\n" +
+                "or\n" +
+                "and\n" +
+                "if(76)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "goto(85)\n" +
+                "push(2)\n" +
+                "invoke(somme)\n" +
+                "swap\n" +
+                "pop\n" +
+                "store(x)\n" +
+                "push(\"x : \")\n" +
+                "write\n" +
+                "load(x)\n" +
+                "writeln\n" +
+                "push(10)\n" +
+                "invoke(f)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "push(\"x : \")\n" +
+                "write\n" +
+                "load(x)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
+    }
+
+    @Test
     @DisplayName("Compile File BasicOperations")
     void CompileBasicOperations()  {
         String res= comp.compileFile("src/test/resources/BasicOperations.mjj");

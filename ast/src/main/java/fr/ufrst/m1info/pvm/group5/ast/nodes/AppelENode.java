@@ -54,12 +54,17 @@ public class AppelENode extends ASTNode implements EvaluableNode {
     @Override
     public List<String> compile(int address) {
         List<String> code = new ArrayList<>();
-        if (args != null) {
-            code.addAll(args.compile(address));
-        }
+        List<String> plexp = args != null ? args.compile(address) : List.of();
+        code.addAll(plexp);
         code.add("invoke(" + ident.identifier + ")");
-        code.add("swap");
-        code.add("pop");
+        if (args != null){
+            if (args instanceof ExpListNode rargs){
+                rargs.compileWithdraw(code);
+            }else {
+                code.add("swap");
+                code.add("pop");
+            }
+        }
         return code;
     }
 
