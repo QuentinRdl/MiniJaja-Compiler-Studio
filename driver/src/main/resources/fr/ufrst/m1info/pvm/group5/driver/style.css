@@ -251,3 +251,24 @@
 .styled-text-area .text {
     -fx-fill: white;
 }
+
+.styled-text-area .caret {
+    -fx-stroke: white;
+}
+
+.context-menu {
+    -fx-background-color: #1d1d1d;
+    -fx-padding: 5px10px;
+}
+
+.menu-item .label {
+    -fx-text-fill: white;
+}
+
+.menu-item:focused {
+    -fx-background-color: transparent;
+}
+
+.menu-item:armed {
+    -fx-background-color: transparent;
+}

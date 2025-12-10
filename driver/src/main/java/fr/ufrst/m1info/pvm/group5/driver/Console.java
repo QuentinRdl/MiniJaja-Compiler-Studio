@@ -99,7 +99,7 @@ public class Console {
 
             // Apply red color to error messages
             if (content.contains("[ERROR]")) {
-                text.setFill(Color.RED);
+                text.setFill(Color.web("#D0253C"));
             } else {
                 text.setFill(Color.WHITE);
             }

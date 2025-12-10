@@ -26,19 +26,13 @@ public class SyntaxHighlighter {
     };
 
     // Operators and special characters
-    private static final String OPERATOR_PATTERN = "[+\\-*/=<>!&|]+";
     private static final String NUMBER_PATTERN = "\\b\\d+\\b";
-    private static final String PAREN_PATTERN = "[(){}\\[\\]]";
-    private static final String SEMICOLON_PATTERN = ";";
     private static final String COMMENT_PATTERN = "//[^\n]*";
 
     // CSS styles for each syntax element
-    private static final String KEYWORD_STYLE = "-fx-fill: #569CD6; -fx-font-weight: bold;";
-    private static final String NUMBER_STYLE = "-fx-fill: #B5CEA8;";
-    private static final String OPERATOR_STYLE = "-fx-fill: #D4D4D4;";
-    private static final String PAREN_STYLE = "-fx-fill: #FFD700;";
-    private static final String SEMICOLON_STYLE = "-fx-fill: #D4D4D4;";
-    private static final String COMMENT_STYLE = "-fx-fill: #6A9955; -fx-font-style: italic;";
+    private static final String KEYWORD_STYLE = "-fx-fill: #FFD270;";
+    private static final String NUMBER_STYLE = "-fx-fill: #EDADC7;";
+    private static final String COMMENT_STYLE = "-fx-fill: #86A17D; -fx-font-style: italic;";
     private static final String DEFAULT_STYLE = "-fx-fill: white;";
 
     /**
@@ -62,9 +56,6 @@ public class SyntaxHighlighter {
         Pattern pattern = Pattern.compile(
             "(?<KEYWORD>" + keywordPattern + ")"
             + "|(?<NUMBER>" + NUMBER_PATTERN + ")"
-            + "|(?<PAREN>" + PAREN_PATTERN + ")"
-            + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-            + "|(?<OPERATOR>" + OPERATOR_PATTERN + ")"
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
         );
 
@@ -77,12 +68,6 @@ public class SyntaxHighlighter {
                 style = KEYWORD_STYLE;
             } else if (matcher.group("NUMBER") != null) {
                 style = NUMBER_STYLE;
-            } else if (matcher.group("PAREN") != null) {
-                style = PAREN_STYLE;
-            } else if (matcher.group("SEMICOLON") != null) {
-                style = SEMICOLON_STYLE;
-            } else if (matcher.group("OPERATOR") != null) {
-                style = OPERATOR_STYLE;
             } else if (matcher.group("COMMENT") != null) {
                 style = COMMENT_STYLE;
             }
