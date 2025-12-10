@@ -47,11 +47,39 @@ public class HeapBlockView extends VBox {
     }
 
     /**
-     * Updates the bytes content displayed in this heap block
+     * Updates the data content displayed in this heap block
      *
-     * @param bytes the string representating the block's bytes
+     * @param data the string representating the block's bytes
      */
-    public void setDataLabel(String bytes){
-        dataLabel.setText("Bytes : " + bytes);
+    public void setDataLabel(String data){
+        data = data.replace("[", "").replace("]", "").trim();
+
+        if(data.isEmpty()){
+            dataLabel.setText("Data : [ ]");
+            return;
+        }
+
+        String[] parts = data.split(",");
+        int size = parts.length;
+
+        boolean allZero = true;
+        for(String p : parts){
+            if(!p.trim().equals("0")){
+                allZero = false;
+                break;
+            }
+        }
+
+        if(allZero){
+            if(size <= 5){
+                dataLabel.setText("Data : [" + String.join(", ", parts) + "]");
+                return;
+            }
+            dataLabel.setText("Data : [0, 0, 0, 0, 0...]");
+            return;
+        }
+
+        dataLabel.setText("Data : [" + data + "]");
+
     }
 }

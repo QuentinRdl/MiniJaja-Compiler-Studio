@@ -1287,34 +1287,40 @@ public class MainController {
                     }
                     console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
 
+                    String[] currMemoryState = null;
                     try {
                         if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
-                            // Get memory
+                            currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
                         }
                     } catch (Exception _ex) {
                         // ignore errors
                     }
 
+                    final String[] finalMemoryState = currMemoryState;
                     Platform.runLater(() -> {
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
-                        if(memoryVisualisationJajaCode != null) {
-                            // TODO : Show and update memory
+                        showMemoryTab(memoryTabJajacode);
+
+                        if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                            memoryVisualisationJajaCode.updateMemory(finalMemoryState);
                         }
                     });
 
                     return;
                 }
 
-                // Final halt : get memory state
+                String[] currMemoryState = null;
                 try {
                     if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
-                        // TODO : Get memory
+                        currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
                     }
                 } catch (Exception _ex) {
                     // ignore errors
                 }
+
+                final String[] finalMemoryState = currMemoryState;
 
                 // Stop the interpreter and clear reference
                 try {
@@ -1334,8 +1340,10 @@ public class MainController {
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
-                    if(memoryVisualisationJajaCode != null) {
-                        // TODO : Show memory and update it
+                    showMemoryTab(memoryTabJajacode);
+
+                    if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                        memoryVisualisationJajaCode.updateMemory(finalMemoryState);
                     }
                 });
 

@@ -160,9 +160,10 @@ public class MemoryVisualisation extends HBox {
                 String kind = extract(line, "kind=", "dataType=");
                 String type = extract(line, "dataType=", "value=");
                 String value = extract(line, "value=", "");
+                String valueContent = extractValueContent(value);
 
                 // Add a StackBlockView at the top of the stack container
-                stackContainer.getChildren().add(new StackBlockView(name, kind, type, value));
+                stackContainer.getChildren().add(new StackBlockView(name, kind, type, valueContent));
             }
         }
     }
@@ -241,6 +242,21 @@ public class MemoryVisualisation extends HBox {
         }catch (Exception e){
             return 0;
         }
+    }
+
+    private String extractValueContent(String text){
+        if(text.equals("null")){
+            return "null";
+        }
+
+        int start = text.indexOf('{');
+        int end = text.indexOf('}');
+
+        if(start != -1 && end != -1 && end > start){
+            return text.substring(start + 1, end).trim();
+        }
+
+        return "";
     }
 
     /**
