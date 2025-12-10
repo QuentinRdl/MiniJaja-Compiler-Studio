@@ -358,6 +358,114 @@ class CompilerTest {
     }
 
     @Test
+    @DisplayName("Compile File MethodComplex")
+    void CompileMethodComplex()  {
+        String res= comp.compileFile("src/test/resources/MethodComplex.mjj");
+        String expected = "init\n" +
+                "push(1)\n" +
+                "new(x,INT,var,0)\n" +
+                "push(100)\n" +
+                "new(y,INT,var,0)\n" +
+                "new(resInt,INT,var,0)\n" +
+                "new(resBool,BOOL,var,0)\n" +
+                "push(11)\n" +
+                "new(addition,INT,meth,0)\n" +
+                "goto(18)\n" +
+                "new(op2,INT,var,1)\n" +
+                "new(op1,INT,var,2)\n" +
+                "load(op1)\n" +
+                "load(op2)\n" +
+                "add\n" +
+                "swap\n" +
+                "return\n" +
+                "push(21)\n" +
+                "new(substraction,INT,meth,0)\n" +
+                "goto(28)\n" +
+                "new(op2,INT,var,1)\n" +
+                "new(op1,INT,var,2)\n" +
+                "load(op1)\n" +
+                "load(op2)\n" +
+                "sub\n" +
+                "swap\n" +
+                "return\n" +
+                "push(31)\n" +
+                "new(inferior,BOOL,meth,0)\n" +
+                "goto(38)\n" +
+                "new(op2,INT,var,1)\n" +
+                "new(op1,INT,var,2)\n" +
+                "load(op2)\n" +
+                "load(op1)\n" +
+                "sup\n" +
+                "swap\n" +
+                "return\n" +
+                "push(41)\n" +
+                "new(helloWorld,VOID,meth,0)\n" +
+                "goto(45)\n" +
+                "push(\"Hello World\")\n" +
+                "writeln\n" +
+                "swap\n" +
+                "return\n" +
+                "push(\"addition : \")\n" +
+                "write\n" +
+                "load(x)\n" +
+                "load(y)\n" +
+                "invoke(addition)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "store(resInt)\n" +
+                "load(resInt)\n" +
+                "writeln\n" +
+                "push(\"substraction : \")\n" +
+                "write\n" +
+                "load(x)\n" +
+                "load(y)\n" +
+                "invoke(substraction)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "store(resInt)\n" +
+                "load(resInt)\n" +
+                "writeln\n" +
+                "push(\"inferior : \")\n" +
+                "write\n" +
+                "load(x)\n" +
+                "load(y)\n" +
+                "invoke(inferior)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "store(resBool)\n" +
+                "load(resBool)\n" +
+                "writeln\n" +
+                "invoke(helloWorld)\n" +
+                "pop\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
+    }
+
+    @Test
     @DisplayName("Compile File OperationPrevalence")
     void CompileOperationPrevalence()  {
         String res= comp.compileFile("src/test/resources/OperationPrevalence.mjj");
