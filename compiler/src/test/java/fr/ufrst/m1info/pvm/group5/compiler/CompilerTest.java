@@ -143,6 +143,39 @@ class CompilerTest {
     }
 
     @Test
+    @DisplayName("Compile File Ainc")
+    void CompileAinc()  {
+        String res= comp.compileFile("src/test/resources/Ainc.mjj");
+        String expected = "init\n" +
+                "push(1)\n" +
+                "newarray(t,INT)\n" +
+                "push(0)\n" +
+                "push(80)\n" +
+                "astore(t)\n" +
+                "push(0)\n" +
+                "aload(t)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "push(1)\n" +
+                "ainc(t)\n" +
+                "push(0)\n" +
+                "aload(t)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "push(8)\n" +
+                "ainc(t)\n" +
+                "push(0)\n" +
+                "aload(t)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
+    }
+
+    @Test
     @DisplayName("Compile File Array")
     void CompileArray()  {
         String res= comp.compileFile("src/test/resources/Array.mjj");
@@ -921,6 +954,145 @@ class CompilerTest {
     void CompileSimple()  {
         String res= comp.compileFile("src/test/resources/Simple.mjj");
         Assertions.assertEquals("init\npush(0)\npop\njcstop",res);
+    }
+
+    @Test
+    @DisplayName("Compile File Synonymie")
+    void CompileSynonymie()  {
+        String res= comp.compileFile("src/test/resources/Synonymie.mjj");
+        String expected = "init\n" +
+                "push(4)\n" +
+                "newarray(t,INT)\n" +
+                "push(4)\n" +
+                "new(taille,INT,var,0)\n" +
+                "push(9)\n" +
+                "new(afficher,VOID,meth,0)\n" +
+                "goto(37)\n" +
+                "new(taille,INT,var,1)\n" +
+                "push(0)\n" +
+                "new(i,INT,var,0)\n" +
+                "push(0)\n" +
+                "new(a,INT,var,0)\n" +
+                "load(taille)\n" +
+                "load(i)\n" +
+                "sup\n" +
+                "not\n" +
+                "if(29)\n" +
+                "load(i)\n" +
+                "aload(t)\n" +
+                "store(a)\n" +
+                "load(a)\n" +
+                "write\n" +
+                "push(\",\")\n" +
+                "write\n" +
+                "push(1)\n" +
+                "inc(i)\n" +
+                "goto(14)\n" +
+                "push(\" \")\n" +
+                "writeln\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "return\n" +
+                "push(40)\n" +
+                "new(f,VOID,meth,0)\n" +
+                "goto(67)\n" +
+                "new(x,INT,var,1)\n" +
+                "push(10)\n" +
+                "newarray(t1,INT)\n" +
+                "push(0)\n" +
+                "new(i,INT,var,0)\n" +
+                "push(10)\n" +
+                "load(i)\n" +
+                "sup\n" +
+                "not\n" +
+                "if(56)\n" +
+                "load(i)\n" +
+                "load(x)\n" +
+                "astore(t1)\n" +
+                "push(1)\n" +
+                "inc(i)\n" +
+                "goto(45)\n" +
+                "load(t1)\n" +
+                "store(t)\n" +
+                "load(x)\n" +
+                "load(taille)\n" +
+                "astore(t)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "return\n" +
+                "push(70)\n" +
+                "new(pause,VOID,meth,0)\n" +
+                "goto(72)\n" +
+                "swap\n" +
+                "return\n" +
+                "push(0)\n" +
+                "new(i,INT,var,0)\n" +
+                "push(4)\n" +
+                "load(i)\n" +
+                "sup\n" +
+                "not\n" +
+                "if(87)\n" +
+                "load(i)\n" +
+                "load(taille)\n" +
+                "push(1)\n" +
+                "sub\n" +
+                "astore(t)\n" +
+                "push(1)\n" +
+                "inc(i)\n" +
+                "goto(74)\n" +
+                "push(3)\n" +
+                "invoke(f)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "push(10)\n" +
+                "invoke(afficher)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "invoke(pause)\n" +
+                "pop\n" +
+                "push(7)\n" +
+                "invoke(f)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "push(10)\n" +
+                "invoke(afficher)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "invoke(pause)\n" +
+                "pop\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String[] listE=expected.split("\n");
+        String[] listR=res.split("\n");
+        for (int i=0;i< listE.length;i++){
+            if (!listE[i].equals(listR[i])){
+                System.out.println("Line "+(i+1)+" : Expected : "+listE[i]+" Res :"+listR[i]);
+            }
+        }
+        Assertions.assertEquals(expected,res);
     }
 
     @Test
