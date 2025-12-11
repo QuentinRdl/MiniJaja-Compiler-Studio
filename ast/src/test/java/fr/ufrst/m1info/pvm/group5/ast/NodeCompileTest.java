@@ -956,7 +956,7 @@ class NodeCompileTest {
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
         List<String> code = node.compile(0);
 
-        assertEquals(List.of("push(5)", "newarray(arr, int)"), code);
+        assertEquals(List.of("push(5)", "newarray(arr,INT)"), code);
     }
 
     @Test
@@ -969,7 +969,7 @@ class NodeCompileTest {
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
         List<String> code = node.compile(0);
 
-        assertEquals(List.of("push(10)", "newarray(flags, bool)"), code);
+        assertEquals(List.of("push(10)", "newarray(flags,BOOL)"), code);
     }
 
     @Test
@@ -982,7 +982,7 @@ class NodeCompileTest {
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
         List<String> code = node.compile(0);
 
-        assertEquals(List.of("push(5)", "push(3)", "add", "newarray(matrix, int)"), code);
+        assertEquals(List.of("push(5)", "push(3)", "add", "newarray(matrix,INT)"), code);
     }
 
     @Test
@@ -996,7 +996,7 @@ class NodeCompileTest {
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
         List<String> code = node.compile(0);
 
-        assertEquals(List.of("load(n)", "newarray(data, int)"), code);
+        assertEquals(List.of("load(n)", "newarray(data,INT)"), code);
     }
 
     @Test
