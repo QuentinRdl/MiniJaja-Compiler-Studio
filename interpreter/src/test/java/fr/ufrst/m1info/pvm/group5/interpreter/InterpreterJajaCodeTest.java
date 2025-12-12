@@ -10,12 +10,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class InterpreterJajaCodeTest {
     InterpreterJajaCode ijc;
     Writer writer;
+
+    void assertInterval(int[] expected, int value){
+        if(value < expected[0] || value > expected[1]){
+            fail("Expected integer in interval ["+expected[0]+","+expected[1]+"] but got "+value);
+        }
+    }
 
     @BeforeEach
     public void setup() {
@@ -631,4 +640,75 @@ class InterpreterJajaCodeTest {
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
+
+    /* Step by step // Breakpoints */
+    @Test
+    @DisplayName("Interpret - step by step")
+    void Step_By_Step() {
+        int[] steps = {1};
+        InterpreterJajaCode ijjc = new InterpreterJajaCode();
+        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
+        ijjc.interpretationHaltedEvent.subscribe(event -> {
+            steps[0]++;
+            ijjc.resumeInterpretation(im);
+        });
+        ijjc.startFileInterpretation("src/test/resources/Complex.jjc", im);
+        ijjc.waitInterpretation();
+        assertInterval(new int[]{48,49}, steps[0]);
+    }
+
+    @Test
+    @DisplayName("Interpret - breakpoints")
+    void Breakpoints() {
+        List<Integer> encountered = new ArrayList<>();
+        InterpreterJajaCode ijjc = new InterpreterJajaCode();
+        InterpretationMode im = InterpretationMode.BREAKPOINTS;
+        ijjc.interpretationHaltedEvent.subscribe(event -> {
+            encountered.add(event.line());
+            if(event.isPursuable())
+                ijjc.resumeInterpretation(im);
+        });
+        ijjc.setBreakpoints(List.of(3,13,18,43));
+        ijjc.startFileInterpretation("src/test/resources/Complex.jjc", im);
+        ijjc.waitInterpretation();
+        assertEquals(List.of(3,13,43,49), encountered); // 18 should not be met, it's "branched over"
+    }
+
+    @Test
+    @DisplayName("Interpret - error during step by step")
+    void errorDuringStepByStep() {
+        List<String> errors = new ArrayList<>();
+        InterpreterJajaCode ijjc = new InterpreterJajaCode();
+        // Creating result
+        List<String> expectedErrors = new ArrayList<>();
+        expectedErrors.add("Type error: add instruction expects two INT operands, but received BOOL and INT.");
+
+        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
+        ijjc.interpretationHaltedEvent.subscribe(event -> {
+            if(event.error() != null)
+                errors.add(event.error());
+            ijjc.resumeInterpretation(im);
+        });
+        ijjc.startCodeInterpretation("init\npush(jcvrai)\npush(1)\nadd\njcstop", im);
+        ijjc.waitInterpretation();
+        assertEquals(expectedErrors, errors);
+    }
+
+    /*
+    @Test
+    @DisplayName("Interpret -  step by step")
+    void stepByStep() {
+        int[] steps = {0};
+        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
+        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
+        imjj.interpretationHaltedEvent.subscribe(event -> {
+            steps[0]++;
+            System.out.println(event);
+            imjj.resumeInterpretation(im);
+        });
+        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
+        imjj.waitInterpretation();
+        Assertions.assertTrue(steps[0] == 5 || steps[0] == 6); // 5 steps + end event trigger potentially triggered
+    }
+     */
 }
