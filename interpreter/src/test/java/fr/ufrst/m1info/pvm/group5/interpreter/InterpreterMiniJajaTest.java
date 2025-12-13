@@ -1034,4 +1034,48 @@ class InterpreterMiniJajaTest {
         Assertions.assertTrue(steps[0] == 2 || steps[0] == 3);
         Assertions.assertTrue(errors.containsAll(expectedErrors));
     }
+
+    @Test
+    @DisplayName("Interpret Code With Single Line Comments")
+    void interpretCodeWithComments() {
+        String input = "// This is a comment\n"
+                + "class C {\n"
+                + "  // Variable declaration\n"
+                + "  int x = 10; // Initialize x to 10\n"
+                + "  main {\n"
+                + "    // Increment x\n"
+                + "    x = x + 1;\n"
+                + "  }\n"
+                + "}";
+        Assertions.assertNull(imj.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Code With Comments At Different Positions")
+    void interpretCodeWithCommentsAtDifferentPositions() {
+        String input = "// Start comment\n"
+                + "class C { // Class comment\n"
+                + "  int y = 5;\n"
+                + "  // Method comment\n"
+                + "  main { // Main comment\n"
+                + "    y = y * 2; // Multiplication\n"
+                + "  } // End main\n"
+                + "} // End class";
+        Assertions.assertNull(imj.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Code With Empty Comments")
+    void interpretCodeWithEmptyComments() {
+        String input = "//\n"
+                + "class C {\n"
+                + "  //\n"
+                + "  int z = 1;\n"
+                + "  main {\n"
+                + "    //\n"
+                + "    z++;\n"
+                + "  }\n"
+                + "}";
+        Assertions.assertNull(imj.interpretCode(input));
+    }
 }
