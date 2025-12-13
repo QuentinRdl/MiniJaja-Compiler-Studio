@@ -1067,6 +1067,13 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Variable Defined In Method Used In Main")
+    void VariableDefinedInMethodUsedInMain() {
+        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; main{ write(x);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Boolean Index")
     void BooleanIndex() {
         String errMessage=imj.interpretCode("class C { int t[20]; main{t[false]=3;}}");
