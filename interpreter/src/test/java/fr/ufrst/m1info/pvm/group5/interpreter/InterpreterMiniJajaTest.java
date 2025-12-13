@@ -1069,7 +1069,14 @@ class InterpreterMiniJajaTest {
     @Test
     @DisplayName("Interpret Variable Defined In Method Used In Main")
     void VariableDefinedInMethodUsedInMain() {
-        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; main{ write(x);}}");
+        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; main{ f(); write(x);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Defined In Method Used In Another Method")
+    void VariableDefinedInMethodUsedInAnotherMethod() {
+        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; void g(){ write(x);}; main{ f(); g();}}");
         Assertions.assertNotEquals(null,errMessage);
     }
 
