@@ -1000,9 +1000,48 @@ class InterpreterMiniJajaTest {
     @Test
     @DisplayName("Interpret Method In Method")
     void MethodInMethod() {
-        String errMessage=imj.interpretCode("class C { void f(){void f2(){return false; }; };main{f();}}");
+        String errMessage=imj.interpretCode("class C { void f(){void f2(){ }; };main{f();}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method In Main")
+    void MethodInMain() {
+        String errMessage=imj.interpretCode("class C { void f(){ };main{void f2(){ };}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Main In Method")
+    void MainInMethod() {
+        String errMessage=imj.interpretCode("class C { void f(){ main{ f()}};}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Args Int Call With Bool")
+    void MethodArgsIntCallWithBool() {
+        String errMessage=imj.interpretCode("class C { void f(int x){ }; main{ f(false);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Args Bool Call With Int")
+    void MethodArgsBoolCallWithInt() {
+        String errMessage=imj.interpretCode("class C { void f(boolean x){ }; main{ f(1);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Args")
+    void MethodManyArgs() {
+        String errMessage=imj.interpretCode("class C { void f(boolean x,boolean y,int z){ }; main{ f(false,1,99);}}");
+        Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test

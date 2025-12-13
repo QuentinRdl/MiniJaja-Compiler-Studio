@@ -113,6 +113,9 @@ public class AppelINode extends ASTNode {
         for (int i = 0; i < formals.size(); i++) {
             ParamNode p = formals.get(i);
             Value argVal = evaluatedArgs.get(i);
+            if (p.type.valueType!=argVal.type){
+                throw new ASTInvalidDynamicTypeException("Line "+getLine()+" Arguments types doesn't match parameters types");
+            }
             m.declVar(p.ident.identifier, argVal, ValueType.toDataType(p.type.valueType));
         }
     }
