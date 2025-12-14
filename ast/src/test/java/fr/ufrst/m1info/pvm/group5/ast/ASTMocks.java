@@ -135,6 +135,36 @@ class ASTMocks {
         return mock;
     }
 
+    public static Memory addHeapToMock(Memory mock, Map<String,Value[]> heap){
+        doAnswer(invocationOnMock -> {
+            int len = invocationOnMock.getArgument(0);
+            Value[] array = new Value[len];
+            return null;
+        }).when(mock).declTab(any(String.class), anyInt(), any(DataType.class));
+
+        doAnswer(invocationOnMock -> {
+            int index = invocationOnMock.getArgument(0);
+            String id =  invocationOnMock.getArgument(1);
+            return heap.get(id)[index];
+        }).when(mock).valT(anyString(), anyInt());
+
+        doAnswer(invocationOnMock -> {
+            String name =   invocationOnMock.getArgument(0);
+            int index = invocationOnMock.getArgument(1);
+            Value affected =  invocationOnMock.getArgument(2);
+            heap.get(name)[index] = affected;
+            return null;
+        }).when(mock).affectValT(anyString(), anyInt(), any(Value.class));
+
+        doAnswer(invocationOnMock -> {
+            String name =  invocationOnMock.getArgument(0);
+            return heap.get(name).length;
+        }).when(mock).tabLength(anyString());
+
+        doAnswer(invocationOnMock -> DataType.INT).when(mock).tabType(any());
+        return mock;
+    }
+
     /**
      * Creates a mock that mimics memory by using a stack, with the purpose to test jajacode instructions
      * @param storage stack used to store the mock's data
