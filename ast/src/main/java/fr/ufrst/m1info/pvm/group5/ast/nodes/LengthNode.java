@@ -19,7 +19,11 @@ public class LengthNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        return new Value(m.tabLength(ident.identifier));
+        int size = m.tabLength(ident.identifier);
+        if (size==-1){
+            throw new ASTInvalidOperationException("Line "+getLine()+" : "+ident.identifier+" is not a array");
+        }
+        return new Value(size);
     }
 
     @Override

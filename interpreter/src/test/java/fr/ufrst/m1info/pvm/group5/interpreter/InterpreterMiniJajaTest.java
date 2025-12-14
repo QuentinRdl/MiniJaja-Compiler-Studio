@@ -1198,6 +1198,35 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Affect Value In Array")
+    void AffectValueInArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Affect Array In Value")
+    void AffectArrayInValue() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ x=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Array")
+    void MulArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t*t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Array And Number")
+    void MulArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t*x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");

@@ -58,7 +58,14 @@ public class AffectationNode extends ASTNode{
             m.affectValT(arrayIdent.identifier, index, value);
         } else {
             Value v = ((EvaluableNode) expression).eval(m);
-            m.affectValue(((IdentNode) identifier).identifier, v);
+            String id = ((IdentNode) identifier).identifier;
+            if (m.isArray(id) && (!(expression instanceof IdentNode)|| !m.isArray(((IdentNode) expression).identifier))){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Value cannot be affected into array");
+            }
+            if (!m.isArray(id) && expression instanceof IdentNode && m.isArray(((IdentNode) expression).identifier)){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Value cannot be affected into array");
+            }
+            m.affectValue(id, v);
         }
     }
 

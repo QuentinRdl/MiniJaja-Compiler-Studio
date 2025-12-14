@@ -490,6 +490,9 @@ public class Memory {
         if(addressObj.getDataType() != DataType.INT) {
             return -1; // An array should be stocked as an int that has its own reference
         }
+        if (!isArray(identifier)){
+            return -1;
+        }
 
         int address = (int) addressObj.getValue();
         return heap.sizeOf(address);
@@ -506,6 +509,19 @@ public class Memory {
             throw new IllegalArgumentException(identifier +" is not a array");
         }
         return arr.getDataType();
+    }
+
+    /**
+     * Check if the element is an array
+     * @param identifier id of the element
+     * @return true if the element is an array
+     */
+    public boolean isArray(String identifier) {
+        SymbolTableEntry arr = symbolTable.lookup(identifier);
+        if (arr==null || arr.getKind()!= EntryKind.ARRAY){
+            return false;
+        }
+        return true;
     }
 
     /**
