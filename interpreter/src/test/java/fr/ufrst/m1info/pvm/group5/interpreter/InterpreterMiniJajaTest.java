@@ -1213,6 +1213,34 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Add Array")
+    void AddArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t+t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Add Array And Number")
+    void AddArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t+x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Array")
+    void SubArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t-t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Array And Number")
+    void SubArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t-x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Mul Array")
     void MulArray() {
         String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t*t;}}");
@@ -1223,6 +1251,62 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret Mul Array And Number")
     void MulArrayAndNumber() {
         String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t*x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Div Array")
+    void DivArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t/t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Div Array And Number")
+    void DivArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t/x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sup Array")
+    void SupArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; boolean t2[5]; main{ t2=t>t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sup Array And Number")
+    void SupArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; boolean t2[5]; int x=5; main{ t2=t>x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret And Array")
+    void AndArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t=t&&t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret And Array And Number")
+    void AndArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; boolean x=false; main{ t=t&&x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Or Array")
+    void OrArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t=t||t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Or Array And Number")
+    void OrArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; boolean x=false; main{ t=t||x;}}");
         Assertions.assertNotEquals(null,errMessage);
     }
 
