@@ -39,8 +39,8 @@ public class Stack {
     public static class ConstantModificationException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
-        public ConstantModificationException(String message) {
-            super(message);
+        public ConstantModificationException(String component, String identifier) {
+            super(String.format("%s : Attempt to modify constant value "+identifier+" after affectation", component, identifier));
         }
     }
 
@@ -385,7 +385,7 @@ public class Stack {
     public void swap() {
         // private Deque<Stack_Object> stack_content;
         if(stackContent.size() < 2) {
-            throw new Memory.MemoryIllegalArgException("Not enough elements to swap (need at least 2)");
+            throw new Memory.MemoryIllegalOperationException("Stack", "swap", "swap operation requires at least 2 elements in the stack, current size is"+stackContent.size());
         }
 
         // Pop top two elements and push them back in reversed order
