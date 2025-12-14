@@ -1120,6 +1120,41 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Empty Array Size")
+    void EmptyArraySize() {
+        String errMessage=imj.interpretCode("class C { int t[]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Array Index 1")
+    void EmptyArrayIndex1() {
+        String errMessage=imj.interpretCode("class C { int t[8]; main{ t[]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Array Index 2")
+    void EmptyArrayIndex2() {
+        String errMessage=imj.interpretCode("class C { int t[1]; main{ int x; t[0]=3; x=t[];}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Length")
+    void EmptyLength() {
+        String errMessage=imj.interpretCode("class C { int t[8]; main{ length();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+
+
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
