@@ -1146,12 +1146,40 @@ class InterpreterMiniJajaTest {
     @Test
     @DisplayName("Interpret Empty Length")
     void EmptyLength() {
-        String errMessage=imj.interpretCode("class C { int t[8]; main{ length();}}");
+        String errMessage=imj.interpretCode("class C { int t[8]; main{ int x=length();}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Test
+    @DisplayName("Interpret Length Not Array")
+    void LengthNotArray() {
+        String errMessage=imj.interpretCode("class C { int t=8; main{ int x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
 
+    @Test
+    @DisplayName("Interpret Length Affected In Bool Variable")
+    void LengthAffectedInBoolVariable() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ boolean x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Length Undefined Variable")
+    void LengthAffectedUndefinedVariable() {
+        String errMessage=imj.interpretCode("class C { main{ int x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Length As Instruction")
+    void LengthAsInstruction() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
 
 
     @Test
