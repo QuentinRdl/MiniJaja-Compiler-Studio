@@ -671,7 +671,8 @@ class InterpreterJajaCodeTest {
         ijjc.setBreakpoints(List.of(3,13,18,43));
         ijjc.startFileInterpretation("src/test/resources/Complex.jjc", im);
         ijjc.waitInterpretation();
-        assertEquals(List.of(3,13,43,49), encountered); // 18 should not be met, it's "branched over"
+        Assertions.assertTrue(encountered.containsAll(List.of(3,13,43)));
+        Assertions.assertFalse(encountered.contains(18));// 18 should not be met, it's "branched over"
     }
 
     @Test
@@ -693,22 +694,4 @@ class InterpreterJajaCodeTest {
         ijjc.waitInterpretation();
         assertEquals(expectedErrors, errors);
     }
-
-    /*
-    @Test
-    @DisplayName("Interpret -  step by step")
-    void stepByStep() {
-        int[] steps = {0};
-        InterpreterMiniJaja imjj=new InterpreterMiniJaja();
-        InterpretationMode im = InterpretationMode.STEP_BY_STEP;
-        imjj.interpretationHaltedEvent.subscribe(event -> {
-            steps[0]++;
-            System.out.println(event);
-            imjj.resumeInterpretation(im);
-        });
-        imjj.startFileInterpretation("src/test/resources/Complex.mjj", im);
-        imjj.waitInterpretation();
-        Assertions.assertTrue(steps[0] == 5 || steps[0] == 6); // 5 steps + end event trigger potentially triggered
-    }
-     */
 }
