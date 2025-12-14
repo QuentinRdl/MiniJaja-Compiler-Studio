@@ -54,9 +54,9 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
 
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (type.valueType.equals(ValueType.VOID)) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", type.valueType.name(), "parameter declaration");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", type.valueType.name(), "parameter declaration");
         }else if (type.valueType.equals(ValueType.INT)) {
             m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
         }

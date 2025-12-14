@@ -38,7 +38,7 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         declaration.checkType(m);
 
         if (declarations != null) {

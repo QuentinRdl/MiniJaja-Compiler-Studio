@@ -8,4 +8,6 @@ public class InitInstruction extends Instruction{
     public int execute(int address, Memory m) {
         return address+1;
     }
+
+    public String toString(){ return "init";}
 }

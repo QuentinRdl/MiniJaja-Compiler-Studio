@@ -10,4 +10,6 @@ public class WriteInstruction extends Instruction {
         m.write(top.toString());
         return address + 1;
     }
+
+    public String toString() { return "write"; }
 }

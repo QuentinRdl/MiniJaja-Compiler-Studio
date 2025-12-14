@@ -1,7 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
@@ -69,7 +68,7 @@ public class AffectationNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
         try {
 
@@ -79,25 +78,25 @@ public class AffectationNode extends ASTNode{
                 ASTNode indexExp = tabNode.getChildren().get(1);
                 String indexType = indexExp.checkType(m);
                 if (!"int".equals(indexType)) {
-                    throw new ASTInvalidDynamicTypeException(this.getLine(), "int", indexType, "affectation");
+                    throw new InterpretationInvalidTypeException(this.getLine(), "int", indexType, "affectation");
                 }
                 DataType arrayDataType = m.tabType(arrayIdent.identifier);
                 String arrayTypeStr;
                 if (arrayDataType == DataType.INT) arrayTypeStr = "int";
                 else if (arrayDataType == DataType.BOOL) arrayTypeStr = "bool";
-                else throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", "array", "affectation");
+                else throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", "array", "affectation");
                 if (!exprType.equals(arrayTypeStr)) {
-                    throw new ASTInvalidDynamicTypeException(this.getLine(), arrayTypeStr, exprType, "affectation");
+                    throw new InterpretationInvalidTypeException(this.getLine(), arrayTypeStr, exprType, "affectation");
                 }
             } else {
                 DataType varDataType = m.dataTypeOf(((IdentNode) identifier).identifier);
                 String varTypeStr;
                 if (varDataType == DataType.INT) varTypeStr = "int";
                 else if (varDataType == DataType.BOOL) varTypeStr = "bool";
-                else throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", varDataType.toString(), "affectation");
+                else throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", varDataType.toString(), "affectation");
 
                 if (!exprType.equals(varTypeStr)) {
-                    throw new ASTInvalidDynamicTypeException(this.getLine(), varTypeStr, exprType, "affectation");
+                    throw new InterpretationInvalidTypeException(this.getLine(), varTypeStr, exprType, "affectation");
                 }
             }
         } catch (IllegalArgumentException e) {

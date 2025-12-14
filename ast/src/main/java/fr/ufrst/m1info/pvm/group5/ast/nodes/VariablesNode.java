@@ -40,7 +40,7 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         variable.checkType(m);
         if (variables != null) {
             variables.checkType(m);

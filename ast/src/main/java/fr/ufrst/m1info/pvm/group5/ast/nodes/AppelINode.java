@@ -51,7 +51,7 @@ public class AppelINode extends ASTNode {
 
     @Override
     public void interpret(Memory m)
-            throws ASTInvalidMemoryException, ASTInvalidOperationException, ASTInvalidDynamicTypeException {
+            throws ASTInvalidMemoryException, ASTInvalidOperationException, InterpretationInvalidTypeException {
         SymbolTableEntry methodEntry = validateMethodEntry(m);
         List<Value> evaluatedArgs = evaluateArguments(m);
         MethodeNode methodNode = getMethodNode(methodEntry);
@@ -197,7 +197,7 @@ public class AppelINode extends ASTNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
         if (methodEntry == null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
@@ -218,7 +218,7 @@ public class AppelINode extends ASTNode {
             case VOID:
                 return "void";
             default:
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int, bool or void", dt.name(), "AppelI");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int, bool or void", dt.name(), "AppelI");
         }
     }
 }

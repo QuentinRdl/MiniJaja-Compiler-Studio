@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 public class OrNode extends BinaryOperator {
@@ -20,9 +20,9 @@ public class OrNode extends BinaryOperator {
     }
 
     @Override
-    protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
+    protected String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException {
         if (!leftType.equals("bool") || !rightType.equals("bool")){
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", (leftType.equals("bool"))?leftType:rightType, "or (||)");
+            throw new InterpretationInvalidTypeException(this.getLine(), "bool", (leftType.equals("bool"))?leftType:rightType, "or (||)");
         }
         return "bool";
     }

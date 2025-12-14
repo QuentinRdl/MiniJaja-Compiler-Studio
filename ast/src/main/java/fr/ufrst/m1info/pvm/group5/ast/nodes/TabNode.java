@@ -3,7 +3,6 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
-import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
         String indexType = indexExp.checkType(m);
         if (!"int".equals(indexType)) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", indexType, "Tab");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int", indexType, "Tab");
         }
         return m.dataTypeOf(ident.identifier).toString().toLowerCase();
     }

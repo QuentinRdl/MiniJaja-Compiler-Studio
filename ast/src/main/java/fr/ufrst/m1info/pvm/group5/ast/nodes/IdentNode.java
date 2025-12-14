@@ -34,7 +34,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         DataType dataType;
         try{
             dataType = m.dataTypeOf(identifier);
@@ -49,7 +49,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
                 return "bool";
             case VOID:
             default:
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", dataType.name(), "ident");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", dataType.name(), "ident");
         }
 
     }

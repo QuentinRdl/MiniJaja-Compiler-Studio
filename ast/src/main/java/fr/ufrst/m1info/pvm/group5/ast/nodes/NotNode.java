@@ -40,10 +40,10 @@ public class NotNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expr.checkType(m);
         if (!exprType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", exprType, "not");
+            throw new InterpretationInvalidTypeException(this.getLine(), "bool", exprType, "not");
         }
         return "bool";
     }

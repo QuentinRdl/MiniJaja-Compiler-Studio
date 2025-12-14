@@ -52,7 +52,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
 
         String declaredType;
@@ -66,11 +66,11 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
                 m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType));
                 break;
             default :
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", type.valueType.name(), "final");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", type.valueType.name(), "final");
         }
 
         if (!exprType.equals(declaredType)) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", declaredType ,"final");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", declaredType ,"final");
         }
 
         return "void";

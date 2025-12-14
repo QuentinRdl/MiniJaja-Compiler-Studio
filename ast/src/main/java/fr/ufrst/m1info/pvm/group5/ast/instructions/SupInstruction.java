@@ -11,12 +11,15 @@ public class SupInstruction extends Instruction{
     public int execute(int address, Memory m) {
         Value v2 = (Value) m.pop(); //first pop => right operand
         Value v1 = (Value) m.pop(); //second pop => left operand
-        if (v1.type != ValueType.INT || v2.type != ValueType.INT){
-            throw new ASTInvalidTypeException("Type error: sup operator expects two INT operands, but received " + v1.type + " and " + v2.type + ".");
-        }
+        compatibleType(ValueType.INT, v2.type);
+        compatibleType(ValueType.INT, v1.type);
         boolean res = v1.valueInt > v2.valueInt;
         Value vres = new Value(res);
         m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
         return address+1;
+    }
+
+    public String toString() {
+        return "store";
     }
 }

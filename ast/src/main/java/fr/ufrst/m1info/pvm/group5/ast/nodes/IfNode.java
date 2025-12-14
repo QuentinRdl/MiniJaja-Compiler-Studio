@@ -59,10 +59,10 @@ public class IfNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", condType ,"if");
+            throw new InterpretationInvalidTypeException(this.getLine(), "bool", condType ,"if");
         }
         if (instrThen != null) {
             instrThen.checkType(m);

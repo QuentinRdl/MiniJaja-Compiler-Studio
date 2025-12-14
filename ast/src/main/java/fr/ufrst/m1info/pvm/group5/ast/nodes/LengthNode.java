@@ -34,7 +34,7 @@ public class LengthNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         return "int";
     }
 

@@ -17,12 +17,12 @@ public class InvokeInstruction extends Instruction {
     public int execute(int address, Memory m) {
         Value vMeth = (Value) m.val(ident);
         if (vMeth==null) {
-            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+") : Method "+ident+" is undefined");
+            throw ASTInvalidMemoryException.UndefinedVariable("ident", this.getLine());
         }
         try {
             m.getMethod(ident);
         } catch (Exception e) {
-            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+") : "+ident+" is not a method");
+            throw ASTInvalidMemoryException.InvalidVariable(ident, this.getLine(), "method", m.dataTypeOf(ident).name());
         }
         int newAdr=vMeth.valueInt;
         if (newAdr<1){
@@ -31,4 +31,6 @@ public class InvokeInstruction extends Instruction {
         m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
         return newAdr;
     }
+
+    public String toString() {return "invoke";}
 }

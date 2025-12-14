@@ -16,7 +16,7 @@ public class ASTInvalidMemoryException extends RuntimeException {
     }
 
     public static ASTInvalidMemoryException UndefinedVariable(String identifier, int line) {
-        return new ASTInvalidMemoryException(String.format("Line %d : Variable %s is not defined", line, identifier));
+        return new ASTInvalidMemoryException(String.format("Line %d : Symbol %s is not defined", line, identifier));
     }
 
     public static ASTInvalidMemoryException InvalidVariable(String identifier, int line, String expected, String actual) {
@@ -28,6 +28,10 @@ public class ASTInvalidMemoryException extends RuntimeException {
     }
 
     public static ASTInvalidMemoryException ConstantChange(String identifier, int line) {
-        return new ASTInvalidMemoryException(String.format("Line %d : SAttempted to change constant value %s", line, identifier));
+        return new ASTInvalidMemoryException(String.format("Line %d : Attempted to change constant value %s", line, identifier));
+    }
+
+    public static ASTInvalidMemoryException EmptyStack(int line) {
+        return new ASTInvalidMemoryException(String.format("Line %d : Attempted to pop a value on an empty stack", line));
     }
 }

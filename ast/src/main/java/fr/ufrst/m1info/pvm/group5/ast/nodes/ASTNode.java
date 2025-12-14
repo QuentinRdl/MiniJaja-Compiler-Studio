@@ -91,9 +91,9 @@ public abstract class ASTNode {
     /**
      * Dynamically checks the type of this node and returns its type.
      * @return the evaluated type of the node (e.g., int, bool, string, void, etc.)
-     * @throws ASTInvalidDynamicTypeException if the type is invalid
+     * @throws InterpretationInvalidTypeException if the type is invalid
      */
-    public abstract String checkType(Memory m) throws ASTInvalidDynamicTypeException;
+    public abstract String checkType(Memory m) throws InterpretationInvalidTypeException;
 
     /**
      * Get the children of the node within a list

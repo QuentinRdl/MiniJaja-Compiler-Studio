@@ -35,10 +35,10 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = exp.checkType(m);
         if (!exprType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", exprType, "Unary minus");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int", exprType, "Unary minus");
         }
         return "int";
     }

@@ -6,6 +6,8 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
+import java.util.List;
+
 public class LoadInstruction extends Instruction{
     String ident;
 
@@ -16,15 +18,12 @@ public class LoadInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v = (Value) m.val(ident);
-        if (v.type == ValueType.STRING){
-            throw new ASTInvalidTypeException("load line ("+(address+1)+" : Type error: operation does not accept STRING type, but received " + v.type + ".");
-
-        }
-        if (v.type == ValueType.EMPTY){
-            throw new ASTInvalidMemoryException("load line ("+(address+1)+" : Variable "+ident+" has no value");
-
-        }
+        compatibleType(List.of(ValueType.INT, ValueType.BOOL), v.type);
         m.push(".", v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
         return address+1;
+    }
+
+    public String toString(){
+        return "load";
     }
 }

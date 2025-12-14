@@ -35,7 +35,7 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException, ASTInvalidDynamicTypeException {
+    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException, InterpretationInvalidTypeException {
         Value sizeVal = ((EvaluableNode) sizeExp).eval(m);
         /* TypeCheck
         if (sizeVal.type != ValueType.INT) {
@@ -63,10 +63,10 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String sizeType = sizeExp.checkType(m);
         if (!sizeType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", sizeType, "array declaration");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int", sizeType, "array declaration");
         }
         DataType dt = ValueType.toDataType(type.valueType);
         m.declTab(ident.identifier, 1, dt);

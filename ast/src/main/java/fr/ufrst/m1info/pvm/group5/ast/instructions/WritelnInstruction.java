@@ -10,4 +10,6 @@ public class WritelnInstruction extends Instruction {
         m.writeLine(top.toString());
         return address + 1;
     }
+
+    public String toString() { return "writeln"; }
 }

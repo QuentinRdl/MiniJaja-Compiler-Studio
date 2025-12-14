@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
@@ -93,7 +93,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         m.popScope();
         String typeMethod = returnType.getValueType().name().toLowerCase();
         if (!typeMethod.equals(typeReturn)){
-            throw new ASTInvalidDynamicTypeException(this.getLine(), typeMethod, typeReturn, "method declaration");
+            throw new InterpretationInvalidTypeException(this.getLine(), typeMethod, typeReturn, "method declaration");
         }
         return typeMethod;
     }

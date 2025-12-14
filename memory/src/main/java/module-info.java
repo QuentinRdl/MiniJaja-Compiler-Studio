@@ -1,4 +1,5 @@
 module fr.ufrst.m1info.pvm.group5.memory {
+    requires fr.ufrst.m1info.pvm.group5.memory;
     exports fr.ufrst.m1info.pvm.group5.memory;
     exports fr.ufrst.m1info.pvm.group5.memory.symbol_table;
     exports fr.ufrst.m1info.pvm.group5.memory.heap;

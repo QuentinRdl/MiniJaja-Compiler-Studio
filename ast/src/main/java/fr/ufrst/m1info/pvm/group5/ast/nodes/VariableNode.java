@@ -51,7 +51,7 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         ValueType varType = typemeth.valueType;
         String vType="";
         if(varType == ValueType.INT){
@@ -62,14 +62,14 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
             m.declVar(ident.identifier, new Value(true), ValueType.toDataType(typemeth.valueType));
             vType="bool";
         }else {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", varType.name(), "Variable declaration");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", varType.name(), "Variable declaration");
         }
         if (vexp != null) {
             String exprType = vexp.checkType(m);
 
 
             if (!exprType.equals(vType)) {
-                throw new ASTInvalidDynamicTypeException(this.getLine(), exprType, vType, "Variable declaration");
+                throw new InterpretationInvalidTypeException(this.getLine(), exprType, vType, "Variable declaration");
             }
         }
         return "void";

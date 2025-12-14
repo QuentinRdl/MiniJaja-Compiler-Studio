@@ -69,10 +69,10 @@ public class SumNode extends ASTNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
         if (!exprType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", exprType, "sum");
+            throw new InterpretationInvalidTypeException(this.getLine(), "int", exprType, "sum");
         }
 
         if (identifier instanceof TabNode) {
@@ -87,7 +87,7 @@ public class SumNode extends ASTNode {
             DataType dataType = m.dataTypeOf(identNode.identifier);
 
             if (dataType != DataType.INT) {
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int", dataType.name(), "sum");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int", dataType.name(), "sum");
             }
         }
 

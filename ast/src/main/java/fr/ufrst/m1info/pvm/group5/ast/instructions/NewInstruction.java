@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.StackObject;
@@ -11,6 +11,7 @@ import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewInstruction extends Instruction{
     String identifier;
@@ -34,8 +35,8 @@ public class NewInstruction extends Instruction{
                 listSO.add(m.top());
                 m.pop();
             }
-        }catch (Exception e){
-            throw new ASTInvalidMemoryException("new line ("+(address+1)+") : "+e.getMessage());
+        }catch (Memory.MemoryIllegalOperationException e){
+            throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
         try{
             StackObject top= m.top();
@@ -51,28 +52,18 @@ public class NewInstruction extends Instruction{
         }catch (Exception e){
             v=new Value();
         }
-        if (type!=DataType.INT && type!=DataType.BOOL){
-            throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Invalid type.");
-        }
+        if(kind == EntryKind.METHOD)
+            compatibleType(ValueType.INT, DataType.toValueType(type));
+        else
+            compatibleType(List.of(ValueType.INT, ValueType.BOOL), DataType.toValueType(type));
+        compatibleType(DataType.toValueType(type), v.type);
         if (kind==EntryKind.VARIABLE){
-            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
-            }
             m.declVar(identifier,v,type);
         }
         else if (kind==EntryKind.CONSTANT){
-            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
-            }
             m.declCst(identifier,v,type);
         }else if (kind==EntryKind.METHOD){
-            if (v.type!=ValueType.INT){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Value must be of type int.");
-            }
             m.push(identifier,v,type,EntryKind.METHOD);
-        }
-        else {
-            throw new ASTBuildException("new line ("+(address+1)+") : Entry kind must be var or const");
         }
         for (int i=scope-1; i>-1; i--){
             StackObject s=listSO.get(i);
@@ -80,4 +71,6 @@ public class NewInstruction extends Instruction{
         }
         return address+1;
     }
+
+    public String toString(){return "new";}
 }

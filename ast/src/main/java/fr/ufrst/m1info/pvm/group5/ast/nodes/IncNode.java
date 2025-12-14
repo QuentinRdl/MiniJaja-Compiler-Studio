@@ -67,7 +67,7 @@ public class IncNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (ident instanceof TabNode) {
             TabNode tabNode = (TabNode) ident;
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
@@ -77,14 +77,14 @@ public class IncNode extends ASTNode{
             }
             String indexType = indexExp.checkType(m);
             if (!"int".equals(indexType)) {
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int", indexType, "inc");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int", indexType, "inc");
             }
         } else {
             IdentNode identNode = (IdentNode) ident;
             DataType dataType = m.dataTypeOf(identNode.identifier);
 
             if (dataType != DataType.INT) {
-                throw new ASTInvalidDynamicTypeException(this.getLine(), "int", dataType.name(), "inc");
+                throw new InterpretationInvalidTypeException(this.getLine(), "int", dataType.name(), "inc");
             }
         }
 

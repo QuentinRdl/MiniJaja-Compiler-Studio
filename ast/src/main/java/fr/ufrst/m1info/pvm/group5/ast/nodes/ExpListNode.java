@@ -35,7 +35,7 @@ public class ExpListNode extends ASTNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         head.checkType(m);
         if (tail != null) {
             tail.checkType(m);
@@ -60,10 +60,10 @@ public class ExpListNode extends ASTNode {
      * @return the list of evaluated values
      * @throws ASTInvalidOperationException
      * @throws ASTInvalidMemoryException
-     * @throws ASTInvalidDynamicTypeException
+     * @throws InterpretationInvalidTypeException
      */
     public List<Value> evalList(Memory m)
-            throws ASTInvalidOperationException, ASTInvalidMemoryException, ASTInvalidDynamicTypeException {
+            throws ASTInvalidOperationException, ASTInvalidMemoryException, InterpretationInvalidTypeException {
         List<Value> values = new ArrayList<>();
 
         if (head instanceof ExpListNode expListNode) {

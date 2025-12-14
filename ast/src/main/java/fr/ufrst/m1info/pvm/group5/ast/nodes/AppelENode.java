@@ -69,13 +69,13 @@ public class AppelENode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException  {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
         if (methodEntry == null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
         }
         if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "method", methodEntry.getKind().toString(), "AppelE");
+            throw new InterpretationInvalidTypeException(this.getLine(), "method", methodEntry.getKind().toString(), "AppelE");
         }
 
         if (args != null) {
@@ -85,7 +85,7 @@ public class AppelENode extends ASTNode implements EvaluableNode {
         return switch (dt) {
             case INT -> "int";
             case BOOL -> "bool";
-            default -> throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", "void", "AppelE");
+            default -> throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", "void", "AppelE");
         };
     }
 }

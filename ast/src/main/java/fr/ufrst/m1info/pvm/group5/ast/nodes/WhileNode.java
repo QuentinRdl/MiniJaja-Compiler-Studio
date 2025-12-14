@@ -48,10 +48,10 @@ public class WhileNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", condType, "While");
+            throw new InterpretationInvalidTypeException(this.getLine(), "bool", condType, "While");
         }
         if (iss != null) {
             iss.checkType(m);

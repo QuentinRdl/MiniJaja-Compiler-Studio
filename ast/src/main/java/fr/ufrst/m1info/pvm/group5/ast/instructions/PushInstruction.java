@@ -21,4 +21,6 @@ public class PushInstruction extends Instruction {
         m.push(".", this.v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
         return address+1;
     }
+
+    public String toString() { return "push"; }
 }

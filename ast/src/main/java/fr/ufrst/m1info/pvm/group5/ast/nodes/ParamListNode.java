@@ -55,7 +55,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m)
-            throws ASTInvalidDynamicTypeException {
+            throws InterpretationInvalidTypeException {
         param.checkType(m);
         if (next != null) {
             next.checkType(m);

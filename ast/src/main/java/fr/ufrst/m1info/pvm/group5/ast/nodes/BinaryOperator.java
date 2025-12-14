@@ -74,7 +74,7 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
 
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String leftType = left.checkType(m);
         String rightType = right.checkType(m);
         return controlType(leftType,rightType);
@@ -88,5 +88,5 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
      * @return The type of the operation
      * @throws Exception
      */
-    protected abstract String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException ;
+    protected abstract String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException;
 }

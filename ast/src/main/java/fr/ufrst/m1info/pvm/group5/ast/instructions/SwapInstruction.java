@@ -8,4 +8,8 @@ public class SwapInstruction extends Instruction {
         m.swap();
         return address + 1;
     }
+
+    public String toString() {
+        return "swap";
+    }
 }

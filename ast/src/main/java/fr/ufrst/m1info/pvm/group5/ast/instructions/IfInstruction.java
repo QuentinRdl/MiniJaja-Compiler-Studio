@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -23,16 +23,18 @@ public class IfInstruction extends Instruction{
         Value v;
         try {
             v = ((Value) m.pop());
-        }catch (Exception e){
-            throw new ASTInvalidMemoryException(e.getMessage());
+        }catch (Memory.MemoryIllegalOperationException e){
+            throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
-        if (v.type !=ValueType.BOOL){
-            throw new ASTInvalidDynamicTypeException("if line ("+(address+1)+") : Value in top of the stack must be boolean");
-        }
+        compatibleType(ValueType.BOOL, v.type);
         b = v.valueBool;
         if (b){
             return addressIf;
         }
         return address+1;
+    }
+
+    public String toString(){
+        return "if";
     }
 }

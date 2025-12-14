@@ -8,4 +8,6 @@ public class PopInstruction extends Instruction {
         m.pop();
         return address + 1;
     }
+
+    public String toString() {return "pop";}
 }

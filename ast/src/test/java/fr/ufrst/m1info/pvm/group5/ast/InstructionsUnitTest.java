@@ -69,7 +69,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value(1));
         Instruction ifInstr = new IfInstruction(5);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> ifInstr.execute(2,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> ifInstr.execute(2,memory));
     }
 
     @Test
@@ -77,7 +77,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value("Not a boolean"));
         Instruction ifInstr = new IfInstruction(5);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> ifInstr.execute(2,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> ifInstr.execute(2,memory));
     }
 
     //jcstop
@@ -157,7 +157,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value(false));
         Instruction newInstr = new NewInstruction("x", DataType.STRING, EntryKind.VARIABLE,0);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> newInstr.execute(1,memory));
     }
 
     @Test
@@ -166,7 +166,7 @@ class InstructionsUnitTest {
             throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
         }).when(memory).pop();
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.METHOD,0);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> newInstr.execute(1,memory));
     }
 
     @Test
@@ -174,7 +174,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value(false));
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.METHOD,0);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> newInstr.execute(1,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> newInstr.execute(1,memory));
     }
 
     @Test
@@ -229,7 +229,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value(3));
         Instruction newaInstr = new NewarrayInstruction("x", DataType.STRING);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> newaInstr.execute(1,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> newaInstr.execute(1,memory));
     }
 
     @Test
@@ -237,7 +237,7 @@ class InstructionsUnitTest {
         Instruction pushInstr = new PushInstruction(new Value(true));
         Instruction newaInstr = new NewarrayInstruction("x", DataType.BOOL);
         pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidDynamicTypeException.class,() -> newaInstr.execute(1,memory));
+        assertThrows(InterpretationInvalidTypeException.class,() -> newaInstr.execute(1,memory));
     }
 
     @Test

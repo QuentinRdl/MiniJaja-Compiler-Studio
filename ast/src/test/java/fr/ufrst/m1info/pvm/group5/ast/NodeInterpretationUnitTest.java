@@ -698,7 +698,7 @@ class NodeInterpretationUnitTest {
         TabNode tabNode = new TabNode(arrayIdent, indexExpr);
 
         IncNode inc = new IncNode(tabNode);
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> inc.interpret(memory));
+        assertThrows(InterpretationInvalidTypeException.class, () -> inc.interpret(memory));
     }
 
     @Test
@@ -1123,7 +1123,7 @@ class NodeInterpretationUnitTest {
         NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(5));
 
         SumNode sumNode = new SumNode(tabNode, valueExpr);
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.interpret(memory));
+        assertThrows(InterpretationInvalidTypeException.class, () -> sumNode.interpret(memory));
     }
 
     @Test
@@ -1136,7 +1136,7 @@ class NodeInterpretationUnitTest {
         BooleanNode valueExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
 
         SumNode sumNode = new SumNode(tabNode, valueExpr);
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> sumNode.interpret(memory));
+        assertThrows(InterpretationInvalidTypeException.class, () -> sumNode.interpret(memory));
     }
 
     @Test
@@ -1760,7 +1760,7 @@ class NodeInterpretationUnitTest {
         BooleanNode sizeExpr = new BooleanNode(true);
 
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.interpret(memory));
+        assertThrows(InterpretationInvalidTypeException.class, () -> node.interpret(memory));
     }
 
     @Test
@@ -1919,7 +1919,7 @@ class NodeInterpretationUnitTest {
         when(memory.tabLength("arr")).thenReturn(5);
 
         TabNode node = new TabNode(ident, indexExpr);
-        assertThrows(ASTInvalidDynamicTypeException.class, () -> node.eval(memory));
+        assertThrows(InterpretationInvalidTypeException.class, () -> node.eval(memory));
     }
 
     @Test
