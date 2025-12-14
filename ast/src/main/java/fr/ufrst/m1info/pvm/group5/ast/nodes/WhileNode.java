@@ -15,10 +15,10 @@ public class WhileNode extends ASTNode{
         this.condition = condition;
         this.iss = iss;
         if(this.condition == null){
-            throw new ASTBuildException("While node must have a condition");
+            throw new ASTBuildException("While", "condition", "While node must have a non-null condition");
         }
         if(!(condition instanceof EvaluableNode)){
-            throw new ASTBuildException("While node condition must be evaluable");
+            throw new ASTBuildException("While", "condition", "While node must have an evaluable condition");
         }
     }
 
@@ -51,9 +51,7 @@ public class WhileNode extends ASTNode{
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "While loop condition must be bool, found : " + condType
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", condType, "While");
         }
         if (iss != null) {
             iss.checkType(m);

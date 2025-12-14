@@ -15,7 +15,10 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     public TabNode(IdentNode ident, ASTNode indexExp) {
         if (ident == null || indexExp == null) {
-            throw new ASTBuildException("TabNode requires non-null identifier and index expression");
+            throw new ASTBuildException("Tab", (ident == null)?"identifier":"index", "Tab must have a non-null"+((ident == null)?"identifier":"index"));
+        }
+        if (!(indexExp instanceof EvaluableNode)) {
+            throw new ASTBuildException("Tab", "index" ,"TabNode index must be evaluable");
         }
         this.ident = ident;
         this.indexExp = indexExp;
@@ -23,42 +26,27 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) {
-        if (!(indexExp instanceof EvaluableNode)) {
-            throw new ASTInvalidOperationException("TabNode index expression is not evaluable");
-        }
 
         Value indexVal = ((EvaluableNode) indexExp).eval(m);
-        if (indexVal.type != ValueType.INT) {
-            throw new ASTInvalidDynamicTypeException("TabNode index must be an integer");
-        }
 
         int index = indexVal.valueInt;
-        if (index < 0) {
-            throw new ASTInvalidOperationException("TabNode index cannot be negative: " + index);
-        }
-
-        int arrayLength = m.tabLength(ident.identifier);
-        if (index >= arrayLength) {
-            throw new ASTInvalidOperationException("TabNode index out of bounds: " + index + " >= " + arrayLength);
-        }
-
         return m.valT(ident.identifier, index);
     }
 
     @Override
     public void interpret(Memory m) {
-        throw new ASTInvalidOperationException("TabNode cannot be interpreted directly");
+        throw new ASTInvalidOperationException("interpretation", "Tab", this.getLine());
     }
 
     @Override
     public String checkType(Memory m) {
         if (!m.contains(ident.identifier)) {
-            throw new ASTInvalidDynamicTypeException("TabNode identifier '" + ident.identifier + "' is not declared");
+            throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
         }
 
         String indexType = indexExp.checkType(m);
         if (!"int".equals(indexType)) {
-            throw new ASTInvalidDynamicTypeException("TabNode index must be of type int, got: " + indexType);
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", indexType, "Tab");
         }
         return m.dataTypeOf(ident.identifier).toString().toLowerCase();
     }

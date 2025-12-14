@@ -14,10 +14,10 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
         this.variable=variable;
         this.variables=variables;
         if(this.variable==null){
-            throw new ASTBuildException("Invalid variable declaration");
+            throw new ASTBuildException("Variables", "variable", "Variables node variable must not be null");
         }
         if(!(this.variable instanceof WithdrawalNode)){
-            throw new ASTBuildException("Variable declarations must be withdrawable");
+            throw new ASTBuildException("Variables", "variable", "Variables node variable must be evaluable");
         }
     }
 

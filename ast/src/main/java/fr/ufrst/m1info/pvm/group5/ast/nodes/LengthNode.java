@@ -13,16 +13,13 @@ public class LengthNode extends ASTNode implements EvaluableNode {
 
         this.ident = ident;
         if(ident==null){
-            throw new ASTBuildException("Length method must have an identifier");
+            throw new ASTBuildException("Length", "identifier", "Length node identifier must not be null");
         }
     }
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         int size = m.tabLength(ident.identifier);
-        if (size==-1){
-            throw new ASTInvalidOperationException("Line "+getLine()+" : "+ident.identifier+" is not a array");
-        }
         return new Value(size);
     }
 
@@ -33,7 +30,7 @@ public class LengthNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        throw new ASTInvalidOperationException("Length node cannot be interpreted");
+        throw new ASTInvalidOperationException("Length", "Length", this.getLine());
     }
 
     @Override

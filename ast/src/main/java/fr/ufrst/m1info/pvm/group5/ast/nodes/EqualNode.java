@@ -26,14 +26,10 @@ public class EqualNode extends BinaryOperator{
     @Override
     protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
         if (!leftType.equals(rightType)){
-            throw new ASTInvalidDynamicTypeException(
-                    "Equal operator must be used with 2 operand of the same type"
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), rightType, leftType, "comparison");
         }
         if (!leftType.equals("int") && !leftType.equals("bool")){
-            throw new ASTInvalidDynamicTypeException(
-                    "Equal operator must be used with 2 operand of type int or bool"
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", leftType, "comparison");
         }
         return "bool";
     }

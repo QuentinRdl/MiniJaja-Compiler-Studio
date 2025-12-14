@@ -19,15 +19,13 @@ public class DivNode extends BinaryOperator{
         if (rightOperand.valueInt != 0){
             return new Value(leftOperand.valueInt / rightOperand.valueInt);
         }
-        throw new ASTInvalidOperationException("Cannot divide by zero");
+        throw new RuntimeException(String.format("Line %d : Cannot divide by 0", this.getLine()));
     }
 
     @Override
     protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
         if (!leftType.equals("int") || !rightType.equals("int")){
-            throw new ASTInvalidDynamicTypeException(
-                    "Div operator must be used with 2 operand of type int"
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int", (!leftType.equals("int"))?leftType:rightType, "division");
         }
         return "int";
     }

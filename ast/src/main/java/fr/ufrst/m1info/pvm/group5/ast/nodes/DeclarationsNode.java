@@ -13,10 +13,10 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
         this.declaration=declaration;
         this.declarations=declarations;
         if(declaration == null){
-            throw new ASTBuildException("Invalid declaration");
+            throw new ASTBuildException("Declarations", "declaration", "declarations must not have a null declaration");
         }
         if(!(declaration instanceof WithdrawalNode)){
-            throw new ASTBuildException("Declarations must be withdrawable");
+            throw new ASTBuildException("Declarations", "declaration", "declaration must be withdrawable");
         }
     }
 

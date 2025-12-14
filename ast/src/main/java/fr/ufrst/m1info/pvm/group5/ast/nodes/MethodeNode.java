@@ -20,7 +20,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     public MethodeNode(TypeNode returnType, IdentNode ident, ASTNode params, ASTNode vars, ASTNode instrs) {
         if (returnType == null || ident == null) {
-            throw new ASTBuildException("MethodeNode requires non-null returnType and ident");
+            throw new ASTBuildException("Methode", (ident == null)?"identifier":"return Type", "Main node" + ((ident == null)?"identifier":"return Type") + "must not be null");
         }
         this.returnType = returnType;
         this.ident = ident;
@@ -93,7 +93,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         m.popScope();
         String typeMethod = returnType.getValueType().name().toLowerCase();
         if (!typeMethod.equals(typeReturn)){
-            throw new ASTInvalidDynamicTypeException("Line "+getLine()+" : Method and return must be of the same type");
+            throw new ASTInvalidDynamicTypeException(this.getLine(), typeMethod, typeReturn, "method declaration");
         }
         return typeMethod;
     }

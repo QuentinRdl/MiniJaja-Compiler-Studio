@@ -19,13 +19,13 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
         this.ident=ident;
         this.vexp=vexp;
         if(typemeth == null){
-            throw new ASTBuildException("Variable must have a valid type");
+            throw new ASTBuildException("Variable", "type", "Variable node must have a valid type");
         }
         if(ident == null){
-            throw new ASTBuildException("Variable must have a valid identifier");
+            throw new ASTBuildException("Variable", "identifier", "Variable node must have a non-null identifier");
         }
         if(vexp != null && !(vexp instanceof EvaluableNode)){
-            throw new ASTBuildException("Variable assignation operator must have an evaluable operand");
+            throw new ASTBuildException("Variable", "vexp", "Variable node assignation must have an evaluable operand");
         }
     }
 
@@ -62,18 +62,14 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
             m.declVar(ident.identifier, new Value(true), ValueType.toDataType(typemeth.valueType));
             vType="bool";
         }else {
-            throw new ASTInvalidDynamicTypeException(
-                    "Cannot declare variable with type " + varType
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", varType.name(), "Variable declaration");
         }
         if (vexp != null) {
             String exprType = vexp.checkType(m);
 
 
             if (!exprType.equals(vType)) {
-                throw new ASTInvalidDynamicTypeException(
-                        "Type of expression (" + exprType + ") incompatible with the type of the variable (" + vType + ")"
-                );
+                throw new ASTInvalidDynamicTypeException(this.getLine(), exprType, vType, "Variable declaration");
             }
         }
         return "void";

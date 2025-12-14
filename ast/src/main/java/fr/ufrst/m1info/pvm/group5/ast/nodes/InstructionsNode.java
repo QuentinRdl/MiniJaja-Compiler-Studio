@@ -17,7 +17,7 @@ public class InstructionsNode extends ASTNode{
         this.instruction = instruction;
         this.otherInstructions = otherInstructions;
         if(instruction == null){
-            throw new ASTBuildException("Invalid instruction definition");
+            throw new ASTBuildException("Instructions", "instruction", "Instructions node's instruction must not be null");
         }
     }
 

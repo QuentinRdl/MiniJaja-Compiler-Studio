@@ -13,7 +13,7 @@ public class ExpListNode extends ASTNode {
 
     public ExpListNode(ASTNode head, ASTNode tail) {
         if (head == null) {
-            throw new ASTBuildException("ExpListNode cannot have a null head expression");
+            throw new ASTBuildException("ExpList", "head", "head of an expression list cannot be null");
         }
         this.head = head;
         this.tail = tail;
@@ -31,9 +31,7 @@ public class ExpListNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException(
-                "ExpListNode cannot be interpreted directly — only used within AppelINode or similar."
-        );
+        throw new ASTInvalidOperationException("interpretation", "ExpList", this.getLine());
     }
 
     @Override
@@ -73,7 +71,7 @@ public class ExpListNode extends ASTNode {
         } else if (head instanceof EvaluableNode evaluableHead) {
             values.add(evaluableHead.eval(m));
         } else {
-            throw new ASTInvalidOperationException("Head of ExpListNode is not evaluable.");
+            throw new ASTInvalidOperationException("evaluation", "ExpList", this.getLine());
         }
 
         if (tail instanceof ExpListNode expListNode) {

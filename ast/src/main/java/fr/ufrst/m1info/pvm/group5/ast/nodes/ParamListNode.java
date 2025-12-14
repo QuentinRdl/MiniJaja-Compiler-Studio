@@ -13,7 +13,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
 
     public ParamListNode(ParamNode param, ParamListNode next) {
         if (param == null) {
-            throw new ASTBuildException("ParamListNode cannot have a null parameter");
+            throw new ASTBuildException("ParamList", "param", "ParamList cannot have a null parameter");
         }
         this.param = param;
         this.next = next;

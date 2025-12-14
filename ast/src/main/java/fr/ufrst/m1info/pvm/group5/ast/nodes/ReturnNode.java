@@ -13,9 +13,9 @@ public class ReturnNode extends ASTNode{
     public ReturnNode(ASTNode expr){
         this.expr = expr;
         if(expr == null)
-            throw new ASTBuildException("Return node must have a expression");
+            throw new ASTBuildException("Return", "expression", "Return node must have a return value");
         else if (!(expr instanceof EvaluableNode))
-            throw new ASTBuildException("Return node must have an evaluable expression");
+            throw new ASTBuildException("Return", "expression","Return node must have an evaluable return value");
     }
 
     @Override

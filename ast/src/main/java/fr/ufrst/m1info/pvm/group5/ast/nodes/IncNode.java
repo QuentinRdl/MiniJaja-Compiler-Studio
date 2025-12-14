@@ -14,10 +14,10 @@ public class IncNode extends ASTNode{
 
     public IncNode(ASTNode ident){
         if(ident == null){
-            throw new ASTBuildException("IncNode cannot have a null identifier");
+            throw new ASTBuildException("Inc", "ident", "Inc node identifier must not be null");
         }
         if(!(ident instanceof IdentNode) && !(ident instanceof TabNode)){
-            throw new ASTBuildException("IncNode identifier must be IdentNode or TabNode");
+            throw new ASTBuildException("Inc", "ident", "Inc node identifier must be an Ident node or Tab node");
         }
         this.ident = ident;
     }
@@ -48,13 +48,10 @@ public class IncNode extends ASTNode{
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
-            if (indexVal.type != fr.ufrst.m1info.pvm.group5.memory.ValueType.INT) {
-                throw new ASTInvalidDynamicTypeException("Array index must be an integer");
-            }
             int index = indexVal.valueInt;
             Value currentVal = m.valT(arrayIdent.identifier, index);
             if (currentVal == null || currentVal.type == ValueType.EMPTY) {
-                throw new ASTInvalidMemoryException("Array " + arrayIdent.identifier + " at index " + index + " is not assigned a value");
+                throw ASTInvalidMemoryException.UndefinedVariable(arrayIdent.identifier, this.getLine());
             }
             Value newVal = new Value(currentVal.valueInt + 1);
             m.affectValT(arrayIdent.identifier, index, newVal);
@@ -62,7 +59,7 @@ public class IncNode extends ASTNode{
             String varName = ((IdentNode)ident).identifier;
             Value v = (Value) m.val(varName);
             if (v == null || v.type == fr.ufrst.m1info.pvm.group5.memory.ValueType.EMPTY) {
-                throw new ASTInvalidMemoryException("Variable " + varName + " is not assigned a value");
+                throw ASTInvalidMemoryException.UndefinedVariable(varName, this.getLine());
             }
             Value res = new Value(v.valueInt + 1);
             m.affectValue(varName, res);
@@ -71,52 +68,27 @@ public class IncNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        try {
-            if (ident instanceof TabNode) {
-                TabNode tabNode = (TabNode) ident;
-                IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
-                ASTNode indexExp = tabNode.getChildren().get(1);
-                if (!m.contains(arrayIdent.identifier)) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot increment: " + arrayIdent.identifier + " is not declared"
-                    );
-                }
-                int tabLen = m.tabLength(arrayIdent.identifier);
-                if (tabLen < 0) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot increment: " + arrayIdent.identifier + " is not an array"
-                    );
-                }
-                String indexType = indexExp.checkType(m);
-                if (!"int".equals(indexType)) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot increment: array index must be of type int, got " + indexType
-                    );
-                }
-            } else {
-                IdentNode identNode = (IdentNode) ident;
-                DataType dataType = m.dataTypeOf(identNode.identifier);
-
-                if (dataType != DataType.INT) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot increment: " + identNode.identifier + " is not an integer"
-                    );
-                }
+        if (ident instanceof TabNode) {
+            TabNode tabNode = (TabNode) ident;
+            IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
+            ASTNode indexExp = tabNode.getChildren().get(1);
+            if (!m.contains(arrayIdent.identifier)) {
+                throw ASTInvalidMemoryException.UndefinedVariable(arrayIdent.identifier, this.getLine());
             }
+            String indexType = indexExp.checkType(m);
+            if (!"int".equals(indexType)) {
+                throw new ASTInvalidDynamicTypeException(this.getLine(), "int", indexType, "inc");
+            }
+        } else {
+            IdentNode identNode = (IdentNode) ident;
+            DataType dataType = m.dataTypeOf(identNode.identifier);
 
-            return "int";
-
-        } catch (ASTInvalidMemoryException e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
-            throw new ASTInvalidMemoryException(
-                    "Memory error while checkingType: " + e.getMessage()
-            );
-        } catch (Exception e) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Unknown error while checkingType: " + e.getMessage()
-            );
+            if (dataType != DataType.INT) {
+                throw new ASTInvalidDynamicTypeException(this.getLine(), "int", dataType.name(), "inc");
+            }
         }
+
+        return "int";
     }
 
     @Override

@@ -20,13 +20,13 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
         this.ident = ident;
         this.expression = expression;
         if(this.type == null){
-            throw new ASTBuildException("Final nodes must have a type");
+            throw new ASTBuildException("Final", "type", "type of final node cannot be null");
         }
         if(this.ident == null){
-            throw new ASTBuildException("Final nodes must have a identifier");
+            throw new ASTBuildException("Final", "identifier", "identifier of final node cannot be null");
         }
         if (expression != null && !(expression instanceof EvaluableNode)) {
-            throw new ASTBuildException("Final nodes expression must be evaluable");
+            throw new ASTBuildException("Final", "expression", "expression of final node must be evaluable");
         }
     }
 
@@ -66,17 +66,11 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
                 m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType));
                 break;
             default :
-                throw new ASTInvalidDynamicTypeException(
-                    "Unsupported type for constant " + ident.identifier
-                );
+                throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", type.valueType.name(), "final");
         }
 
         if (!exprType.equals(declaredType)) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Type of expression (" + exprType +
-                            ") does not match the declared type (" + declaredType +
-                            ") for the variable " + ident.identifier
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", declaredType ,"final");
         }
 
         return "void";

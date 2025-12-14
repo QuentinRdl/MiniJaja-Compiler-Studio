@@ -14,7 +14,7 @@ public class MainNode extends ASTNode {
         this.vars = vars;
         this.instrs = instrs;
         if(vars != null && !(vars instanceof WithdrawalNode)){
-            throw  new ASTBuildException("Declarations of a main method must be withdrawable");
+            throw  new ASTBuildException("Main", "declarations", "Main node declarations must be withdrawable");
         }
     }
 

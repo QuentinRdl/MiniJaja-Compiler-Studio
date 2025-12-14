@@ -22,9 +22,7 @@ public class OrNode extends BinaryOperator {
     @Override
     protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
         if (!leftType.equals("bool") || !rightType.equals("bool")){
-            throw new ASTInvalidDynamicTypeException(
-                    "Or operator must be used with 2 operand of type bool"
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", (leftType.equals("bool"))?leftType:rightType, "or (||)");
         }
         return "bool";
     }

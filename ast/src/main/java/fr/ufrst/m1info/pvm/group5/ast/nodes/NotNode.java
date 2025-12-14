@@ -14,10 +14,10 @@ public class NotNode extends ASTNode implements EvaluableNode {
 
         this.expr = expr;
         if(expr==null){
-            throw new ASTBuildException("Not operator must have an operand");
+            throw new ASTBuildException("Not", "expr", "Not operator must have a non-null operand");
         }
         else if(!(expr instanceof EvaluableNode))
-            throw new ASTBuildException("Not operator must have an evaluable operand");
+            throw new ASTBuildException("Not", "expr", "Not operator must have an evaluable operand");
     }
 
     @Override
@@ -36,16 +36,14 @@ public class NotNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException("Not node cannot be interpreted");
+        throw new ASTInvalidOperationException("interpretation", "not", this.getLine());
     }
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         String exprType = expr.checkType(m);
         if (!exprType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "'not' operator applied to a non-bool type : " + exprType
-            );
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "bool", exprType, "not");
         }
         return "bool";
     }

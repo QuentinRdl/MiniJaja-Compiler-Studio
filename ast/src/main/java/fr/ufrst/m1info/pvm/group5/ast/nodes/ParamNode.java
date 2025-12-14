@@ -15,10 +15,10 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
 
     public ParamNode(TypeNode type, IdentNode ident) {
         if (type == null) {
-            throw new ASTBuildException("Param must have a valid type");
+            throw new ASTBuildException("Param", "type", "ParamNode cannot have a null type");
         }
         if (ident == null) {
-            throw new ASTBuildException("param must have a valid identifier");
+            throw new ASTBuildException("Param", "identifier", "ParamNode cannot have a null identifier");
         }
         this.type = type;
         this.ident = ident;
@@ -56,7 +56,7 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if (type.valueType.equals(ValueType.VOID)) {
-            throw new ASTInvalidDynamicTypeException("Parameter cannot be of type void");
+            throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", type.valueType.name(), "parameter declaration");
         }else if (type.valueType.equals(ValueType.INT)) {
             m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
         }

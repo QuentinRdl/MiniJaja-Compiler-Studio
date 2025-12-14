@@ -17,7 +17,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
         this.identifier = identifier;
         if(this.identifier == null){
-            throw new ASTBuildException("Ident node cannot have null identifier");
+            throw new ASTBuildException("ident", "identifier", "ident identifier must not be null");
         }
     }
 
@@ -30,7 +30,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException{
-        throw new ASTInvalidOperationException("Ident node cannot be interpreted");
+        throw new ASTInvalidOperationException("interpret", "Ident", this.getLine());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
         try{
             dataType = m.dataTypeOf(identifier);
         } catch (Exception e) {
-            throw new ASTInvalidMemoryException(e.getMessage());
+            throw ASTInvalidMemoryException.UndefinedVariable(identifier, this.getLine());
         }
 
         switch (dataType) {
@@ -48,13 +48,8 @@ public class IdentNode extends ASTNode implements EvaluableNode {
             case BOOL:
                 return "bool";
             case VOID:
-                throw new ASTInvalidDynamicTypeException(
-                        "Variable " + identifier + " cannot be of type void"
-                );
             default:
-                throw new ASTInvalidDynamicTypeException(
-                        "Invalid type for variable " + identifier
-                );
+                throw new ASTInvalidDynamicTypeException(this.getLine(), "int or bool", dataType.name(), "ident");
         }
 
     }
@@ -74,7 +69,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
     public Value eval(Memory m) throws ASTInvalidMemoryException{
         Value v = (Value) m.val(identifier);
         if(v == null || v.type == ValueType.EMPTY){
-            throw new ASTInvalidMemoryException("Variable " + identifier + " is undefined");
+            throw ASTInvalidMemoryException.UndefinedVariable(identifier, this.getLine());
         }
         return v;
     }
