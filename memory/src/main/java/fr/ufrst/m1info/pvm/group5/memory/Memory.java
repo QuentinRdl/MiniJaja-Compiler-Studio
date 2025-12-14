@@ -221,9 +221,6 @@ public class Memory {
         // Check that it exists in the symbol table
         SymbolTableEntry entry = symbolTable.lookup(identifier); // Can throw illegalArgumentException if identifier not found
 
-        // Check that types matches
-        DataType givenDataType = stack.getDataTypeFromGenericObject(value);
-
         // Find the object in the stack
         StackObject obj = stack.searchObject(identifier);
         if (obj == null) {
@@ -259,6 +256,10 @@ public class Memory {
         throw new MemoryIllegalArgException("affectValue is not supported YET for EntryKind: " + entry.getKind());
     }
 
+    /**
+     * Declares the class variable
+     * @param identifier identifier of the var class
+     */
     public void declVarClass(String identifier) {
         if(identifierVarClass != null) {
             throw new MemoryIllegalArgException("The class variable is already defined, cannot create a new one");
@@ -296,7 +297,7 @@ public class Memory {
 
         Object raw = stackobj.getValue();
         if (raw instanceof Value) {
-            return (Value) raw;
+            return raw;
         }
 
         return StackObject.stackObjToValue(stackobj);
@@ -376,7 +377,6 @@ public class Memory {
         entry.setReference(params);
         symbolTable.addEntry(entry);
         stack.setMethod(identifier, params, returnType);
-        //stack.pushScope();
     }
 
     /**
@@ -414,10 +414,6 @@ public class Memory {
         if (obj != null) {
             stack.removeObject(obj);
         }
-        /*try {
-            stack.popScope();
-        } catch (Stack.NoScopeException e) {
-        }*/
     }
 
     public void pushScope() {
@@ -429,7 +425,8 @@ public class Memory {
         try {
             stack.popScope();
             symbolTable=symbolTable.getParentScope();
-        } catch (Stack.NoScopeException ignored) {
+        } catch (Stack.NoScopeException _) {
+
         }
     }
 
@@ -518,10 +515,7 @@ public class Memory {
      */
     public boolean isArray(String identifier) {
         SymbolTableEntry arr = symbolTable.lookup(identifier);
-        if (arr==null || arr.getKind()!= EntryKind.ARRAY){
-            return false;
-        }
-        return true;
+        return arr != null && arr.getKind() == EntryKind.ARRAY;
     }
 
     /**

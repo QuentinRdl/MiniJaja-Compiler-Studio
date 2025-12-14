@@ -7,13 +7,10 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.Objects;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Stack {
     private Deque<StackObject> stackContent;
     private int scopeDepth;
-    // private int size;
 
     /**
      * Exception thrown when attempting to pop a scope from the stack when no scopes exist.
@@ -73,7 +70,6 @@ public class Stack {
     public Stack() {
         this.stackContent = new ArrayDeque<>();
         this.scopeDepth = 0;
-        // this.size = 0;
     }
 
     /**
@@ -108,8 +104,8 @@ public class Stack {
             throw new InvalidNameException("Variable name cannot be null or empty");
         }
 
-        StackObject var = new StackObject(name, value, scopeDepth, EntryKind.VARIABLE, type);
-        stackContent.push(var);
+        StackObject stackVar = new StackObject(name, value, scopeDepth, EntryKind.VARIABLE, type);
+        stackContent.push(stackVar);
     }
 
 
@@ -136,7 +132,6 @@ public class Stack {
         if (name == null || name.isEmpty()) {
             throw new InvalidNameException("Method name cannot be null or empty");
         }
-
 
         StackObject method = new StackObject(name, value, 0, EntryKind.METHOD, type);
         stackContent.push(method);
@@ -199,13 +194,13 @@ public class Stack {
      * @return true if var updated, false otherwise
      */
     public boolean updateVar(String name, Object value) {
-        for(StackObject var : stackContent) {
-            if(var.getEntryKind() != EntryKind.VARIABLE) {
+        for(StackObject stackObject : stackContent) {
+            if(stackObject.getEntryKind() != EntryKind.VARIABLE) {
                 return false;
             }
-            if(var.getName().equals(name) && var.getScope() == scopeDepth) {
+            if(stackObject.getName().equals(name) && stackObject.getScope() == scopeDepth) {
                 // validate value against the variable's declared type
-                var.setValue(value);
+                stackObject.setValue(value);
                 return true;
             }
         }
@@ -233,6 +228,7 @@ public class Stack {
         return true;
     }
 
+
     /**
      * Updates the top value of the stack w/ the given value
      * @param value new value for the object on top of the stack
@@ -246,9 +242,9 @@ public class Stack {
         DataType valueDt = getDataTypeFromGenericObject(value);
         StackObject topObj = stackContent.peek();
         if(topObj == null) return false;
-        if(topObj.getEntryKind() == EntryKind.CONSTANT) {
+        if(topObj.getEntryKind() == EntryKind.CONSTANT && topObj.getValue() != null) {
             // Can only reassign constant if value == null
-            if(topObj.getValue() != null) return false; // Cannot reassign constant
+            return false; // Cannot reassign constant
         }
         if(topObj.getDataType() != valueDt) return false;
 
@@ -272,6 +268,7 @@ public class Stack {
         return false;
     }
 
+
     /**
      * Returns the number of vars on the stack
      * @return int nb of vars
@@ -279,6 +276,7 @@ public class Stack {
     public int size() {
         return stackContent.size();
     }
+
 
     /**
      * Check if the vars stack is empty
@@ -288,6 +286,7 @@ public class Stack {
         return stackContent.isEmpty();
     }
 
+
     /**
      * Clears all vars and reset the scope
      */
@@ -295,6 +294,7 @@ public class Stack {
         stackContent.clear();
         scopeDepth = 0;
     }
+
 
     @Override
     public String toString() {
@@ -320,8 +320,7 @@ public class Stack {
             sb.append(" \tvalue=");
             if (val == null) {
                 sb.append("null");
-            } else if (val instanceof Value) {
-                Value v = (Value) val;
+            } else if (val instanceof Value v) {
                 sb.append("Value(type=").append(v.type).append("){").append(v.toString()).append("}");
             } else {
                 // For other objects, show runtime class and toString()
@@ -341,6 +340,7 @@ public class Stack {
         return sb.toString();
     }
 
+
     /**
      * Searches for the given Object in the stack
      * @param identifier the name of the Object we are looking for
@@ -355,6 +355,7 @@ public class Stack {
         return null; // Object not found
     }
 
+
     /**
      * Will remove the given Stack_Object given, MUST BE SURE IT EXISTS
      * @param object the Stack_Object to remove
@@ -362,6 +363,7 @@ public class Stack {
     public void removeObject(StackObject object) {
         stackContent.remove(object);
     }
+
 
     /**
      * Will look for an Object with the name given as an argument, remove it and put it back on top of the stack
@@ -379,11 +381,11 @@ public class Stack {
         return true;
     }
 
+
     /**
      * Will swap the 2 top values of the stack
      */
     public void swap() {
-        // private Deque<Stack_Object> stack_content;
         if(stackContent.size() < 2) {
             throw new Memory.MemoryIllegalArgException("Not enough elements to swap (need at least 2)");
         }
@@ -394,6 +396,7 @@ public class Stack {
         stackContent.push(first);
         stackContent.push(second);
     }
+
 
     /**
      * Returns the DataType for any given Object
@@ -420,6 +423,7 @@ public class Stack {
         return DataType.UNKNOWN;
     }
 
+
     /**
      * Returns the depth of the current scope.
      */
@@ -427,6 +431,13 @@ public class Stack {
         return scopeDepth;
     }
 
+
+    /**
+     * Sets a method
+     * @param identifier id of the method
+     * @param params params of the method
+     * @param returnType return type of the method
+     */
     public void setMethod(String identifier, Object params, DataType returnType) {
         if (identifier == null || identifier.isEmpty()) {
             throw new IllegalArgumentException("Cannot define method with null or empty identifier");

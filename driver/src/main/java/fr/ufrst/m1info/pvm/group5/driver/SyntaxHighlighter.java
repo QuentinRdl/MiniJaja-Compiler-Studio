@@ -2,7 +2,6 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import org.fxmisc.richtext.InlineCssTextArea;
 
-import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +10,10 @@ import java.util.regex.Pattern;
  * Provides syntax highlighting by identifying keywords, types, operators, and literals
  */
 public class SyntaxHighlighter {
+
+    private SyntaxHighlighter() {
+        throw new IllegalStateException("Utility class");
+    }
 
     // MiniJaja keywords
     private static final String[] MINIJAJA_KEYWORDS = {
