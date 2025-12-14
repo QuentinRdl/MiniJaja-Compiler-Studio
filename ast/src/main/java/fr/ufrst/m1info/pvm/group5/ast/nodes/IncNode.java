@@ -60,6 +60,9 @@ public class IncNode extends ASTNode{
             m.affectValT(arrayIdent.identifier, index, newVal);
         } else {
             String varName = ((IdentNode)ident).identifier;
+            if (m.isArray(varName)){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Increment operation cannot be used on array.");
+            }
             Value v = (Value) m.val(varName);
             if (v == null || v.type == fr.ufrst.m1info.pvm.group5.memory.ValueType.EMPTY) {
                 throw new ASTInvalidMemoryException("Variable " + varName + " is not assigned a value");

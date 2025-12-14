@@ -70,6 +70,12 @@ public class SumNode extends ASTNode {
             m.affectValT(arrayIdent.identifier, index, new Value(res));
         } else {
             IdentNode identNode = (IdentNode) identifier;
+            if (m.isArray(identNode.identifier)){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Sum operation cannot be used on array.");
+            }
+            if (expression instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Sum operation cannot be used with an array.");
+            }
             Value v = ((EvaluableNode) expression).eval(m);
             Value u = (Value) m.val(identNode.identifier);
             if (u == null) {

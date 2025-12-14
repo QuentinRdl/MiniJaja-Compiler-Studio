@@ -1392,6 +1392,34 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Increment Array")
+    void IncrementArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t++;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Array on Array")
+    void SumArrayOnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t+=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Array on Value")
+    void SumArrayOnValue() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t+=x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Value on Array")
+    void SumValueOnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ x+=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
