@@ -63,6 +63,9 @@ public class WriteLineNode extends ASTNode{
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if(ident instanceof IdentNode iNode){
             try {
+                if (m.isArray(iNode.identifier)){
+                    throw new ASTInvalidOperationException("Line "+ getLine() +" : Writeln operation cannot be used with an array.");
+                }
                 Value v = (Value) m.val(iNode.identifier);
                 if(v == null)
                     throw new ASTInvalidMemoryException("Variable " + iNode.identifier +" is not defined");

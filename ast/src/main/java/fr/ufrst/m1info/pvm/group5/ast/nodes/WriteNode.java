@@ -44,6 +44,9 @@ public class WriteNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         if(ident instanceof IdentNode iNode){
+            if (m.isArray(iNode.identifier)){
+                throw new ASTInvalidOperationException("Line "+ getLine() +" : Write operation cannot be used with an array.");
+            }
             Value v = iNode.eval(m);
             if(v == null)
                 throw new ASTInvalidMemoryException("Unknown variable : " + iNode.identifier);

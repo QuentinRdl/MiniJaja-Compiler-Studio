@@ -97,6 +97,8 @@ public class AppelINode extends ASTNode {
 
         if (args instanceof ExpListNode expListNode) {
             evaluatedArgs.addAll(expListNode.evalList(m));
+        }else if (args instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {

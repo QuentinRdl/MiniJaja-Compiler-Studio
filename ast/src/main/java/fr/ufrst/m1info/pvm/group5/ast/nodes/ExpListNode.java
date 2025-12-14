@@ -70,7 +70,9 @@ public class ExpListNode extends ASTNode {
 
         if (head instanceof ExpListNode expListNode) {
             values.addAll(expListNode.evalList(m));
-        } else if (head instanceof EvaluableNode evaluableHead) {
+        } else if (head instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
+        }else if (head instanceof EvaluableNode evaluableHead) {
             values.add(evaluableHead.eval(m));
         } else {
             throw new ASTInvalidOperationException("Head of ExpListNode is not evaluable.");
@@ -78,6 +80,8 @@ public class ExpListNode extends ASTNode {
 
         if (tail instanceof ExpListNode expListNode) {
             values.addAll(expListNode.evalList(m));
+        }else if (tail instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (tail instanceof EvaluableNode evaluableTail) {
             values.add(evaluableTail.eval(m));
         }

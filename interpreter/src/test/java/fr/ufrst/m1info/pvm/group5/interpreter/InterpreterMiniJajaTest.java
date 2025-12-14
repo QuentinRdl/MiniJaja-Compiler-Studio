@@ -1350,6 +1350,48 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Write Array")
+    void WriteArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ write(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Writeln Array")
+    void WritelnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ writeln(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Argument Array")
+    void MethodArgumentArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x){}; main{ f(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 1")
+    void MethodManyArgumentArray1() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x,boolean y,int z){}; main{ f(t,false,3);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 2")
+    void MethodManyArgumentArray2() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; f(int x,boolean y,int z){}; main{ f(5,t,7);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 3")
+    void MethodManyArgumentArray3() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x,boolean y,int z){}; main{ f(3,false,t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
