@@ -1,11 +1,9 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
 import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
-import fr.ufrst.m1info.pvm.group5.memory.heap.UnmappedMemoryAddressException;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
-import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +17,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 

@@ -6,10 +6,6 @@ package fr.ufrst.m1info.pvm.group5.memory.heap;
 public class InsufficientMemoryException extends RuntimeException {
 
     public InsufficientMemoryException(int availableSize, int allocationSize) {
-        super("Trying to allocate "+allocationSize+" bytes with only "+availableSize+" bytes available");
-    }
-
-    public InsufficientMemoryException(String message) {
-        super(message);
+        super(String.format("Heap : Cannot allocate %s, only %s available", availableSize, allocationSize));
     }
 }
