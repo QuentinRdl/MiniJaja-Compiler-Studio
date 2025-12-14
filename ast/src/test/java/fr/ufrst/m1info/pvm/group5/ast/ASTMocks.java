@@ -138,7 +138,9 @@ class ASTMocks {
     public static Memory addHeapToMock(Memory mock, Map<String,Value[]> heap){
         doAnswer(invocationOnMock -> {
             int len = invocationOnMock.getArgument(0);
+            String id =  invocationOnMock.getArgument(1);
             Value[] array = new Value[len];
+            heap.put(id, array);
             return null;
         }).when(mock).declTab(any(String.class), anyInt(), any(DataType.class));
 
