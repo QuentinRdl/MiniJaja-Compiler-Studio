@@ -1,0 +1,23 @@
+class C {
+  int arrI[3];
+  boolean arrB[4];
+  int x = 0;
+  main {
+ 	arrI[0] = 4;
+ 	arrI[1] = 33;
+ 	arrI[2] = 81;
+ 	arrB[0] = false;
+ 	arrB[1] = true;
+ 	arrB[2] = false;
+ 	arrB[3] = false;
+ 	while(3 > x){
+        writeln(arrI[x]);
+        x++;
+    };
+    x = 0;
+    while(4 > x){
+        writeln(arrB[x]);
+        x++;
+    };
+  }
+}

@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.concurrent.Task;
+import javafx.scene.text.TextFlow;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,7 +53,7 @@ public class MainController {
     private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
-    TextArea output;
+    ColoredTextFlow output;
 
     private Console console;
 
@@ -121,6 +122,7 @@ public class MainController {
         // allows ListView to know how to create its cells
         codeListView.setCellFactory(lv -> {
             CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(true); // Source code is MiniJaja
             cell.setListener(new CodeLineCellListener() {
                 @Override
                 public void onEnterPressed(CodeLine codeLine) {
@@ -153,6 +155,7 @@ public class MainController {
         compiledCodeListView.setItems(compiledCodeLines);
         compiledCodeListView.setCellFactory(lv -> {
             CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(false); // Compiled code is JajaCode
             cell.setCodeEditable(false);
             return cell;
         });
@@ -182,26 +185,22 @@ public class MainController {
         FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
         playIcon.setIconColor(Color.web("#398989"));
         playIcon.setIconSize(12);
+        btnDebugRun.setGraphic(playIcon);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
 
         FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
         stopIcon.setIconColor(Color.web("#BF2237"));
         stopIcon.setIconSize(12);
-
-        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
-        nextIcon.setIconColor(Color.web("#FFD270"));
-        nextIcon.setIconSize(12);
-
-        btnDebugRun.setGraphic(playIcon);
-        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
-
         btnDebugStop.setGraphic(stopIcon);
         btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
         btnDebugStop.setDisable(true);
 
+        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
+        nextIcon.setIconColor(Color.web("#FFD270"));
+        nextIcon.setIconSize(12);
         btnDebugNext.setGraphic(nextIcon);
         btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
         btnDebugNext.setDisable(true);
-
 
         hideCompileTab();
         setupOutputContextMenu();
@@ -1078,10 +1077,79 @@ public class MainController {
         }
     }
 
+    /**
+     * Returns a set of line numbers where breakpoints are currently set
+     * This can be used by the interpreter to know where to halt execution
+     *
+     * @return a Set containing all line numbers with breakpoints
+     */
+    public java.util.Set<Integer> getBreakpointLines(){
+        return codeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of line numbers where breakpoints are set in the compiled code
+     * This can be used by the JajaCode interpreter
+     *
+     * @return a Set containing all line numbers with breakpoints in compiled code
+     */
+    public java.util.Set<Integer> getCompiledBreakpointLines(){
+        return compiledCodeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Checks if a breakpoint is set at a specific line number
+     *
+     * @param lineNumber the line number to check
+     * @return true if a breakpoint is set at the given line, false otherwise
+     */
+    public boolean hasBreakpointAt(int lineNumber){
+        return codeLines.stream()
+                .anyMatch(line -> line.getLineNumber() == lineNumber && line.isBreakpoint());
+    }
+
+    /**
+     * Clears all breakpoints from the source code
+     */
+    public void clearAllBreakpoints(){
+        codeLines.forEach(line -> line.setBreakpoint(false));
+        codeListView.refresh();
+    }
+
+    /**
+     * Clears all breakpoints from the compiled code
+     */
+    public void clearCompiledBreakpoints(){
+        compiledCodeLines.forEach(line -> line.setBreakpoint(false));
+        compiledCodeListView.refresh();
+    }
+
+    /**
+     * Toggles a breakpoint at the specified line number
+     *
+     * @param lineNumber the line number where to toggle the breakpoint
+     */
+    public void toggleBreakpointAt(int lineNumber){
+        codeLines.stream()
+                .filter(line -> line.getLineNumber() == lineNumber)
+                .findFirst()
+                .ifPresent(line -> {
+                    line.setBreakpoint(!line.isBreakpoint());
+                    codeListView.refresh();
+                });
+    }
+
     InterpreterMiniJaja debugInterpreterMjj = null;
     InterpreterJajaCode debugInterpreterJjc = null;
     boolean debugHalted = false;
     int debugCurrentLine = -1;
+    InterpretationMode currentDebugMode = InterpretationMode.STEP_BY_STEP;
 
     // Store event subscribers so we can unsubscribe them later
     private java.util.function.Consumer<InterpretationHaltedData> debugMjjSubscriber = null;
@@ -1113,7 +1181,6 @@ public class MainController {
         if(debugInterpreterMjj != null){
             // Unsubscribe from the old event before stopping
             if(debugMjjSubscriber != null){
-                System.out.println("DEBUG -> Unsubscribing mjj");
                 debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
                 debugMjjSubscriber = null;
             }
@@ -1128,7 +1195,6 @@ public class MainController {
         if(debugInterpreterJjc != null){
             // Unsubscribe from the old event before stopping
             if(debugJjcSubscriber != null){
-                System.out.println("DEBUG -> Unsubscribing jjc");
                 debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
                 debugJjcSubscriber = null;
             }
@@ -1148,6 +1214,18 @@ public class MainController {
         // Setup interpreter and subscribe to halted events
         if(mjj){
             debugInterpreterMjj = (InterpreterMiniJaja) interpreter;
+
+            // Configure breakpoints for MiniJaja code
+            java.util.Set<Integer> breakpoints = getBreakpointLines();
+
+            if(!breakpoints.isEmpty()){
+                debugInterpreterMjj.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                currentDebugMode = InterpretationMode.BREAKPOINTS;
+                console.getWriter().writeLine("[INFO] Breakpoints mode - halting at lines: " + breakpoints);
+            } else {
+                currentDebugMode = InterpretationMode.STEP_BY_STEP;
+                console.getWriter().writeLine("[INFO] Step-by-step mode - no breakpoints set");
+            }
 
             // Create and store the subscriber so we can unsubscribe later
             debugMjjSubscriber = event -> {
@@ -1182,6 +1260,8 @@ public class MainController {
                     final String[] finalMemoryState = currMemoryState;
 
                     Platform.runLater(() -> {
+                        highlightDebugLine(lineIdx, codeLines, codeListView);
+
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
@@ -1223,6 +1303,7 @@ public class MainController {
                 debugHalted = false;
 
                 Platform.runLater(() -> {
+                    clearDebugHighlight(codeLines, codeListView);
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
@@ -1234,22 +1315,19 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                console.getWriter().writeLine("[INFO] Debugging stopped (final halt)");
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
-                    System.out.println("Trying to shut down the thread");
-                    debugInterpreterMjj.stopInterpretation(); // FIXME : Thread is not apparently not alive shown by debugging stopIntrepretation
+                    debugInterpreterMjj.stopInterpretation();
                 }
-
-                //debugInterpreterMjj = null;
             };
 
             // Subscribe the handler to the event
             debugInterpreterMjj.getInterpretationHaltedEvent().subscribe(debugMjjSubscriber);
 
-            // Start interpretation in set by step mode
-            String err = debugInterpreterMjj.startCodeInterpretation(code, InterpretationMode.STEP_BY_STEP);
+            // Start interpretation with selected mode
+            String err = debugInterpreterMjj.startCodeInterpretation(code, currentDebugMode);
             if(err != null){
                 console.getWriter().writeLine("[ERROR] " + err);
                 // cleanup
@@ -1266,12 +1344,26 @@ public class MainController {
                 return;
             }
 
-            console.getWriter().writeLine("[INFO] MiniJaja step-by-step interpretation started");
+            String modeDescription = (currentDebugMode == InterpretationMode.BREAKPOINTS)
+                ? "breakpoints mode" : "step-by-step mode";
+            console.getWriter().writeLine("[INFO] MiniJaja interpretation started in " + modeDescription);
             if(btnDebugNext != null) btnDebugNext.setDisable(true); // Will be enabled when first halt happens
             if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
         } else { // JajaCode
             debugInterpreterJjc = (InterpreterJajaCode) interpreter;
+
+            // Configure breakpoints for JajaCode
+            java.util.Set<Integer> breakpoints = getCompiledBreakpointLines();
+
+            if(!breakpoints.isEmpty()){
+                debugInterpreterJjc.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                currentDebugMode = InterpretationMode.BREAKPOINTS;
+                console.getWriter().writeLine("[INFO] Breakpoints mode - halting at lines: " + breakpoints);
+            } else {
+                currentDebugMode = InterpretationMode.STEP_BY_STEP;
+                console.getWriter().writeLine("[INFO] Step-by-step mode - no breakpoints set");
+            }
 
             // Create and store the subscriber so we can unsubscribe later
             debugJjcSubscriber = event -> {
@@ -1298,6 +1390,7 @@ public class MainController {
 
                     final String[] finalMemoryState = currMemoryState;
                     Platform.runLater(() -> {
+                        highlightDebugLine(lineIdx, compiledCodeLines, compiledCodeListView);
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
@@ -1337,6 +1430,7 @@ public class MainController {
                 debugHalted = false;
 
                 Platform.runLater(() -> {
+                    clearDebugHighlight(compiledCodeLines, compiledCodeListView);
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
@@ -1362,8 +1456,8 @@ public class MainController {
             // Subscribe the handler to the event
             debugInterpreterJjc.getInterpretationHaltedEvent().subscribe(debugJjcSubscriber);
 
-            // Start interpretation in STEP_BY_STEP mode
-            String err = debugInterpreterJjc.startCodeInterpretation(code, InterpretationMode.STEP_BY_STEP);
+            // Start interpretation with selected mode
+            String err = debugInterpreterJjc.startCodeInterpretation(code, currentDebugMode);
             if(err != null) {
                 console.getWriter().writeLine("[ERROR] " + err);
                 try {
@@ -1378,7 +1472,9 @@ public class MainController {
                 return;
             }
 
-            console.getWriter().writeLine("[INFO] JajaCode step-by-step interpretation started");
+            String modeDescription = (currentDebugMode == InterpretationMode.BREAKPOINTS)
+                ? "breakpoints mode" : "step-by-step mode";
+            console.getWriter().writeLine("[INFO] JajaCode interpretation started in " + modeDescription);
             if(btnDebugNext != null) btnDebugNext.setDisable(true);
             if(btnDebugStop != null) btnDebugStop.setDisable(false);
         }
@@ -1419,6 +1515,7 @@ public class MainController {
             }
             debugInterpreterMjj.stopInterpretation();
             debugInterpreterMjj = null;
+            clearDebugHighlight(codeLines, codeListView);
         }
 
         if(debugInterpreterJjc != null){
@@ -1429,6 +1526,7 @@ public class MainController {
             }
             debugInterpreterJjc.stopInterpretation();
             debugInterpreterJjc = null;
+            clearDebugHighlight(compiledCodeLines, compiledCodeListView);
         }
 
         debugHalted = false;
@@ -1436,6 +1534,7 @@ public class MainController {
 
         if(btnDebugNext != null) btnDebugNext.setDisable(true);
         if(btnDebugStop != null) btnDebugStop.setDisable(true);
+
         hideMemoryTab(memoryTabMinijaja);
         hideMemoryTab(memoryTabJajacode);
         if(btnDebugRun != null) btnDebugRun.setDisable(false);
@@ -1458,10 +1557,10 @@ public class MainController {
                 return;
             }
 
-            // Clear the halted flag and resume interpretation until nextstep
+            // Clear the halted flag and resume interpretation
             debugHalted = false;
             if(btnDebugNext != null) btnDebugNext.setDisable(true);
-            debugInterpreterMjj.resumeInterpretation(InterpretationMode.STEP_BY_STEP);
+            debugInterpreterMjj.resumeInterpretation(currentDebugMode);
         } else {
 
             if(debugInterpreterJjc == null){
@@ -1474,10 +1573,10 @@ public class MainController {
                 return;
             }
 
-            // Clear the halted flag and resume interpretation for one step
+            // Clear the halted flag and resume interpretation
             debugHalted = false;
             if(btnDebugNext != null) btnDebugNext.setDisable(true);
-            debugInterpreterJjc.resumeInterpretation(InterpretationMode.STEP_BY_STEP);
+            debugInterpreterJjc.resumeInterpretation(currentDebugMode);
         }
     }
 
@@ -1495,5 +1594,37 @@ public class MainController {
                 sourceTab.setText("Untitled •");
             }
         }
+    }
+
+    /**
+     * Highlights the specified line in a ListView during debugging
+     *
+     * @param lineIndex index of the line to highlight
+     * @param lines the list of CodeLine objects
+     * @param listView the ListView displaying the lines
+     */
+    public void highlightDebugLine(int lineIndex, ObservableList<CodeLine> lines, ListView<CodeLine> listView){
+        for(CodeLine line : lines){
+            line.setCurrentDebugLine(false);
+        }
+
+        if(lineIndex >= 0 && lineIndex < codeLines.size()){
+            lines.get(lineIndex).setCurrentDebugLine(true);
+        }
+
+        listView.refresh();
+    }
+
+    /**
+     * Removes any debug highlight from the given ListView
+     *
+     * @param lines the list of CodeLine objects
+     * @param listView the ListView displaying the lines
+     */
+    public void clearDebugHighlight(ObservableList<CodeLine> lines, ListView<CodeLine> listView){
+        for(CodeLine line : lines){
+            line.setCurrentDebugLine(false);
+        }
+        listView.refresh();
     }
 }

@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
@@ -44,16 +45,15 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         List<String> pens = params != null ?params.compile(address + 3) : List.of();
         List<String> pdvs = vars != null ? vars.compile(address + 3 + pens.size()) : List.of();
         List<String> piss = instrs != null ? instrs.compile(address + 3 + pens.size() + pdvs.size()) : List.of();
-        List<String> prdvs = List.of();
+        List<String> prdvs = vars != null && vars instanceof WithdrawalNode wvars ? wvars.withdrawCompile(address + 3 + pens.size() + pdvs.size() + piss.size()) : List.of();
 
         int n = address;
         int nens = pens.size();
         int ndvs = pdvs.size();
         int niss = piss.size();
         int nrdvs = prdvs.size();
-        code.add("jncnil");
         code.add("push(" + (n + 3) + ")");
-        code.add("new(" + ident.identifier + ", " + returnType + ", meth, 0)");
+        code.add("new(" + ident.identifier + "," + returnType + ",meth,0)");
         code.add("goto(" + (n + nens + ndvs + niss + nrdvs + 5) + ")");
         code.addAll(pens);
         code.addAll(pdvs);
@@ -75,9 +75,11 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     public String checkType(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
         m.declMethod(ident.identifier, dataType, this);
+        String typeReturn = "void";
         m.pushScope();
         if (params != null) params.checkType(m);
-        if (instrs != null) instrs.checkType(m);
+        if (vars != null) vars.checkType(m);
+        if (instrs != null) typeReturn=instrs.checkType(m);
         if (params != null) {
             if (params instanceof WithdrawalNode withdrawalNode) {
                 withdrawalNode.withdrawInterpret(m);
@@ -89,7 +91,11 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
             }
         }
         m.popScope();
-        return returnType.getValueType().name().toLowerCase();
+        String typeMethod = returnType.getValueType().name().toLowerCase();
+        if (!typeMethod.equals(typeReturn)){
+            throw new ASTInvalidDynamicTypeException("Line "+getLine()+" : Method and return must be of the same type");
+        }
+        return typeMethod;
     }
     @Override
     protected Map<String, String> getProperties(){

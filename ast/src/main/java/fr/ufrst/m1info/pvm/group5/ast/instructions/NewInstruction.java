@@ -51,10 +51,6 @@ public class NewInstruction extends Instruction{
         }catch (Exception e){
             v=new Value();
         }
-        for (int i=scope-1; i>-1; i--){
-            StackObject s=listSO.get(i);
-            m.push(s.getName(),s.getValue(),s.getDataType(),s.getEntryKind());
-        }
         if (type!=DataType.INT && type!=DataType.BOOL){
             throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Invalid type.");
         }
@@ -77,6 +73,10 @@ public class NewInstruction extends Instruction{
         }
         else {
             throw new ASTBuildException("new line ("+(address+1)+") : Entry kind must be var or const");
+        }
+        for (int i=scope-1; i>-1; i--){
+            StackObject s=listSO.get(i);
+            m.push(s.getName(),s.getValue(),s.getDataType(),s.getEntryKind());
         }
         return address+1;
     }

@@ -62,7 +62,7 @@ public class InterpreterJajaCode extends Interpreter{
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();
         }
-
+        this.mode = mode;
         // Starting the thread
         startInterpretation(jjc);
 
@@ -97,7 +97,7 @@ public class InterpreterJajaCode extends Interpreter{
         } catch (Exception e) {
             errMessage=e.getClass()+" : "+e.getMessage();
         }
-
+        this.mode = mode;
         // Starting the thread
         startInterpretation(jjc);
 
@@ -115,7 +115,10 @@ public class InterpreterJajaCode extends Interpreter{
     public void resumeInterpretation(InterpretationMode mode) {
         if(interpretationThread==null || !interpretationThread.isAlive())
             return;
-        currentInstruction.notify();
+        this.mode = mode;
+        synchronized (currentInstruction){
+            currentInstruction.notify();
+        }
     }
 
     @Override
@@ -154,18 +157,25 @@ public class InterpreterJajaCode extends Interpreter{
                     interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, "Address "+address[0]+" not found",line));
                     return;
                }
-               currentInstruction = instructions.get(address[0]);
+               currentInstruction = instructions.get(address[0]-1);
                if(mode == InterpretationMode.STEP_BY_STEP || (
                        mode == InterpretationMode.BREAKPOINTS && mem.isBreakpoint(currentInstruction.getLine()))){
-                   interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, currentInstruction.getLine()));
-                   try{
-                       currentInstruction.wait();
-                   }catch (InterruptedException e){
-                       interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentInstruction.getLine()));
-                       return;
+                   synchronized (currentInstruction){
+                       try{
+                           interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, currentInstruction.getLine()));
+                           currentInstruction.wait();
+                       }catch (InterruptedException e) {
+                           interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentInstruction.getLine()));
+                           return;
+                       }
                    }
                }
-               address[0] = currentInstruction.execute(address[0], mem);
+               try {
+                   address[0] = currentInstruction.execute(address[0], mem);
+               }catch (Exception e){
+                   interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, e.getMessage(), currentInstruction.getLine()));
+                   return;
+               }
            }
            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null, currentInstruction.getLine()));
         });

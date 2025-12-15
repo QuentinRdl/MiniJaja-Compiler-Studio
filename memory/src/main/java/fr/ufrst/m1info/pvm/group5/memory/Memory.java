@@ -221,9 +221,6 @@ public class Memory {
         // Check that it exists in the symbol table
         SymbolTableEntry entry = symbolTable.lookup(identifier); // Can throw illegalArgumentException if identifier not found
 
-        // Check that types matches
-        DataType givenDataType = stack.getDataTypeFromGenericObject(value);
-
         // Find the object in the stack
         StackObject obj = stack.searchObject(identifier);
         if (obj == null) {
@@ -237,8 +234,8 @@ public class Memory {
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
-            heap.addReference((int)value);
-            obj.setValue(value);
+            heap.addReference(((Value) value).valueInt);
+            obj.setValue(((Value) value).valueInt);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
@@ -259,6 +256,10 @@ public class Memory {
         throw new MemoryIllegalArgException("affectValue is not supported YET for EntryKind: " + entry.getKind());
     }
 
+    /**
+     * Declares the class variable
+     * @param identifier identifier of the var class
+     */
     public void declVarClass(String identifier) {
         if(identifierVarClass != null) {
             throw new MemoryIllegalArgException("The class variable is already defined, cannot create a new one");
@@ -296,7 +297,7 @@ public class Memory {
 
         Object raw = stackobj.getValue();
         if (raw instanceof Value) {
-            return (Value) raw;
+            return raw;
         }
 
         return StackObject.stackObjToValue(stackobj);
@@ -376,7 +377,6 @@ public class Memory {
         entry.setReference(params);
         symbolTable.addEntry(entry);
         stack.setMethod(identifier, params, returnType);
-        //stack.pushScope();
     }
 
     /**
@@ -414,10 +414,6 @@ public class Memory {
         if (obj != null) {
             stack.removeObject(obj);
         }
-        /*try {
-            stack.popScope();
-        } catch (Stack.NoScopeException e) {
-        }*/
     }
 
     public void pushScope() {
@@ -429,7 +425,8 @@ public class Memory {
         try {
             stack.popScope();
             symbolTable=symbolTable.getParentScope();
-        } catch (Stack.NoScopeException ignored) {
+        } catch (Stack.NoScopeException _) {
+
         }
     }
 
@@ -490,9 +487,35 @@ public class Memory {
         if(addressObj.getDataType() != DataType.INT) {
             return -1; // An array should be stocked as an int that has its own reference
         }
+        if (!isArray(identifier)){
+            return -1;
+        }
 
         int address = (int) addressObj.getValue();
         return heap.sizeOf(address);
+    }
+
+    /**
+     * Returns the type of the given array
+     * @param identifier id of the array
+     * @return type of the given array
+     */
+    public DataType tabType(String identifier) {
+        SymbolTableEntry arr = symbolTable.lookup(identifier);
+        if (arr.getKind()!= EntryKind.ARRAY){
+            throw new IllegalArgumentException(identifier +" is not a array");
+        }
+        return arr.getDataType();
+    }
+
+    /**
+     * Check if the element is an array
+     * @param identifier id of the element
+     * @return true if the element is an array
+     */
+    public boolean isArray(String identifier) {
+        SymbolTableEntry arr = symbolTable.lookup(identifier);
+        return arr != null && arr.getKind() == EntryKind.ARRAY;
     }
 
     /**

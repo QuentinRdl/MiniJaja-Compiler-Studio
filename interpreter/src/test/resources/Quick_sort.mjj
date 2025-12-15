@@ -1,0 +1,78 @@
+class quicksort {
+    final int longueur = 20;
+    int tableau[longueur];
+
+    void afficher(){
+        int taille = length(tableau);
+        int i = 0;
+        int a = 0;
+
+        while(taille>i){
+            a = tableau[i];
+            write(a);
+            write(",");
+            i++;
+        };
+        writeln(" ");
+    };
+
+    int partition(int deb, int fin){
+        int compt=deb;
+        int pivot=tableau[deb];
+        int i=deb+1;
+        int temp;
+
+        while(fin>i || i==fin){
+            if(pivot>tableau[i]){
+                compt++;
+                temp=tableau[compt];
+                tableau[compt]=tableau[i];
+                tableau[i]=temp;
+            };
+            i++;
+        };
+        temp=tableau[compt];
+        tableau[compt]=tableau[deb];
+        tableau[deb]=temp;
+        return compt;
+    };
+
+    void pause(){
+    };
+
+    void trirapide(int debut,int fin){
+        int pivot;
+        if(fin>debut){
+            pivot = partition(debut, fin);
+            trirapide(debut, pivot-1);
+            trirapide(pivot+1, fin);
+        };
+    };
+
+    main{
+        tableau[0]=4;
+        tableau[1]=81;
+        tableau[2]=63;
+        tableau[3]=12;
+        tableau[4]=33;
+        tableau[5]=22;
+        tableau[6]=16;
+        tableau[7]=44;
+        tableau[8]=55;
+        tableau[9]=23;
+        tableau[10]=27;
+        tableau[11]=5;
+        tableau[12]=14;
+        tableau[13]=18;
+        tableau[14]=6;
+        tableau[15]=30;
+        tableau[16]=87;
+        tableau[17]=31;
+        tableau[18]=10;
+        tableau[19]=43;
+        afficher();
+        trirapide(0,longueur-1);
+        afficher();
+        pause();
+    }
+}

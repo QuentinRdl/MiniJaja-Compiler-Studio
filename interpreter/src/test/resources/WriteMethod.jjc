@@ -13,7 +13,7 @@ load(y)
 writeln
 push(17)
 new(addition,INT,meth,0)
-goto(36)
+goto(32)
 new(op2,INT,var,1)
 push("op2 : ")
 write
@@ -28,20 +28,22 @@ load(op1)
 load(op2)
 add
 swap
-pop
-swap
-pop
-swap
 return
 load(x)
 load(y)
 invoke(addition)
+swap
+pop
+swap
+pop
 store(x)
 push("x : ")
 write
 load(x)
 writeln
 push(0)
+swap
+pop
 swap
 pop
 swap

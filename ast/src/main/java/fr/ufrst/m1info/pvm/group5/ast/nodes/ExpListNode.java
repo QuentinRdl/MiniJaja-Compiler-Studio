@@ -54,11 +54,25 @@ public class ExpListNode extends ASTNode {
         }
         return children;
     }
+
+    /**
+     * Evaluate every expression in the list
+     *
+     * @param m the memory
+     * @return the list of evaluated values
+     * @throws ASTInvalidOperationException
+     * @throws ASTInvalidMemoryException
+     * @throws ASTInvalidDynamicTypeException
+     */
     public List<Value> evalList(Memory m)
             throws ASTInvalidOperationException, ASTInvalidMemoryException, ASTInvalidDynamicTypeException {
         List<Value> values = new ArrayList<>();
 
-        if (head instanceof EvaluableNode evaluableHead) {
+        if (head instanceof ExpListNode expListNode) {
+            values.addAll(expListNode.evalList(m));
+        } else if (head instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
+        }else if (head instanceof EvaluableNode evaluableHead) {
             values.add(evaluableHead.eval(m));
         } else {
             throw new ASTInvalidOperationException("Head of ExpListNode is not evaluable.");
@@ -66,10 +80,34 @@ public class ExpListNode extends ASTNode {
 
         if (tail instanceof ExpListNode expListNode) {
             values.addAll(expListNode.evalList(m));
+        }else if (tail instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (tail instanceof EvaluableNode evaluableTail) {
             values.add(evaluableTail.eval(m));
         }
 
         return values;
+    }
+
+    /**
+     * Compile the withdrawal of arguments when a method is invoked
+     *
+     * @param code the list of jajacodes instruction
+     */
+    public void compileWithdraw(List<String> code) {
+        if (head instanceof ExpListNode ehead){
+            ehead.compileWithdraw(code);
+        }else{
+            code.add("swap");
+            code.add("pop");
+        }
+        if (tail != null){
+            if (tail instanceof ExpListNode etail){
+                etail.compileWithdraw(code);
+            }else{
+                code.add("swap");
+                code.add("pop");
+            }
+        }
     }
 }

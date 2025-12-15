@@ -34,8 +34,18 @@ public class AppelINode extends ASTNode {
     @Override
     public List<String> compile(int address) {
         List<String> code = new ArrayList<>();
-        if (args != null) code.addAll(args.compile(address));
+        List<String> plexp = args != null ? args.compile(address) : List.of();
+        code.addAll(plexp);
         code.add("invoke(" + ident.identifier + ")");
+        if (args != null){
+            if (args instanceof ExpListNode rargs){
+                rargs.compileWithdraw(code);
+            }else {
+                code.add("swap");
+                code.add("pop");
+            }
+        }
+        code.add("pop");
         return code;
     }
 
@@ -53,6 +63,14 @@ public class AppelINode extends ASTNode {
         m.popScope();
     }
 
+    /**
+     * Validates that the method exists in memory and is indeed a method.
+     *
+     * @param m the memory containing the symbol table
+     * @return the symbol table entry for the method
+     * @throws ASTInvalidMemoryException if the method is not found
+     * @throws ASTInvalidOperationException if the identifier is not a method
+     */
     private SymbolTableEntry validateMethodEntry(Memory m) {
         SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
         if (methodEntry == null) {
@@ -64,6 +82,13 @@ public class AppelINode extends ASTNode {
         return methodEntry;
     }
 
+    /**
+     * Evaluates the arguments passed to the method call.
+     *
+     * @param m the memory used for evaluation
+     * @return a list of evaluated argument values
+     * @throws ASTInvalidOperationException if arguments are not evaluable
+     */
     private List<Value> evaluateArguments(Memory m) {
         List<Value> evaluatedArgs = new ArrayList<>();
         if (args == null) {
@@ -72,6 +97,8 @@ public class AppelINode extends ASTNode {
 
         if (args instanceof ExpListNode expListNode) {
             evaluatedArgs.addAll(expListNode.evalList(m));
+        }else if (args instanceof IdentNode iNode && m.isArray(iNode.identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {
@@ -80,6 +107,13 @@ public class AppelINode extends ASTNode {
         return evaluatedArgs;
     }
 
+    /**
+     * Retrieves the MethodeNode from the symbol table entry.
+     *
+     * @param methodEntry the symbol table entry for the method
+     * @return the MethodeNode containing method definition
+     * @throws ASTInvalidOperationException if the reference is not a MethodeNode
+     */
     private MethodeNode getMethodNode(SymbolTableEntry methodEntry) {
         Object ref = methodEntry.getReference();
         if (!(ref instanceof MethodeNode methodNode)) {
@@ -88,6 +122,14 @@ public class AppelINode extends ASTNode {
         return methodNode;
     }
 
+    /**
+     * Binds the evaluated arguments to the method's formal parameters in memory.
+     *
+     * @param m the memory where variables will be declared
+     * @param methodNode the method node containing parameter definitions
+     * @param evaluatedArgs the list of evaluated argument values
+     * @throws ASTInvalidOperationException if parameters are invalid or arity mismatch
+     */
     private void bindParameters(Memory m, MethodeNode methodNode, List<Value> evaluatedArgs) {
         if (methodNode.params == null) {
             return;
@@ -103,10 +145,20 @@ public class AppelINode extends ASTNode {
         for (int i = 0; i < formals.size(); i++) {
             ParamNode p = formals.get(i);
             Value argVal = evaluatedArgs.get(i);
+            if (p.type.valueType!=argVal.type){
+                throw new ASTInvalidDynamicTypeException("Line "+getLine()+" Arguments types doesn't match parameters types");
+            }
             m.declVar(p.ident.identifier, argVal, ValueType.toDataType(p.type.valueType));
         }
     }
 
+    /**
+     * Validates that the number of arguments matches the expected parameter count.
+     *
+     * @param expected the expected number of parameters
+     * @param actual the actual number of arguments provided
+     * @throws ASTInvalidOperationException if arity does not match
+     */
     private void validateArity(int expected, int actual) {
         if (expected != actual) {
             throw new ASTInvalidOperationException(
@@ -115,12 +167,27 @@ public class AppelINode extends ASTNode {
         }
     }
 
+    /**
+     * Executes the method body by interpreting its variables and instructions.
+     *
+     * @param m the memory context for interpretation
+     * @param methodNode the method node containing the body to execute
+     */
     private void executeMethodBody(Memory m, MethodeNode methodNode) {
+        if (methodNode.vars != null) {
+            methodNode.vars.interpret(m);
+        }
         if (methodNode.instrs != null) {
             methodNode.instrs.interpret(m);
         }
     }
 
+    /**
+     * Cleans up the method parameters from memory after method execution.
+     *
+     * @param m the memory from which to withdraw parameters
+     * @param methodNode the method node containing the parameters to clean up
+     */
     private void cleanupParameters(Memory m, MethodeNode methodNode) {
         if (methodNode.params == null) {
             return;

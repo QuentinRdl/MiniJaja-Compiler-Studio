@@ -53,6 +53,9 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
+        if (exp instanceof IdentNode && m.isArray(((IdentNode) exp).identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Negative operator cannot be used with an array.");
+        }
         Value v = ((EvaluableNode)exp).eval(m);
         return new Value(-v.valueInt);
     }

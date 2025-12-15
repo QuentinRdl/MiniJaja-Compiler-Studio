@@ -6,6 +6,8 @@ module fr.ufrst.m1info.pvm.group5.driver {
     requires org.kordamp.ikonli.fontawesome5;
     requires org.kordamp.ikonli.materialdesign;
 
+    requires org.fxmisc.richtext;
+
     requires fr.ufrst.m1info.pvm.group5.memory;
     requires fr.ufrst.m1info.pvm.group5.interpreter;
     requires fr.ufrst.m1info.pvm.group5.compiler;

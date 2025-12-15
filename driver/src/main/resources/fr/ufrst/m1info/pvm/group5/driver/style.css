@@ -198,5 +198,77 @@
     -fx-background-color: transparent;
 }
 
+.list-cell.debug-current-line {
+    -fx-background-color : rgba(191, 34, 55, 0.2) !important;
+}
 
+/* Syntax Highlighting */
+.keyword {
+    -fx-fill: #569CD6; /* For keywords */
+    -fx-font-weight: bold;
+}
 
+.number {
+    -fx-fill: #B5CEA8; /* For numbers */
+}
+
+.operator {
+    -fx-fill: #D4D4D4; /* For operators */
+}
+
+.paren {
+    -fx-fill: #FFD700; /* For parentheses and brackets */
+}
+
+.semicolon {
+    -fx-fill: #D4D4D4; /* For semicolons */
+}
+
+.comment {
+    -fx-fill: #6A9955; /* Comments */
+    -fx-font-style: italic;
+}
+
+/* InlineCssTextArea for syntax highlighting */
+.styled-text-area {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-font-family: 'Consolas', 'Courier New', monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    -fx-padding: 5px 10px;
+}
+
+.styled-text-area .content {
+    -fx-background-color: transparent;
+}
+
+.styled-text-area:focused .content {
+    -fx-background-color: transparent;
+}
+
+.styled-text-area .text {
+    -fx-fill: white;
+}
+
+.styled-text-area .caret {
+    -fx-stroke: white;
+}
+
+.context-menu {
+    -fx-background-color: #1d1d1d;
+    -fx-padding: 5px10px;
+}
+
+.menu-item .label {
+    -fx-text-fill: white;
+}
+
+.menu-item:focused {
+    -fx-background-color: transparent;
+}
+
+.menu-item:armed {
+    -fx-background-color: transparent;
+}

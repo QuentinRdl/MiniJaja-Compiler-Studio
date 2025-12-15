@@ -269,7 +269,7 @@ class MemoryTest {
         StackObject obj = new StackObject("arr", oldRef, 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.searchObject("arr")).thenReturn(obj);
 
-        memory.affectValue("arr", 200);
+        memory.affectValue("arr", new Value(200));
 
         verify(symbolTableMocked, times(1)).lookup("arr");
         verify(stackMocked, times(1)).searchObject("arr");
@@ -313,6 +313,8 @@ class MemoryTest {
 
     @Test
     void tabLengthDelegatesToHeapSizeOf() {
+        SymbolTableEntry arrayEntry = new SymbolTableEntry("arr", EntryKind.ARRAY, DataType.INT);
+        when(symbolTableMocked.lookup("arr")).thenReturn(arrayEntry);
         int addr = 99;
         StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.getObject("arr")).thenReturn(addrObj);

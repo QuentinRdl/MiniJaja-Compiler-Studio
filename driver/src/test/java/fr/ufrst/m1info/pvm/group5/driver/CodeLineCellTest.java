@@ -98,10 +98,21 @@ class CodeLineCellTest extends ApplicationTest {
 
         StackPane lineNumberContainer = (StackPane) container.getChildren().get(0);
         Label lineNumber = (Label) cell.getLineNumberLabel();
-        TextField codeField = (TextField) container.getChildren().get(1);
+
+        // Get the code field (can be TextField or InlineCssTextArea)
+        javafx.scene.Node codeFieldNode = container.getChildren().get(1);
+        System.out.println("DEBUG = " + codeFieldNode);
+        String codeText;
+        if (codeFieldNode instanceof org.fxmisc.richtext.InlineCssTextArea textArea) {
+            codeText = textArea.getText();
+        } else if (codeFieldNode instanceof TextField tf) {
+            codeText = tf.getText();
+        } else {
+            codeText = "";
+        }
 
         assertEquals("1", lineNumber.getText());
-        assertEquals("x = 10;", codeField.getText());
+        assertEquals("x = 10;", codeText);
     }
 
     @Test
@@ -211,7 +222,7 @@ class CodeLineCellTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        TextField codeField = cell.getCodeField();
+        var codeField = cell.getCodeField();
         assertNotNull(codeField);
         assertEquals("int x = 10;", codeField.getText());
 

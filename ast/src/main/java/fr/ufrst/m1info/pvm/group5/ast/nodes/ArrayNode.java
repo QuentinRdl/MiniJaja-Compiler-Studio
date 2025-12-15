@@ -27,8 +27,8 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     public List<String> compile(int address) {
         java.util.List<String> code = new java.util.ArrayList<>();
         code.addAll(sizeExp.compile(address));
-        String typeStr = type.valueType.name().toLowerCase();
-        code.add("newarray(" + ident.identifier + ", " + typeStr + ")");
+        String typeStr = type.valueType.name().toUpperCase();
+        code.add("newarray(" + ident.identifier + "," + typeStr + ")");
 
         return code;
     }

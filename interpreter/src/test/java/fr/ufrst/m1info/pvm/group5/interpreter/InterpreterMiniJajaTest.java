@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.interpreter;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
+import fr.ufrst.m1info.pvm.group5.memory.heap.HeapElement;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.*;
 
@@ -45,6 +46,26 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File One")
+    void FileOne() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/1.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 8\nx : 11\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File Array")
+    void Array() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Array.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4\n33\n81\nfalse\ntrue\nfalse\nfalse\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File BasicOperations")
     void BasicOperations() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/BasicOperations.mjj"));
@@ -60,6 +81,16 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret File Conditionals")
     void Conditionals() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Conditionals.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Fact")
+    void Fact() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Fact.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 7\nres : 5040\n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -109,9 +140,29 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Quicksort")
+    void Quicksort() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Quick_sort.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4,81,63,12,33,22,16,44,55,23,27,5,14,18,6,30,87,31,10,43, \n4,5,6,10,12,14,16,18,22,23,27,30,31,33,43,44,55,63,81,87, \n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Simple")
     void Simple() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Simple.mjj"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Synonymie")
+    void Synonymie() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Synonymie.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -859,6 +910,516 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Method Without Type")
+    void MethodWithoutType() {
+        String errMessage=imj.interpretCode("class C { f(){};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Void Method With Return")
+    void VoidMethodWithReturn() {
+        String errMessage=imj.interpretCode("class C { void f(){return 1;};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Non-Void Method Without Return")
+    void NonVoidMethodWithoutReturn() {
+        String errMessage=imj.interpretCode("class C { int f(){};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Int Method With Bool Return")
+    void IntMethodBoolReturn() {
+        String errMessage=imj.interpretCode("class C { int f(){return false;};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Bool Method With Int Return")
+    void BoolMethodIntReturn() {
+        String errMessage=imj.interpretCode("class C { boolean f(){return 1;};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret String Method")
+    void StringMethod() {
+        String errMessage=imj.interpretCode("class C { string f(){return \"Hello World\";};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Instr Before Var")
+    void MethodInstrBeforeVar() {
+        String errMessage=imj.interpretCode("class C { void f(){write(\"f\"); int x = 0;};main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Call Void Method In Var")
+    void CallVoidMethodInVar() {
+        String errMessage=imj.interpretCode("class C { void f(){write(\"f\"); };main{int x = f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Call Int Method In Bool Var")
+    void CallIntMethodInBoolVar() {
+        String errMessage=imj.interpretCode("class C { int f(){return 5; };main{boolean x = f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Call Bool Method In Int Var")
+    void CallBoolMethodIntVar() {
+        String errMessage=imj.interpretCode("class C { boolean f(){return false; };main{int x = f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method With Void Args")
+    void MethodWithVoidArgs() {
+        String errMessage=imj.interpretCode("class C { void f(void arg1){ };main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method In Method")
+    void MethodInMethod() {
+        String errMessage=imj.interpretCode("class C { void f(){void f2(){ }; };main{f();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method In Main")
+    void MethodInMain() {
+        String errMessage=imj.interpretCode("class C { void f(){ };main{void f2(){ };}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Main In Method")
+    void MainInMethod() {
+        String errMessage=imj.interpretCode("class C { void f(){ main{ f()}};}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Args Int Call With Bool")
+    void MethodArgsIntCallWithBool() {
+        String errMessage=imj.interpretCode("class C { void f(int x){ }; main{ f(false);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Args Bool Call With Int")
+    void MethodArgsBoolCallWithInt() {
+        String errMessage=imj.interpretCode("class C { void f(boolean x){ }; main{ f(1);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Args Type Error")
+    void MethodManyArgsTypeError() {
+        String errMessage=imj.interpretCode("class C { void f(boolean x,boolean y,int z){ }; main{ f(false,1,99);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Three Args")
+    void MethodThreeArgs() {
+        String errMessage=imj.interpretCode("class C { void f(boolean x,int y,int z){ writeln(x); writeln(y); writeln(z);}; main{ f(false,1,99);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("false\n1\n99\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Method Eight Args")
+    void MethodEightArgs() {
+        String errMessage=imj.interpretCode("class C { void f(boolean a,int b,int c,int d,boolean e,int f,int g,int h){ writeln(a); writeln(b); writeln(c); writeln(d); writeln(e); writeln(f); writeln(g); writeln(h); }; main{ f(false,1,99,27,true,5,10,81);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("false\n1\n99\n27\ntrue\n5\n10\n81\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Defined In Method Used In Main")
+    void VariableDefinedInMethodUsedInMain() {
+        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; main{ f(); write(x);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Defined In Method Used In Another Method")
+    void VariableDefinedInMethodUsedInAnotherMethod() {
+        String errMessage=imj.interpretCode("class C { void f(){ int x=0;}; void g(){ write(x);}; main{ f(); g();}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Index")
+    void BooleanIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[false]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Index")
+    void NegativeIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[-1]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ArrayIndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Out Of Bounds Index")
+    void OutOfBoundsIndex() {
+        String errMessage=imj.interpretCode("class C { int t[20]; main{t[20]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Array Size")
+    void BooleanArraySize() {
+        String errMessage=imj.interpretCode("class C { boolean t[false]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Array Size")
+    void NegativeArraySize() {
+        String errMessage=imj.interpretCode("class C { int t[-20]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Array Size")
+    void EmptyArraySize() {
+        String errMessage=imj.interpretCode("class C { int t[]; main{}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Array Index 1")
+    void EmptyArrayIndex1() {
+        String errMessage=imj.interpretCode("class C { int t[8]; main{ t[]=3;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Array Index 2")
+    void EmptyArrayIndex2() {
+        String errMessage=imj.interpretCode("class C { int t[1]; main{ int x; t[0]=3; x=t[];}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Empty Length")
+    void EmptyLength() {
+        String errMessage=imj.interpretCode("class C { int t[8]; main{ int x=length();}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Length Not Array")
+    void LengthNotArray() {
+        String errMessage=imj.interpretCode("class C { int t=8; main{ int x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Length Affected In Bool Variable")
+    void LengthAffectedInBoolVariable() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ boolean x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Length Undefined Variable")
+    void LengthAffectedUndefinedVariable() {
+        String errMessage=imj.interpretCode("class C { main{ int x=length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Length As Instruction")
+    void LengthAsInstruction() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ length(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Array Initialize With Value")
+    void ArrayInitializeWithValue() {
+        String errMessage=imj.interpretCode("class C { int t[5]=8; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Final Array")
+    void FinalArray() {
+        String errMessage=imj.interpretCode("class C { final int t[5]; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ParseCancellationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Affect Value In Array")
+    void AffectValueInArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Affect Array In Value")
+    void AffectArrayInValue() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ x=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
+    }
+
+    @Test
+    @DisplayName("Interpret Add Array")
+    void AddArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t+t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Add Array And Number")
+    void AddArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t+x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Array")
+    void SubArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t-t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sub Array And Number")
+    void SubArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t-x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Array")
+    void MulArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t*t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Mul Array And Number")
+    void MulArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t*x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Div Array")
+    void DivArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=t/t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Div Array And Number")
+    void DivArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t=t/x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sup Array")
+    void SupArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; boolean t2[5]; main{ t2=t>t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sup Array And Number")
+    void SupArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { int t[5]; boolean t2[5]; int x=5; main{ t2=t>x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret And Array")
+    void AndArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t=t&&t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret And Array And Number")
+    void AndArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; boolean x=false; main{ t=t&&x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Or Array")
+    void OrArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t=t||t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Or Array And Number")
+    void OrArrayAndNumber() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; boolean x=false; main{ t=t||x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Negative Array")
+    void NegativeArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t=-t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Not Array")
+    void NotArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t=!t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Boolean Array")
+    void BooleanArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ t[0]=false; t[1]=true; t[2]=false; t[3]=true; t[4]=false; writeln(t[0]); writeln(t[1]); writeln(t[2]); writeln(t[3]); writeln(t[4]);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("false\ntrue\nfalse\ntrue\nfalse\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret If Array")
+    void IfArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ if(t){};}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret While Array")
+    void WhileArray() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; main{ while(t){};}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Write Array")
+    void WriteArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ write(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Writeln Array")
+    void WritelnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ writeln(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Argument Array")
+    void MethodArgumentArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x){}; main{ f(t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 1")
+    void MethodManyArgumentArray1() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x,boolean y,int z){}; main{ f(t,false,3);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 2")
+    void MethodManyArgumentArray2() {
+        String errMessage=imj.interpretCode("class C { boolean t[5]; f(int x,boolean y,int z){}; main{ f(5,t,7);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Many Argument Array 3")
+    void MethodManyArgumentArray3() {
+        String errMessage=imj.interpretCode("class C { int t[5]; f(int x,boolean y,int z){}; main{ f(3,false,t);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Increment Array")
+    void IncrementArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t++;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Array on Array")
+    void SumArrayOnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; main{ t+=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Array on Value")
+    void SumArrayOnValue() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ t+=x;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Value on Array")
+    void SumValueOnArray() {
+        String errMessage=imj.interpretCode("class C { int t[5]; int x=5; main{ x+=t;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
@@ -943,5 +1504,49 @@ class InterpreterMiniJajaTest {
         imjj.waitInterpretation();
         Assertions.assertTrue(steps[0] == 2 || steps[0] == 3);
         Assertions.assertTrue(errors.containsAll(expectedErrors));
+    }
+
+    @Test
+    @DisplayName("Interpret Code With Single Line Comments")
+    void interpretCodeWithComments() {
+        String input = "// This is a comment\n"
+                + "class C {\n"
+                + "  // Variable declaration\n"
+                + "  int x = 10; // Initialize x to 10\n"
+                + "  main {\n"
+                + "    // Increment x\n"
+                + "    x = x + 1;\n"
+                + "  }\n"
+                + "}";
+        Assertions.assertNull(imj.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Code With Comments At Different Positions")
+    void interpretCodeWithCommentsAtDifferentPositions() {
+        String input = "// Start comment\n"
+                + "class C { // Class comment\n"
+                + "  int y = 5;\n"
+                + "  // Method comment\n"
+                + "  main { // Main comment\n"
+                + "    y = y * 2; // Multiplication\n"
+                + "  } // End main\n"
+                + "} // End class";
+        Assertions.assertNull(imj.interpretCode(input));
+    }
+
+    @Test
+    @DisplayName("Interpret Code With Empty Comments")
+    void interpretCodeWithEmptyComments() {
+        String input = "//\n"
+                + "class C {\n"
+                + "  //\n"
+                + "  int z = 1;\n"
+                + "  main {\n"
+                + "    //\n"
+                + "    z++;\n"
+                + "  }\n"
+                + "}";
+        Assertions.assertNull(imj.interpretCode(input));
     }
 }

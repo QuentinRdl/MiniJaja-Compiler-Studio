@@ -217,7 +217,7 @@ class CheckDynamicTypeTest {
     void testAffectationNode_ArrayIntIndexIntValue() throws Exception {
 
         memoryStorage.put("arr", new Value(0));
-        when(memoryMock.dataTypeOf("arr")).thenReturn(DataType.INT);
+        when(memoryMock.tabType("arr")).thenReturn(DataType.INT);
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         ASTNode valueExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
@@ -233,7 +233,7 @@ class CheckDynamicTypeTest {
     @DisplayName("AffectationNode.checkType - tab[int] = bool (valid with bool array)")
     void testAffectationNode_ArrayIntIndexBoolValue() throws Exception {
         memoryStorage.put("flags", new Value(false));
-        when(memoryMock.dataTypeOf("flags")).thenReturn(DataType.BOOL);
+        when(memoryMock.tabType("flags")).thenReturn(DataType.BOOL);
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         ASTNode valueExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
@@ -282,6 +282,7 @@ class CheckDynamicTypeTest {
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         ASTNode valueExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(valueExpr.checkType(memoryMock)).thenReturn("int");
+        when(memoryMock.tabType("undefinedArr")).thenThrow(IllegalArgumentException.class);
         TabNode tabNode = new TabNode(new IdentNode("undefinedArr"), indexExpr);
         AffectationNode affectNode = new AffectationNode(tabNode, valueExpr);
 
@@ -307,7 +308,7 @@ class CheckDynamicTypeTest {
     @DisplayName("AffectationNode.checkType - tab[i+1] = value (valid with complex index)")
     void testAffectationNode_ArrayComplexIndexExpression() throws Exception {
         memoryStorage.put("matrix", new Value(100));
-        when(memoryMock.dataTypeOf("matrix")).thenReturn(DataType.INT);
+        when(memoryMock.tabType("matrix")).thenReturn(DataType.INT);
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         ASTNode valueExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
@@ -1746,7 +1747,7 @@ class CheckDynamicTypeTest {
         ASTNode params = ASTMocks.createNode(ASTNode.class, null, i -> List.of());
 
         ASTNode instrs = mock(ASTNode.class);
-        when(instrs.checkType(memory)).thenReturn("void");
+        when(instrs.checkType(memory)).thenReturn("int");
 
         MethodeNode method = new MethodeNode(returnType, ident, params, null, instrs);
 
@@ -1767,7 +1768,7 @@ class CheckDynamicTypeTest {
                 null
         );
 
-        assertEquals("bool", method.checkType(memory));
+        assertThrows(ASTInvalidDynamicTypeException.class, () -> method.checkType(memory));
     }
     @Test
     void testMethodeNodeCheckType_Int() {
@@ -1776,7 +1777,7 @@ class CheckDynamicTypeTest {
                 new IdentNode("f"),
                 ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
                 null,
-                null
+                new InstructionsNode(new ReturnNode(new NumberNode(3)),null)
         );
         assertEquals("int", m.checkType(mock(Memory.class)));
     }
@@ -1788,7 +1789,7 @@ class CheckDynamicTypeTest {
                 new IdentNode("f"),
                 ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
                 null,
-                null
+                new InstructionsNode(new ReturnNode(new BooleanNode(false)),null)
         );
         assertEquals("bool", m.checkType(mock(Memory.class)));
     }
@@ -1809,7 +1810,7 @@ class CheckDynamicTypeTest {
         Memory mem = mock(Memory.class);
 
         ASTNode instrs = mock(ASTNode.class);
-        when(instrs.checkType(mem)).thenReturn("void");
+        when(instrs.checkType(mem)).thenReturn("int");
 
         MethodeNode m = new MethodeNode(
                 new TypeNode(ValueType.INT),

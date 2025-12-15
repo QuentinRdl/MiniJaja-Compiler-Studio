@@ -67,7 +67,7 @@ public class InterpreterMiniJaja extends Interpreter{
         // Subscribing to the event of the ast
         ast.interpretationStoppedEvent.subscribe(d -> {
             this.currentNode = d.node();
-            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, currentNode.getLine()));
+            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(true, null, (currentNode == null) ? -1 : currentNode.getLine()));
         });
 
         // Creating a secondary thread that will trigger an event once the interpretation stops
@@ -75,7 +75,7 @@ public class InterpreterMiniJaja extends Interpreter{
             try {
                 interpretationThread.join();
             } catch (InterruptedException _) { return; }
-            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null, currentNode.getLine()));
+            interpretationHaltedEvent.triggerAsync(new InterpretationHaltedData(false, null, (currentNode == null) ? -1 : currentNode.getLine()));
         });
 
         // Creating the main thread

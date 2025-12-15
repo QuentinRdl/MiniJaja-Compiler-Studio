@@ -11,6 +11,8 @@ public class CodeLine {
     private String code;
     private boolean breakpoint;
 
+    private boolean isCurrentDebugLine = false;
+
     /**
      * Creates a new CodeLine with a specific line number and code content.
      *
@@ -51,6 +53,15 @@ public class CodeLine {
     }
 
     /**
+     * Returns whether this code line is currently marked as the active debug line
+     *
+     * @return true if this line is the current debug line, false otherwise
+     */
+    public boolean isCurrentDebugLine() {
+        return isCurrentDebugLine;
+    }
+
+    /**
      * Sets the line number for this code line.
      *
      * @param lineNumber the new line number to assign to this code line
@@ -76,4 +87,11 @@ public class CodeLine {
     public void setBreakpoint(boolean breakpoint){
         this.breakpoint = breakpoint;
     }
+
+    /**
+     * Marks this code line as the current debug line or removes the marks
+     *
+     * @param currentDebugLine true to highlight this line during debugging, false to clear the highlight
+     */
+    public void setCurrentDebugLine(boolean currentDebugLine) { this.isCurrentDebugLine = currentDebugLine; }
 }

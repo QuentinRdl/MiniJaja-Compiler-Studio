@@ -1,0 +1,22 @@
+class C {
+    int x = 5;
+
+    void countdown(int n){
+        if(n > -1){
+            writeln(n);
+            countdown(n-1);
+        };
+    };
+
+    void countup(int n){
+        if(n > -1){
+            countup(n-1);
+            writeln(n);
+        };
+    };
+
+    main{
+        countdown(x);
+        countup(x);
+    }
+}
