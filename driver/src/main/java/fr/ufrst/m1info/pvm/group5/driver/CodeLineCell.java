@@ -191,7 +191,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
         container = new HBox();
         container.getStyleClass().add("code-line");
         container.getChildren().addAll(lineNumberContainer, codeFieldContainer);
-        HBox.setHgrow(codeFieldContainer, Priority.ALWAYS);
 
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
     }

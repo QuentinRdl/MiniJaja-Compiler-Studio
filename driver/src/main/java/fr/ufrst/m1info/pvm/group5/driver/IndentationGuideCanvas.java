@@ -14,11 +14,14 @@ public class IndentationGuideCanvas extends Canvas {
     private static final Color GUIDE_COLOR = Color.web("#4a4a4a");
     private String text = "";
 
+    private int xy = 0;
     /**
      * Redraws when the canvas change size
      */
     public IndentationGuideCanvas() {
         // Redraw when canvas size changes
+        System.out.println("TRIGGER" + xy);
+        xy++;
         widthProperty().addListener(obs -> redraw());
         heightProperty().addListener(obs -> redraw());
     }

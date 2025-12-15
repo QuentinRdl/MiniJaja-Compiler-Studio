@@ -141,9 +141,6 @@ public class MainController {
                 @Override
                 public void onDownPressed(int index) { handleDownPressed(index);}
 
-                //@verride
-                //public void onTabPressed(int index) { handleTabPressed(index);}
-
                 @Override
                 public void onModified(){
                     if(isLoadingFile) return;
