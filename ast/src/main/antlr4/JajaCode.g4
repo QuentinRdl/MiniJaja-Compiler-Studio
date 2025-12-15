@@ -75,6 +75,7 @@ jcboolean returns [boolean b]
 type returns [DataType dt]
      : 'INT' {$dt = DataType.INT;}
      | 'BOOL' {$dt = DataType.BOOL;}
+     | 'VOID' {$dt = DataType.VOID;}
      ;
 
 entrykind returns [EntryKind ek]

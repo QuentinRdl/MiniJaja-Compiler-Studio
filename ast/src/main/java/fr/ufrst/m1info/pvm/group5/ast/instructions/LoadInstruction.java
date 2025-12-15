@@ -18,11 +18,11 @@ public class LoadInstruction extends Instruction{
     public int execute(int address, Memory m) {
         Value v = (Value) m.val(ident);
         if (v.type == ValueType.STRING){
-            throw new ASTInvalidTypeException("load line ("+(address+1)+" : Type error: operation does not accept STRING type, but received " + v.type + ".");
+            throw new ASTInvalidTypeException("load line ("+address+") : Type error: operation does not accept STRING type, but received " + v.type + ".");
 
         }
         if (v.type == ValueType.EMPTY){
-            throw new ASTInvalidMemoryException("load line ("+(address+1)+" : Variable "+ident+" has no value");
+            throw new ASTInvalidMemoryException("load line ("+address+") : Variable "+ident+" has no value");
 
         }
         m.push(".", v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
