@@ -58,13 +58,13 @@ public class SumNode extends ASTNode {
             Value v = ((EvaluableNode) expression).eval(m);
             Value currentVal = ((TabNode) identifier).eval(m);
             int res = currentVal.valueInt + v.valueInt;
-            m.affectValT(arrayIdent.identifier, index, new Value(res));
+            MemoryCallUtil.safeCall(() -> m.affectValT(arrayIdent.identifier, index, new Value(res)), this);
         } else {
             IdentNode identNode = (IdentNode) identifier;
             Value v = ((EvaluableNode) expression).eval(m);
             Value u = ((IdentNode) identifier).eval(m);
             int res = u.valueInt + v.valueInt;
-            m.affectValue(identNode.identifier, new Value(res));
+            MemoryCallUtil.safeCall(() -> m.affectValue(identNode.identifier, new Value(res)), this);
         }
     }
 

@@ -1889,7 +1889,7 @@ class CheckDynamicTypeTest {
         when(memoryMock.getMethod("ghostFunc")).thenThrow(new Memory.MemoryIllegalArgException("Memory", "op", "reason"));
 
         AppelENode node = new AppelENode(ident, null);
-        assertThrows(Memory.MemoryIllegalArgException.class, () -> node.checkType(memoryMock));
+        assertThrows(ASTInvalidMemoryException.class, () -> node.checkType(memoryMock));
     }
     @Test
     @DisplayName("ArrayNode - checkType() valid with int size expression")

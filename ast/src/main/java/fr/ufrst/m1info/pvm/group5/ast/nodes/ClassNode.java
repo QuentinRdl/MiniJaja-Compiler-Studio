@@ -52,7 +52,7 @@ public class ClassNode extends ASTNode {
         // Only withdraw the class declaration if we don't want to preserve the items of memory
         // This is so we can test
         if (!m.isPreserveAfterInterpret()) {
-            m.withdrawDecl(ident.identifier);
+            MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
         }
     }
 

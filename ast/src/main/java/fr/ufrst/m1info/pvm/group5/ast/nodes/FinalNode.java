@@ -48,7 +48,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
             return;
         }
         Value v = ((EvaluableNode)expression).eval(m);
-        m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType));
+        MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType)), this);
     }
 
     @Override
@@ -59,11 +59,11 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
         switch (type.valueType) {
             case INT :
                 declaredType = "int";
-                m.declCst(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+                MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
                 break;
             case BOOL :
                 declaredType = "bool";
-                m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType));
+                MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType)), this);
                 break;
             default :
                 throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", type.valueType.name(), "final");

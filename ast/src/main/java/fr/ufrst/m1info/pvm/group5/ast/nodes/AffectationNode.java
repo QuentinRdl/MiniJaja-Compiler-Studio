@@ -52,18 +52,11 @@ public class AffectationNode extends ASTNode{
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
             int index = indexVal.valueInt;
             Value value = ((EvaluableNode) expression).eval(m);
-            m.affectValT(arrayIdent.identifier, index, value);
+            MemoryCallUtil.safeCall(() -> m.affectValT(arrayIdent.identifier, index, value), this);
         } else {
             Value v = ((EvaluableNode) expression).eval(m);
             String id = ((IdentNode) identifier).identifier;
-            // Should be done in type-checking
-            /*if (m.isArray(id) && (!(expression instanceof IdentNode)|| !m.isArray(((IdentNode) expression).identifier))){
-                throw new ASTInvalidOperationException("Line "+ getLine() +" : Value cannot be affected into array");
-            }
-            if (!m.isArray(id) && expression instanceof IdentNode && m.isArray(((IdentNode) expression).identifier)){
-                throw new ASTInvalidOperationException("Line "+ getLine() +" : Value cannot be affected into array");
-            }*/
-            m.affectValue(id, v);
+            MemoryCallUtil.safeCall(() -> m.affectValue(id, v), this);
         }
     }
 
@@ -71,7 +64,6 @@ public class AffectationNode extends ASTNode{
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
         try {
-
             if (identifier instanceof TabNode) {
                 TabNode tabNode = (TabNode) identifier;
                 IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
@@ -80,7 +72,7 @@ public class AffectationNode extends ASTNode{
                 if (!"int".equals(indexType)) {
                     throw new InterpretationInvalidTypeException(this.getLine(), "int", indexType, "affectation");
                 }
-                DataType arrayDataType = m.tabType(arrayIdent.identifier);
+                DataType arrayDataType = MemoryCallUtil.safeCall(() -> m.tabType(arrayIdent.identifier), this);
                 String arrayTypeStr;
                 if (arrayDataType == DataType.INT) arrayTypeStr = "int";
                 else if (arrayDataType == DataType.BOOL) arrayTypeStr = "bool";

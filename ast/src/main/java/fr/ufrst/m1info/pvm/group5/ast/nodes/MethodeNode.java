@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
@@ -68,15 +69,15 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     @Override
     public void interpret(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
-        m.declMethod(ident.identifier, dataType, this);
+        MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
     }
 
     @Override
     public String checkType(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
-        m.declMethod(ident.identifier, dataType, this);
+        MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
         String typeReturn = "void";
-        m.pushScope();
+        MemoryCallUtil.safeCall(m::pushScope, this);
         if (params != null) params.checkType(m);
         if (vars != null) vars.checkType(m);
         if (instrs != null) typeReturn=instrs.checkType(m);
@@ -90,7 +91,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
                 }
             }
         }
-        m.popScope();
+        MemoryCallUtil.safeCall(m::popScope, this);
         String typeMethod = returnType.getValueType().name().toLowerCase();
         if (!typeMethod.equals(typeReturn)){
             throw new InterpretationInvalidTypeException(this.getLine(), typeMethod, typeReturn, "method declaration");
@@ -104,7 +105,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public void withdrawInterpret(Memory m) {
-        m.withdrawDecl(ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
     }
 
     @Override

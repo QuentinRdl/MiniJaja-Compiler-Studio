@@ -85,7 +85,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     public void withdrawInterpret(Memory m) {
         if (next instanceof WithdrawalNode wNext)
             wNext.withdrawInterpret(m);
-        m.withdrawDecl(param.ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(param.ident.identifier), this);
     }
 
     @Override

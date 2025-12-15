@@ -42,18 +42,18 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         if(vexp == null){
-            m.declVar(ident.identifier, new Value(), ValueType.toDataType(typemeth.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, new Value(), ValueType.toDataType(typemeth.valueType)), this);
         }
         else {
             Value v = ((EvaluableNode) vexp).eval(m);
-            m.declVar(ident.identifier, v, ValueType.toDataType(typemeth.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, v, ValueType.toDataType(typemeth.valueType)), this);
         }
     }
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
         ValueType varType = typemeth.valueType;
-        String vType="";
+        String vType;
         if(varType == ValueType.INT){
             m.declVar(ident.identifier, new Value(1), ValueType.toDataType(typemeth.valueType));
             vType="int";

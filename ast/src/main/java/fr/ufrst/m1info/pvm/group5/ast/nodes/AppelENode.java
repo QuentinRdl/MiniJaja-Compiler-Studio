@@ -38,7 +38,7 @@ public class AppelENode extends ASTNode implements EvaluableNode {
         AppelINode appelInstruction = new AppelINode(ident, args);
         appelInstruction.interpret(m);
 
-        Object result = m.val(m.identVarClass());
+        Object result = MemoryCallUtil.safeCall(() -> m.val(m.identVarClass()), this);
         return (Value)result;
     }
 
@@ -70,7 +70,7 @@ public class AppelENode extends ASTNode implements EvaluableNode {
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
+        SymbolTableEntry methodEntry = MemoryCallUtil.safeCall(() -> m.getMethod(ident.identifier), this);
         if (methodEntry == null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
         }

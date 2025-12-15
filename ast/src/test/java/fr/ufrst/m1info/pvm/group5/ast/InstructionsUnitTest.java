@@ -254,7 +254,7 @@ class InstructionsUnitTest {
             throw new fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException("pop with a empty stack");
         }).when(memory).pop();
         Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
-        assertThrows(StackIsEmptyException.class,() -> newaInstr.execute(1,memory));
+        assertThrows(ASTInvalidMemoryException.class,() -> newaInstr.execute(1,memory));
     }
 
     @Test
@@ -861,7 +861,7 @@ class InstructionsUnitTest {
     @Test
     void pop_empty() {
         PopInstruction p = new PopInstruction();
-        assertThrows(StackIsEmptyException.class, () -> p.execute(0, memory));
+        assertThrows(ASTInvalidMemoryException.class, () -> p.execute(0, memory));
     }
 
     //swap
@@ -888,7 +888,7 @@ class InstructionsUnitTest {
         p1.execute(0, memory);
 
         SwapInstruction swap = new SwapInstruction();
-        assertThrows(MemoryIllegalArgException.class, () -> swap.execute(1, memory));
+        assertThrows(ASTInvalidMemoryException.class, () -> swap.execute(1, memory));
     }
 
     //goto
@@ -1018,7 +1018,7 @@ class InstructionsUnitTest {
     @Test
     void return_stack_empty(){
         ReturnInstruction r = new ReturnInstruction();
-        assertThrows(StackIsEmptyException.class, () -> r.execute(0, memory));
+        assertThrows(ASTInvalidMemoryException.class, () -> r.execute(0, memory));
     }
 
 }

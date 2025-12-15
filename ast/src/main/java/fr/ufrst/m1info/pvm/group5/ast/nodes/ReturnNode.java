@@ -28,7 +28,7 @@ public class ReturnNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         Value v = ((EvaluableNode)expr).eval(m);
-        m.affectValue(m.identVarClass(), v);
+        MemoryCallUtil.safeCall(() -> m.affectValue(m.identVarClass(), v), this);
     }
 
     @Override

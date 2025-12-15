@@ -54,7 +54,7 @@ public class IncNode extends ASTNode{
                 throw ASTInvalidMemoryException.UndefinedVariable(arrayIdent.identifier, this.getLine());
             }
             Value newVal = new Value(currentVal.valueInt + 1);
-            m.affectValT(arrayIdent.identifier, index, newVal);
+            MemoryCallUtil.safeCall(() -> m.affectValT(arrayIdent.identifier, index, newVal), this);
         } else {
             String varName = ((IdentNode)ident).identifier;
             Value v = (Value) m.val(varName);
@@ -62,7 +62,7 @@ public class IncNode extends ASTNode{
                 throw ASTInvalidMemoryException.UndefinedVariable(varName, this.getLine());
             }
             Value res = new Value(v.valueInt + 1);
-            m.affectValue(varName, res);
+            MemoryCallUtil.safeCall(() -> m.affectValue(varName, res), this);
         }
     }
 

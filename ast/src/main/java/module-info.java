@@ -3,7 +3,6 @@ module fr.ufrst.m1info.pvm.group5.ast {
     requires fr.ufrst.m1info.pvm.group5.memory;
     requires java.desktop;
     requires java.xml.crypto;
-    requires fr.ufrst.m1info.pvm.group5.ast;
 
     exports fr.ufrst.m1info.pvm.group5.ast;
     opens fr.ufrst.m1info.pvm.group5.ast.nodes;

@@ -19,7 +19,7 @@ public class LengthNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        int size = m.tabLength(ident.identifier);
+        int size = MemoryCallUtil.safeCall(() -> m.tabLength(ident.identifier), this);
         return new Value(size);
     }
 

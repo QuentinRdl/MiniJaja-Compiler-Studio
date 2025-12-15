@@ -49,7 +49,7 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
             case INT -> val = new Value(0);
             default -> val = new Value();
         }
-        m.declVar(ident.identifier, val, ValueType.toDataType(type.valueType));
+        MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, val, ValueType.toDataType(type.valueType)), this);
     }
 
 
@@ -58,17 +58,17 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
         if (type.valueType.equals(ValueType.VOID)) {
             throw new InterpretationInvalidTypeException(this.getLine(), "int or bool", type.valueType.name(), "parameter declaration");
         }else if (type.valueType.equals(ValueType.INT)) {
-            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
         }
         else if (type.valueType.equals(ValueType.BOOL)) {
-            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
         }
         return "void";
     }
 
     @Override
     public void withdrawInterpret(Memory m) {
-        m.withdrawDecl(ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
     }
 
     @Override

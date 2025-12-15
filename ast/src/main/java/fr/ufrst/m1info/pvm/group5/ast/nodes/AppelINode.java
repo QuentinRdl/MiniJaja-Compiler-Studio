@@ -56,11 +56,11 @@ public class AppelINode extends ASTNode {
         List<Value> evaluatedArgs = evaluateArguments(m);
         MethodeNode methodNode = getMethodNode(methodEntry);
 
-        m.pushScope();
+        MemoryCallUtil.safeCall(m::pushScope, this);
         bindParameters(m, methodNode, evaluatedArgs);
         executeMethodBody(m, methodNode);
         cleanupParameters(m, methodNode);
-        m.popScope();
+        MemoryCallUtil.safeCall(m::popScope, this);
     }
 
     /**
@@ -72,7 +72,7 @@ public class AppelINode extends ASTNode {
      * @throws ASTInvalidOperationException if the identifier is not a method
      */
     private SymbolTableEntry validateMethodEntry(Memory m) {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
+        SymbolTableEntry methodEntry = MemoryCallUtil.safeCall(() -> m.getMethod(ident.identifier), this);
         if (methodEntry == null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
         }
@@ -113,7 +113,7 @@ public class AppelINode extends ASTNode {
      * @throws ASTInvalidOperationException if the reference is not a MethodeNode
      */
     private MethodeNode getMethodNode(SymbolTableEntry methodEntry) {
-        Object ref = methodEntry.getReference();
+        Object ref = MemoryCallUtil.safeCall(methodEntry::getReference, this);
         if (!(ref instanceof MethodeNode methodNode)) {
             throw ASTInvalidMemoryException.InvalidVariable(ident.identifier, this.getLine(), "MethodNode", ref.getClass().getSimpleName());
         }
@@ -191,14 +191,14 @@ public class AppelINode extends ASTNode {
         } else if (methodNode.params instanceof ParamListNode paramListNode) {
             List<ParamNode> formals = paramListNode.toList();
             for (ParamNode p : formals) {
-                m.withdrawDecl(p.ident.identifier);
+                MemoryCallUtil.safeCall(() -> m.withdrawDecl(p.ident.identifier), this);
             }
         }
     }
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
+        SymbolTableEntry methodEntry = MemoryCallUtil.safeCall(() -> m.getMethod(ident.identifier), this);
         if (methodEntry == null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this.getLine());
         }
