@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
@@ -15,7 +16,7 @@ public class InvokeInstruction extends Instruction {
 
     @Override
     public int execute(int address, Memory m) {
-        Value vMeth = (Value) m.val(ident);
+        Value vMeth = (Value) MemoryCallUtil.safeCall(() -> m.val(ident), this);
         if (vMeth==null) {
             throw ASTInvalidMemoryException.UndefinedVariable(ident, this.getLine());
         }
@@ -30,7 +31,7 @@ public class InvokeInstruction extends Instruction {
         if (newAdr<1){
             throw new IndexOutOfBoundsException("invoke line ("+(address+1)+" : Value must be positive.");
         }
-        m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
+        MemoryCallUtil.safeCall(() -> m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT), this);
         return newAdr;
     }
 

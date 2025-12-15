@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -17,9 +18,9 @@ public class LoadInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        Value v = (Value) m.val(ident);
+        Value v = (Value) MemoryCallUtil.safeCall(() -> m.val(ident), this);
         compatibleType(List.of(ValueType.INT, ValueType.BOOL), v.type);
-        m.push(".", v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
+        MemoryCallUtil.safeCall(() -> m.push(".", v, ValueType.toDataType(v.type), EntryKind.CONSTANT), this);
         return address+1;
     }
 

@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.ast.instructions;
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.StackObject;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
@@ -35,14 +36,14 @@ public class NewInstruction extends Instruction{
         ArrayList<StackObject> listSO= new ArrayList<StackObject>();
         try{
             for (int i=0; i<scope; i++){
-                listSO.add(m.top());
+                listSO.add(MemoryCallUtil.safeCall(m::top, this));
                 MemoryCallUtil.safeCall(m::pop, this);
             }
         }catch (Memory.MemoryIllegalOperationException e){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
         try{
-            StackObject top= m.top();
+            StackObject top= MemoryCallUtil.safeCall(m::top, this);
             String name= ".";
             if (top!=null){
                 name=top.getName();
@@ -62,50 +63,26 @@ public class NewInstruction extends Instruction{
             if (v.type!=ValueType.EMPTY){
                 compatibleType(DataType.toValueType(type), v.type);
             }
-            m.declVar(identifier,v,type);
+            final var u = v;
+            MemoryCallUtil.safeCall(() -> m.declVar(identifier,u,type), this);
         }
         else if (kind==EntryKind.CONSTANT){
             if (v.type!=ValueType.EMPTY){
                 compatibleType(DataType.toValueType(type), v.type);
             }
-            m.declCst(identifier,v,type);
+            final var u = v;
+            MemoryCallUtil.safeCall(() -> m.declCst(identifier,u,type), this);
         }else{
             compatibleType(ValueType.INT , v.type);
-            m.push(identifier,v,type,EntryKind.METHOD);
+            final var u = v;
+            MemoryCallUtil.safeCall(() -> m.push(identifier,u,type,EntryKind.METHOD), this);
         }
         for (int i=scope-1; i>-1; i--){
             StackObject s=listSO.get(i);
-            m.push(s.getName(),s.getValue(),s.getDataType(),s.getEntryKind());
+            MemoryCallUtil.safeCall(() -> m.push(s.getName(),s.getValue(),s.getDataType(),s.getEntryKind()), this);
         }
         return address+1;
     }
-
-    /*
-    if (type!=DataType.INT && type!=DataType.BOOL && type!=DataType.VOID){
-            throw new ASTInvalidDynamicTypeException("new line ("+address+") : Invalid type.");
-        }
-        if (kind==EntryKind.VARIABLE){
-            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
-            }
-            m.declVar(identifier,v,type);
-        }
-        else if (kind==EntryKind.CONSTANT){
-            if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
-            }
-            m.declCst(identifier,v,type);
-        }else if (kind==EntryKind.METHOD){
-            if (v.type!=ValueType.INT){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Value must be of type int.");
-            }
-            m.push(identifier,v,type,EntryKind.METHOD);
-        }
-        else {
-            throw new ASTBuildException("new line ("+address+") : Entry kind must be var or const");
-        }
-
-     */
 
     public String toString(){return "new";}
 }

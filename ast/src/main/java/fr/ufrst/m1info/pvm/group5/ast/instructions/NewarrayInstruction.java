@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.ast.instructions;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.StackObject;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -24,7 +25,7 @@ public class NewarrayInstruction extends Instruction {
 
     @Override
     public int execute(int address, Memory m) {
-        StackObject top = m.top();
+        StackObject top = MemoryCallUtil.safeCall(m::top, this);
         if (!Objects.equals(top.getName(), ".")){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
@@ -32,7 +33,7 @@ public class NewarrayInstruction extends Instruction {
         compatibleType(List.of(ValueType.INT, ValueType.BOOL), DataType.toValueType(type));
         compatibleType(ValueType.INT, v.type);
         int size=v.valueInt;
-        m.declTab(identifier,size,type);
+        MemoryCallUtil.safeCall(() -> m.declTab(identifier,size,type), this);
         return address+1;
     }
 

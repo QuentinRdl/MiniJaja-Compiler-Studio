@@ -17,11 +17,11 @@ public class CmpInstruction extends Instruction{
         if (v1.type == ValueType.INT){
             boolean res = v1.valueInt == v2.valueInt;
             Value vres = new Value(res);
-            m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
+            MemoryCallUtil.safeCall(() -> m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT), this);
         }else{
             boolean res = v1.valueBool == v2.valueBool;
             Value vres = new Value(res);
-            m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT);
+            MemoryCallUtil.safeCall(() -> m.push(".", vres, DataType.BOOL, EntryKind.CONSTANT), this);
         }
 
         return address+1;
