@@ -95,6 +95,13 @@ public class Stack {
     }
 
     /**
+     * Decrement the current scope
+     */
+    public void decrementScope() {
+        scopeDepth--;
+    }
+
+    /**
      * Pushes a new var in the stack, w/ the current scope as suffix
      * @param name name of the var
      * @param value value of the var

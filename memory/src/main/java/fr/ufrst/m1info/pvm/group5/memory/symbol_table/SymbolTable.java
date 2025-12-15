@@ -93,7 +93,11 @@ public class SymbolTable {
      */
     public void removeEntry(String name) {
         if (!table.containsKey(name)) {
-            throw new IllegalArgumentException("Symbol not found in current scope: " + name);
+            if (parentScope!=null){
+                parentScope.removeEntry(name);
+            }else{
+                throw new IllegalArgumentException("Symbol not found : " + name);
+            }
         }
         table.remove(name);
     }

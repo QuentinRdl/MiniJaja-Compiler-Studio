@@ -31,6 +31,7 @@ public class InvokeInstruction extends Instruction {
             throw new IndexOutOfBoundsException("invoke line ("+address+" : Value must be positive.");
         }
         m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
+        m.pushScope();
         return newAdr;
     }
 }
