@@ -43,7 +43,7 @@ swap
 return
 push(47)
 new(f,VOID,meth,0)
-goto(60)
+goto(61)
 new(z,INT,var,1)
 load(y)
 load(z)
@@ -55,6 +55,7 @@ div
 store(x)
 push(1)
 inc(x)
+push(0)
 swap
 return
 load(y)
@@ -69,10 +70,10 @@ load(b2)
 not
 or
 and
-if(76)
+if(77)
 push(1)
 inc(x)
-goto(85)
+goto(86)
 push(2)
 invoke(somme)
 swap

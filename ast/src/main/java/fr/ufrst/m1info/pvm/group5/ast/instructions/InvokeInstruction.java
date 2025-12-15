@@ -19,16 +19,16 @@ public class InvokeInstruction extends Instruction {
     public int execute(int address, Memory m) {
         Value vMeth = (Value) m.val(ident);
         if (vMeth==null) {
-            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+") : Method "+ident+" is undefined");
+            throw new ASTInvalidMemoryException("invoke line ("+address+") : Method "+ident+" is undefined");
         }
         try {
             m.getMethod(ident);
         } catch (Exception e) {
-            throw new ASTInvalidMemoryException("invoke line ("+(address+1)+") : "+ident+" is not a method");
+            throw new ASTInvalidMemoryException("invoke line ("+address+") : "+ident+" is not a method");
         }
         int newAdr=vMeth.valueInt;
         if (newAdr<1){
-            throw new IndexOutOfBoundsException("invoke line ("+(address+1)+" : Value must be positive.");
+            throw new IndexOutOfBoundsException("invoke line ("+address+" : Value must be positive.");
         }
         m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
         return newAdr;

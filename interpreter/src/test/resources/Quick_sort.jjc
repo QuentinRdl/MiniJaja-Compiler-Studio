@@ -29,6 +29,7 @@ inc(i)
 goto(15)
 push(" ")
 writeln
+push(0)
 swap
 pop
 swap
@@ -106,6 +107,7 @@ return
 push(109)
 new(pause,VOID,meth,0)
 goto(111)
+push(0)
 swap
 return
 push(114)
@@ -147,6 +149,7 @@ pop
 swap
 pop
 pop
+push(0)
 swap
 pop
 swap

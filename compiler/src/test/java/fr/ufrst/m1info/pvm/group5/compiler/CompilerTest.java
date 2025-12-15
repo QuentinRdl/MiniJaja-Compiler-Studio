@@ -72,7 +72,7 @@ class CompilerTest {
                 "return\n" +
                 "push(47)\n" +
                 "new(f,VOID,meth,0)\n" +
-                "goto(60)\n" +
+                "goto(61)\n" +
                 "new(z,INT,var,1)\n" +
                 "load(y)\n" +
                 "load(z)\n" +
@@ -84,6 +84,7 @@ class CompilerTest {
                 "store(x)\n" +
                 "push(1)\n" +
                 "inc(x)\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
                 "load(y)\n" +
@@ -98,10 +99,10 @@ class CompilerTest {
                 "not\n" +
                 "or\n" +
                 "and\n" +
-                "if(76)\n" +
+                "if(77)\n" +
                 "push(1)\n" +
                 "inc(x)\n" +
-                "goto(85)\n" +
+                "goto(86)\n" +
                 "push(2)\n" +
                 "invoke(somme)\n" +
                 "swap\n" +
@@ -139,7 +140,15 @@ class CompilerTest {
                 "pop\n" +
                 "pop\n" +
                 "jcstop";
-        Assertions.assertEquals(expected,res);
+        String[] listE=expected.split("\n");
+        String[] listR=res.split("\n");
+        StringBuilder differences = new StringBuilder();
+        for (int i = 0; i < listE.length; i++) {
+            if (!listE[i].equals(listR[i])) {
+                differences.append("Line ").append(i + 1).append(" : Expected : ").append(listE[i]).append(" Res : ").append(listR[i]).append("\n");
+            }
+        }
+        Assertions.assertEquals(expected, res, differences.toString());
     }
 
     @Test
@@ -501,9 +510,10 @@ class CompilerTest {
                 "return\n" +
                 "push(41)\n" +
                 "new(helloWorld,VOID,meth,0)\n" +
-                "goto(45)\n" +
+                "goto(46)\n" +
                 "push(\"Hello World\")\n" +
                 "writeln\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
                 "push(\"addition : \")\n" +
@@ -563,7 +573,15 @@ class CompilerTest {
                 "pop\n" +
                 "pop\n" +
                 "jcstop";
-        Assertions.assertEquals(expected,res);
+        String[] listE=expected.split("\n");
+        String[] listR=res.split("\n");
+        StringBuilder differences = new StringBuilder();
+        for (int i = 0; i < listE.length; i++) {
+            if (!listE[i].equals(listR[i])) {
+                differences.append("Line ").append(i + 1).append(" : Expected : ").append(listE[i]).append(" Res : ").append(listR[i]).append("\n");
+            }
+        }
+        Assertions.assertEquals(expected, res, differences.toString());
     }
 
     @Test
@@ -575,7 +593,7 @@ class CompilerTest {
                 "new(x,INT,var,0)\n" +
                 "push(7)\n" +
                 "new(countdown,VOID,meth,0)\n" +
-                "goto(25)\n" +
+                "goto(26)\n" +
                 "new(n,INT,var,1)\n" +
                 "load(n)\n" +
                 "push(1)\n" +
@@ -592,18 +610,19 @@ class CompilerTest {
                 "swap\n" +
                 "pop\n" +
                 "pop\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
-                "push(28)\n" +
+                "push(29)\n" +
                 "new(countup,VOID,meth,0)\n" +
-                "goto(46)\n" +
+                "goto(48)\n" +
                 "new(n,INT,var,1)\n" +
                 "load(n)\n" +
                 "push(1)\n" +
                 "neg\n" +
                 "sup\n" +
-                "if(35)\n" +
-                "goto(44)\n" +
+                "if(36)\n" +
+                "goto(45)\n" +
                 "load(n)\n" +
                 "push(1)\n" +
                 "sub\n" +
@@ -613,6 +632,7 @@ class CompilerTest {
                 "pop\n" +
                 "load(n)\n" +
                 "writeln\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
                 "load(x)\n" +
@@ -634,7 +654,15 @@ class CompilerTest {
                 "pop\n" +
                 "pop\n" +
                 "jcstop";
-        Assertions.assertEquals(expected,res);
+        String[] listE=expected.split("\n");
+        String[] listR=res.split("\n");
+        StringBuilder differences = new StringBuilder();
+        for (int i = 0; i < listE.length; i++) {
+            if (!listE[i].equals(listR[i])) {
+                differences.append("Line ").append(i + 1).append(" : Expected : ").append(listE[i]).append(" Res : ").append(listR[i]).append("\n");
+            }
+        }
+        Assertions.assertEquals(expected, res, differences.toString());
     }
 
     @Test
@@ -726,6 +754,7 @@ class CompilerTest {
                 "goto(15)\n" +
                 "push(\" \")\n" +
                 "writeln\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
                 "swap\n" +
@@ -803,6 +832,7 @@ class CompilerTest {
                 "push(109)\n" +
                 "new(pause,VOID,meth,0)\n" +
                 "goto(111)\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
                 "push(114)\n" +
@@ -844,6 +874,7 @@ class CompilerTest {
                 "swap\n" +
                 "pop\n" +
                 "pop\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
                 "swap\n" +
@@ -991,6 +1022,7 @@ class CompilerTest {
                 "goto(14)\n" +
                 "push(\" \")\n" +
                 "writeln\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
                 "swap\n" +
@@ -1021,6 +1053,7 @@ class CompilerTest {
                 "load(x)\n" +
                 "load(taille)\n" +
                 "astore(t)\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
                 "swap\n" +
@@ -1030,6 +1063,7 @@ class CompilerTest {
                 "push(70)\n" +
                 "new(pause,VOID,meth,0)\n" +
                 "goto(72)\n" +
+                "push(0)\n" +
                 "swap\n" +
                 "return\n" +
                 "push(0)\n" +

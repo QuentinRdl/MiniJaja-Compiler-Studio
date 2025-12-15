@@ -28,6 +28,7 @@ inc(i)
 goto(14)
 push(" ")
 writeln
+push(0)
 swap
 pop
 swap
@@ -58,6 +59,7 @@ store(t)
 load(x)
 load(taille)
 astore(t)
+push(0)
 swap
 pop
 swap
@@ -67,6 +69,7 @@ return
 push(70)
 new(pause,VOID,meth,0)
 goto(72)
+push(0)
 swap
 return
 push(0)

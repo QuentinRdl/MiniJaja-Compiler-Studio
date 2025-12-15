@@ -51,18 +51,18 @@ public class NewInstruction extends Instruction{
         }catch (Exception e){
             v=new Value();
         }
-        if (type!=DataType.INT && type!=DataType.BOOL){
-            throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : Invalid type.");
+        if (type!=DataType.INT && type!=DataType.BOOL && type!=DataType.VOID){
+            throw new ASTInvalidDynamicTypeException("new line ("+address+") : Invalid type.");
         }
         if (kind==EntryKind.VARIABLE){
             if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
+                throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
             }
             m.declVar(identifier,v,type);
         }
         else if (kind==EntryKind.CONSTANT){
             if (v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
-                throw new ASTInvalidDynamicTypeException("new line ("+(address+1)+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
+                throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
             }
             m.declCst(identifier,v,type);
         }else if (kind==EntryKind.METHOD){
@@ -72,7 +72,7 @@ public class NewInstruction extends Instruction{
             m.push(identifier,v,type,EntryKind.METHOD);
         }
         else {
-            throw new ASTBuildException("new line ("+(address+1)+") : Entry kind must be var or const");
+            throw new ASTBuildException("new line ("+address+") : Entry kind must be var or const");
         }
         for (int i=scope-1; i>-1; i--){
             StackObject s=listSO.get(i);

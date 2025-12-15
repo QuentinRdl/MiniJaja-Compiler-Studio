@@ -51,6 +51,10 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         int nens = pens.size();
         int ndvs = pdvs.size();
         int niss = piss.size();
+        if (returnType.valueType==ValueType.VOID){
+            piss.add("push(0)");
+            niss++;
+        }
         int nrdvs = prdvs.size();
         code.add("push(" + (n + 3) + ")");
         code.add("new(" + ident.identifier + "," + returnType + ",meth,0)");
