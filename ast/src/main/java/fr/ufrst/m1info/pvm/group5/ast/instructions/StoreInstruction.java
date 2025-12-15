@@ -16,7 +16,7 @@ public class StoreInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        Value v = (Value) m.pop();
+        Value v = (Value) MemoryCallUtil.safeCall(m::pop, this);
         ValueType varType = m.valueTypeOf(ident);
         compatibleType(List.of(ValueType.BOOL, ValueType.INT), varType);
         compatibleType(varType, v.type);

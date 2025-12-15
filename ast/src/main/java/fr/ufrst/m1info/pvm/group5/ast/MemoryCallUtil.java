@@ -4,6 +4,7 @@ import fr.ufrst.m1info.pvm.group5.ast.instructions.Instruction;
 import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 
 import java.lang.reflect.Executable;
+import java.util.function.Supplier;
 
 public class MemoryCallUtil {
     public static void safeCall(Runnable call, Instruction caller){
@@ -22,5 +23,27 @@ public class MemoryCallUtil {
         catch (Exception e){
             throw ASTInvalidMemoryException.InvalidMemoryOperation(caller.getLine(), e.getMessage());
         }
+    }
+
+    public static <T> T safeCall(Supplier<T> call, ASTNode caller){
+        T res;
+        try{
+            res = call.get();
+        }
+        catch (Exception e){
+            throw ASTInvalidMemoryException.InvalidMemoryOperation(caller.getLine(), e.getMessage());
+        }
+        return res;
+    }
+
+    public static <T> T safeCall(Supplier<T> call, Instruction caller){
+        T res;
+        try{
+            res = call.get();
+        }
+        catch (Exception e){
+            throw ASTInvalidMemoryException.InvalidMemoryOperation(caller.getLine(), e.getMessage());
+        }
+        return res;
     }
 }

@@ -28,7 +28,7 @@ public class NewarrayInstruction extends Instruction {
         if (!Objects.equals(top.getName(), ".")){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
-        Value v = ((Value) m.pop());
+        Value v = ((Value) MemoryCallUtil.safeCall(m::pop, this));
         compatibleType(List.of(ValueType.INT, ValueType.BOOL), DataType.toValueType(type));
         compatibleType(ValueType.INT, v.type);
         int size=v.valueInt;

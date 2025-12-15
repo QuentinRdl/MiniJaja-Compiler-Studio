@@ -36,7 +36,7 @@ public class NewInstruction extends Instruction{
         try{
             for (int i=0; i<scope; i++){
                 listSO.add(m.top());
-                m.pop();
+                MemoryCallUtil.safeCall(m::pop, this);
             }
         }catch (Memory.MemoryIllegalOperationException e){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
@@ -48,7 +48,7 @@ public class NewInstruction extends Instruction{
                 name=top.getName();
             }
             if(name.equals(".")) {
-                v = ((Value) m.pop());
+                v = ((Value) MemoryCallUtil.safeCall(m::pop, this));
             }else{
                 v=new Value();
             }

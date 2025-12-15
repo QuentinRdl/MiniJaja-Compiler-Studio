@@ -21,7 +21,7 @@ public class IncInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v_add = (Value) m.val(ident);
-        Value v_pop = (Value) m.pop();
+        Value v_pop = (Value) MemoryCallUtil.safeCall(m::pop, this);
         compatibleType(ValueType.INT, v_add.type);
         compatibleType(ValueType.INT, v_pop.type);
         int res = v_pop.valueInt + v_add.valueInt;

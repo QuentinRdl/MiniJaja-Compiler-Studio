@@ -7,7 +7,7 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 public class ReturnInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
-        Value top = (Value) m.pop();
+        Value top = (Value) MemoryCallUtil.safeCall(m::pop, this);
         compatibleType(ValueType.INT, top.type);
         return top.valueInt;
     }

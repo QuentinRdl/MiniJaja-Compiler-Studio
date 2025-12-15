@@ -8,8 +8,8 @@ import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 public class AndInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
-        Value v2 = (Value) m.pop(); //first pop => right operand
-        Value v1 = (Value) m.pop(); //second pop => left operand
+        Value v2 = (Value) MemoryCallUtil.safeCall(m::pop, this); //first pop => right operand
+        Value v1 = (Value) MemoryCallUtil.safeCall(m::pop, this); //second pop => left operand
         compatibleType(ValueType.BOOL, v1.type);
         compatibleType(ValueType.BOOL, v2.type);
         boolean res = v1.valueBool && v2.valueBool;

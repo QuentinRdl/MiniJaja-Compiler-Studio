@@ -6,7 +6,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Value;
 public class WriteInstruction extends Instruction {
     @Override
     public int execute(int address, Memory m) {
-        Value top = (Value) m.pop();
+        Value top = (Value) MemoryCallUtil.safeCall(m::pop, this);
         m.write(top.toString());
         return address + 1;
     }

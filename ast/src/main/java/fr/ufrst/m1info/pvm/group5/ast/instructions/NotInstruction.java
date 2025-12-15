@@ -10,7 +10,7 @@ public class NotInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        Value v = (Value) m.pop();
+        Value v = (Value) MemoryCallUtil.safeCall(m::pop, this);
         compatibleType(ValueType.BOOL, v.type);
         boolean res = !v.valueBool ;
         Value vres = new Value(res);

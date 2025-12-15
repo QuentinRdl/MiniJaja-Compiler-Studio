@@ -10,7 +10,7 @@ public class NegInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        Value v = (Value) m.pop();
+        Value v = (Value) MemoryCallUtil.safeCall(m::pop, this);
         compatibleType(ValueType.INT, v.type);
         int res = -v.valueInt ;
         Value vres = new Value(res);

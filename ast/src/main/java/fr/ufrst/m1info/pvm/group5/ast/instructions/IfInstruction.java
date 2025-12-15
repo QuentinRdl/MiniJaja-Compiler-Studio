@@ -23,7 +23,7 @@ public class IfInstruction extends Instruction{
         boolean b;
         Value v;
         try {
-            v = ((Value) m.pop());
+            v = ((Value) MemoryCallUtil.safeCall(m::pop, this));
         }catch (Stack.StackIsEmptyException e){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
