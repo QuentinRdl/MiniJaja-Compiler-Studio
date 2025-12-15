@@ -266,7 +266,7 @@ class MemoryTest {
         when(symbolTableMocked.lookup("arr")).thenReturn(arrayEntry);
 
         int oldRef = 50;
-        StackObject obj = new StackObject("arr", oldRef, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject obj = new StackObject("arr", new Value(oldRef), 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.searchObject("arr")).thenReturn(obj);
 
         memory.affectValue("arr", new Value(200));
@@ -276,7 +276,7 @@ class MemoryTest {
         verify(heapMocked, times(1)).removeReference(oldRef);
         verify(heapMocked, times(1)).addReference(200);
         // stack object's value should be updated
-        assertEquals(200, obj.getValue());
+        assertEquals(200, ((Value) obj.getValue()).valueInt);
     }
 
     @Test

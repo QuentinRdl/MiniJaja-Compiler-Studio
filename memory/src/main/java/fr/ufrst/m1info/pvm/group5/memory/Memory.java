@@ -230,12 +230,12 @@ public class Memory {
         // Handle according to the kind
         if(entry.getKind() == EntryKind.ARRAY) {
             // Remove the reference from old array
-            int oldReference = (int) obj.getValue();
+            int oldReference = ((Value) obj.getValue()).valueInt;
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
             heap.addReference(((Value) value).valueInt);
-            obj.setValue(((Value) value).valueInt);
+            obj.setValue(value);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
