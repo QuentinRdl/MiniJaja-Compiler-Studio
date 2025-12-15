@@ -30,6 +30,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private Label lineNumberLabel;
     private InlineCssTextArea codeField;
     private Circle breakpointCircle;
+    private IndentationGuideCanvas indentationCanvas;
 
     // Listener used to handle user interactions (Enter ou Delete key events)
     private CodeLineCellListener listener;
@@ -71,6 +72,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
         codeField.getStyleClass().addAll("styled-text-area", "code-field");
         codeField.setWrapText(false);
         codeField.setPrefHeight(30);
+        codeField.setPrefWidth(1000);
         HBox.setHgrow(codeField, Priority.ALWAYS);
 
 
@@ -118,6 +120,11 @@ public class CodeLineCell extends ListCell<CodeLine> {
             // Apply syntax highlighting
             if (!isUpdating && cleaned != null) {
                 applySyntaxHighlighting(cleaned);
+            }
+
+            // Update indentation lines
+            if (indentationCanvas != null) {
+                indentationCanvas.setText(cleaned);
             }
         });
 
@@ -167,9 +174,24 @@ public class CodeLineCell extends ListCell<CodeLine> {
             }
         });
 
+        // Create indentation canvas
+        indentationCanvas = new IndentationGuideCanvas();
+        indentationCanvas.setMouseTransparent(true); // Allow clicks through to codeField
+
+        // Wrap codeField and canvas in StackPane for overlay
+        StackPane codeFieldContainer = new StackPane();
+        codeFieldContainer.getChildren().addAll(indentationCanvas, codeField);
+        StackPane.setAlignment(indentationCanvas, Pos.TOP_LEFT);
+        StackPane.setAlignment(codeField, Pos.TOP_LEFT);
+
+        // Bind canvas size to codeField size
+        indentationCanvas.widthProperty().bind(codeField.widthProperty());
+        indentationCanvas.heightProperty().bind(codeField.heightProperty());
+
+        // Create container with new structure
         container = new HBox();
         container.getStyleClass().add("code-line");
-        container.getChildren().addAll(lineNumberContainer, codeField);
+        container.getChildren().addAll(lineNumberContainer, codeFieldContainer);
 
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
     }
@@ -255,6 +277,11 @@ public class CodeLineCell extends ListCell<CodeLine> {
             setGraphic(null);
         } else {
             codeField.replaceText(item.getCode());
+
+            // Update indentation canvas
+            if (indentationCanvas != null) {
+                indentationCanvas.setText(item.getCode());
+            }
 
             if(item.isCurrentDebugLine()){
                 if(!getStyleClass().contains("debug-current-line")){

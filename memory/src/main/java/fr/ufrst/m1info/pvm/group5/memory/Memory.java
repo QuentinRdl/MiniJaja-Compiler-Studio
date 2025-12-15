@@ -416,11 +416,17 @@ public class Memory {
         }
     }
 
+    /**
+     * Adds a new scope
+     */
     public void pushScope() {
         stack.pushScope();
         symbolTable=symbolTable.createChildScope();
     }
 
+    /**
+     * Pops the current scope
+     */
     public void popScope() {
         try {
             stack.popScope();
@@ -430,11 +436,34 @@ public class Memory {
         }
     }
 
+    /**
+     * Decrement the current scope
+     */
+    public void decrementScope() {
+        try {
+            stack.decrementScope();
+        } catch (Stack.NoScopeException _) {
+
+        }
+    }
+
+    /**
+     * Checks whether a symbol with the given name exists in the table.
+     *
+     * @param identifier the name of the symbol to check
+     * @return {@code true} if the symbol exists, {@code false} otherwise
+     */
     public boolean contains(String identifier) {
         if (identifier == null || identifier.isEmpty()) return false;
         return symbolTable.contains(identifier);
     }
 
+    /**
+     * Declares a named array
+     * @param identifier identifier of the array, can't be null
+     * @param size value of the array. Can't be null
+     * @param type type of the array
+     */
     public void declTab(String identifier, int size, DataType type) {
         int addr = heap.allocate(size, type);
         heap.addReference(addr);
