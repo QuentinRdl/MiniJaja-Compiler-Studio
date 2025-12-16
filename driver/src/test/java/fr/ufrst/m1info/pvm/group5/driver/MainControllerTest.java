@@ -2375,4 +2375,6 @@ class MainControllerTest extends ApplicationTest {
         String output = controller.output.getText();
         assertTrue(output.contains("[INFO] Debugging stopped"));
     }
+
+
 }

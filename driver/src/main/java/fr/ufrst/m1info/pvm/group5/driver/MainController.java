@@ -915,6 +915,8 @@ public class MainController {
                 err = interpreterJajaCode.interpretCode(compiledCode);
 
                 if(err == null){
+                    showMemoryTab(memoryTabJajacode);
+                    Platform.runLater(() -> memoryVisualisationJajaCode.updateMemory(interpreterJajaCode.getMemory().toStringTab()));
                     console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
                 } else {
                     console.getWriter().writeLine("[ERROR] " + err);
