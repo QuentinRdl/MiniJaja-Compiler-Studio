@@ -272,3 +272,18 @@
 .menu-item:armed {
     -fx-background-color: transparent;
 }
+
+.text-area.data-area .content {
+    -fx-padding: 0;
+    -fx-background-color: #262626;
+}
+
+.text-area.data-area .scroll-pane{
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.tab-close-button {
+    -fx-background-color: white;
+}
+

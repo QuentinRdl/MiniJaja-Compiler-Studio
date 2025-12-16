@@ -2,6 +2,9 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 /**
@@ -9,7 +12,7 @@ import javafx.scene.layout.VBox;
  * Each block shows its address, allocation status, size, reference count, and content bytes
  */
 public class HeapBlockView extends VBox {
-    private Label dataLabel;
+    private TextArea dataLabel;
 
     /**
      * Constructs a visual block for a heap memory segment
@@ -41,9 +44,14 @@ public class HeapBlockView extends VBox {
 
         Label refsLabel = new Label("Refs : " + refs);
 
-        dataLabel = new Label();
-        dataLabel.setMaxWidth(260);
+        dataLabel = new TextArea();
+        dataLabel.getStyleClass().add("data-area");
+        dataLabel.setEditable(false);
         dataLabel.setWrapText(true);
+
+        dataLabel.setPrefRowCount(3);
+        dataLabel.setMinHeight(Region.USE_PREF_SIZE);
+        VBox.setVgrow(dataLabel, Priority.NEVER);
 
         getChildren().addAll(addressLabel, sizeLabel, refsLabel, dataLabel);
     }
@@ -54,34 +62,7 @@ public class HeapBlockView extends VBox {
      * @param data the string representating the block's bytes
      */
     public void setDataLabel(String data){
-        data = data.replace("[", "").replace("]", "").trim();
-
-        if(data.isEmpty()){
-            dataLabel.setText("Data : [ ]");
-            return;
-        }
-
-        String[] parts = data.split(",");
-        int size = parts.length;
-
-        boolean allZero = true;
-        for(String p : parts){
-            if(!p.trim().equals("0")){
-                allZero = false;
-                break;
-            }
-        }
-
-        if(allZero){
-            if(size <= 5){
-                dataLabel.setText("Data : [" + String.join(", ", parts) + "]");
-                return;
-            }
-            dataLabel.setText("Data : [0, 0, 0, 0, 0...]");
-            return;
-        }
-
-        dataLabel.setText("Data : [" + data + "]");
+        dataLabel.setText("Data : " + data );
 
     }
 }

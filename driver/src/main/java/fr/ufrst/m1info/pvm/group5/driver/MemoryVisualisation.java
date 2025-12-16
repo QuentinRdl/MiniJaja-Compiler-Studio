@@ -7,16 +7,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 /**
  * Component to visually display the memory state (stack and heap) in the UI
  * Provides methods to update and clear the visualisation
  */
-public class MemoryVisualisation extends HBox {
+public class MemoryVisualisation extends GridPane {
 
     private VBox stackContainer;
     private VBox heapContainer;
@@ -28,8 +26,21 @@ public class MemoryVisualisation extends HBox {
      * Initializes the memory visualisation UI with separate sections for stack and heap
      */
     public MemoryVisualisation() {
-        super(20);
+        super();
         setPadding(new Insets(15));
+        setHgap(20);
+
+        ColumnConstraints colStack = new ColumnConstraints();
+        colStack.setHgrow(Priority.ALWAYS);
+        colStack.setFillWidth(true);
+        colStack.setPercentWidth(50);
+
+        ColumnConstraints colHeap = new ColumnConstraints();
+        colHeap.setHgrow(Priority.ALWAYS);
+        colHeap.setFillWidth(true);
+        colHeap.setPercentWidth(50);
+
+        getColumnConstraints().addAll(colStack, colHeap);
 
         // Stack
         VBox stackSection = new VBox(10);
@@ -74,12 +85,9 @@ public class MemoryVisualisation extends HBox {
         VBox.setVgrow(stackScrollPane, Priority.ALWAYS);
         VBox.setVgrow(heapScrollPane, Priority.ALWAYS);
 
-        getChildren().addAll(stackSection, heapSection);
-        HBox.setHgrow(stackSection, Priority.ALWAYS);
-        HBox.setHgrow(heapSection, Priority.ALWAYS);
+        add(stackSection, 0, 0);
+        add(heapSection, 1, 0);
 
-        stackSection.setMaxWidth(Double.MAX_VALUE);
-        heapSection.setMaxWidth(Double.MAX_VALUE);
     }
 
     /**
