@@ -11,6 +11,7 @@ public class ReturnInstruction extends Instruction {
         if(top.type != ValueType.INT){
             throw new IllegalStateException("Return address must be int");
         }
+        m.decrementScope();
         return top.valueInt;
     }
 }

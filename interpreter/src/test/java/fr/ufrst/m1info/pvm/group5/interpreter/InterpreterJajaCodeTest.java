@@ -54,6 +54,16 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File One")
+    void FileOne() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/1.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("x : 8\nx : 11\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File BasicOperations")
     void BasicOperations() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/BasicOperations.jjc"));
@@ -87,6 +97,26 @@ class InterpreterJajaCodeTest {
     @DisplayName("Interpret File Method")
     void Method() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Method.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodComplex")
+    void MethodComplex() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/MethodComplex.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("addition : 101\nsubstraction : -99\ninferior : true\nHello World\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File MethodRecursive")
+    void MethodRecursive() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/MethodRecursive.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n4\n3\n2\n1\n0\n0\n1\n2\n3\n4\n5\n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test

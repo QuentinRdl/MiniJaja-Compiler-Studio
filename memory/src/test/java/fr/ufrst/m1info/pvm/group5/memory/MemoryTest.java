@@ -257,7 +257,7 @@ class MemoryTest {
 
         verify(heapMocked, times(1)).allocate(5, DataType.INT);
         verify(symbolTableMocked, times(1)).addEntry("arr", EntryKind.ARRAY, DataType.INT);
-        verify(stackMocked, times(1)).setVar("arr", 123, DataType.INT);
+        verify(stackMocked, times(1)).setVar(eq("arr"), any(Value.class), eq(DataType.INT));
     }
 
     @Test
@@ -266,7 +266,7 @@ class MemoryTest {
         when(symbolTableMocked.lookup("arr")).thenReturn(arrayEntry);
 
         int oldRef = 50;
-        StackObject obj = new StackObject("arr", oldRef, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject obj = new StackObject("arr", new Value(oldRef), 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.searchObject("arr")).thenReturn(obj);
 
         memory.affectValue("arr", new Value(200));
@@ -276,13 +276,13 @@ class MemoryTest {
         verify(heapMocked, times(1)).removeReference(oldRef);
         verify(heapMocked, times(1)).addReference(200);
         // stack object's value should be updated
-        assertEquals(200, obj.getValue());
+        assertEquals(200, ((Value) obj.getValue()).valueInt);
     }
 
     @Test
     void affectValTDelegatesToHeap() {
         int addr = 77;
-        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject addrObj = new StackObject("arr", new Value(addr), 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.getObject("arr")).thenReturn(addrObj);
 
         Value val = new Value(999);
@@ -296,7 +296,7 @@ class MemoryTest {
     @Test
     void valTReturnsValueFromHeap() {
         int addr = 88;
-        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject addrObj = new StackObject("arr", new Value(addr), 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.getObject("arr")).thenReturn(addrObj);
 
         Value expected = new Value(42);
@@ -316,7 +316,7 @@ class MemoryTest {
         SymbolTableEntry arrayEntry = new SymbolTableEntry("arr", EntryKind.ARRAY, DataType.INT);
         when(symbolTableMocked.lookup("arr")).thenReturn(arrayEntry);
         int addr = 99;
-        StackObject addrObj = new StackObject("arr", addr, 0, EntryKind.VARIABLE, DataType.INT);
+        StackObject addrObj = new StackObject("arr", new Value(addr), 0, EntryKind.VARIABLE, DataType.INT);
         when(stackMocked.getObject("arr")).thenReturn(addrObj);
 
         when(heapMocked.sizeOf(addr)).thenReturn(5);

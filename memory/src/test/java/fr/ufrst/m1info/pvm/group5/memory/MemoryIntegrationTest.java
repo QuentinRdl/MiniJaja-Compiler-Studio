@@ -612,8 +612,7 @@ class MemoryIntegrationTest {
         assertEquals(DataType.INT, aObj.getDataType());
 
         // Create an alias variable that stores the raw address
-        int address = (int) aObj.getValue();
-        mem.declVar("alias", address, DataType.INT);
+        mem.declVar("alias", aObj.getValue(), DataType.INT);
 
         // Write via original identifier
         mem.affectValT("tab", 0, new Value(42));

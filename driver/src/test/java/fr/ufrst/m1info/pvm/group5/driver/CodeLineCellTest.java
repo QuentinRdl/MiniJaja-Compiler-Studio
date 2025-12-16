@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;
@@ -99,17 +100,9 @@ class CodeLineCellTest extends ApplicationTest {
         StackPane lineNumberContainer = (StackPane) container.getChildren().get(0);
         Label lineNumber = (Label) cell.getLineNumberLabel();
 
-        // Get the code field (can be TextField or InlineCssTextArea)
-        javafx.scene.Node codeFieldNode = container.getChildren().get(1);
-        System.out.println("DEBUG = " + codeFieldNode);
-        String codeText;
-        if (codeFieldNode instanceof org.fxmisc.richtext.InlineCssTextArea textArea) {
-            codeText = textArea.getText();
-        } else if (codeFieldNode instanceof TextField tf) {
-            codeText = tf.getText();
-        } else {
-            codeText = "";
-        }
+        // Get the code field directly from the cell
+        InlineCssTextArea codeField = cell.getCodeField();
+        String codeText = codeField.getText();
 
         assertEquals("1", lineNumber.getText());
         assertEquals("x = 10;", codeText);
@@ -244,6 +237,4 @@ class CodeLineCellTest extends ApplicationTest {
         cell.setCodeEditable(false);
         assertFalse(cell.getCodeField().isEditable());
     }
-
-
 }

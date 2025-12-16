@@ -37,9 +37,10 @@ swap
 return
 push(41)
 new(helloWorld,VOID,meth,0)
-goto(45)
+goto(46)
 push("Hello World")
 writeln
+push(0)
 swap
 return
 push("addition : ")

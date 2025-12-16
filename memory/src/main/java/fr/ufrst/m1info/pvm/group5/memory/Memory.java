@@ -117,7 +117,7 @@ public class Memory {
         if (!top.getName().equals(".")) {
             SymbolTableEntry ste = symbolTable.lookup(top.getName());
             if (ste!=null && ste.getKind()==EntryKind.ARRAY){
-                heap.removeReference((int) top.getValue());
+                heap.removeReference(((Value) top.getValue()).valueInt);
             }
             symbolTable.removeEntry(top.getName());
         }
@@ -196,7 +196,7 @@ public class Memory {
             if(obj.getEntryKind() != EntryKind.VARIABLE && obj.getDataType() != DataType.INT) {
                 throw new MemoryIllegalArgException("When referencing an array, we should find an int");
             }
-            int reference_value = (int)obj.getValue();
+            int reference_value = ((Value) obj.getValue()).valueInt;
             heap.removeReference(reference_value);
         }
 
@@ -230,12 +230,12 @@ public class Memory {
         // Handle according to the kind
         if(entry.getKind() == EntryKind.ARRAY) {
             // Remove the reference from old array
-            int oldReference = (int) obj.getValue();
+            int oldReference = ((Value) obj.getValue()).valueInt;
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
             heap.addReference(((Value) value).valueInt);
-            obj.setValue(((Value) value).valueInt);
+            obj.setValue(value);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
@@ -416,11 +416,17 @@ public class Memory {
         }
     }
 
+    /**
+     * Adds a new scope
+     */
     public void pushScope() {
         stack.pushScope();
         symbolTable=symbolTable.createChildScope();
     }
 
+    /**
+     * Pops the current scope
+     */
     public void popScope() {
         try {
             stack.popScope();
@@ -430,16 +436,39 @@ public class Memory {
         }
     }
 
+    /**
+     * Decrement the current scope
+     */
+    public void decrementScope() {
+        try {
+            stack.decrementScope();
+        } catch (Stack.NoScopeException _) {
+
+        }
+    }
+
+    /**
+     * Checks whether a symbol with the given name exists in the table.
+     *
+     * @param identifier the name of the symbol to check
+     * @return {@code true} if the symbol exists, {@code false} otherwise
+     */
     public boolean contains(String identifier) {
         if (identifier == null || identifier.isEmpty()) return false;
         return symbolTable.contains(identifier);
     }
 
+    /**
+     * Declares a named array
+     * @param identifier identifier of the array, can't be null
+     * @param size value of the array. Can't be null
+     * @param type type of the array
+     */
     public void declTab(String identifier, int size, DataType type) {
         int addr = heap.allocate(size, type);
         heap.addReference(addr);
         symbolTable.addEntry(identifier, EntryKind.ARRAY, type);
-        stack.setVar(identifier, addr, DataType.INT);
+        stack.setVar(identifier, new Value(addr), DataType.INT);
     }
 
     /**
@@ -455,7 +484,7 @@ public class Memory {
             return; // An array should be stocked as an int that has its own reference
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
 
         heap.setValue(address, index, value);
     }
@@ -473,7 +502,7 @@ public class Memory {
             return null; // An array should be stocked as an int that has its own reference
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
         return heap.getValue(address, index);
     }
 
@@ -491,7 +520,7 @@ public class Memory {
             return -1;
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
         return heap.sizeOf(address);
     }
 
