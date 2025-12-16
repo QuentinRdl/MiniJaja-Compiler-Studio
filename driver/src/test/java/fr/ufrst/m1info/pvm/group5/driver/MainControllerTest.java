@@ -6,9 +6,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import static org.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,9 +27,7 @@ import java.util.List;
 
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.matcher.control.LabeledMatchers;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
 import static org.testfx.util.NodeQueryUtils.isVisible;
 import org.testfx.api.FxAssert;
@@ -1740,6 +1739,7 @@ class MainControllerTest extends ApplicationTest {
         }
     }
 
+
     @Test
     void testStartDebugOnSimpleMiniJajaFile() throws Exception {
         File testFile = createTestFile("simple_debug.mjj",
@@ -1756,7 +1756,9 @@ class MainControllerTest extends ApplicationTest {
         interact(() -> controller.onClickRunDebug());
         WaitForAsyncUtils.waitForFxEvents();
 
-        Thread.sleep(500); // Wait for debug to initialize
+        await().atMost(2, SECONDS).until(() ->
+                        controller.output.getText().contains("[DEBUG] Line")
+        );
 
         String output = controller.output.getText();
         assertTrue(output.contains("[DEBUG] Line"));
@@ -1812,10 +1814,23 @@ class MainControllerTest extends ApplicationTest {
 
         interact(() -> controller.onClickRunDebug());
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(500);
+
+        // Wait until debugging is actually running
+        await()
+                .atMost(2, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
 
         interact(() -> controller.onClickStopDebug());
         WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait until stop is fully processed
+        await()
+                .atMost(2, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[INFO] Debugging stopped")
+                );
 
         String output = controller.output.getText();
         assertTrue(output.contains("[INFO] Debugging stopped"));
@@ -1823,6 +1838,7 @@ class MainControllerTest extends ApplicationTest {
         verifyThat("#btnDebugStop", isDisabled());
         verifyThat("#btnDebugRun", isEnabled());
     }
+
 
     @Test
     void testGetBreakpointLines_Empty() throws IOException {
@@ -1978,7 +1994,6 @@ class MainControllerTest extends ApplicationTest {
         Thread.sleep(1000); // Wait for compilation
 
         java.util.Set<Integer> breakpoints = controller.getCompiledBreakpointLines();
-
         assertTrue(breakpoints.isEmpty());
     }
 

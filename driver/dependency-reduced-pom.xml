@@ -21,7 +21,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>fr.ufrst.m1info.pvm.group5.driver.MainApplication</mainClass>
+                  <mainClass>fr.ufrst.m1info.pvm.group5.driver.Launcher</mainClass>
                 </transformer>
               </transformers>
             </configuration>

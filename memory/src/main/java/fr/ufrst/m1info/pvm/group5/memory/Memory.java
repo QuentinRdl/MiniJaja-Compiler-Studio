@@ -123,7 +123,7 @@ public class Memory {
         if (!top.getName().equals(".")) {
             SymbolTableEntry ste = symbolTable.lookup(top.getName());
             if (ste!=null && ste.getKind()==EntryKind.ARRAY){
-                heap.removeReference((int) top.getValue());
+                heap.removeReference(((Value) top.getValue()).valueInt);
             }
             symbolTable.removeEntry(top.getName());
         }
@@ -202,7 +202,7 @@ public class Memory {
             if(obj.getEntryKind() != EntryKind.VARIABLE && obj.getDataType() != DataType.INT) {
                 throw new MemoryIllegalArgException("Memory", "withdraw", "no array address found when trying to withdraw an array, given "+kind);
             }
-            int reference_value = (int)obj.getValue();
+            int reference_value = ((Value) obj.getValue()).valueInt;
             heap.removeReference(reference_value);
         }
 
@@ -227,9 +227,6 @@ public class Memory {
         // Check that it exists in the symbol table
         SymbolTableEntry entry = symbolTable.lookup(identifier); // Can throw illegalArgumentException if identifier not found
 
-        // Check that types matches
-        DataType givenDataType = stack.getDataTypeFromGenericObject(value);
-
         // Find the object in the stack
         StackObject obj = stack.searchObject(identifier);
         if (obj == null) {
@@ -239,12 +236,12 @@ public class Memory {
         // Handle according to the kind
         if(entry.getKind() == EntryKind.ARRAY) {
             // Remove the reference from old array
-            int oldReference = (int) obj.getValue();
+            int oldReference = ((Value) obj.getValue()).valueInt;
             heap.removeReference(oldReference);
 
             // Add the new reference to the heap & the stack
             heap.addReference(((Value) value).valueInt);
-            obj.setValue(((Value) value).valueInt);
+            obj.setValue(value);
             return;
         } else if (entry.getKind() == EntryKind.VARIABLE) {
             // Variables can always be reassigned
@@ -265,6 +262,10 @@ public class Memory {
         throw new MemoryIllegalOperationException("Memory", "value affectation", "operation not defined for given kind, "+entry.getKind());
     }
 
+    /**
+     * Declares the class variable
+     * @param identifier identifier of the var class
+     */
     public void declVarClass(String identifier) {
         // We check that nothing on the Symbol Table & the stack is defined w/ this name
         if(identifierVarClass != null || symbolTable.contains(identifier) || stack.hasObj(identifier)) {
@@ -376,7 +377,6 @@ public class Memory {
         entry.setReference(params);
         symbolTable.addEntry(entry);
         stack.setMethod(identifier, params, returnType);
-        //stack.pushScope();
     }
 
     /**
@@ -414,35 +414,61 @@ public class Memory {
         if (obj != null) {
             stack.removeObject(obj);
         }
-        /*try {
-            stack.popScope();
-        } catch (Stack.NoScopeException e) {
-        }*/
     }
 
+    /**
+     * Adds a new scope
+     */
     public void pushScope() {
         stack.pushScope();
         symbolTable=symbolTable.createChildScope();
     }
 
+    /**
+     * Pops the current scope
+     */
     public void popScope() {
         try {
             stack.popScope();
             symbolTable=symbolTable.getParentScope();
-        } catch (Stack.NoScopeException ignored) {
+        } catch (Stack.NoScopeException _) {
+
         }
     }
 
+    /**
+     * Decrement the current scope
+     */
+    public void decrementScope() {
+        try {
+            stack.decrementScope();
+        } catch (Stack.NoScopeException _) {
+
+        }
+    }
+
+    /**
+     * Checks whether a symbol with the given name exists in the table.
+     *
+     * @param identifier the name of the symbol to check
+     * @return {@code true} if the symbol exists, {@code false} otherwise
+     */
     public boolean contains(String identifier) {
         if (identifier == null || identifier.isEmpty()) return false;
         return val(identifier) != null;
     }
 
+    /**
+     * Declares a named array
+     * @param identifier identifier of the array, can't be null
+     * @param size value of the array. Can't be null
+     * @param type type of the array
+     */
     public void declTab(String identifier, int size, DataType type) {
         int addr = heap.allocate(size, type);
         heap.addReference(addr);
         symbolTable.addEntry(identifier, EntryKind.ARRAY, type);
-        stack.setVar(identifier, addr, DataType.INT);
+        stack.setVar(identifier, new Value(addr), DataType.INT);
     }
 
     /**
@@ -458,7 +484,7 @@ public class Memory {
             return; // An array should be stocked as an int that has its own reference
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
 
         heap.setValue(address, index, value);
     }
@@ -476,7 +502,7 @@ public class Memory {
             return null; // An array should be stocked as an int that has its own reference
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
         return heap.getValue(address, index);
     }
 
@@ -494,7 +520,7 @@ public class Memory {
             return -1;
         }
 
-        int address = (int) addressObj.getValue();
+        int address = ((Value) addressObj.getValue()).valueInt;
         return heap.sizeOf(address);
     }
 
@@ -518,10 +544,7 @@ public class Memory {
      */
     public boolean isArray(String identifier) {
         SymbolTableEntry arr = symbolTable.lookup(identifier);
-        if (arr==null || arr.getKind()!= EntryKind.ARRAY){
-            return false;
-        }
-        return true;
+        return arr != null && arr.getKind() == EntryKind.ARRAY;
     }
 
     /**

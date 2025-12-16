@@ -32,6 +32,7 @@ public class InvokeInstruction extends Instruction {
             throw new IndexOutOfBoundsException("invoke line ("+(address+1)+" : Value must be positive.");
         }
         MemoryCallUtil.safeCall(() -> m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT), this);
+        MemoryCallUtil.safeCall(m::pushScope, this);
         return newAdr;
     }
 

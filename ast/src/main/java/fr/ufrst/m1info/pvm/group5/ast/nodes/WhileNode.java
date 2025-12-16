@@ -39,6 +39,9 @@ public class WhileNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
+        if (condition instanceof IdentNode && m.isArray(((IdentNode) condition).identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Condition in While structure cannot be an array.");
+        }
         Value e = ((EvaluableNode)condition).eval(m);
         while(e.valueBool){ // Rule [tantquevrai]
             if(iss != null)

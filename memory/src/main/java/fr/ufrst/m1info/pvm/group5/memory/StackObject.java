@@ -32,12 +32,10 @@ public class StackObject {
                         "VARIABLE, CONSTANT or METHOD must specify a valid DataType"
                 );
             }
-        } else if(dataType != DataType.UNKNOWN) {
-            if (dataType != null) {
-                throw new Stack.InvalidStackObjectConstructionException(
-                        "Non-variable/non-constant/non-method objects should not specify DataType"
-                );
-            }
+        } else if(dataType != DataType.UNKNOWN && dataType != null) {
+            throw new Stack.InvalidStackObjectConstructionException(
+                    "Non-variable/non-constant/non-method objects should not specify DataType"
+            );
         }
         this.name = name;
         this.value = value;
@@ -134,15 +132,15 @@ public class StackObject {
      * Turns a Stack_Object into a Value
      * Should be use where we would Cast
      * @param obj object to cast into value
-     * @return Value value casted from the given Stack_Object
+     * @return Value the value corresponding to the given Stack_Object
      */
     public static Value stackObjToValue(StackObject obj) {
         if(obj == null) return null;
 
         Object raw = obj.getValue();
         // If the stored object is already a Value, return it, right now it will not be, but later on it will be
-        if (raw instanceof Value) {
-            return (Value) raw;
+        if (raw instanceof Value rawRet) {
+            return rawRet;
         }
 
         // If the stored object is null, return an empty Value
@@ -151,11 +149,11 @@ public class StackObject {
         }
 
         // Convert primitives to Value
-        if (raw instanceof Integer) {
-            return new Value((Integer) raw);
+        if (raw instanceof Integer rawInt) {
+            return new Value(rawInt);
         }
-        if (raw instanceof Boolean) {
-            return new Value((Boolean) raw);
+        if (raw instanceof Boolean rawBool) {
+            return new Value(rawBool);
         }
 
         return null;
@@ -165,12 +163,10 @@ public class StackObject {
      * Turns a Value into a Stack_Object
      * Should be use where we would Cast
      * @param val Value to cast into Stack_Object
-     * @return Stack_Object casted from the given Stack_Object
+     * @return Stack_Object corresponding to the given Stack_Object
      */
     public static StackObject valueToStackObj(Value val) {
         if (val == null) return null;
-
-        final String objName = null;
 
         if (val.type == null) {
             return new StackObject(null, null, 0, EntryKind.OTHER);

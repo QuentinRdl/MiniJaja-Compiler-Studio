@@ -40,5 +40,4 @@ public interface CodeLineCellListener {
      * Called when the code editor content is modified
      */
     void onModified();
-
 }

@@ -37,6 +37,9 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
     }
 
     public Value eval(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
+        if ((left instanceof IdentNode && m.isArray(((IdentNode) left).identifier)) || (right instanceof IdentNode && m.isArray(((IdentNode) right).identifier))){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Binary Operation cannot be used with an array.");
+        }
         Value l = ((EvaluableNode) left).eval(m);
         Value r = ((EvaluableNode) right).eval(m);
         return mainOperation(l, r);

@@ -47,6 +47,9 @@ public class IfNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
+        if (condition instanceof IdentNode && m.isArray(((IdentNode) condition).identifier)){
+            throw new ASTInvalidOperationException("Line "+ getLine() +" : Condition in If structure cannot be an array.");
+        }
         boolean exp = ((EvaluableNode)condition).eval(m).valueBool;
         if(exp){
             if(instrThen != null) {

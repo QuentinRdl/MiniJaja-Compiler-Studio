@@ -891,11 +891,7 @@ class NodeCompileTest {
                 i -> List.of("V1")
         );
 
-        ASTNode instrs = ASTMocks.createNode(
-                ASTNode.class,
-                null,
-                i -> List.of("I1", "I2")
-        );
+        ASTNode instrs = new InstructionsNode(new WriteNode("Compile"),null);
 
         MethodeNode m = new MethodeNode(
                 new TypeNode(ValueType.VOID),
@@ -911,11 +907,12 @@ class NodeCompileTest {
                 List.of(
                         "push(3)",
                         "new(g,VOID,meth,0)",
-                        "goto(9)",
+                        "goto(10)",
                         "P1",
                         "V1",
-                        "I1",
-                        "I2",
+                        "push(\"Compile\")",
+                        "write",
+                        "push(0)",
                         "swap",
                         "return"
                 ),
