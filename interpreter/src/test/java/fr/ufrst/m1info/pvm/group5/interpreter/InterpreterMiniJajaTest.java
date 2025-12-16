@@ -250,8 +250,6 @@ class InterpreterMiniJajaTest {
         Assertions.assertNull(errMessage);
     }
 
-     // TODO : Re-enable this test when the issue is fixed
-    @Disabled
     @Test
     @DisplayName("Interpret Multiple Class")
     void multipleClass() {
@@ -1092,7 +1090,7 @@ class InterpreterMiniJajaTest {
     void NegativeIndex() {
         String errMessage=imj.interpretCode("class C { int t[20]; main{t[-1]=3;}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ArrayIndexOutOfBoundsException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -1115,7 +1113,7 @@ class InterpreterMiniJajaTest {
     void NegativeArraySize() {
         String errMessage=imj.interpretCode("class C { int t[-20]; main{}}");
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -1298,7 +1296,7 @@ class InterpreterMiniJajaTest {
         List<String> expectedErrors = new ArrayList<>();
         expectedErrors.add(null);
         expectedErrors.add(null);
-        expectedErrors.add("Variable b is not assigned a value");
+        expectedErrors.add("Symbol b is not defined (at line 1)");
 
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
         imjj.interpretationHaltedEvent.subscribe(event -> {

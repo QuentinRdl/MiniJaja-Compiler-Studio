@@ -57,14 +57,8 @@ public class WriteLineNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        if(ident instanceof IdentNode iNode){
-            if(m.val(iNode.identifier) == null){
-                throw ASTInvalidMemoryException.UndefinedVariable(iNode.identifier, this.getLine());
-            }
-        }
-        else if(ident instanceof TabNode tab){
-            throw ASTInvalidMemoryException.UndefinedVariable(tab.ident.identifier, this.getLine());
-        }
+        if(ident != null)
+            ident.checkType(m);
         return "void";
     }
 

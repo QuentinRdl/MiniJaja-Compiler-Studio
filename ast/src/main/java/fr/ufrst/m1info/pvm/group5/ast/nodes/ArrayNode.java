@@ -41,11 +41,7 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
 
         DataType dt = ValueType.toDataType(type.valueType);
 
-        try {
-            m.declTab(ident.identifier, size, dt);
-        }catch (Exception e) {
-            throw new RuntimeException("Line "+this.getLine()+" : "+e.getMessage());
-        }
+        MemoryCallUtil.safeCall(() -> m.declTab(ident.identifier, size, dt), this);
     }
 
     @Override

@@ -34,7 +34,10 @@ public class LengthNode extends ASTNode implements EvaluableNode {
     }
 
     @Override
-    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+    public String checkType(Memory m) {
+        if(!MemoryCallUtil.safeCall(() -> m.isArray(ident.identifier), this)){
+            throw new InterpretationInvalidTypeException("Expected "+ident.identifier+" to be an array", this.getLine());
+        }
         return "int";
     }
 
