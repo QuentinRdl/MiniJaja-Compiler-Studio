@@ -66,6 +66,18 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>4.2.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit5</artifactId>
       <version>4.0.16-alpha</version>

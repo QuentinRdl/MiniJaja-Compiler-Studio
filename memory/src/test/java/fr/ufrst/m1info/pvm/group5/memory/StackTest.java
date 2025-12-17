@@ -393,8 +393,8 @@ class StackTest {
         dq.addLast(b);
 
         String expected = "Stack{scopeDepth=0, size=2, contents=\n" +
-                "  [0] x_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                "  [1] y_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(2)\n" +
+                "  [0] x   scope=0   kind=VARIABLE   dataType=INT   value=Integer(1)\n" +
+                "  [1] y   scope=0   kind=VARIABLE   dataType=INT   value=Integer(2)\n" +
                 "}";
         assertEquals(expected, s.toString());
     }

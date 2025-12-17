@@ -18,7 +18,7 @@ public class StackBlockView extends VBox {
      * @param type the date type of the variable (INT, STRING...)
      * @param value the current value of the variable
      */
-    public StackBlockView(String name, String kind, String type, String value){
+    public StackBlockView(String name, String kind, int scope, String type, String value){
         super();
         setPadding(new Insets(8));
         getStyleClass().add("stack-block");
@@ -26,7 +26,7 @@ public class StackBlockView extends VBox {
         setPrefWidth(200);
 
         getChildren().addAll(
-                new Label("Name : " + name),
+                new Label("Name : " + name + "   (Scope = " + scope + ")"),
                 new Label("Kind : " + kind),
                 new Label("Type : " + type),
                 new Label("Value : " + value)
