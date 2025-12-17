@@ -19,7 +19,7 @@ public class HeapBlockView extends VBox {
      *
      * @param address the memory address of the block
      * @param size the size of the block
-     * @param allocatedString true if the block is allocated, false if free
+     * @param allocatedString a string describing the allocation state ("Allocated" or "Free")
      * @param refs the number of references pointing to this block
      * @param bytes the content of the block (can be empty initially)
      */

@@ -383,15 +383,34 @@ public class MainController {
      */
     public Tab getSourceTab() { return sourceTab; }
 
+    /**
+     * Returns the TabPane used to display output-related tabs.
+     *
+     * @return the output TabPane
+     */
     public TabPane getOutputTabPane() { return outputTabPane; }
 
+    /**
+     * Returns the memory tab for MiniJaja execution
+     *
+     * @return the MiniJaja memory Tab
+     */
     public Tab getMemoryTabMinijaja() { return memoryTabMinijaja; }
 
+    /**
+     * Returns the memory tab for JajaCode execution
+     *
+     * @return the JajaCode memory Tab
+     */
     public Tab getMemoryTabJajacode() { return memoryTabJajacode; }
 
+    /**
+     * Returns the memory viusalisation for MiniJaja
+     *
+     * @return the MiniJaja MemoryVisualisation
+     */
     public MemoryVisualisation getMemoryVisualisationMiniJaja() { return memoryVisualisationMiniJaja; }
 
-    public MemoryVisualisation getMemoryVisualisationJajaCode() { return memoryVisualisationJajaCode; }
 
     /**
      * Returns the ListView component used to display compiled code lines
