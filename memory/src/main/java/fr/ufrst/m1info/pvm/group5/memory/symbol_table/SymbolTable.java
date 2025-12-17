@@ -45,7 +45,7 @@ public class SymbolTable {
      */
     public void addEntry(SymbolTableEntry entry) {
         String name = entry.getName();
-        if (!name.equals(".") && table.containsKey(name)) {
+        if (!name.startsWith(".") && table.containsKey(name)) {
             throw new IllegalArgumentException("Symbol already declared: " + name);
         }
         table.put(name, entry);

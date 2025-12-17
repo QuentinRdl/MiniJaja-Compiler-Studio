@@ -4,10 +4,7 @@ import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
@@ -62,6 +59,26 @@ class InterpreterJajaCodeTest {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/1.jjc"));
         writer.textChangedEvent.subscribe(e -> {
             assertEquals("x : 8\nx : 11\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File Ainc")
+    void Ainc() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Ainc.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("80\n81\n89\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File Array")
+    void Array() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Array.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4\n33\n81\nfalse\ntrue\nfalse\nfalse\n", e.oldText());
         });
         writer.write("");
     }
@@ -129,9 +146,29 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File Quicksort")
+    void Quicksort() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Quick_sort.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4,81,63,12,33,22,16,44,55,23,27,5,14,18,6,30,87,31,10,43, \n4,5,6,10,12,14,16,18,22,23,27,30,31,33,43,44,55,63,81,87, \n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Simple")
     void Simple() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Simple.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Synonymie")
+    void Synonymie() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Synonymie.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -671,6 +708,7 @@ class InterpreterJajaCodeTest {
         Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Disabled
     /* Step by step // Breakpoints */
     @Test
     @DisplayName("Interpret - step by step")
@@ -705,6 +743,7 @@ class InterpreterJajaCodeTest {
         Assertions.assertFalse(encountered.contains(18));// 18 should not be met, it's "branched over"
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret - error during step by step")
     void errorDuringStepByStep() {

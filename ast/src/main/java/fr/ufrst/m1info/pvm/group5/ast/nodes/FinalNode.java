@@ -44,7 +44,7 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
     @Override
     public void interpret(Memory m) {
         if(expression == null){
-            m.declCst(ident.identifier, new Value(), ValueType.toDataType(type.valueType));
+            m.declCst(ident.identifier, null, ValueType.toDataType(type.valueType));
             return;
         }
         Value v = ((EvaluableNode)expression).eval(m);
@@ -53,7 +53,6 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        String exprType = expression.checkType(m);
 
         String declaredType;
         switch (type.valueType) {
@@ -70,13 +69,15 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
                     "Unsupported type for constant " + ident.identifier
                 );
         }
-
-        if (!exprType.equals(declaredType)) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Type of expression (" + exprType +
-                            ") does not match the declared type (" + declaredType +
-                            ") for the variable " + ident.identifier
-            );
+        if (expression != null){
+            String exprType = expression.checkType(m);
+            if (!exprType.equals(declaredType)) {
+                throw new ASTInvalidDynamicTypeException(
+                        "Type of expression (" + exprType +
+                                ") does not match the declared type (" + declaredType +
+                                ") for the variable " + ident.identifier
+                );
+            }
         }
 
         return "void";
