@@ -1377,7 +1377,7 @@ class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveShortcutCtrlS() throws Exception {
+    void testSaveShortcutCtrlS() throws Exception {
         File testFile = createTestFile("shortcut_save.mjj", "int x = 10;", "x++");
 
         interact(() -> {
