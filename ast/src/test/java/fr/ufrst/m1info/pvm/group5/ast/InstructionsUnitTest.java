@@ -141,7 +141,7 @@ class InstructionsUnitTest {
         }).when(memory).pop();
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.CONSTANT,0);
         assertEquals(3,newInstr.execute(2,memory));
-        assertNotEquals(null,memory.val("x"));
+        assertNull(memory.val("x"));
     }
 
     @Test

@@ -96,6 +96,16 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File Constant")
+    void Constant() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Constant.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\nfalse\n40\ntrue\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Conditionals")
     void Conditionals() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Conditionals.jjc"));
