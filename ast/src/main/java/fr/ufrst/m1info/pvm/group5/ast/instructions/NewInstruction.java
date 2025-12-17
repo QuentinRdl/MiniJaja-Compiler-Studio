@@ -37,19 +37,19 @@ public class NewInstruction extends Instruction{
         try{
             for (int i=0; i<scope; i++){
                 listSO.add(MemoryCallUtil.safeCall(m::top, this));
-                MemoryCallUtil.safeCall(m::pop, this);
+                m.pop();
             }
         }catch (Memory.MemoryIllegalOperationException e){
             throw ASTInvalidMemoryException.EmptyStack(this.getLine());
         }
         try{
-            StackObject top= MemoryCallUtil.safeCall(m::top, this);
+            StackObject top= m.top();
             String name= ".";
             if (top!=null){
                 name=top.getName();
             }
             if(name.equals(".")) {
-                v = ((Value) MemoryCallUtil.safeCall(m::pop, this));
+                v = ((Value) m.pop());
             }else{
                 v=new Value();
             }

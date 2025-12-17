@@ -16,7 +16,7 @@ public class AstoreInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        if (!m.isArray(ident)){
+        if (!MemoryCallUtil.safeCall(() -> m.isArray(ident), this)){
             throw new InterpretationInvalidTypeException("Expected " + ident + " to be an array", this.getLine());
         }
         Value v = (Value) MemoryCallUtil.safeCall(m::pop, this);
@@ -26,5 +26,9 @@ public class AstoreInstruction extends Instruction{
         compatibleType(ValueType.INT, index.type);
         MemoryCallUtil.safeCall(()->m.affectValT(ident, index.valueInt, v), this);
         return address+1;
+    }
+
+    public String toString(){
+        return "astore";
     }
 }

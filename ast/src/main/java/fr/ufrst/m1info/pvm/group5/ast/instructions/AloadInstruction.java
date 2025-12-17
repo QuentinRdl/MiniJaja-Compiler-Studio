@@ -19,12 +19,16 @@ public class AloadInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value index = (Value) MemoryCallUtil.safeCall(m::pop, this);
-        if (!m.isArray(ident)){
+        if (!MemoryCallUtil.safeCall(() -> m.isArray(ident), this)){
             throw new InterpretationInvalidTypeException("Expected "+ident+" to be an array", this.getLine());
         }
         compatibleType(ValueType.INT, index.type);
         Value res = MemoryCallUtil.safeCall(()-> m.valT(ident, index.valueInt), this);
         MemoryCallUtil.safeCall(()->m.push(".", res, DataType.INT, EntryKind.CONSTANT), this);
         return address+1;
+    }
+
+    public String toString(){
+        return "aload";
     }
 }

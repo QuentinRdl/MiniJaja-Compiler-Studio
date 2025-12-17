@@ -23,4 +23,8 @@ public class DivInstruction extends Instruction{
         MemoryCallUtil.safeCall(() -> m.push(".", vres, DataType.INT, EntryKind.CONSTANT), this);
         return address+1;
     }
+
+    public String toString(){
+        return "div";
+    }
 }

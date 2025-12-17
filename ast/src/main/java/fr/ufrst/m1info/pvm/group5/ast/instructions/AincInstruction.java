@@ -19,8 +19,8 @@ public class AincInstruction extends Instruction{
             throw new InterpretationInvalidTypeException("Expected "+ident+" to be an array", this.getLine());
         }
 
-        Value vAdd = (Value) m.pop();
-        Value index = (Value) m.pop();
+        Value vAdd = (Value) MemoryCallUtil.safeCall(m::pop, this);
+        Value index = (Value) MemoryCallUtil.safeCall(m::pop, this);
         compatibleType(ValueType.INT, vAdd.type);
         compatibleType(ValueType.INT, index.type);
         Value v = MemoryCallUtil.safeCall(() -> m.valT(ident, index.valueInt), this);
@@ -28,5 +28,9 @@ public class AincInstruction extends Instruction{
         Value vres = new Value(res);
         MemoryCallUtil.safeCall(() -> m.affectValT(ident, index.valueInt, vres), this);
         return address+1;
+    }
+
+    public String toString(){
+        return "ainc";
     }
 }

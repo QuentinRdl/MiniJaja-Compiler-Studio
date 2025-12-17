@@ -25,4 +25,7 @@ public class LengthInstruction extends Instruction {
         return address + 1;
     }
 
+    public String toString(){
+        return "length";
+    }
 }
