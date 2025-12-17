@@ -67,6 +67,26 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File Ainc")
+    void Ainc() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Ainc.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("80\n81\n89\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret File Array")
+    void Array() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Array.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4\n33\n81\nfalse\ntrue\nfalse\nfalse\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File BasicOperations")
     void BasicOperations() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/BasicOperations.jjc"));
@@ -129,9 +149,29 @@ class InterpreterJajaCodeTest {
     }
 
     @Test
+    @DisplayName("Interpret File Quicksort")
+    void Quicksort() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Quick_sort.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("4,81,63,12,33,22,16,44,55,23,27,5,14,18,6,30,87,31,10,43, \n4,5,6,10,12,14,16,18,22,23,27,30,31,33,43,44,55,63,81,87, \n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Simple")
     void Simple() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Simple.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Synonymie")
+    void Synonymie() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Synonymie.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test

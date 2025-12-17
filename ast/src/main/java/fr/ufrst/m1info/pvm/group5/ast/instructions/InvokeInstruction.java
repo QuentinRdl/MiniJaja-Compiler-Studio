@@ -28,8 +28,6 @@ public class InvokeInstruction extends Instruction {
             throw ASTInvalidMemoryException.InvalidVariable(ident, this, "method", m.dataTypeOf(ident).name());
         }
         int newAdr=vMeth.valueInt;
-        MemoryCallUtil.safeCall(() -> m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT), this);
-        MemoryCallUtil.safeCall(m::pushScope, this);
         return newAdr;
     }
 

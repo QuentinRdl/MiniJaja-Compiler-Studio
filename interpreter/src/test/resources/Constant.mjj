@@ -1,0 +1,17 @@
+class C {
+  final int VAL = 5;
+  final int X;
+  final int X2; // never initialized
+  final boolean B = false;
+  final boolean T;
+  final boolean T2; // never initialized
+
+   main {
+ 	writeln(VAL);
+	writeln(B);
+	X = 8 * VAL;
+	T = !B;
+	writeln(X);
+	writeln(T);
+   }
+}
