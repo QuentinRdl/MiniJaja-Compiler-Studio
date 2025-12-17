@@ -159,7 +159,7 @@ public class AppelINode extends ASTNode {
      */
     private void validateArity(int expected, int actual) {
         if (expected != actual) {
-            throw new RuntimeException(String.format("Line %d : Arity mismatch, expected %d arguments, got %d", this, expected, actual));
+            throw new RuntimeException(String.format("Arity mismatch, expected %d arguments, got %d (at line %d, %s)", expected, actual, this.getLine(), this.toString()));
         }
     }
 

@@ -19,7 +19,7 @@ public class DivNode extends BinaryOperator{
         if (rightOperand.valueInt != 0){
             return new Value(leftOperand.valueInt / rightOperand.valueInt);
         }
-        throw new RuntimeException(String.format("Line %d : Cannot divide by 0", this));
+        throw new RuntimeException(String.format("Cannot divide by 0 (at line %d, %s)", this.getLine(), this.toString()));
     }
 
     @Override
