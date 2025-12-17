@@ -2966,4 +2966,115 @@ public class MainControllerTest extends ApplicationTest {
         String output = controller.output.getText();
         assertTrue(output.contains("[DEBUG]"));
     }
+
+    // Debug Button State Tests
+
+    @Test
+    void testDebugRunButtonReEnabledAfterErrorMjj() throws Exception {
+        File testFile = createTestFile("invalid.mjj", "this is not valid code");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Try to start debug  should fail with error
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Verify debug run button is re-enabled after error
+        verifyThat("#btnDebugRun", isEnabled());
+        verifyThat("#btnDebugNext", isDisabled());
+        verifyThat("#btnDebugStop", isDisabled());
+
+        // Verify error was logged
+        String output = controller.output.getText();
+        assertTrue(output.contains("[ERROR]"));
+    }
+
+    @Test
+    void testDebugStoppedWhenLoadingNewFile() throws Exception {
+        // Start debug session
+        File testFile1 = createTestFile("debug1.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x++;",
+                "        x++;",
+                "        x++;",
+                "        x++;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile1));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for debug to start
+        await().atMost(2, SECONDS).until(() ->
+                controller.output.getText().contains("[DEBUG]")
+        );
+
+        // Verify debug is running
+        verifyThat("#btnDebugStop", isEnabled());
+
+        // Load a new file
+        File testFile2 = createTestFile("debug2.mjj",
+                "class C {",
+                "    int y = 5;",
+                "}");
+
+        interact(() -> controller.loadFile(testFile2));
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Verify debug was stopped
+        verifyThat("#btnDebugRun", isEnabled());
+        verifyThat("#btnDebugNext", isDisabled());
+        verifyThat("#btnDebugStop", isDisabled());
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[INFO] Debugging stopped"));
+    }
+
+    @Test
+    void testDebugStoppedWhenCreatingNewFile() throws Exception {
+        // Start debug session
+        File testFile = createTestFile("debug.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x++;",
+                "        x++;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for debug to start
+        await().atMost(2, SECONDS).until(() ->
+                controller.output.getText().contains("[DEBUG]")
+        );
+
+        // Verify debug is running
+        verifyThat("#btnDebugStop", isEnabled());
+
+        // Create new file
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Verify debug was stopped
+        verifyThat("#btnDebugRun", isEnabled());
+        verifyThat("#btnDebugNext", isDisabled());
+        verifyThat("#btnDebugStop", isDisabled());
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[INFO] Debugging stopped"));
+    }
 }

@@ -280,6 +280,11 @@ public class MainController {
             return false;
         }
 
+        // Stop any active debug session before loading new file
+        if(debugInterpreterMjj != null || debugInterpreterJjc != null){
+            onClickStopDebug();
+        }
+
         try {
             isLoadingFile = true;
             // Delete old cells
@@ -807,6 +812,11 @@ public class MainController {
      * activates the buttons, and updates the label to indicate a new file
      */
     public void createNewFile(){
+        // Stop any active debug session before creating new file
+        if(debugInterpreterMjj != null || debugInterpreterJjc != null){
+            onClickStopDebug();
+        }
+
         codeLines.clear();
         codeLines.add(new CodeLine(1, ""));
         codeListView.getSelectionModel().select(0);
@@ -1352,7 +1362,15 @@ public class MainController {
             debugInterpreterMjj.getInterpretationHaltedEvent().subscribe(debugMjjSubscriber);
 
             // Start interpretation with selected mode
-            String err = debugInterpreterMjj.startCodeInterpretation(code, currentDebugMode);
+            String err = null;
+            try {
+                err = debugInterpreterMjj.startCodeInterpretation(code, currentDebugMode);
+            } catch (Exception e) {
+                // Handle exceptions thrown during interpretation startup
+                console.getWriter().writeLine("[ERROR] Exception during debug startup: " + e.getMessage());
+                err = "Exception: " + e.getMessage();
+            }
+
             if(err != null){
                 console.getWriter().writeLine("[ERROR] " + err);
                 // cleanup
@@ -1366,6 +1384,7 @@ public class MainController {
                 debugHalted = false;
                 if(btnDebugNext != null) btnDebugNext.setDisable(true);
                 if(btnDebugStop != null) btnDebugStop.setDisable(true);
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable run button after error
                 return;
             }
 
@@ -1483,7 +1502,15 @@ public class MainController {
             debugInterpreterJjc.getInterpretationHaltedEvent().subscribe(debugJjcSubscriber);
 
             // Start interpretation with selected mode
-            String err = debugInterpreterJjc.startCodeInterpretation(code, currentDebugMode);
+            String err = null;
+            try {
+                err = debugInterpreterJjc.startCodeInterpretation(code, currentDebugMode);
+            } catch (Exception e) {
+                // Handle exceptions thrown during interpretation startup
+                console.getWriter().writeLine("[ERROR] Exception during debug startup: " + e.getMessage());
+                err = "Exception: " + e.getMessage();
+            }
+
             if(err != null) {
                 console.getWriter().writeLine("[ERROR] " + err);
                 try {
@@ -1495,6 +1522,7 @@ public class MainController {
                 debugHalted = false;
                 if(btnDebugNext != null) btnDebugNext.setDisable(true);
                 if(btnDebugStop != null) btnDebugStop.setDisable(true);
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable run button after error
                 return;
             }
 
