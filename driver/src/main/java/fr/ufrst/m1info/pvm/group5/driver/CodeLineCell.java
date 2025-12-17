@@ -45,8 +45,9 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
     private boolean isMiniJaja = true; // Track whether this is MiniJaja or JajaCode for syntax highlighting
 
+    // Listener used to react when the debug state of a line changes
     private ChangeListener<Boolean> debugLineListener;
-    private CodeLine currentItem;
+    private CodeLine currentItem; // Currently displayed / associated code line
 
     /**
      * Creates a new CodeLineCell and initializes its layout.
@@ -365,6 +366,11 @@ public class CodeLineCell extends ListCell<CodeLine> {
         SyntaxHighlighter.applySyntaxHighlighting(codeField, text, isMiniJaja);
     }
 
+    /**
+     * Applies or removes the debug highlight style on this line
+     *
+     * @param isDebugLine true if this line is the current debug line
+     */
     private void updateDebugLineStyle(boolean isDebugLine){
         if(isDebugLine){
             if(!getStyleClass().contains("debug-current-line")){

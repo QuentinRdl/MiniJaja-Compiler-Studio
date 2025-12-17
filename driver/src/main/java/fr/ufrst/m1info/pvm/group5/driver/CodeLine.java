@@ -98,6 +98,12 @@ public class CodeLine {
      */
     public void setCurrentDebugLine(boolean currentDebugLine) { this.currentDebugLine.set(currentDebugLine); }
 
+    /**
+     * Returns the BooleanProperty indicating whether this line is the current line being executed in debug mode
+     * This property can be observed to update the UI when the current debug line changes
+     *
+     * @return the currentDebugLine BooleanProperty
+     */
     public BooleanProperty currentDebugLineProperty(){
         return currentDebugLine;
     }
