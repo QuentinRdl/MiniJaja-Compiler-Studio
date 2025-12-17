@@ -144,6 +144,7 @@ class InstructionsUnitTest {
         assertEquals(3,newInstr.execute(2,memory));
         assertNull(memory.val("x"));
     }
+    
 
     @Test
     void new_unknown_entry_kind() throws Exception {
