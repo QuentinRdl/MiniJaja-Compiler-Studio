@@ -48,11 +48,11 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-class MainControllerTest extends ApplicationTest {
+public class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
-    static Path tempDir;
+    public static Path tempDir;
 
     private MainController controller;
 
