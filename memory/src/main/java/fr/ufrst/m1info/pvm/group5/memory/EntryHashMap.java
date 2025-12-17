@@ -20,6 +20,4 @@ public class EntryHashMap<K,V> {
     public void setValue(V value) {
         this.value = value;
     }
-
-
 }

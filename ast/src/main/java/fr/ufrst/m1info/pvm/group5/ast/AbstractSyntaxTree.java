@@ -1,10 +1,12 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.memory.Event;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaLexer;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaParser;
 import org.antlr.v4.runtime.*;
-import fr.ufrst.m1info.pvm.group5.ast.Nodes.ClassNode;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ClassNode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.io.BufferedWriter;
@@ -18,7 +20,10 @@ public class AbstractSyntaxTree {
      */
     public ClassNode root;
 
-    private AbstractSyntaxTree() {}
+    public Event<InterpretationStoppedData> interpretationStoppedEvent = new Event<>();
+
+    private AbstractSyntaxTree() {
+    }
 
     /**
      * Generate a new AST from a text input.
@@ -62,6 +67,9 @@ public class AbstractSyntaxTree {
 
         AbstractSyntaxTree tree = new AbstractSyntaxTree();
         tree.root = parser.classe().node;
+
+        tree.root.setAsRoot();
+        tree.root.interpretationStoppedEvent().subscribe(d -> tree.interpretationStoppedEvent.trigger(d));
         return tree;
     }
 
@@ -70,6 +78,16 @@ public class AbstractSyntaxTree {
      * @return memory resulting from the evaluation of the tree
      */
     public Memory interpret() throws Exception{
+        return interpret(InterpretationMode.DIRECT);
+    }
+
+    /**
+     * Interprets the tree in a given interpretation mode and returns the resulting memory.
+     * @param mode interpretation mode used for the interpretation
+     * @return memory resulting from the interpretation of the tree
+     */
+    public Memory interpret(InterpretationMode mode) throws Exception{
+        root.setInterpretationMode(mode);
         Memory m = new Memory();
         interpret(m);
         return m;
@@ -83,8 +101,30 @@ public class AbstractSyntaxTree {
      * @return memory after the interpretation
      */
     public Memory interpret(Memory m) throws Exception{
+        return interpret(m, InterpretationMode.DIRECT);
+    }
+
+    /**
+     * Interprets the tree from an existing memory, and returns the resulting memory.
+     * The memory passed in parameter will be used for the evaluation, and therefor modified.
+     * The returned object will be the same as the inputted one.
+     * @param m memory before the interpretation
+     * @param mode interpretation mode to use for the interpretation
+     * @return memory after the interpretation
+     */
+    public Memory interpret(Memory m, InterpretationMode mode) throws Exception{
+        root.setInterpretationMode(mode);
+        root.checkType(new Memory());
         root.interpret(m);
         return m;
+    }
+
+    /**
+     * Allows to change the interpretation mode of the AST, event during an interpretation
+     * @param mode new interpretation mode
+     */
+    public void changeInterpretationMode(InterpretationMode mode){
+        root.setInterpretationMode(mode);
     }
 
     /**
@@ -105,20 +145,21 @@ public class AbstractSyntaxTree {
     }
 
     /**
-     * Compiles the tree into JaJaCode and prints the result to a file.
-     * @param filePath path to the output file. The file must exist and have sufficient permission to write in it.
-     */
-    public void compileToFile(String filePath){
-        compileToFile(filePath, 1);
-    }
-
-    /**
      * Compiles the tree into JaJaCode and prints the result into a file, starting from a given address (line)
      * @param filePath path to the output file. The file must exist and have sufficient permission to write in it.
-     * @param startingAddress address to start to write the code from
      */
-    public void compileToFile(String filePath, int startingAddress){
-        // TODO
+    public void compileToFile(String filePath) throws IOException{
+        BufferedWriter out = null;
+        try {
+            FileWriter fstream = new FileWriter(filePath+".jjc", false);
+            out = new BufferedWriter(fstream);
+            out.write(compileAsString());
+            out.close();
+        }
+        catch (IOException e) {
+            if(out != null) out.close();
+            throw e;
+        }
     }
 
     /**

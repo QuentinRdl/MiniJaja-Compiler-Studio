@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for simple App.
  */
-public class DriverTest {
+class DriverTest {
     /**
      * Rigorous Test :-)
      */
     @Test
-    public void testApp() {
+    void testApp() {
         assertTrue(true);
     }
 }

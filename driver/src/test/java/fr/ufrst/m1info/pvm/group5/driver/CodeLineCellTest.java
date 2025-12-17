@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxAssert;
@@ -26,7 +27,7 @@ import static org.testfx.matcher.base.NodeMatchers.isInvisible;
  * Unit tests for the CodeLineCell class
  */
 @ExtendWith(ApplicationExtension.class)
-public class CodeLineCellTest extends ApplicationTest {
+class CodeLineCellTest extends ApplicationTest {
 
     private ListView<CodeLine> listView;
 
@@ -57,7 +58,7 @@ public class CodeLineCellTest extends ApplicationTest {
      * with the expected number of child nodes
      */
     @Test
-    public void testCellDisplaysCorrectContent(){
+    void testCellDisplaysCorrectContent(){
         CodeLineCell cell = (CodeLineCell) listView.lookup(".list-cell"); // Retrieves a cell from the listview
         assertNotNull(cell);
 
@@ -67,7 +68,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testNullCellHasNoGraphic(){
+    void testNullCellHasNoGraphic(){
         CodeLineCell cell = new CodeLineCell();
         cell.updateItem(null, false);
 
@@ -76,7 +77,7 @@ public class CodeLineCellTest extends ApplicationTest {
 
 
     @Test
-    public void testEmptyCellHasNoGraphic(){
+    void testEmptyCellHasNoGraphic(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "x = 10;");
 
@@ -86,7 +87,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testCellUpdate(){
+    void testCellUpdate(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "x = 10;");
 
@@ -98,14 +99,17 @@ public class CodeLineCellTest extends ApplicationTest {
 
         StackPane lineNumberContainer = (StackPane) container.getChildren().get(0);
         Label lineNumber = (Label) cell.getLineNumberLabel();
-        TextField codeField = (TextField) container.getChildren().get(1);
+
+        // Get the code field directly from the cell
+        InlineCssTextArea codeField = cell.getCodeField();
+        String codeText = codeField.getText();
 
         assertEquals("1", lineNumber.getText());
-        assertEquals("x = 10;", codeField.getText());
+        assertEquals("x = 10;", codeText);
     }
 
     @Test
-    public void testBreakpointShouldBeVisible(){
+    void testBreakpointShouldBeVisible(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         codeLine.setBreakpoint(true);
@@ -119,7 +123,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testBreakpointShouldNotBeVisible(){
+    void testBreakpointShouldNotBeVisible(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         assertFalse(codeLine.isBreakpoint());
@@ -132,7 +136,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
     
     @Test
-    public void testBreakpointDisplayWhenLineNumberContainerIsClicked(){
+    void testBreakpointDisplayWhenLineNumberContainerIsClicked(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         assertFalse(codeLine.isBreakpoint());
@@ -163,7 +167,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testRemoveBreakpointWhenLineNumberContainerIsClicked(){
+    void testRemoveBreakpointWhenLineNumberContainerIsClicked(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
         codeLine.setBreakpoint(true);
@@ -196,7 +200,7 @@ public class CodeLineCellTest extends ApplicationTest {
     }
 
     @Test
-    public void testCodeLineUpdatesWhenUserEditsTextField(){
+    void testCodeLineUpdatesWhenUserEditsTextField(){
         CodeLineCell cell = new CodeLineCell();
         CodeLine codeLine = new CodeLine(1, "int x = 10;");
 
@@ -211,7 +215,7 @@ public class CodeLineCellTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        TextField codeField = cell.getCodeField();
+        var codeField = cell.getCodeField();
         assertNotNull(codeField);
         assertEquals("int x = 10;", codeField.getText());
 
@@ -222,5 +226,15 @@ public class CodeLineCellTest extends ApplicationTest {
         assertEquals("int y = 12", codeField.getText());
     }
 
+    @Test
+    void testSetCodeEditable() {
+        CodeLineCell cell = new CodeLineCell();
+        CodeLine codeLine = new CodeLine(1, "int x = 10;");
 
+        cell.updateItem(codeLine, false);
+        assertTrue(cell.getCodeField().isEditable());
+
+        cell.setCodeEditable(false);
+        assertFalse(cell.getCodeField().isEditable());
+    }
 }

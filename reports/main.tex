@@ -1,0 +1,391 @@
+\documentclass[11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{mathptmx} % Police Times 
+\usepackage[a4paper, left=30mm,right=20mm,top=25mm,bottom=25mm]{geometry}
+
+\usepackage{titlesec} % Pour reconfigurer la numérotation
+
+
+%ajoute un niveau de titres non présent dans la table des matières
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\titleformat{\paragraph}[block]{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titlespacing*{\paragraph}{0pt}{1ex plus .2ex minus .2ex}{1ex}
+
+%configuration de la numérotation des sections
+\renewcommand{\thesection}{\arabic{section}}
+
+%ajoute des subsubsection
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\title{Compte rendu Release 1}
+\author{
+  Laura JACQUESON,
+  \and
+  Kilian JELIC,
+  \and
+  Julie MAGNIN,
+  \and
+  Quentin RADLO,
+  \and
+  Théo HUMBERT,
+  \and
+  Islem HADJ RABIA
+}
+\date{3 Novembre 2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \includegraphics[width=\textwidth]{graphics/Logo_UFR_ST_UMLP.png}
+    \end{center}
+    \vspace{1cm}
+
+    \begin{center}
+        {\LARGE\textsc{Université Marie et Louis PASTEUR}}\\[0.5cm]
+        {\Large\textsc{UFR Sciences et Techniques}}\\[0.5cm]
+        {\Large \textsc{Master 1 Informatique}}\\[0.5cm]
+
+        {\large\textbf{Compte rendu Release 1}}\\[2cm]
+        \hrule\vspace{0.3cm}
+        {\huge \bfseries Projet de développement Agile de machines virtuelles}\\[0.5cm]
+        \hrule\vspace{2cm}
+
+        {\Large Julie \textsc{MAGNIN}, Laura \textsc{JACQUESON}, Kilian \textsc{JELIC}, Quentin \textsc{RADLO}, Théo \textsc{HUMBERT}, Islem \textsc{HADJ RABIA}}\\[4cm]
+
+        %\includegraphics[width=0.5\textwidth]{illustration.jpg}\\[0.5cm]
+
+        {\large 3 Novembre 2025}\\[0.5cm]
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+Dans le cadre du premier semestre du Master d’informatique à l’Université Marie et Louis Pasteur de Besançon, un projet commun entre les enseignements de compilation et de génie logiciel est obligatoire. Nous avons été répartis en groupes de six étudiants et disposons de la période de septembre à décembre pour le réaliser. Ce projet permet d’appliquer  les connaissances acquises en compilation tout en mettant en œuvre la méthode Agile étudiée en génie logiciel. Il consiste en le développement d’un compilateur accompagné d’une interface utilisateur. Ce compilateur s'applique au langage MiniJaja. Il s'agit d'un langage simplifié, inspiré du Java
+
+Ce rapport se découpe en trois grandes parties. La première partie présentera le bilan de la Release 1, en détaillant les objectifs de cette release et des sprints, la gestion des tâches et des User Stories, ainsi que le bilan des sprints, incluant les rétrospectives, le point de vue de l’équipe, les points positifs et les axes d’amélioration du projet. La deuxième partie sera consacrée à la qualité du code et à l’intégration, en abordant les tests unitaires et d’acceptation, les revues, ainsi que l’intégration et le déploiement continus. Enfin, la troisième partie traitera de l’organisation du projet, en évoquant la coordination et la communication au sein de l’équipe. Le rapport se conclura par une prévision de notre méthode de travail pour la Release 2.
+
+\newpage
+
+\section{Bilan de la Release 1}
+\subsection{Objectifs}
+\subsubsection{Objectifs de la Release 1}
+Les objectifs fixés pour la \textbf{Release 1} consistaient à concevoir un interpréteur et un compilateur fonctionnels reposant sur une grammaire réduite du langage \textbf{MiniJaja}, tout en développant la pile et une interface graphique opérationnelle.
+
+La grammaire complète de MiniJaja contient de nombreux éléments de syntaxe et de sémantique. Nous avons donc choisi une version réduite afin de pouvoir créer un interpréteur et un compilateur pleinement fonctionnels.
+
+L’implémentation de la pile constituait l’un des objectifs principaux de cette première release. La pile étant nécessaire à l’exécution d’un programme, sa mise en œuvre dès le début du projet nous a permis d’obtenir un interpréteur fonctionnel.
+
+Enfin, l’intégration de l’interface graphique dès la première release permettait de tester la communication entre les différents modules (compilation, interprétation, affichage) et d’offrir une première version utilisable de l’outil.
+
+\subsubsection{Objectifs des spints}
+Pour cette première release, le développement du projet a été mené selon une approche \emph{Agile}, organisée en plusieurs sprints successifs permettant d’avancer de manière progressive et contrôlée. Chaque sprint visait des objectifs précis, garantissant la cohérence technique et fonctionnelle du projet.
+
+\subsubsection*{Sprint 1}
+
+\textbf{Objectifs :}
+\begin{itemize}
+    \item Réfléchir à l’architecture générale du projet ;
+    \item Planifier les étapes de développement ;
+    \item Mettre en place un dépôt \textbf{GitLab} avec un template \emph{JavaFX} et une pipeline CI/CD fonctionnelle.
+\end{itemize}
+
+Ce premier sprint a permis de poser les bases techniques et organisationnelles du projet. Tous les objectifs ont été atteints.
+
+\subsubsection*{Sprint 2}
+
+\textbf{Objectifs :}
+\begin{itemize}
+    \item Créer le squelette de l’interface graphique ;
+    \item Modifier et compléter une partie de la grammaire MiniJaja ;
+    \item Implémenter les classes de la pile ;
+    \item Interpréter la grammaire ajoutée ;
+    \item Valider la construction CI/CD et débuter les tests unitaires.
+\end{itemize}
+
+Ce sprint a marqué le passage à la phase de développement fonctionnel, avec la mise en place des premières briques concrètes de l’application. Tous les objectifs ont été atteints.
+
+\subsubsection*{Sprint 3}
+
+\textbf{Objectifs :}
+\begin{itemize}
+    \item Permettre l’édition du code depuis l’interface graphique ;
+    \item Ajouter des points d’arrêt ;
+    \item Interpréter le \textbf{JajaCode} et créer le compilateur ;
+    \item Mettre en place la vérification dynamique des types ;
+    \item Réaliser les tests d’intégration.
+\end{itemize}
+
+Ce troisième sprint avait pour objectif de rendre l’application complète et interactive, en assurant la cohérence entre les différents modules et la stabilité du système.
+
+
+\subsection{Gestion des tâches et des User Stories}
+\subsubsection{Rédaction des User Stories}
+Nous avons choisi de rédiger nos \textbf{User Stories} au cours de multiples réunions organisées durant le premier sprint. 
+Nous avons commencé par les écrire selon le modèle : 
+\begin{quote} 
+\textit{« En tant que …, je veux pouvoir … afin de … »} 
+\end{quote}
+
+Nous les avons ensuite peu à peu raffinées, d’abord en découpant les \emph{User Stories} les plus volumineuses en plus petites, puis en leur donnant des critères d’acceptations, ainsi que les tests d’acceptation
+associés. 
+
+Afin d’éviter les conflits, le \emph{Scrum Master} du sprint courant avait pour rôle de saisir les \emph{User Stories} sous forme de tickets dans \textbf{Jira}.
+
+\subsubsection{Mise à jour et gestion des User Stories}
+L'évolution des \emph{User Stories} et leur gestion s'est faite au fur et à mesure des réunions, quand nous constations que certaines étaient trop volumineuses ou mal définies.
+
+La plupart de ces révisions se sont faites au début de chaque sprint, au moment de planifier l'ensemble des tâches à réaliser pour le sprint. C'était le \emph{Scrum Master} qui était, une nouvelle fois, chargé d'effectuer les modifications en fonction de ce qui était décidé pendant les réunions.
+
+\subsubsection{Rédaction des tâches}
+Les \emph{User Stories} intégrées aux sprints sont choisies au début de chaque sprint. Une fois ce choix réalisé, elles sont découpées en tâches correspondant aux actions à réaliser pour que la \emph{User Story} associée puisse être validée. Ces tâches sont ensuite découpées en sous-tâches afin de les spécifier.
+
+Lors d’une réunion, nous prenons le temps d’estimer chacune de ces sous-tâches, comme le veut la méthode \textbf{Scrum}. Les tâches et sous-tâches sont ensuite saisies sur Jira par tout le groupe pendant les réunions.
+
+Il arrive, au cours d’un sprint, que nous constations que certaines tâches ont été mal estimées ou qu’il en manque. Dans ce cas, le sujet est abordé lors d’une réunion, et les tâches sont réévaluées ou de nouvelles sont ajoutées. Lorsqu’une tâche est mal comprise, nous ajoutons également des précisions dans sa description.
+
+\subsubsection{Gestion de la complexité des tâches}
+
+Après avoir rédigé et défini la totalité des tâches que nous avions à effectuer pour le sprint suivant, nous avons mis en place une méthode bien spécifique pour évaluer leur complexité et leur charge de travail.
+
+Pour évaluer la complexité de chaque tâche, nous avons procédé en nous concertant ensemble, avec tous les membres de l’équipe présents. En effet, avant chaque démarrage de sprint, nous nous sommes réunis afin d’analyser chaque tâche que nous avions définie comme devant être réalisée pendant ce sprint. Nous analysions la difficulté technique de la tâche ainsi que la charge de travail qu’elle devait représenter sur l’ensemble du sprint.
+
+À l’issue de cette concertation, nous estimions le temps de travail nécessaire pour chaque tâche, et nous avons convenu de l’approche suivante : chaque heure de travail estimée correspondait à un \emph{story point}. Ainsi, si nous estimions qu’une tâche devait prendre cinq heures, nous renseignions le champ \emph{Story Point} de ladite tâche sur Jira à 5. Cas particulier : si une tâche était estimée à moins d’une heure de travail, nous fixions malgré tout son champ à 1.
+
+Cette approche nous a permis d’obtenir des estimations pas forcément toujours réalistes, mais au moins homogènes pour chaque tâche, et donc de répartir au mieux le travail entre les différents membres de l’équipe, afin que la charge de travail de chacun soit la plus juste possible. De cette manière, nous avons également pu planifier l’avancement du projet sur chaque sprint et vérifier si nous étions en avance ou en retard.
+
+
+\subsubsection{Priorisation des tâches}
+
+Pour prioriser les tâches et les \emph{User Stories} à inclure dans chaque sprint, nous avons pris en compte la complexité, l’urgence et les dépendances entre les tâches. 
+
+Avant le début de chaque sprint, nous organisons une réunion de planification pour définir les tâches à réaliser, évaluer leur complexité et déterminer leur priorité. Nous estimons le temps nécessaire pour chaque tâche et accordons une priorité plus élevée aux tâches les plus longues et les plus importantes. Nous prenons également en compte les dépendances : certaines tâches doivent être réalisées en premier pour ne pas bloquer le reste du sprint. 
+
+Par ailleurs, certaines tâches moins essentielles ou rapides à réaliser sont programmées en dernier, ce qui nous permet d’optimiser notre temps et de maintenir une progression continue tout au long du sprint. 
+
+Une fois les priorités définies, nous les reportons dans le tableau Jira, en utilisant les niveaux de priorité : Très urgent (\emph{Highest}), Urgent (\emph{High}), Moyen (\emph{Middle}), Faible (\emph{Low}) et Très faible (\emph{Lowest}). Cela permet à l’équipe de savoir sur quoi se concentrer en priorité.
+
+\subsection{Bilan des sprints}
+\subsubsection{Rétrospectives des sprints}
+
+À la fin des sprints 2 et 3, nous avons réalisé des rétrospectives de sprint. Celles-ci consistent à revenir sur le sprint écoulé, en soulignant les points positifs et les points à améliorer afin de progresser pour les sprints suivants.
+
+\paragraph{Rétrospective du sprint 2}
+
+Tous les membres étaient présents, excepté Islem qui est arrivé en fin de réunion. Nous avons relevé les points suivants :
+
+\textbf{Points à améliorer :}
+\begin{itemize}
+    \item Mieux découper les \emph{Merge Requests};
+    \item S’assigner à une \emph{Merge Requests} lors de sa création ;
+    \item S’attribuer en tant que \emph{Reviewer} lors d’une code review ;
+    \item Approuver la \emph{Merge Requests} avant de la fusionner pour faciliter la gestion \emph{Git} ;
+    \item Bien utiliser les tags dans les \emph{Commits} ;
+    \item Utiliser correctement l’espace de commentaires des \emph{Merge Requests} ;
+    \item Une \emph{Merge Requests} ne doit pas être trop grande ni trop petite, à juger selon le cas ;
+    \item Faire plus de \emph{Merge Requests} par tâche ou par \emph{User Story} ;
+    \item Mettre à jour l’état des tâches (\emph{à valider} et \emph{terminé}) ;
+    \item Bien noter les points sur les tâches ;
+    \item Organiser des réunions techniques et communiquer sur le côté technique du travail réalisé ;
+    \item Utiliser correctement le salon \emph{Daily Meeting} sur Discord et évoquer les difficultés rencontrées ;
+    \item Travailler plus en collaboration pour éviter de regrouper tout à la fin ;
+    \item Ne pas se spécialiser excessivement et passer sur différentes tâches.
+\end{itemize}
+
+\textbf{Points positifs :}
+\begin{itemize}
+    \item Création du forum pour les \emph{Merge Requests} ;
+    \item Jira bien géré et respect des objectifs ;
+    \item Tous les membres ont participé au travail ;
+    \item Graphiques et rapports Jira satisfaisants ;
+    \item Début du travail dès le début du sprint ;
+    \item Bonne communication et nombreuses réunions ;
+    \item \emph{Git} bien géré et compte rendu clair.
+\end{itemize}
+
+\paragraph{Rétrospective du sprint 3}
+
+Tous les membres étaient présents. Les points relevés sont les suivants :
+
+\textbf{Métriques :}
+\begin{itemize}
+    \item Le rapport Jira n’était pas optimal à cause des sous-tâches et de la modification des \emph{Story Points} en cours de sprint ;
+    \item Bon \emph{code coverage}, mais non représentatif sur \textbf{SonarQube} à cause du module AST non détecté correctement.
+\end{itemize}
+
+\textbf{Points positifs :}
+\begin{itemize}
+    \item Beaucoup plus de \emph{Merge Requests} ;
+    \item Code de bonne qualité, travail collectif et organisé ;
+    \item Répartition efficace des tâches ;
+    \item Bonne réactivité globale ;
+    \item Définition précise des fonctions de l’API mémoire, avec paramètres et retours, facilitant le travail parallèle ;
+    \item Les tests sont produits presque en même temps que le code ;
+    \item Code bien documenté ;
+    \item Revue de code bien gérées ;
+    \item Bon usage du processus itératif.
+\end{itemize}
+
+\textbf{Points à améliorer :}
+\begin{itemize}
+    \item Gestion des tâches sur Jira ;
+    \item Les \emph{Daily Meetings} ne sont pas nécessaires, les réunions suffisent ;
+    \item Prendre en compte l’emploi du temps des membres (partiels, contraintes personnelles) ;
+    \item Mieux estimer la durée des tâches ;
+    \item Mieux spécifier les interfaces à implémenter.
+\end{itemize}
+
+
+À la fin de chaque rétrospective, nous recueillons également le point de vue de chaque membre, avec leurs ressentis sur le sprint qui vient de s’écouler.
+
+
+\subsubsection{Point de vue de l'équipe}
+
+Les membres du groupe ont partagé leur avis sur l'avancée du projet à l’issue du sprint 3 : 
+
+\begin{itemize}
+    \item \textbf{Julie} : Bien que surprise par la charge de travail que représente le projet, Julie est satisfaite de l'avancée du groupe et de la qualité de la communication entre ses membres. Elle se dit heureuse des résultats obtenus lors des premiers sprints et se sent moins stressée pour la suite du projet.
+    
+    \item \textbf{Théo} : Content de l'application réalisée pour la release 1 et du travail fourni par chacun des membres.
+    
+    \item \textbf{Quentin} : Estime que le groupe a bien progressé et se réjouit de pouvoir partir sur des bases solides pour la suite du projet. Il souligne le travail et la cohésion des membres et se dit confiant pour la suite.
+    
+    \item \textbf{Kilian} : Partage l'avis du reste du groupe. Il se dit particulièrement satisfait de la présence et de la réactivité de tous les membres et est confiant que le résultat final répondra aux attentes initiales.
+    
+    \item \textbf{Islem} : Trouve que les sprints se sont très bien déroulés et se montre confiant pour la suite du projet.
+    
+    \item \textbf{Laura} : Se montre moins confiante, car certains objectifs du sprint 3 n'ont pas été atteints, ce qui l'inquiète pour la fin du projet. Cependant, elle se dit satisfaite du bon fonctionnement du groupe, malgré son absence partielle lors de la fin du sprint 3, due à des complications personnelles.
+\end{itemize}
+
+\subsubsection{Point positifs du projet}
+
+Nous avons pu réaliser de nombreuses \emph{Merge Requests}, ce qui a permis que tout le code écrit soit revu et validé. Cela nous a permis d'obtenir un code de bonne qualité, bien ordonné, correctement documenté et testé.  
+
+La répartition des tâches a été appropriée, personne ne semblait trop en faire ou pas assez, et le projet a pu bien avancer. 
+
+Nous avons maintenu une très bonne communication, ce qui nous a permis de résoudre rapidement et efficacement les problèmes que nous avons pu rencontrer.  
+
+Le processus itératif a été correctement appliqué, et nous avions toujours une version fonctionnelle des différents modules.
+
+La création d'une architecture dès le début du premier sprint nous a permis de travailler efficacement en parallèle pendant les sprints suivants, et la réalisation de l'intégration s'est déroulée sans complications.
+
+\subsubsection{Points à améliorer}
+
+La gestion des tâches sur Jira a été difficile en raison de la non-intuitivité du logiciel. En effet, nous avions décidé de découper les tâches en sous-tâches et d'estimer ces sous-tâches. Le résultat a été que les points des sous-tâches n'étaient pris en compte qu'une fois toutes les sous-tâches achevées. En conséquence, le graphique de \emph{Burndown} comporte de nombreux pics descendants, et la vélocité de l'équipe est difficile à déterminer.  
+
+Nous avons mal pris en compte les emplois du temps, ce qui nous a amené à nous imposer une charge de travail trop importante par rapport au temps dont nous disposions. Cela est particulièrement visible Sprint 3, où nous n'avons pas pu terminer tout ce qui était prévu à cause du temps pris par les révisions de multiples devoirs.  
+
+Nous n'avons, également, pas correctement estimé la complexité de certaines tâches, qui ont pris beaucoup plus de temps que prévu.
+
+\newpage
+
+\section{Qualité du code et intégration}
+\subsection{Tests}
+\subsubsection{Tests unitaires}
+
+La stratégie de test adoptée pour ce projet visait à garantir la cohérence globale du système en validant chaque composant individuellement avant leur intégration.  
+Étant donné que le projet était divisé en plusieurs modules, des tests unitaires ont été mis en place pour chaque niveau.
+
+Chaque module dispose de ses propres classes de test, principalement écrites avec \textbf{JUnit}. L'objectif principal était de vérifier la validité des comportements attendus et la robustesse du code face aux cas limites.  
+
+Pour isoler certaines dépendances, nous avons utilisé \emph{Mockito} afin de créer des objets simulés (mocks). Cette approche a permis de tester la logique interne de chaque classe sans dépendre du comportement des autres modules.
+
+Chaque module possède son propre répertoire de tests. Cette organisation facilite la maintenance, améliore la lisibilité et permet une détection rapide des erreurs. De plus, chacun des tests sont indépendant les uns des autres afin d'éviter toute interférence entre eux.
+
+L'exécution des tests se fait via \textbf{Maven}, assurant une l'intégration des tests dans le build. Cette méthode permet de vérifier rapidement le bon fonctionnement du projet et de détecter d'éventuelles régressions après chaque modification du code.
+
+
+\subsubsection{Tests d'acceptations}
+Nous n’avons pas exactement mis en place des tests d’acceptation dans notre projet. Cependant, nos tests unitaires et tests d'intégration couvrent une grande partie des fonctionnalités décrites dans nos \emph{User Stories}. Ainsi, même si nous ne les avons pas qualifiés de tests d’acceptation, ils jouent un rôle équivalent, car ils valident le bon fonctionnement de notre logiciel. Grâce à eux, nous avons pu vérifier la bonne intégration de chaque fonctionnalité dans notre logiciel.  
+
+Voici maintenant les données sur la couverture de notre projet, listées module par module :  
+
+\begin{itemize}
+    \item \textbf{AST} : suite à un problème avec la récupération du coverage via SonarQube, nous n'avons pas le pourcentage pour cette partie ; en local, nous avons un coverage de 88\% ;
+    \item \textbf{Compiler} : 85,0\% ;
+    \item \textbf{Driver} : 76,5\% ;
+    \item \textbf{Interpreter} : 87,0\% ;
+    \item \textbf{Memory} : 88,2\%.
+\end{itemize}
+
+Pour un total de couverture de \textbf{84,9\%} sur l’ensemble du projet.
+
+\subsection{Revues}
+Pour assurer que notre code soit de qualité et cohérent avec le reste du projet, nous avons mis en place des revues de code fréquentes. Comme notre méthode de travail consistait à créer une branche par tâche, nous avions assez fréquemment des \emph{Merge Requests} à traiter. Nous avons donc adopté la méthode suivante : lorsqu'un membre crée une \emph{Merge Requests} sur la branche associée à sa tâche, un autre membre effectue une revue de son code via l’interface fournie par GitLab. La personne en charge de la revue, était aussi en charge de lancer la fusion entre la branche de la tâche et la branche de développement. De plus, comme la branche \emph{dev} était protégée, il n’était possible d’y ajouter du code qu’en passant par une Merge Request. 
+Ainsi, avec notre méthode de travail, nous étions garantis que chaque ajout au projet était vérifié par au moins un autre membre. Et comme nous passions par l’interface de GitLab, si la personne en charge de la revue avait un commentaire à faire sur la qualité ou les fonctionnalités du code ajouté, elle pouvait le signaler en utilisant la fonctionnalité \emph{Commentaires}.
+
+De cette manière, nous pouvions également vérifier les tests ajoutés, mais plus globalement, nous contrôlions que la couverture totale de notre projet avançait conjointement avec les nouvelles fonctionnalités apportées, grâce à l’analyse SonarQube de notre projet.
+
+De plus, après chaque sprint, nous avons organisé une revue de sprint. Avec toute l’équipe présente, nous validions les différentes fonctionnalités terminées, ajustions les priorités du \emph{backlog} et recueillions les ressentis de chaque membre de l’équipe.
+
+\subsection{Intégration et déploiement continus}
+Pour le projet, nous avons exploité différentes techniques d’intégration et de déploiement continus afin d’automatiser la validation et la mise à disposition de notre code autant que possible.
+
+Premièrement, nous avons mis en place une pipeline CI/CD via GitLab. Celle-ci était exécutée à chaque Merge Request et constituait une étape obligatoire avant toute fusion vers la branche \emph{dev}. Cela nous garantissait que le code présent sur \emph{dev} était bien fonctionnel, car la pipeline réalisait automatiquement la compilation et l’exécution des tests, et affichait clairement si son exécution était réussie ou non. 
+
+Ensuite, un job de cette pipeline envoyait les résultats de nos tests à SonarQube. De cette manière, nous avions toujours un aperçu de ce que nos tests couvraient dans notre code. Grâce à cela, nous avons pu identifier quels modules étaient bien couverts et ceux qui manquaient de couverture.
+
+Enfin, par le biais de Nexus, nous avons généré différentes \emph{snapshots}, afin de toujours garder une trace de l’avancement de notre projet.
+
+\newpage
+
+\section{Organisation}
+\subsection{Coordination de l'équipe}
+Dès le début du projet, notre équipe s’est organisée efficacement. Nous avons défini un fonctionnement inspiré de la méthode \emph{Agile}, avec une répartition claire et une communication régulière. Des réunions hebdomadaires nous permettaient de faire le point sur l’avancement de chacun, d’identifier les difficultés et d’ajuster les tâches si nécessaire. En complément, nous faisions régulièrement des points rapides sur \textbf{Discord} afin de tenir l’équipe informée du travail en cours. Cette communication régulière nous a permis de savoir en permanence où en était le projet, tout en donnant à chacun l’occasion de s’exprimer.  
+
+La répartition des tâches au début de chaque sprint s’est faite en fonction des envies, des compétences et de la disponibilité de chacun. Même si une personne travaillait généralement sur une tâche précise, il arrivait que plusieurs membres collaborent sur un même module. Par exemple, lors du sprint 2, Laura et Kilian ont travaillé ensemble sur la grammaire, Théo, Islem et Quentin sur la mémoire, avec chacun une tâche bien définie, tandis que Julie s’occupait de l’interface graphique. Nous avons également veillé à ce que la charge de travail soit équilibrée entre tous les membres de l’équipe.  
+
+Pour le suivi global du projet, nous avons utilisé un tableau \emph{Jira}, qui nous servait à planifier les sprints, répartir les tâches et suivre l’état d’avancement du projet.  
+
+Enfin, nous avons choisi de faire tourner le rôle de Scrum Master à chaque sprint pour que chaque membre puisse découvrir ce rôle et comprendre le fonctionnement de la gestion d’équipe. Par exemple, Théo a tenu ce rôle lors du sprint 1, Kilian lors du sprint 2, puis Laura lors du sprint 3.
+
+Cette organisation s’est appuyée sur des outils et des canaux de communication essentiels pour maintenir une bonne coordination tout au long du projet.
+
+
+\subsection{Communication au sein de l'équipe}
+
+Pour communiquer au sein de notre groupe, nous avons choisi d'utiliser le logiciel \textbf{Discord}.  \\
+Discord est un outil de messagerie instantanée permettant également les appels de groupe. Il offre la possibilité de créer des serveurs, sur lesquels les utilisateurs peuvent se regrouper pour discuter d'un sujet commun. Un serveur peut être divisé en salons textuels ou vocaux, facilitant l'organisation des discussions par thèmes. 
+
+Nous avons opté pour ce logiciel en raison de sa simplicité d'utilisation et de sa popularité, puisque la quasi-totalité des membres du groupe possédait déjà un compte Discord.  
+
+Un serveur Discord a été créé dès que les groupes ont été connus, et tous les membres ont été invités à le rejoindre. Nous avons rapidement créé plusieurs salons afin de structurer les discussions et de pouvoir retrouver plus facilement les échanges. Par exemple, un salon a été dédié à la réalisation des \emph{User Stories}, et un autre aux discussions concernant la résolution des conflits de fusion des branches Git.  
+
+Étant donné qu'il ne nous était pas possible de réaliser les \emph{Daily Meetings} de la méthode \emph{Agile}, nous avons créé un salon où chacun pouvait poster des messages récapitulant ce qu'il avait fait et ce qu'il prévoyait de faire prochainement, simulant ainsi ce rituel.  
+
+La plupart des réunions relatives au projet se sont tenues à l'Université afin de privilégier la proximité entre les membres du groupe. Cependant, lorsque cela n'était pas possible, un canal vocal sur Discord permettait d'organiser des réunions à distance.
+
+\newpage
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+Pour cette deuxième release, nous allons poursuivre notre méthode de travail, que nous trouvons efficace et adaptée à notre équipe. Nous créons désormais une branche par fonctionnalité, ce qui facilite les \emph{Merge Requests} et rend l’intégration du code plus simple. Chaque \emph{Merge Requests} est accompagnée d’une documentation claire avec une \emph{Javadoc} et les tests associés au code couvrent une grande partie des fonctionnalités développées.
+
+Nous continuerons également à communiquer régulièrement, comme lors de cette première release, avec des réunions hebdomadaires et des points réguliers sur Discord. Nous avons constaté que cette manière de travailler nous permet de maintenir un code de qualité, sans blocages liés à la compréhension du travail des autres. De plus, cette communication régulière a renforcé notre cohésion et notre dynamique d’équipe.
+
+La méthode \emph{Agile} nous a permis de travailler de manière claire et organisée dès le début du projet. À la fin de cette première release, grâce aux sprints itératifs, nous disposons d’une application fonctionnelle sur plusieurs points :  
+
+\begin{itemize}
+    \item une première version de la grammaire MiniJaja, complète à l’exception des tableaux et des méthodes ;
+    \item l’interprétation de cette partie de la grammaire MiniJaja ;
+    \item la compilation de cette grammaire en JajaCode ;
+    \item une interface graphique permettant d’éditer un fichier (ajout ou suppression de lignes, navigation entre les lignes de code), de l’interpréter, de le compiler et d’afficher le résultat directement dans la console intégrée.
+\end{itemize}
+
+Pour la suite, nous allons naturellement continuer à appliquer cette approche. Lors des prochains sprints, nous maintiendrons la rotation du rôle de \emph{Scrum Master} avec Islem pour le sprint 4, Quentin pour le sprint 5 et Julie pour le sprint 6. Les \emph{User Stories} et les tâches continueront d’être définies en début de sprint, collectivement, et chacun choisira celles sur lesquelles il souhaite travailler selon ses envies et ses capacités.
+
+Sur le plan technique, nous prévoyons de terminer la grammaire MiniJaja en y intégrant les méthodes et les tableaux, de commencer la grammaire JajaCode pour l’interpréteur, de finaliser la mémoire avec la gestion du tas et d’améliorer l’interface graphique.
+
+Enfin, nous évaluerons l’efficacité de ces actions à l’aide du graphique \emph{Burndown} de Jira, des tests d’acceptation et d’intégration, ainsi que du taux de couverture du code. Ces indicateurs nous permettront de suivre précisément l’avancement du projet et de vérifier la qualité des développements réalisés lors des prochains sprints.
+
+\end{document}
+

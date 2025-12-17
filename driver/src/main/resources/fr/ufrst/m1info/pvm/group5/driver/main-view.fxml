@@ -15,9 +15,15 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.geometry.Orientation?>
 
 <?import javafx.scene.control.SplitPane.Divider?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.TextFlow?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="fr.ufrst.m1info.pvm.group5.driver.MainController">
 
   <top>
@@ -26,9 +32,20 @@
       <Button text="Open" fx:id="btnOpen" onAction="#selectFileButton"/>
       <Button text="Save" fx:id="btnSave" onAction="#saveButton"/>
       <Button text="Save As" fx:id="btnSaveAs" onAction="#saveAsButton"/>
+
+      <Region fx:id="spacer1" prefWidth="30"/>
+
       <Button text="Run" fx:id="btnRun" onAction="#onRunClicked"/>
       <Button text="Compile" fx:id="btnCompile" onAction="#onCompileClicked"/>
-      <Button text="Compile and run" fx:id="btnRunCompile"/>
+      <Button text="Compile and run" fx:id="btnRunCompile" onAction="#onCompileAndRunClicked"/>
+
+      <Region fx:id="spacer2" prefWidth="60"/>
+
+      <Label text="Debug : "/>
+      <Button text="Run" fx:id="btnDebugRun" onAction="#onClickRunDebug"/>
+      <Button text="Next" fx:id="btnDebugNext" onAction="#onClickNextDebug"/>
+      <Button text="Stop" fx:id="btnDebugStop" onAction="#onClickStopDebug"/>
+
     </ToolBar>
   </top>
 
@@ -38,21 +55,27 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
       </padding>
 
-      <HBox alignment="CENTER" spacing="20.0">
-        <padding>
-          <Insets top="10.0"/>
-        </padding>
-
-        <Label text="No file selected" fx:id="fileLabel"/>
-      </HBox>
-
       <SplitPane fx:id="splitPane">
-        <ListView fx:id="codeListView"/>
-        <TextArea fx:id="output" editable="false" prefHeight="150"/>
+        <TabPane fx:id="editorTabPane">
+          <Tab fx:id="sourceTab" text="Source Code" closable="false">
+            <ListView fx:id="codeListView"/>
+          </Tab>
+          <Tab fx:id="compiledTab" text="Compiled Code">
+            <ListView fx:id="compiledCodeListView"/>
+          </Tab>
+        </TabPane>
+
+        <TabPane fx:id="outputTabPane">
+          <Tab fx:id="outputTab" text="Output" closable="false">
+            <ScrollPane fx:id="outputScrollPane" fitToWidth="true" prefHeight="150">
+              <fr.ufrst.m1info.pvm.group5.driver.ColoredTextFlow fx:id="output" style="-fx-background-color: #333333; -fx-padding: 5;"/>
+            </ScrollPane>
+          </Tab>
+          <Tab fx:id="memoryTabMinijaja" text="MiniJaja Memory Visualisation"/>
+          <Tab fx:id="memoryTabJajacode" text="JajaCode Memory Visualisation"/>
+        </TabPane>
       </SplitPane>
 
     </VBox>
   </center>
-
 </BorderPane>
-

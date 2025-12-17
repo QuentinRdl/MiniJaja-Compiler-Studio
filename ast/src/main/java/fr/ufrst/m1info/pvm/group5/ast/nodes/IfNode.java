@@ -1,0 +1,88 @@
+package fr.ufrst.m1info.pvm.group5.ast.nodes;
+
+import fr.ufrst.m1info.pvm.group5.ast.*;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class IfNode extends ASTNode{
+    ASTNode condition;
+    ASTNode instrThen;
+    ASTNode instrElse;
+
+    public IfNode(ASTNode condition, ASTNode instrThen, ASTNode instrElse) {
+        this.condition = condition;
+        this.instrThen = instrThen;
+        this.instrElse = instrElse;
+        if(condition == null){
+            throw new ASTBuildException("If", "condition", "If node condition must not be null");
+        }
+        if(!(condition instanceof EvaluableNode)){
+            throw new ASTBuildException("If", "condition", "If node condition must be evaluable");
+        }
+    }
+
+    @Override
+    public List<String> compile(int address) {
+        List<String> jjcodes = new ArrayList<>();
+        List<String> pe = condition.compile(address);
+        List<String> ps1 = new ArrayList<>();
+        List<String> ps = new ArrayList<>();
+        if (instrElse != null){
+            ps1 = instrElse.compile(address + pe.size() + 1);
+        }
+        if (instrThen != null){
+            ps = instrThen.compile(address + pe.size() + ps1.size() + 2);
+        }
+
+        jjcodes.addAll(pe);
+        jjcodes.add("if("+ (address + pe.size() + ps1.size() + 2) + ")");
+        jjcodes.addAll(ps1);
+        jjcodes.add("goto("+ (address + pe.size() + ps1.size() + ps.size() + 2) + ")");
+        jjcodes.addAll(ps);
+
+        return jjcodes;
+    }
+
+    @Override
+    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
+        boolean exp = ((EvaluableNode)condition).eval(m).valueBool;
+        if(exp){
+            if(instrThen != null) {
+                instrThen.interpret(m);
+            }
+        }
+        else if(instrElse!=null){
+            instrElse.interpret(m);
+        }
+    }
+
+    @Override
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        String condType = condition.checkType(m);
+        if (!condType.equals("bool")) {
+            throw new InterpretationInvalidTypeException(this, "bool", condType);
+        }
+        if (instrThen != null) {
+            instrThen.checkType(m);
+        }
+        if (instrElse != null) {
+            instrElse.checkType(m);
+        }
+        return "void";
+    }
+
+    @Override
+    public List<ASTNode> getChildren() {
+        List<ASTNode> children = new ArrayList<>();
+        children.add(condition);
+        if(instrThen != null)
+            children.add(instrThen);
+        if(instrElse != null)
+            children.add(instrElse);
+        return children;
+    }
+
+    public String toString(){return "if";}
+}

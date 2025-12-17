@@ -3,7 +3,7 @@
     <parent>
         <groupId>fr.ufrst.m1info.pvm.group5</groupId>
         <artifactId>group5</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>2.0-pre</version>
     </parent>
 
     <artifactId>memory</artifactId>

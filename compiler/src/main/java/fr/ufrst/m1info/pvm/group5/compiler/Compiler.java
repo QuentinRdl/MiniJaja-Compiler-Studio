@@ -16,10 +16,10 @@ public class Compiler {
     }
 
     /**
-     * Compile the given code
+     * Compile the given code, write an error message on the output if an exception is thrown
      *
      * @param code the code we want to compile
-     * @return the compiled code or the error message if an exception is thrown
+     * @return the compiled code or null if an exception is thrown
      */
     public String compileCode(String code) {
         String res=null;
@@ -33,10 +33,10 @@ public class Compiler {
     }
 
     /**
-     * Compile the given code
+     * Compile the given code, write an error message on the output if an exception is thrown
      *
      * @param path the path of the file we want to compile
-     * @return the compiled code or the error message if an exception is thrown
+     * @return the compiled code or null if an exception is thrown
      */
     public String compileFile(String path) {
         String res=null;

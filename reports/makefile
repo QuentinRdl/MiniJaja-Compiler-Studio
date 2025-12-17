@@ -1,4 +1,4 @@
-docs=main aux
+docs=main
 
 all : documents clean
 

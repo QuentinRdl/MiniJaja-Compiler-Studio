@@ -3,14 +3,23 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 public class Console {
     /**
-     * Textarea to add to the window
+     * Textarea to add to the window (deprecated, use TextFlow instead)
      */
     public TextArea textArea;
+
     /**
-     * Writer associated to the textarea. Anything written to the writer will be added to the textarea.
+     * TextFlow for colored output
+     */
+    private TextFlow textFlow;
+
+    /**
+     * Writer associated to the output. Anything written to the writer will be added to the output.
      */
     private final Writer writer;
 
@@ -18,14 +27,28 @@ public class Console {
         textArea = new TextArea();
         textArea.setEditable(false);
         writer = new Writer();
-        writer.TextAddedEvent.subscribe(e -> textArea.appendText(e.diff()));
+        writer.textAddedEvent.subscribe(e -> appendText(e.diff()));
     }
 
     public Console(TextArea textArea){
         this.textArea = textArea;
         this.textArea.setEditable(false);
         writer = new Writer();
-        writer.TextAddedEvent.subscribe(e -> Platform.runLater(() -> textArea.appendText(e.diff())));
+        writer.textAddedEvent.subscribe(e -> Platform.runLater(() -> appendText(e.diff())));
+    }
+
+    public Console(TextFlow textFlow){
+        this.textFlow = textFlow;
+        writer = new Writer();
+        writer.textAddedEvent.subscribe(e -> Platform.runLater(() -> appendText(e.diff())));
+    }
+
+    /**
+     * Sets the TextFlow to be used for colored output
+     * @param textFlow the TextFlow component
+     */
+    public void setTextFlow(TextFlow textFlow) {
+        this.textFlow = textFlow;
     }
 
     /**
@@ -41,7 +64,11 @@ public class Console {
      */
     public void clear(){
         writer.clear();
-        textArea.clear();
+        if (textFlow != null) {
+            textFlow.getChildren().clear();
+        } else if (textArea != null) {
+            textArea.clear();
+        }
     }
 
     /**
@@ -49,7 +76,7 @@ public class Console {
      * @param content text to write to the console
      */
     public void write(String content){
-        textArea.appendText(content);
+        appendText(content);
     }
 
     /**
@@ -58,6 +85,43 @@ public class Console {
      * @param content text to write to the console
      */
     public void writeLine(String content) {
-        textArea.appendText(content + "\n");
+        appendText(content + "\n");
+    }
+
+    /**
+     * Appends text to the console with appropriate coloring
+     * @param content the text to append
+     */
+    private void appendText(String content) {
+        if (textFlow != null) {
+            // Create colored text node
+            Text text = new Text(content);
+
+            // Apply red color to error messages
+            if (content.contains("[ERROR]")) {
+                text.setFill(Color.web("#D0253C"));
+            } else {
+                text.setFill(Color.WHITE);
+            }
+
+            textFlow.getChildren().add(text);
+        } else if (textArea != null) {
+            // Fallback to TextArea if TextFlow is not available
+            textArea.appendText(content);
+        }
+    }
+
+    /**
+     * Gets all the text content from the console
+     * This method maintains compatibility with tests that use getText()
+     * @return the complete text content
+     */
+    public String getText() {
+        if (textFlow instanceof ColoredTextFlow) {
+            return ((ColoredTextFlow) textFlow).getText();
+        } else if (textArea != null) {
+            return textArea.getText();
+        }
+        return "";
     }
 }

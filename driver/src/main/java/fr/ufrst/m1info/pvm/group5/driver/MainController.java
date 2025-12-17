@@ -1,7 +1,10 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
+import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterJajaCode;
 import fr.ufrst.m1info.pvm.group5.interpreter.InterpreterMiniJaja;
+import fr.ufrst.m1info.pvm.group5.interpreter.InterpretationHaltedData;
 import fr.ufrst.m1info.pvm.group5.compiler.Compiler;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationMode;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -10,10 +13,16 @@ import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.concurrent.Task;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +33,9 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
 
 /**
  * Controller class for managing interactions in the main application interface
@@ -32,22 +44,47 @@ import java.util.stream.Collectors;
  */
 public class MainController {
     @FXML
-    private Label fileLabel;
-
-    @FXML
     private ListView<CodeLine> codeListView;
+    private ObservableList<CodeLine> codeLines;
 
     @FXML
-    TextArea output;
+    private ListView<CodeLine> compiledCodeListView;
+    private ObservableList<CodeLine> compiledCodeLines;
+
+    @FXML
+    public ColoredTextFlow output;
 
     private Console console;
-
-    private ObservableList<CodeLine> codeLines;
 
     @FXML
     private SplitPane splitPane;
 
     private File currentFile;
+
+    @FXML
+    private TabPane editorTabPane;
+
+    @FXML
+    private TabPane outputTabPane;
+
+    @FXML
+    private Tab sourceTab;
+
+    @FXML
+    private Tab compiledTab;
+
+    @FXML
+    private Tab memoryTabMinijaja;
+
+    @FXML
+    private Tab memoryTabJajacode;
+
+    private MemoryVisualisation memoryVisualisationMiniJaja;
+
+    private MemoryVisualisation memoryVisualisationJajaCode;
+
+    private boolean isModified = false; //indicates whether the file has been modified
+    private boolean isLoadingFile = false; //indicates whether the file is currently being loaded
 
     @FXML
     private Button btnSave;
@@ -59,6 +96,12 @@ public class MainController {
     private Button btnCompile;
     @FXML
     private Button btnRunCompile;
+    @FXML
+    private Button btnDebugRun;
+    @FXML
+    private Button btnDebugStop;
+    @FXML
+    private Button btnDebugNext;
 
 
     /**
@@ -78,15 +121,18 @@ public class MainController {
         // allows ListView to know how to create its cells
         codeListView.setCellFactory(lv -> {
             CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(true); // Source code is MiniJaja
             cell.setListener(new CodeLineCellListener() {
                 @Override
                 public void onEnterPressed(CodeLine codeLine) {
                     handleEnterPressed(codeLine);
+                    markAsModified();
                 }
 
                 @Override
                 public void onDeletePressed(CodeLine codeLine) {
                     handleDeleteEmptyLine(codeLine);
+                    markAsModified();
                 }
 
                 @Override
@@ -94,24 +140,123 @@ public class MainController {
 
                 @Override
                 public void onDownPressed(int index) { handleDownPressed(index);}
+
+                @Override
+                public void onModified(){
+                    if(isLoadingFile) return;
+                    markAsModified();
+                }
             });
             return cell;
         });
 
-        deactiveButtons();
+        compiledCodeLines = FXCollections.observableArrayList();
+        compiledCodeListView.setItems(compiledCodeLines);
+        compiledCodeListView.setCellFactory(lv -> {
+            CodeLineCell cell = new CodeLineCell();
+            cell.setMiniJaja(false); // Compiled code is JajaCode
+            cell.setCodeEditable(false);
+            return cell;
+        });
+
+        editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            //TODO: disable buttons when viewing memory tabs
+            if(isCompiledTab()){
+                btnCompile.setDisable(true);
+                btnRunCompile.setDisable(true);
+            } else {
+                activeButtons();
+            }
+        });
+
+        memoryVisualisationMiniJaja = new MemoryVisualisation();
+        if(memoryTabMinijaja != null){
+            memoryTabMinijaja.setContent(memoryVisualisationMiniJaja);
+        }
+        hideMemoryTab(memoryTabMinijaja);
+
+        memoryVisualisationJajaCode = new MemoryVisualisation();
+        if(memoryTabJajacode != null){
+            memoryTabJajacode.setContent(memoryVisualisationJajaCode);
+        }
+        hideMemoryTab(memoryTabJajacode);
+
+        FontIcon playIcon = new FontIcon(FontAwesomeSolid.PLAY);
+        playIcon.setIconColor(Color.web("#398989"));
+        playIcon.setIconSize(12);
+        btnDebugRun.setGraphic(playIcon);
+        btnDebugRun.setContentDisplay(ContentDisplay.LEFT);
+
+        FontIcon stopIcon = new FontIcon(FontAwesomeSolid.STOP);
+        stopIcon.setIconColor(Color.web("#BF2237"));
+        stopIcon.setIconSize(12);
+        btnDebugStop.setGraphic(stopIcon);
+        btnDebugStop.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugStop.setDisable(true);
+
+        FontIcon nextIcon = new FontIcon(FontAwesomeSolid.ARROW_RIGHT);
+        nextIcon.setIconColor(Color.web("#FFD270"));
+        nextIcon.setIconSize(12);
+        btnDebugNext.setGraphic(nextIcon);
+        btnDebugNext.setContentDisplay(ContentDisplay.LEFT);
+        btnDebugNext.setDisable(true);
+
+        hideCompileTab();
         setupOutputContextMenu();
+        setupKeyboardShortcuts();
+
+        createNewFile();
     }
+
+
+    /**
+     * Register keyboard shortcuts with the Scene so we can use
+     * shortcuts like Ctrl + S (save)
+     */
+    private void setupKeyboardShortcuts() {
+        Platform.runLater(() -> {
+            if(splitPane == null) return;
+            Scene scene = splitPane.getScene();
+            if(scene == null) return;
+
+            // Ctrl + S -> Save
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN),
+                    this::saveButton
+            );
+
+            // Ctrl + Shift + S -> Save As
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+                    this::saveAsButton
+            );
+
+            // Ctrl + R -> Run
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN),
+                    this::onRunClicked
+            );
+
+            // Ctrl + K -> Compile
+            scene.getAccelerators().put(
+                    new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN),
+                    this::onCompileClicked
+            );
+
+        });
+    }
+
 
     /**
      * Called when the user clicks the "Open" button
-     * Opens a file chooser allowing selection of a MiniJaja or JajaCode file,
+     * Opens a file chooser allowing a MiniJaja file,
      * then loads its content into the ListView
      */
     @FXML
     protected void selectFileButton() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter("MiniJaja and JajaCode file", "*.mjj", "*.jcc")
+                new ExtensionFilter("MiniJaja file", "*.mjj")
         );
         File selectedFile = fc.showOpenDialog(splitPane.getScene().getWindow());
         loadFile(selectedFile);
@@ -127,17 +272,21 @@ public class MainController {
      */
     public boolean loadFile(File selectedFile){
         if(selectedFile == null){
-            System.out.println("No file selected");
             return false;
         }
 
         if(!selectedFile.exists()){
-            console.getWriter().writeLine("[ERROR] File doesn't exist :" + selectedFile.getName());
-            System.err.println("File doesn't exist : " + selectedFile.getName());
+            console.getWriter().writeLine("[ERROR] File doesn't exist : " + selectedFile.getName());
             return false;
         }
 
+        // Stop any active debug session before loading new file
+        if(debugInterpreterMjj != null || debugInterpreterJjc != null){
+            onClickStopDebug();
+        }
+
         try {
+            isLoadingFile = true;
             // Delete old cells
             codeLines.clear();
 
@@ -151,9 +300,21 @@ public class MainController {
                 }
             }
 
-            fileLabel.setText(selectedFile.getName());
             currentFile = selectedFile;
-            activeButtons();
+
+            isModified = false;
+            sourceTab.setText(currentFile.getName());
+
+            compiledCodeLines.clear();
+            hideCompileTab();
+            clearMemoryVisualisation(memoryVisualisationMiniJaja);
+            hideMemoryTab(memoryTabMinijaja);
+            clearMemoryVisualisation(memoryVisualisationJajaCode);
+            hideMemoryTab(memoryTabJajacode);
+
+            Platform.runLater(() -> {
+                isLoadingFile = false;
+            });
 
             console.getWriter().writeLine("[INFO] File loaded : " + selectedFile.getName());
             return true;
@@ -163,15 +324,6 @@ public class MainController {
             console.getWriter().writeLine("[ERROR] " + e.getMessage());
             return false;
         }
-    }
-
-    /**
-     * Returns the label that displays the name of the currently loaded file
-     *
-     * @return the Label showing the selected file name
-     */
-    public Label getFileLabel(){
-        return fileLabel;
     }
 
     /**
@@ -212,14 +364,100 @@ public class MainController {
     }
 
     /**
+     * Returns the main TabPane that contains the editor tabs
+     *
+     * @return the TabPane managing open editor tabs
+     */
+    public TabPane getEditorTabPane(){
+        return editorTabPane;
+    }
+
+    /**
+     * Returns the tab displaying the compiled code
+     *
+     * @return the Tab that shows the compiled code
+     */
+    public Tab getCompiledTab(){
+        return compiledTab;
+    }
+
+    /**
+     * Returns the tab displaying the source code
+     *
+     * @return the Tab that shows the source code
+     */
+    public Tab getSourceTab() { return sourceTab; }
+
+    /**
+     * Returns the TabPane used to display output-related tabs.
+     *
+     * @return the output TabPane
+     */
+    public TabPane getOutputTabPane() { return outputTabPane; }
+
+    /**
+     * Returns the memory tab for MiniJaja execution
+     *
+     * @return the MiniJaja memory Tab
+     */
+    public Tab getMemoryTabMinijaja() { return memoryTabMinijaja; }
+
+    /**
+     * Returns the memory tab for JajaCode execution
+     *
+     * @return the JajaCode memory Tab
+     */
+    public Tab getMemoryTabJajacode() { return memoryTabJajacode; }
+
+    /**
+     * Returns the memory viusalisation for MiniJaja
+     *
+     * @return the MiniJaja MemoryVisualisation
+     */
+    public MemoryVisualisation getMemoryVisualisationMiniJaja() { return memoryVisualisationMiniJaja; }
+
+
+    /**
+     * Returns the ListView component used to display compiled code lines
+     *
+     * @return the ListView containing compiled CodeLine objects
+     */
+    public ListView<CodeLine> getCompiledCodeListView(){
+        return compiledCodeListView;
+    }
+
+    /**
+     * Returns the observable list representing the compiled code lines
+     *
+     * @return the ObservableList of compiled CodeLine objects
+     */
+    public ObservableList<CodeLine> getCompiledCodeLines(){
+        return compiledCodeLines;
+    }
+
+    /**
+     * Returns the compiled code as a single string,
+     * joining all CodeLine entries with newline characters
+     *
+     * @return the compiled JajaCode as text
+     */
+    public String getCompiledCode(){
+        return compiledCodeLines.stream().map(CodeLine::getCode).collect(Collectors.joining("\n"));
+    }
+
+    /**
      * Saves the current code to the currently loaded file
      * If no file is loaded, it triggers the "Save As" dialog instead
      */
     public void saveButton(){
-        if(currentFile != null){
-            saveToFile(currentFile);
+        if(isCompiledTab()){
+            saveCompiledCodeAs();
         } else {
-            saveAsButton();
+            if(currentFile != null){
+                saveToFile(currentFile);
+            } else {
+                saveAsButton();
+            }
         }
     }
 
@@ -230,12 +468,11 @@ public class MainController {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save a file as");
         fc.getExtensionFilters().addAll(
-                new ExtensionFilter( "MiniJaja file", "*.mjj"),
-                new ExtensionFilter("JajaCode file", "*.jcc")
+                new ExtensionFilter( "MiniJaja file", "*.mjj")
         );
 
         // Default name if file exists
-        if (currentFile != null){
+        if(currentFile != null){
             fc.setInitialFileName(getBaseFileName(currentFile.getName()));
             fc.setInitialDirectory(currentFile.getParentFile());
         }
@@ -252,9 +489,9 @@ public class MainController {
      */
     public void saveAs(File file){
         if (file != null){
-          saveToFile(file);
-          currentFile = file;
-          fileLabel.setText(currentFile.getName());
+            currentFile = file;
+            saveToFile(file);
+            sourceTab.setText(currentFile.getName());
         }
     }
 
@@ -270,11 +507,30 @@ public class MainController {
             Files.write(file.toPath(), lines , StandardCharsets.UTF_8);
 
             console.getWriter().writeLine("[INFO] File saved " + file.getName());
+            isModified = false;
+            sourceTab.setText(currentFile.getName());
 
         } catch (IOException e){
-            System.err.println("Error during saving : " + e.getMessage());
             console.getWriter().writeLine("[ERROR] Error during saving : " + e.getMessage());
         }
+    }
+
+    /**
+     * Opens a "Save As" dialog to save the compiled code as a JajaCode file
+     * The default filename and directory are based on the currently opened file
+     */
+    public void saveCompiledCodeAs(){
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save compiled file as ");
+        fc.getExtensionFilters().addAll(
+                new ExtensionFilter( "JajaCode file", "*.jjc")
+        );
+
+        fc.setInitialFileName(getBaseFileName(currentFile.getName()));
+        fc.setInitialDirectory(currentFile.getParentFile());
+
+        File fileToSave = fc.showSaveDialog(splitPane.getScene().getWindow());
+        saveAs(fileToSave);
     }
 
     /**
@@ -328,7 +584,7 @@ public class MainController {
 
         codeLines.remove(index);
 
-        renumberAllLines();;
+        renumberAllLines();
 
         int targetIndex = Math.max(0, index - 1);
         Platform.runLater(() -> {
@@ -402,29 +658,96 @@ public class MainController {
         return codeListView.getItems().size() - 1;
     }
 
-    /**
-     * Executes the current code when the "Run" button is clicked
-     * Retrieves the code from the editor and passes it to the InterpreterMiniJaja for interpretation
-     * After interpretation, logs either a success message or an error message to the console
-     */
-    public void onRunClicked(){
-        String code = getModifiedCode();
 
-        //find another solution to better intercept empty code (with multiple lines)
-        if (code.isEmpty()){
+    /**
+     * This func checks if the code we gave (as a String), is just empty chars or not
+     * @param code the given code as a String
+     * @return true if the code is just empty chars, false otherwise
+     */
+    private boolean isCodeEmptyChars(String code) {
+        String justBlank = code.trim();
+        // If the code we got is just empty chars, do not run it
+        return justBlank.isEmpty();
+    }
+
+
+    /**
+     * Handles the "Run" button click
+     * Determines the file type and launches the appropriate interpretation (MiniJaja or JajaCode)
+     * Displays an error if interpretation is not allowed
+     */
+    public void onRunClicked() {
+        boolean miniJaja = isMinijajaFile();
+        boolean jajaCode = isJajaCode();
+
+        if(!miniJaja && !jajaCode) {
+            console.getWriter().writeLine("[ERROR] Interpretation is only available for MiniJaja files and JajaCode files (.mjj & .jjc)");
+            return;
+        } else if (miniJaja && jajaCode) {
+            // Should never be called in actual code but still check for tests purpose
+            console.getWriter().writeLine("[INTERNAL ERROR] current file is marked as jjc and mjj");
             return;
         }
 
-        InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+        if(!isCompiledTab()){
+            interpretationMinijaja();
+        } else {
+            interpretationJajacode();
+        }
 
-        String err = interpreterMiniJaja.interpretCode(code);
+    }
+
+    /**
+     * Interprets the current MiniJaja code
+     * Retrieves edited code, checks validity, runs the MiniJaja interpreter,
+     * and prints either a success or an error message
+     */
+    public void interpretationMinijaja(){
+        String code = getModifiedCode();
+
+        // If the code is just empty chars, do not run it
+        if (code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[INFO] No code to interpret !");
+            return;
+        }
+
+        String err = null;
+        InterpreterMiniJaja interpreterMiniJaja = new InterpreterMiniJaja(console.getWriter());
+        err = interpreterMiniJaja.interpretCode(code);
 
         if(err == null){
-            console.getWriter().writeLine("[INFO] Interpretation successfully completed");
+            showMemoryTab(memoryTabMinijaja);
+            Platform.runLater(() -> memoryVisualisationMiniJaja.updateMemory(interpreterMiniJaja.getMemory().toStringTab()));
+            console.getWriter().writeLine("[INFO] MiniJaja interpretation successfully completed");
         } else {
             console.getWriter().writeLine("[ERROR] " + err);
         }
+    }
 
+    /**
+     * Interprets the current JajaCode code
+     * Retrieves compiled code, checks validity, runs the JajaCode interpreter,
+     * and prints either a success or an error message
+     */
+    public void interpretationJajacode(){
+        String compiledCode = getCompiledCode();
+
+        if(compiledCode.isEmpty() || isCodeEmptyChars(compiledCode)){
+            console.getWriter().writeLine("[ERROR] No code to interpret !");
+            return;
+        }
+
+        String err = null;
+        InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
+        err = interpreterJajaCode.interpretCode(compiledCode);
+
+        if(err == null){
+            showMemoryTab(memoryTabJajacode);
+            Platform.runLater(() -> memoryVisualisationJajaCode.updateMemory(interpreterJajaCode.getMemory().toStringTab()));
+            console.getWriter().writeLine("[INFO] JajaCode interpretation successfully completed");
+        } else {
+            console.getWriter().writeLine("[ERROR] " + err);
+        }
     }
 
     /**
@@ -445,7 +768,6 @@ public class MainController {
             }
 
             Platform.runLater(this::focusSelectedCell);
-
         }
     }
 
@@ -490,12 +812,25 @@ public class MainController {
      * activates the buttons, and updates the label to indicate a new file
      */
     public void createNewFile(){
+        // Stop any active debug session before creating new file
+        if(debugInterpreterMjj != null || debugInterpreterJjc != null){
+            onClickStopDebug();
+        }
+
         codeLines.clear();
         codeLines.add(new CodeLine(1, ""));
         codeListView.getSelectionModel().select(0);
-        activeButtons();
         currentFile = null;
-        fileLabel.setText("New file");
+        isModified = false;
+        sourceTab.setText("Untitled");
+
+        compiledCodeLines.clear();
+        hideCompileTab();
+
+        clearMemoryVisualisation(memoryVisualisationMiniJaja);
+        hideMemoryTab(memoryTabMinijaja);
+        clearMemoryVisualisation(memoryVisualisationJajaCode);
+        hideMemoryTab(memoryTabJajacode);
     }
 
     /**
@@ -525,34 +860,122 @@ public class MainController {
     /**
      * Handles the action triggered when the user clicks the "Compile" button
      *
-     * This method werifies that the currently loaded file is a MiniJaja file,
+     * This method verifies that the currently loaded file is a MiniJaja file,
      * then retrieves the modified code from the editor and, if not empty, sends it
      * to the Compiler for compilation.
-     * Upon success, the complied JajaCode is printed in the console along with a confirmation message.
+     * Upon success, the compiled JajaCode is printed in the console along with a confirmation message.
      */
     public void onCompileClicked(){
+        String code = getModifiedCode();
+
+        if(code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[INFO] No code to compile !");
+            return;
+        }
+
         if(!isMinijajaFile()){
             console.getWriter().writeLine("[ERROR] Compilation is only available for MiniJaja files (.mjj)");
             return;
         }
 
-        String code = getModifiedCode();
+        // Disable compile button while compilation is in progress
+        // if(btnCompile != null) btnCompile.setDisable(true);
 
-        //TODO: find another solution to better intercept empty code (with multiple lines)
-        if(code.isEmpty()){
-            console.getWriter().writeLine("[ERROR] No code to compile !");
+        Task<String> compileTask = new Task<>(){
+            @Override
+            protected String call() {
+                Compiler compiler = new Compiler(console.getWriter());
+                return compiler.compileCode(code);
+            }
+        };
+
+        compileTask.setOnSucceeded(e -> {
+            String res = compileTask.getValue();
+            if (res != null){
+                compiledTab.setText(getBaseFileName(currentFile.getName()) + ".jjc");
+                showCompiledTab();
+                loadCompiledCodeToListView(res);
+                console.getWriter().writeLine("[INFO] Compilation successful!");
+            }
+            // if(btnCompile != null) btnCompile.setDisable(false);
+        });
+
+        compileTask.setOnFailed(e -> {
+            Throwable ex = compileTask.getException();
+            console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
+            // if(btnCompile != null) btnCompile.setDisable(false);
+        });
+
+        Thread t = new Thread(compileTask, "Compiler-Thread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Compiles and immediately runs the current MiniJaja code
+     * Validates the code, compiles it, loads the compiled result into the compiled tab,
+     * then interprets it and logs either success or error message
+     */
+    public void onCompileAndRunClicked(){
+        String code = getModifiedCode();
+        if(code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[INFO] No code to compile and run !");
             return;
         }
 
-        Compiler compiler = new Compiler(console.getWriter());
-        String res = compiler.compileCode(getModifiedCode());
-
-        if (res != null){
-            console.getWriter().writeLine("[INFO] Compilation successful!");
-            console.getWriter().writeLine("=== Compiled JajaCode ===");
-            console.getWriter().writeLine(res);
-            console.getWriter().writeLine("=== End of compiled code ===");
+        if(!isMinijajaFile()){
+            console.getWriter().writeLine("[ERROR] Compilation and interpretation is only available for MiniJaja (.mjj) files");
+            return;
         }
+
+        // Disable compiler and run buttons while compilation is in progress
+        // if(btnCompile != null) btnCompile.setDisable(true);
+        // if(btnRunCompile != null) btnRunCompile.setDisable(true);
+
+        // Create task to call later
+        Task<String> compileAndRunTask = new Task<>() {
+            @Override
+            protected String call() {
+                Compiler compiler = new Compiler(console.getWriter());
+                return compiler.compileCode(code);
+            }
+        };
+
+        compileAndRunTask.setOnSucceeded(e -> {
+            String compiledCode = compileAndRunTask.getValue();
+            if(compiledCode != null) {
+                compiledTab.setText(getBaseFileName(currentFile.getName()) + ".jjc");
+                showCompiledTab();
+                loadCompiledCodeToListView(compiledCode);
+
+                // Interpret compiled code
+                String err = null;
+                InterpreterJajaCode interpreterJajaCode = new InterpreterJajaCode(console.getWriter());
+                err = interpreterJajaCode.interpretCode(compiledCode);
+
+                if(err == null){
+                    showMemoryTab(memoryTabJajacode);
+                    Platform.runLater(() -> memoryVisualisationJajaCode.updateMemory(interpreterJajaCode.getMemory().toStringTab()));
+                    console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
+                } else {
+                    console.getWriter().writeLine("[ERROR] " + err);
+                }
+            }
+
+            if(btnCompile != null) btnCompile.setDisable(false);
+            if(btnRunCompile != null) btnRunCompile.setDisable(false);
+        });
+
+        compileAndRunTask.setOnFailed(e -> {
+            Throwable ex = compileAndRunTask.getException();
+            console.getWriter().writeLine("[ERROR] Compilation failed: " + (ex != null ? ex.getMessage() : "Unknown error"));
+            //if(btnCompile != null) btnCompile.setDisable(false);
+            //if(btnRunCompile != null) btnRunCompile.setDisable(false);
+        });
+
+        Thread t = new Thread(compileAndRunTask, "Compiler-Run-Thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
@@ -561,12 +984,33 @@ public class MainController {
      * @return true if the file exists and its name ends with ".mjj", false otherwise
      */
     public boolean isMinijajaFile(){
+        return fileExtensionMatches(".mjj");
+    }
+
+
+    /**
+     * Checks whether the currently opened file is a JajaCode source file
+     *
+     * @return true if the file exists and its name ends with ".jjc", false otherwise
+     */
+    public boolean isJajaCode(){
+        return fileExtensionMatches(".jjc");
+    }
+
+
+    /**
+     * Checks that the current file extension matches with the parameter we give it
+     * @param extension the extension we want to match
+     * @return true if extension == actual extension, false otherwise
+     */
+    public boolean fileExtensionMatches(String extension) {
         if(currentFile == null){
             return false;
         }
         String fileName = currentFile.getName().toLowerCase();
-        return fileName.endsWith(".mjj");
+        return fileName.endsWith(extension);
     }
+
 
     /**
      * Initializes a context menu for the output console
@@ -575,7 +1019,7 @@ public class MainController {
      * the user to clear the console output area.
      */
     private void setupOutputContextMenu(){
-        if (output == null){
+        if(output == null){
             return;
         }
 
@@ -587,5 +1031,654 @@ public class MainController {
         contextMenu.getItems().addAll(clearOutput);
 
         output.setContextMenu(contextMenu);
+    }
+
+    /**
+     * Checks whether the currently selected tab is the compiled code tab
+     *
+     * @return true if the compiled tab is selected, false otherwise
+     */
+    public boolean isCompiledTab(){
+        return editorTabPane != null && editorTabPane.getSelectionModel().getSelectedItem() == compiledTab;
+    }
+
+    /**
+     * Loads compiled code into the compiled code ListView
+     * Clears any existing content before filling it with new code lines
+     *
+     * @param compiledCode the compiled code to display in the ListView
+     */
+    public void loadCompiledCodeToListView(String compiledCode){
+        compiledCodeLines.clear();
+
+        String[] lines = compiledCode.split("\n");
+        int lineNumber = 1;
+        for(String line : lines){
+            compiledCodeLines.add(new CodeLine(lineNumber++, line));
+        }
+    }
+
+    //TODO: replace the functions with showTab and hideTab (more generic functions)
+
+    /**
+     * Hides the compiled code tab from the editor tab pane
+     */
+    public void hideCompileTab(){
+        if(editorTabPane != null && compiledTab != null){
+            editorTabPane.getTabs().remove(compiledTab);
+        }
+    }
+
+    /**
+     * Displays the compiled code tab in the editor tab pane
+     * Adds it if it is not already visible, and selects it
+     */
+    public void showCompiledTab(){
+        if(editorTabPane != null && compiledTab != null){
+            if(!editorTabPane.getTabs().contains(compiledTab)){
+                editorTabPane.getTabs().add(compiledTab);
+            }
+            editorTabPane.getSelectionModel().select(compiledTab);
+        }
+    }
+
+    /**
+     * Displays a memory tab in the editor if it is not already visible
+     *
+     * @param memoryTab the Tab representing the memory view
+     */
+    public void showMemoryTab(Tab memoryTab){
+        if(outputTabPane != null && memoryTab != null){
+            if(!outputTabPane.getTabs().contains(memoryTab)){
+                outputTabPane.getTabs().add(memoryTab);
+            }
+        }
+    }
+
+    /**
+     * Hides the memory tab from the editor tab pane
+     *
+     * @param memoryTab the Tab representing the memory view
+     */
+    public void hideMemoryTab(Tab memoryTab){
+        if(outputTabPane != null && memoryTab != null){
+            outputTabPane.getTabs().remove(memoryTab);
+        }
+    }
+
+    /**
+     * Clears the contents of the memory visualisation
+     *
+     * @param memoryVisualisation the MemoryVisualisation instance to clear
+     */
+    private void clearMemoryVisualisation(MemoryVisualisation memoryVisualisation){
+        if(memoryVisualisation != null){
+            memoryVisualisation.clear();
+        }
+    }
+
+    /**
+     * Returns a set of line numbers where breakpoints are currently set
+     * This can be used by the interpreter to know where to halt execution
+     *
+     * @return a Set containing all line numbers with breakpoints
+     */
+    public java.util.Set<Integer> getBreakpointLines(){
+        return codeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of line numbers where breakpoints are set in the compiled code
+     * This can be used by the JajaCode interpreter
+     *
+     * @return a Set containing all line numbers with breakpoints in compiled code
+     */
+    public java.util.Set<Integer> getCompiledBreakpointLines(){
+        return compiledCodeLines.stream()
+                .filter(CodeLine::isBreakpoint)
+                .map(CodeLine::getLineNumber)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
+    /**
+     * Checks if a breakpoint is set at a specific line number
+     *
+     * @param lineNumber the line number to check
+     * @return true if a breakpoint is set at the given line, false otherwise
+     */
+    public boolean hasBreakpointAt(int lineNumber){
+        return codeLines.stream()
+                .anyMatch(line -> line.getLineNumber() == lineNumber && line.isBreakpoint());
+    }
+
+    /**
+     * Clears all breakpoints from the source code
+     */
+    public void clearAllBreakpoints(){
+        codeLines.forEach(line -> line.setBreakpoint(false));
+        codeListView.refresh();
+    }
+
+    /**
+     * Clears all breakpoints from the compiled code
+     */
+    public void clearCompiledBreakpoints(){
+        compiledCodeLines.forEach(line -> line.setBreakpoint(false));
+        compiledCodeListView.refresh();
+    }
+
+    /**
+     * Toggles a breakpoint at the specified line number
+     *
+     * @param lineNumber the line number where to toggle the breakpoint
+     */
+    public void toggleBreakpointAt(int lineNumber){
+        codeLines.stream()
+                .filter(line -> line.getLineNumber() == lineNumber)
+                .findFirst()
+                .ifPresent(line -> {
+                    line.setBreakpoint(!line.isBreakpoint());
+                    codeListView.refresh();
+                });
+    }
+
+    InterpreterMiniJaja debugInterpreterMjj = null;
+    InterpreterJajaCode debugInterpreterJjc = null;
+    boolean debugHalted = false;
+    int debugCurrentLine = -1;
+    InterpretationMode currentDebugMode = InterpretationMode.STEP_BY_STEP;
+
+    // Store event subscribers so we can unsubscribe them later
+    private java.util.function.Consumer<InterpretationHaltedData> debugMjjSubscriber = null;
+    private java.util.function.Consumer<InterpretationHaltedData> debugJjcSubscriber = null;
+
+
+    /**
+     * Runs the adequat interpreter on debug mode (InterpreterMiniJaja / InterpreterJajaCode)
+     * @param interpreter interpreter to run the debug func
+     */
+    public void globalRunDebugFunc(Object interpreter) {
+        // Determine interpreter type
+        boolean mjj = interpreter instanceof InterpreterMiniJaja;
+        boolean jjc = interpreter instanceof InterpreterJajaCode;
+
+        if(!mjj && !jjc) {
+            // Given interpreter object is neither an interpreter JajaCode nor an interpreter MiniJaja
+            return;
+        }
+
+        // Get code based on interpreter type
+        String code = mjj ? getModifiedCode() : getCompiledCode();
+        if(code == null || code.isEmpty() || isCodeEmptyChars(code)){
+            console.getWriter().writeLine("[INFO] No code to debug !");
+            return;
+        }
+
+        // Clean previous debug state
+        if(debugInterpreterMjj != null){
+            // Unsubscribe from the old event before stopping
+            if(debugMjjSubscriber != null){
+                debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
+                debugMjjSubscriber = null;
+            }
+            try {
+                debugInterpreterMjj.stopInterpretation();
+            } catch (Exception _){
+                // Ignore errors
+            }
+            debugInterpreterMjj = null;
+        }
+
+        if(debugInterpreterJjc != null){
+            // Unsubscribe from the old event before stopping
+            if(debugJjcSubscriber != null){
+                debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
+                debugJjcSubscriber = null;
+            }
+            try {
+                debugInterpreterJjc.stopInterpretation();
+            } catch (Exception _){
+                // Ignore errors
+            }
+            debugInterpreterJjc = null;
+        }
+
+        debugHalted = false;
+        debugCurrentLine = -1;
+
+        if(btnDebugRun!= null) btnDebugRun.setDisable(true); // Disable run button as we are already running
+
+        // Setup interpreter and subscribe to halted events
+        if(mjj){
+            debugInterpreterMjj = (InterpreterMiniJaja) interpreter;
+
+            // Configure breakpoints for MiniJaja code
+            java.util.Set<Integer> breakpoints = getBreakpointLines();
+
+            if(!breakpoints.isEmpty()){
+                debugInterpreterMjj.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                currentDebugMode = InterpretationMode.BREAKPOINTS;
+                console.getWriter().writeLine("[INFO] Breakpoints mode - halting at lines: " + breakpoints);
+            } else {
+                currentDebugMode = InterpretationMode.STEP_BY_STEP;
+                console.getWriter().writeLine("[INFO] Step-by-step mode - no breakpoints set");
+            }
+
+            // Create and store the subscriber so we can unsubscribe later
+            debugMjjSubscriber = event -> {
+                // Event runs on a thread we must update the controller state
+                debugHalted = event.isPursuable();
+                debugCurrentLine = event.line();
+
+                // If the interpreter said that the halt is pursuable, we are paused and
+                // the user can request the next step. We must get the memory and enable next step button
+                if(event.isPursuable()) {
+                    // Get the line text if we can
+                    String lineText = "";
+                    int lineIdx = debugCurrentLine - 1;
+                    if(lineIdx >= 0 && lineIdx < codeLines.size()){
+                        lineText = codeLines.get(lineIdx).getCode();
+                    }
+                    console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
+
+                    String[] currMemoryState = null;
+                    try {
+                        if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
+                            currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
+                        }
+                    } catch(Exception _ex) {
+                        // ignore errors
+                    }
+
+                    final String[] finalMemoryState = currMemoryState;
+
+                    Platform.runLater(() -> {
+                        highlightDebugLine(lineIdx, codeLines, codeListView);
+
+                        if(btnDebugNext != null) btnDebugNext.setDisable(false);
+                        if(btnDebugStop != null) btnDebugStop.setDisable(false);
+
+                        showMemoryTab(memoryTabMinijaja);
+
+                        if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                            memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
+                        }
+                    });
+
+                    return;
+                }
+
+                // Final halt we get memory state
+                String[] currMemoryState = null;
+                try {
+                    if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
+                        currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
+
+                    }
+                } catch (Exception _ex) {
+                    // ignore errors
+                }
+
+                final String[] finalMemoryState = currMemoryState;
+
+                // Stop the interpreter and clear reference
+                try {
+                    if(debugInterpreterMjj != null) debugInterpreterMjj.stopInterpretation();
+                } catch (Exception _){
+                    // ignore errors
+                }
+                try {
+                    if(debugInterpreterMjj != null) debugInterpreterMjj.waitInterpretation();
+                } catch (Exception _){
+                    // ignore errors
+                }
+                debugHalted = false;
+
+                Platform.runLater(() -> {
+                    clearDebugHighlight(codeLines, codeListView);
+                    if(btnDebugNext != null) btnDebugNext.setDisable(true);
+                    if(btnDebugStop != null) btnDebugStop.setDisable(true);
+
+                    showMemoryTab(memoryTabMinijaja);
+
+                    if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                        memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
+                    }
+                });
+
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
+                console.getWriter().writeLine("[INFO] Debugging stopped (final halt)");
+
+                // Clean everything -> Stop threads
+                if(debugInterpreterMjj != null) {
+                    debugInterpreterMjj.stopInterpretation();
+                }
+            };
+
+            // Subscribe the handler to the event
+            debugInterpreterMjj.getInterpretationHaltedEvent().subscribe(debugMjjSubscriber);
+
+            // Start interpretation with selected mode
+            String err = null;
+            try {
+                err = debugInterpreterMjj.startCodeInterpretation(code, currentDebugMode);
+            } catch (Exception e) {
+                // Handle exceptions thrown during interpretation startup
+                console.getWriter().writeLine("[ERROR] Exception during debug startup: " + e.getMessage());
+                err = "Exception: " + e.getMessage();
+            }
+
+            if(err != null){
+                console.getWriter().writeLine("[ERROR] " + err);
+                // cleanup
+                try {
+                    if(debugInterpreterMjj != null) debugInterpreterMjj.stopInterpretation();
+                } catch (Exception _){
+                    // ignore errors
+                }
+
+                debugInterpreterMjj = null;
+                debugHalted = false;
+                if(btnDebugNext != null) btnDebugNext.setDisable(true);
+                if(btnDebugStop != null) btnDebugStop.setDisable(true);
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable run button after error
+                return;
+            }
+
+            String modeDescription = (currentDebugMode == InterpretationMode.BREAKPOINTS)
+                ? "breakpoints mode" : "step-by-step mode";
+            console.getWriter().writeLine("[INFO] MiniJaja interpretation started in " + modeDescription);
+            if(btnDebugNext != null) btnDebugNext.setDisable(true); // Will be enabled when first halt happens
+            if(btnDebugStop != null) btnDebugStop.setDisable(false);
+
+        } else { // JajaCode
+            debugInterpreterJjc = (InterpreterJajaCode) interpreter;
+
+            // Configure breakpoints for JajaCode
+            java.util.Set<Integer> breakpoints = getCompiledBreakpointLines();
+
+            if(!breakpoints.isEmpty()){
+                debugInterpreterJjc.setBreakpoints(new java.util.ArrayList<>(breakpoints));
+                currentDebugMode = InterpretationMode.BREAKPOINTS;
+                console.getWriter().writeLine("[INFO] Breakpoints mode - halting at lines: " + breakpoints);
+            } else {
+                currentDebugMode = InterpretationMode.STEP_BY_STEP;
+                console.getWriter().writeLine("[INFO] Step-by-step mode - no breakpoints set");
+            }
+
+            // Create and store the subscriber so we can unsubscribe later
+            debugJjcSubscriber = event -> {
+                debugHalted = event.isPursuable();
+                debugCurrentLine = event.line();
+
+                if(event.isPursuable()) {
+                    // Retrieve the line text if possible
+                    String lineText = "";
+                    int lineIdx = debugCurrentLine - 1;
+                    if(lineIdx >= 0 && lineIdx < compiledCodeLines.size()) {
+                        lineText = compiledCodeLines.get(lineIdx).getCode();
+                    }
+                    console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
+
+                    String[] currMemoryState = null;
+                    try {
+                        if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
+                            currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
+                        }
+                    } catch (Exception _ex) {
+                        // ignore errors
+                    }
+
+                    final String[] finalMemoryState = currMemoryState;
+                    Platform.runLater(() -> {
+                        highlightDebugLine(lineIdx, compiledCodeLines, compiledCodeListView);
+                        if(btnDebugNext != null) btnDebugNext.setDisable(false);
+                        if(btnDebugStop != null) btnDebugStop.setDisable(false);
+
+                        showMemoryTab(memoryTabJajacode);
+
+                        if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                            memoryVisualisationJajaCode.updateMemory(finalMemoryState);
+                        }
+                    });
+
+                    return;
+                }
+
+                String[] currMemoryState = null;
+                try {
+                    if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
+                        currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
+                    }
+                } catch (Exception _ex) {
+                    // ignore errors
+                }
+
+                final String[] finalMemoryState = currMemoryState;
+
+                // Stop the interpreter and clear reference
+                try {
+                    if(debugInterpreterJjc != null) debugInterpreterJjc.stopInterpretation();
+                } catch (Exception _) {
+                    // ignore errors
+                }
+                try {
+                    if(debugInterpreterJjc != null) debugInterpreterJjc.waitInterpretation();
+                } catch (Exception _) {
+                    // ignore errors
+                }
+                debugInterpreterJjc = null;
+                debugHalted = false;
+
+                Platform.runLater(() -> {
+                    clearDebugHighlight(compiledCodeLines, compiledCodeListView);
+                    if(btnDebugNext != null) btnDebugNext.setDisable(true);
+                    if(btnDebugStop != null) btnDebugStop.setDisable(true);
+
+                    showMemoryTab(memoryTabJajacode);
+
+                    if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                        memoryVisualisationJajaCode.updateMemory(finalMemoryState);
+                    }
+                });
+
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
+                console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+
+                // Clean everything -> Stop threads
+                if(debugInterpreterJjc != null) {
+                    try {
+                        debugInterpreterJjc.stopInterpretation();
+                    } catch (Exception _) {
+                        // Ignore errors
+                    }
+                }
+            };
+
+            // Subscribe the handler to the event
+            debugInterpreterJjc.getInterpretationHaltedEvent().subscribe(debugJjcSubscriber);
+
+            // Start interpretation with selected mode
+            String err = null;
+            try {
+                err = debugInterpreterJjc.startCodeInterpretation(code, currentDebugMode);
+            } catch (Exception e) {
+                // Handle exceptions thrown during interpretation startup
+                console.getWriter().writeLine("[ERROR] Exception during debug startup: " + e.getMessage());
+                err = "Exception: " + e.getMessage();
+            }
+
+            if(err != null) {
+                console.getWriter().writeLine("[ERROR] " + err);
+                try {
+                    if(debugInterpreterJjc != null) debugInterpreterJjc.stopInterpretation();
+                } catch (Exception _) {
+                    // Ignore errors
+                }
+                debugInterpreterJjc = null;
+                debugHalted = false;
+                if(btnDebugNext != null) btnDebugNext.setDisable(true);
+                if(btnDebugStop != null) btnDebugStop.setDisable(true);
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable run button after error
+                return;
+            }
+
+            String modeDescription = (currentDebugMode == InterpretationMode.BREAKPOINTS)
+                ? "breakpoints mode" : "step-by-step mode";
+            console.getWriter().writeLine("[INFO] JajaCode interpretation started in " + modeDescription);
+            if(btnDebugNext != null) btnDebugNext.setDisable(true);
+            if(btnDebugStop != null) btnDebugStop.setDisable(false);
+        }
+    }
+
+
+    /**
+     * Starts debugging the current code when the "Run" debug button is clicked
+     */
+    public void onClickRunDebug(){
+        boolean miniJaja = isMinijajaFile();
+        boolean jajaCode = isJajaCode();
+
+        if(!miniJaja && !jajaCode) {
+            console.getWriter().writeLine("[ERROR] Debug is only available for MiniJaja files and JajaCode files (.mjj & .jjc)");
+            return;
+        }
+
+        if(!isCompiledTab()){
+            // For MiniJaja files, create the MiniJaja interpreter and delegate
+            InterpreterMiniJaja interpreter = new InterpreterMiniJaja(console.getWriter());
+            globalRunDebugFunc(interpreter);
+        } else {
+            InterpreterJajaCode interpreter = new InterpreterJajaCode(console.getWriter());
+            globalRunDebugFunc(interpreter);
+        }
+    }
+
+    /**
+     * Stops the current debugging session when the "Stop" debug button is clicked
+     */
+    public void onClickStopDebug(){
+        if(debugInterpreterMjj != null){
+            // Unsubscribe from the event before stopping
+            if(debugMjjSubscriber != null){
+                debugInterpreterMjj.getInterpretationHaltedEvent().unsubscribe(debugMjjSubscriber);
+                debugMjjSubscriber = null;
+            }
+            debugInterpreterMjj.stopInterpretation();
+            debugInterpreterMjj = null;
+            clearDebugHighlight(codeLines, codeListView);
+        }
+
+        if(debugInterpreterJjc != null){
+            // Unsubscribe from the event before stopping
+            if(debugJjcSubscriber != null){
+                debugInterpreterJjc.getInterpretationHaltedEvent().unsubscribe(debugJjcSubscriber);
+                debugJjcSubscriber = null;
+            }
+            debugInterpreterJjc.stopInterpretation();
+            debugInterpreterJjc = null;
+            clearDebugHighlight(compiledCodeLines, compiledCodeListView);
+        }
+
+        debugHalted = false;
+        debugCurrentLine = -1;
+
+        if(btnDebugNext != null) btnDebugNext.setDisable(true);
+        if(btnDebugStop != null) btnDebugStop.setDisable(true);
+
+        hideMemoryTab(memoryTabMinijaja);
+        hideMemoryTab(memoryTabJajacode);
+        if(btnDebugRun != null) btnDebugRun.setDisable(false);
+        console.getWriter().writeLine("[INFO] Debugging stopped");
+    }
+
+    /**
+     * Executes the next instruction in the debugging session when the "Next" debug button is clicked
+     */
+    public void onClickNextDebug(){
+
+        if(!isCompiledTab()){
+            if(debugInterpreterMjj == null){
+                console.getWriter().writeLine("[INFO] No active debugging session");
+                return;
+            }
+
+            if(!debugHalted){
+                console.getWriter().writeLine("[INFO] Interpreter is not halted yet");
+                return;
+            }
+
+            // Clear the halted flag and resume interpretation
+            debugHalted = false;
+            if(btnDebugNext != null) btnDebugNext.setDisable(true);
+            debugInterpreterMjj.resumeInterpretation(currentDebugMode);
+        } else {
+
+            if(debugInterpreterJjc == null){
+                console.getWriter().writeLine("[INFO] No active debugging session");
+                return;
+            }
+
+            if(!debugHalted){
+                console.getWriter().writeLine("[INFO] Interpreter is not halted yet");
+                return;
+            }
+
+            // Clear the halted flag and resume interpretation
+            debugHalted = false;
+            if(btnDebugNext != null) btnDebugNext.setDisable(true);
+            debugInterpreterJjc.resumeInterpretation(currentDebugMode);
+        }
+    }
+
+    /**
+     * Marks the current file as modified
+     * Updates the tab title by adding a dot indicator if not already marked
+     */
+    private void markAsModified(){
+        if(!isModified){
+            isModified = true;
+
+            if(currentFile != null){
+                sourceTab.setText(currentFile.getName() + " •");
+            } else {
+                sourceTab.setText("Untitled •");
+            }
+        }
+    }
+
+    /**
+     * Highlights the specified line in a ListView during debugging
+     *
+     * @param lineIndex index of the line to highlight
+     * @param lines the list of CodeLine objects
+     * @param listView the ListView displaying the lines
+     */
+    public void highlightDebugLine(int lineIndex, ObservableList<CodeLine> lines, ListView<CodeLine> listView){
+        for(CodeLine line : lines){
+            line.setCurrentDebugLine(false);
+        }
+
+        if(lineIndex >= 0 && lineIndex < lines.size()){
+            lines.get(lineIndex).setCurrentDebugLine(true);
+        }
+
+        Platform.runLater(listView::refresh);
+    }
+
+    /**
+     * Removes any debug highlight from the given ListView
+     *
+     * @param lines the list of CodeLine objects
+     * @param listView the ListView displaying the lines
+     */
+    public void clearDebugHighlight(ObservableList<CodeLine> lines, ListView<CodeLine> listView){
+        for(CodeLine line : lines){
+            line.setCurrentDebugLine(false);
+        }
+        Platform.runLater(listView::refresh);
     }
 }

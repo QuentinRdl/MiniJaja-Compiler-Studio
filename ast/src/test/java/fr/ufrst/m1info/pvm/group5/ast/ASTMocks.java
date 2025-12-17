@@ -1,22 +1,31 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.ast.Nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
+import fr.ufrst.m1info.pvm.group5.memory.StackObject;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import fr.ufrst.m1info.pvm.group5.memory.Stack.StackIsEmptyException;
+import fr.ufrst.m1info.pvm.group5.memory.Memory.MemoryIllegalArgException;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
+
 
 /**
  * Static class to quickly create classes mocking Memory
  */
-public class ASTMocks {
+class ASTMocks {
+
+    public record Pair<T,V>(T first, V second){}
 
     /**
      * Creates a mock with no specific behaviour
@@ -37,7 +46,7 @@ public class ASTMocks {
                     String arg =  invocation.getArgument(0);
                     Value value = invocation.getArgument(1);
                     if(!storage.containsKey(arg)){
-                        throw new ASTInvalidMemoryException("Unknown variable "+arg);
+                        throw ASTInvalidMemoryException.UndefinedVariable(arg, () -> 0);
                     }
                     storage.put(arg, value);
                     return null;
@@ -51,6 +60,22 @@ public class ASTMocks {
                     return null;
                 }
         ).when(result).declVar(any(String.class), any(Value.class), any());
+
+        doAnswer( invocation -> {
+                    String ident = invocation.getArgument(0);
+                    Value value = invocation.getArgument(1);
+                    storage.put(ident, value);
+                    return null;
+                }
+        ).when(result).declCst(any(String.class), any(Value.class), any());
+
+        doAnswer( invocation -> {
+                    String ident = invocation.getArgument(0);
+                    int size = invocation.getArgument(1);
+                    storage.put(ident, new Value(size));
+                    return null;
+                }
+        ).when(result).declTab(any(String.class), anyInt(), any(DataType.class));
 
         doAnswer( invocation -> {
                     String ident = invocation.getArgument(0);
@@ -100,6 +125,172 @@ public class ASTMocks {
             return null;
         }).when(mock).writeLine(any(String.class));
         return mock;
+    }
+
+    public static Memory addBreakPointsToMock(Memory mock, List<Integer> breakPoints){
+        doAnswer(invocationOnMock -> {
+            int breakPoint =  invocationOnMock.getArgument(0);
+            return breakPoints.contains(breakPoint);
+        }).when(mock).isBreakpoint(any(Integer.class));
+        return mock;
+    }
+
+    public static Memory addHeapToMock(Memory mock, Map<String,Value[]> heap){
+        doAnswer(invocationOnMock -> {
+            int len = invocationOnMock.getArgument(0);
+            String id =  invocationOnMock.getArgument(1);
+            Value[] array = new Value[len];
+            heap.put(id, array);
+            return null;
+        }).when(mock).declTab(any(String.class), anyInt(), any(DataType.class));
+
+        doAnswer(invocationOnMock -> {
+            int index = invocationOnMock.getArgument(1);
+            String id =  invocationOnMock.getArgument(0);
+            return heap.get(id)[index];
+        }).when(mock).valT(anyString(), anyInt());
+
+        doAnswer(invocationOnMock -> {
+            String name =   invocationOnMock.getArgument(0);
+            int index = invocationOnMock.getArgument(1);
+            Value affected =  invocationOnMock.getArgument(2);
+            heap.get(name)[index] = affected;
+            return null;
+        }).when(mock).affectValT(anyString(), anyInt(), any(Value.class));
+
+        doAnswer(invocationOnMock -> {
+            String name =  invocationOnMock.getArgument(0);
+            return heap.get(name).length;
+        }).when(mock).tabLength(anyString());
+
+        doAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            return heap.containsKey(id);
+        }).when(mock).isArray(anyString());
+
+
+        doAnswer(invocationOnMock -> DataType.INT).when(mock).tabType(any());
+        return mock;
+    }
+
+    /**
+     * Creates a mock that mimics memory by using a stack, with the purpose to test jajacode instructions
+     * @param storage stack used to store the mock's data
+     * @return mock created
+     */
+    public static Memory createMemoryWithStack(Stack<Pair<String,Value>> storage){
+        Memory result = createEmptyMemory();
+        doAnswer(invocationOnMock -> {
+            Pair<String,Value> pair  = new Pair<>(
+                    invocationOnMock.getArgument(0),
+                    invocationOnMock.getArgument(1)
+            );
+            storage.push(pair);
+            return null;
+        }).when(result).declVar(any(String.class), any(Value.class), any());
+
+        doAnswer(invocationOnMock -> {
+            Pair<String,Value> pair  = new Pair<>(
+                    invocationOnMock.getArgument(0),
+                    invocationOnMock.getArgument(1)
+            );
+            storage.push(pair);
+            return null;
+        }).when(result).declCst(any(String.class), any(Value.class), any());
+
+        doAnswer( invocationOnMock -> {
+                    Pair<String,Value> pair  = new Pair<>(
+                            invocationOnMock.getArgument(0),
+                            new Value((Integer) invocationOnMock.getArgument(1))
+                    );
+                    storage.push(pair);
+                    return null;
+                }
+        ).when(result).declTab(any(String.class), any(Integer.class), any(DataType.class));
+
+        doAnswer(invocationOnMock -> {
+            Pair<String,Value> pair  = new Pair<>(
+                    invocationOnMock.getArgument(0),
+                    invocationOnMock.getArgument(1)
+            );
+            storage.push(pair);
+            return null;
+        }).when(result).push(any(String.class), any(Value.class), any(), any());
+
+        doAnswer(invocationOnMock -> {
+            Stack<Pair<String,Value>> stack = new Stack<>();
+            boolean found = false;
+            while(!found && !storage.empty()){
+                Pair<String,Value> pair = storage.pop();
+                if(pair.first.equals(invocationOnMock.getArgument(0))){
+                    found = true;
+                    storage.push(new Pair<>(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1)));
+                }
+                else{
+                    stack.push(pair);
+                }
+            }
+            while(!stack.isEmpty())
+                storage.push(stack.pop());
+            return null;
+        }).when(result).affectValue(any(String.class), any(Value.class));
+
+
+        doAnswer(invocationOnMock -> {
+            if(storage.empty()){
+                throw new StackIsEmptyException("The stack is empty, cannot pop");
+            }
+            return storage.pop().second();
+        }).when(result).pop();
+
+        doAnswer(invocationOnMock -> {
+            if(storage.empty()){
+                throw new StackIsEmptyException("The stack is empty, cannot use top");
+            }
+            return new StackObject(storage.lastElement().first(),storage.lastElement().second(),0, EntryKind.ARRAY);
+        }).when(result).top();
+
+
+        /*
+        try {
+            doAnswer(invocationOnMock -> {
+                try {
+                    return storage.pop().second;
+                } catch (Exception e) {
+                    return null;
+                }
+            }).when(result).pop();
+        }catch (Exception _){}
+         */
+
+
+        doAnswer(invocationOnMock -> {
+            Value v = null;
+            Stack<Pair<String,Value>> stack = new Stack<>();
+            while(v == null && !storage.empty()){
+                Pair<String,Value> pair = storage.pop();
+                if(pair.first.equals(invocationOnMock.getArgument(0))){
+                    v = pair.second;
+                }
+                stack.push(pair);
+            }
+            while(!stack.isEmpty())
+                storage.push(stack.pop());
+            return v;
+        }).when(result).val(any(String.class));
+
+        doAnswer(invocationOnMock -> {
+            if(storage.size() < 2){
+                throw new MemoryIllegalArgException("Stack", "swap", "not enough elements to swap");
+            }
+            var v1 = storage.pop();
+            var v2 = storage.pop();
+            storage.push(v1);
+            storage.push(v2);
+            return null;
+        }).when(result).swap();
+
+        return result;
     }
 
     /**

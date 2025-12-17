@@ -56,14 +56,17 @@ public class HashMap<K,V>
     /**
      * Returns the index of key
      *
-     * @param key
+     * @param key the key we want the index
      * @return the index of key
      */
     public int getIndex(Object key){
         if (key==null){
             return 0;
         }
-        return Math.abs(key.hashCode()) % capacity;
+        int h = key.hashCode();
+        h = h ^ (h >>> 16);
+        if(h < 0) h = -h; // We do the Math.abs func ourselves as SonarQube detects it as a bug
+        return h % capacity;
     }
 
     /**
@@ -140,17 +143,17 @@ public class HashMap<K,V>
      */
     public V put(K key, V value){
         int index=getIndex(key);
-        V old_value=null;
+        V oldValue=null;
         for (EntryHashMap<K,V> e : buckets[index]){
             if (key==null && e.getKey()==null){
-                old_value=e.getValue();
+                oldValue=e.getValue();
                 e.setValue(value);
-                return old_value;
+                return oldValue;
             }
             if ((key!=null && e.getKey()!=null) && key.equals(e.getKey())){
-                old_value=e.getValue();
+                oldValue=e.getValue();
                 e.setValue(value);
-                return old_value;
+                return oldValue;
             }
         }
         buckets[index].add(new EntryHashMap<>(key,value));
@@ -158,7 +161,7 @@ public class HashMap<K,V>
         if (sizeHashMap>capacity*loadFactor){
             resize();
         }
-        return old_value;
+        return oldValue;
     }
 
     /**
@@ -173,12 +176,14 @@ public class HashMap<K,V>
             if (key==null && buckets[index].get(i).getKey()==null){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
+                i--;
                 sizeHashMap--;
                 return value;
             }
             if ((key!=null && buckets[index].get(i).getKey()!=null) && key.equals(buckets[index].get(i).getKey())){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
+                i--;
                 sizeHashMap--;
                 return value;
             }

@@ -1,16 +1,16 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
 import org.junit.jupiter.api.Test;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ValueTest {
+class ValueTest {
 
     @Test
     void intConstructor_shouldSetTypeAndValue() {
         Value v = new Value(42);
-        assertEquals(ValueType.INT, v.Type);
+        assertEquals(ValueType.INT, v.type);
         assertEquals(42, v.valueInt);
         assertEquals("42", v.toString());
     }
@@ -18,7 +18,7 @@ public class ValueTest {
     @Test
     void boolConstructor_shouldSetTypeAndValue() {
         Value v = new Value(true);
-        assertEquals(ValueType.BOOL, v.Type);
+        assertEquals(ValueType.BOOL, v.type);
         assertTrue(v.valueBool);
         assertEquals("true", v.toString());
     }
@@ -26,7 +26,7 @@ public class ValueTest {
     @Test
     void defaultConstructor_shouldBeEmpty() {
         Value v = new Value();
-        assertEquals(ValueType.EMPTY, v.Type);
+        assertEquals(ValueType.EMPTY, v.type);
         assertEquals("", v.toString());
     }
 
@@ -35,24 +35,24 @@ public class ValueTest {
         Value v = new Value();
 
         v.valueInt = -7;
-        v.Type = ValueType.INT;
+        v.type = ValueType.INT;
         assertEquals("-7", v.toString());
 
         v.valueBool = false;
-        v.Type = ValueType.BOOL;
+        v.type = ValueType.BOOL;
         assertEquals("false", v.toString());
 
-        v.Type = ValueType.VOID;
+        v.type = ValueType.VOID;
         assertEquals("", v.toString());
 
-        v.Type = ValueType.EMPTY;
+        v.type = ValueType.EMPTY;
         assertEquals("", v.toString());
     }
 
     @Test
     void toString_withNullType() {
         Value v = new Value();
-        v.Type = null;
+        v.type = null;
         assertThrows(NullPointerException.class, v::toString);
     }
 

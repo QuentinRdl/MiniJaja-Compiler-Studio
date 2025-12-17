@@ -36,4 +36,8 @@ public interface CodeLineCellListener {
      */
     void onDownPressed(int index);
 
+    /**
+     * Called when the code editor content is modified
+     */
+    void onModified();
 }

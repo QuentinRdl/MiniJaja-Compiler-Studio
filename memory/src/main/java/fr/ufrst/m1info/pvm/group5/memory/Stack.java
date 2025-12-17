@@ -1,34 +1,30 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.DataType;
-import fr.ufrst.m1info.pvm.group5.memory.SymbolTable.EntryKind;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.*;
 
 import java.io.Serial;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.Objects;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Stack {
-    private Deque<Stack_Object> stack_content;
+    private Deque<StackObject> stackContent;
     private int scopeDepth;
-    // private int size;
 
     /**
      * Exception thrown when attempting to pop a scope from the stack when no scopes exist.
      */
-    public static class NoScopeException extends Exception {
-        public NoScopeException(String msg) {
-            super(msg);
+    public static class NoScopeException extends InnerMemoryException{
+        public NoScopeException() {
+            super("Stack : Attempted to remove a scope from the stack, while none exists");
         }
     }
 
     /**
      * Exception thrown when attempting to pop or access an element from the stack when it is empty.
      */
-    public static class StackIsEmptyException extends Exception {
+    public static class StackIsEmptyException extends RuntimeException {
         public StackIsEmptyException(String msg) {
             super(msg);
         }
@@ -40,8 +36,8 @@ public class Stack {
     public static class ConstantModificationException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
-        public ConstantModificationException(String message) {
-            super(message);
+        public ConstantModificationException(String component, String identifier) {
+            super(String.format("%s : Attempt to modify constant value "+identifier+" after affectation", component, identifier));
         }
     }
 
@@ -49,12 +45,12 @@ public class Stack {
      * Thrown when attempting to construct a Stack_Object using the generic constructor
      * for kinds that require a specialized constructor (rn only vars and csts)
      */
-    public static class InvalidStackObjectConstructionException extends RuntimeException {
+    public static class InvalidStackObjectConstructionException extends InnerMemoryException {
         @Serial
         private static final long serialVersionUID = 1L;
 
         public InvalidStackObjectConstructionException(String message) {
-            super(message);
+            super("Stack : Wrong attempt to construct a value of the stack, " + message);
         }
     }
 
@@ -62,9 +58,9 @@ public class Stack {
      * Exception thrown when attempting to create or set a variable with an invalid (null/empty) name.
      * This is unchecked so existing callers don't need to change their signatures.
      */
-    public static class InvalidNameException extends IllegalArgumentException {
-        public InvalidNameException(String msg) {
-            super(msg);
+    public static class InvalidNameException extends InnerMemoryException{
+        public InvalidNameException(String name) {
+            super("Stack : "+name+" is an invalid identifier");
         }
     }
 
@@ -72,9 +68,8 @@ public class Stack {
      * Constructor
      */
     public Stack() {
-        this.stack_content = new ArrayDeque<>();
+        this.stackContent = new ArrayDeque<>();
         this.scopeDepth = 0;
-        // this.size = 0;
     }
 
     /**
@@ -89,13 +84,20 @@ public class Stack {
      * @throws NoScopeException if no scope are present
      */
     public void popScope() throws NoScopeException {
-        if(scopeDepth == 0) throw new NoScopeException("There are currently 0 scopes, cannot pop");
+        if(scopeDepth == 0) throw new NoScopeException();
 
         // If we are here then no exception has been thrown, then we can remove all vars from current scope
-        while(!stack_content.isEmpty() && stack_content.peek().getScope() == scopeDepth) {
-            stack_content.pop();
+        while(!stackContent.isEmpty() && stackContent.peek().getScope() == scopeDepth) {
+            stackContent.pop();
         }
 
+        scopeDepth--;
+    }
+
+    /**
+     * Decrement the current scope
+     */
+    public void decrementScope() {
         scopeDepth--;
     }
 
@@ -109,13 +111,8 @@ public class Stack {
             throw new InvalidNameException("Variable name cannot be null or empty");
         }
 
-        // Allow declarations without initial value: only validate when value is non-null
-        if (value != null) {
-            validateType(value, type);
-        }
-
-        Stack_Object var = new Stack_Object(name, value, scopeDepth, EntryKind.VARIABLE, type);
-        stack_content.push(var);
+        StackObject stackVar = new StackObject(name, value, scopeDepth, EntryKind.VARIABLE, type);
+        stackContent.push(stackVar);
     }
 
 
@@ -129,14 +126,22 @@ public class Stack {
             throw new InvalidNameException("Constant name cannot be null or empty");
         }
 
-        // Constants may be declared without an initial value (value can be assigned later),
-        // so only validate when a non-null value is provided
-        if (value != null) {
-            validateType(value, type);
+        StackObject constant = new StackObject(name, value, scopeDepth, EntryKind.CONSTANT, type);
+        stackContent.push(constant);
+    }
+
+    /**
+     * Pushes a new method in the stack
+     * @param name name of the method
+     * @param value value of the method
+     */
+    public void setMeth(String name, Object value, DataType type) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidNameException("Method name cannot be null or empty");
         }
 
-        Stack_Object constant = new Stack_Object(name, value, scopeDepth, EntryKind.CONSTANT, type);
-        stack_content.push(constant);
+        StackObject method = new StackObject(name, value, 0, EntryKind.METHOD, type);
+        stackContent.push(method);
     }
 
 
@@ -145,9 +150,9 @@ public class Stack {
      * @return Object the top object
      * @throws EmptyStackException if stack empty
      */
-    public Stack_Object top() {
-        if (stack_content.isEmpty()) throw new EmptyStackException();
-        return stack_content.peek();
+    public StackObject top() {
+        if (stackContent.isEmpty()) throw new EmptyStackException();
+        return stackContent.peek();
     }
 
 
@@ -156,9 +161,9 @@ public class Stack {
      * @return Stack_Object the object on top of the stack
      * @throws StackIsEmptyException if the stack is empty
      */
-    public Stack_Object pop() throws StackIsEmptyException {
-        if(stack_content.isEmpty()) throw new StackIsEmptyException("The stack is empty, cannot pop");
-        return stack_content.pop();
+    public StackObject pop() throws StackIsEmptyException {
+        if(stackContent.isEmpty()) throw new StackIsEmptyException("The stack is empty, cannot pop");
+        return stackContent.pop();
     }
 
 
@@ -166,9 +171,9 @@ public class Stack {
      * @param name the name of the object we are looking for
      * @return Object, the Object if found, null otherwise
      */
-     public Stack_Object getObject(String name) {
-         for(Stack_Object obj : stack_content) {
-             if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
+     public StackObject getObject(String name) {
+         for(StackObject obj : stackContent) {
+             if(obj.getName().equals(name) && (obj.getScope() == scopeDepth || obj.getScope() == 0)) {
                  return obj;
              }
          }
@@ -181,8 +186,8 @@ public class Stack {
      * @return Object, the value if found, null otherwise
      */
     public Object getObjectValue(String name) {
-        for(Stack_Object obj : stack_content) {
-            if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
+        for(StackObject obj : stackContent) {
+            if(obj.getName().equals(name) && (obj.getScope() == scopeDepth || obj.getScope() == 0)) {
                 return obj.getValue();
             }
         }
@@ -196,16 +201,13 @@ public class Stack {
      * @return true if var updated, false otherwise
      */
     public boolean updateVar(String name, Object value) {
-        for(Stack_Object var : stack_content) {
-            if(var.getEntryKind() != EntryKind.VARIABLE) {
-                // TODO : Should we throw an error ? this way if false is returned then the var is not found
-                // And if exception, we now that it is not because the object is not a var
+        for(StackObject stackObject : stackContent) {
+            if(stackObject.getEntryKind() != EntryKind.VARIABLE) {
                 return false;
             }
-            if(var.getName().equals(name) && var.getScope() == scopeDepth) {
+            if(stackObject.getName().equals(name) && stackObject.getScope() == scopeDepth) {
                 // validate value against the variable's declared type
-                validateType(value, var.getDataType());
-                var.setValue(value);
+                stackObject.setValue(value);
                 return true;
             }
         }
@@ -219,20 +221,20 @@ public class Stack {
      * @return true if var updated, false otherwise
      */
     public boolean updateTopVar(Object value) {
-        if (stack_content.isEmpty()) {
+        if (stackContent.isEmpty()) {
             return false;
         }
 
-        Stack_Object topVar = stack_content.peek();
+        StackObject topVar = stackContent.peek();
 
         if(topVar.getEntryKind() != EntryKind.VARIABLE) {
             return false; // Not a var
         }
 
-        validateType(value, topVar.getDataType());
         topVar.setValue(value);
         return true;
     }
+
 
     /**
      * Updates the top value of the stack w/ the given value
@@ -240,16 +242,16 @@ public class Stack {
      * @return true if object updated, false otherwise
      */
     public boolean updateTopValue(Object value) {
-        if (stack_content.isEmpty()) {
+        if (stackContent.isEmpty()) {
             return false;
         }
 
         DataType valueDt = getDataTypeFromGenericObject(value);
-        Stack_Object topObj = stack_content.peek();
+        StackObject topObj = stackContent.peek();
         if(topObj == null) return false;
-        if(topObj.getEntryKind() == EntryKind.CONSTANT) {
+        if(topObj.getEntryKind() == EntryKind.CONSTANT && topObj.getValue() != null) {
             // Can only reassign constant if value == null
-            if(topObj.getValue() != null) return false; // Cannot reassign constant
+            return false; // Cannot reassign constant
         }
         if(topObj.getDataType() != valueDt) return false;
 
@@ -265,7 +267,7 @@ public class Stack {
      * @return true if the var exists, false otherwise
      */
     public boolean hasObj(String name) {
-        for(Stack_Object obj : stack_content) {
+        for(StackObject obj : stackContent) {
             if(obj.getName().equals(name) && obj.getScope() == scopeDepth) {
                 return true;
             }
@@ -273,53 +275,144 @@ public class Stack {
         return false;
     }
 
+
     /**
      * Returns the number of vars on the stack
      * @return int nb of vars
      */
     public int size() {
-        return stack_content.size();
+        return stackContent.size();
     }
+
 
     /**
      * Check if the vars stack is empty
      * @return true if no vars, false otherwise
      */
     public boolean isEmpty() {
-        return stack_content.isEmpty();
+        return stackContent.isEmpty();
     }
+
 
     /**
      * Clears all vars and reset the scope
      */
     public void clear() {
-        stack_content.clear();
+        stackContent.clear();
         scopeDepth = 0;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Stack{scopeDepth=").append(scopeDepth).append(", contents=");
-        sb.append('[');
-        boolean first = true;
-        for (Stack_Object obj : stack_content) {
-            if (!first) sb.append(", ");
-            sb.append(obj.toString());
-            first = false;
+        sb.append("Stack{scopeDepth=").append(scopeDepth)
+                .append(", size=").append(stackContent.size())
+                .append(", contents=\n");
+
+        int idx = 0;
+        for (StackObject obj : stackContent) {
+            sb.append("  [").append(idx++).append("] ");
+
+            // Basic identity
+            String name = obj.getName();
+            sb.append(name == null ? "<anon>" : name);
+
+            // Entry kind and declared DataType
+            sb.append("   scope=").append(obj.getScope())
+                    .append("   kind=").append(obj.getEntryKind())
+                    .append("   dataType=").append(obj.getDataType());
+
+            // Value description
+            Object val = obj.getValue();
+            sb.append("   value=");
+            if (val == null) {
+                sb.append("null");
+            } else if (val instanceof Value v) {
+                sb.append("Value(type=").append(v.type).append("){").append(v).append("}");
+            } else {
+                // For other objects, show runtime class and toString()
+                String cls = val.getClass().getSimpleName();
+                sb.append(cls).append("(").append(val).append(")");
+            }
+
+            // If the object is a constant and currently uninitialized, mark it
+            if (obj.getEntryKind() == fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind.CONSTANT && obj.getValue() == null) {
+                sb.append(" [const:uninitialized]");
+            }
+
+            sb.append('\n');
         }
-        sb.append(']');
+
         sb.append('}');
         return sb.toString();
     }
 
+
+    public String toString(SymbolTable symbolTable) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Stack{scopeDepth=").append(scopeDepth)
+          .append(", size=").append(stackContent.size())
+          .append(", contents=\n");
+
+        int idx = 0;
+        for (StackObject obj : stackContent) {
+            sb.append("  [").append(idx++).append("] ");
+
+            // Basic identity
+            String name = obj.getName();
+            sb.append(name == null ? "<anon>" : name);
+
+            // Entry kind and declared DataType
+            sb.append("   scope=").append(obj.getScope())
+                    .append("   kind=").append(obj.getEntryKind())
+                    .append("   dataType=").append(obj.getDataType());
+
+            // Value description
+            Object val = obj.getValue();
+            sb.append("   value=");
+            if (val == null) {
+                sb.append("null");
+            } else if (val instanceof Value v) {
+                sb.append("Value(type=").append(v.type).append("){");
+
+                if (name != null && symbolTable != null && symbolTable.contains(name)) {
+                    try {
+                        SymbolTableEntry entry = symbolTable.lookup(name);
+                        if (entry.getKind() == EntryKind.ARRAY) {
+                            sb.append("@");
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // ignore error
+                    }
+                }
+
+                sb.append(v).append("}");
+            } else {
+                // For other objects, show runtime class and toString()
+                String cls = val.getClass().getSimpleName();
+                sb.append(cls).append("(").append(val).append(")");
+            }
+
+            // If the object is a constant and currently uninitialized, mark it
+            if (obj.getEntryKind() == fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind.CONSTANT && obj.getValue() == null) {
+                sb.append(" [const:uninitialized]");
+            }
+
+            sb.append('\n');
+        }
+
+        sb.append('}');
+        return sb.toString();
+    }
+
+
     /**
-     * Searches for the given Object in the stack // TODO : Unit tests !!!
+     * Searches for the given Object in the stack
      * @param identifier the name of the Object we are looking for
      * @return Object if found, null otherwise
      */
-    public Stack_Object searchObject(String identifier) {
-        for(Stack_Object obj : stack_content) {
+    public StackObject searchObject(String identifier) {
+        for(StackObject obj : stackContent) {
             if(Objects.equals(obj.getName(), identifier)) {
                 return obj; // Object found
             }
@@ -327,13 +420,15 @@ public class Stack {
         return null; // Object not found
     }
 
+
     /**
      * Will remove the given Stack_Object given, MUST BE SURE IT EXISTS
      * @param object the Stack_Object to remove
      */
-    public void removeObject(Stack_Object object) {
-        stack_content.remove(object);
+    public void removeObject(StackObject object) {
+        stackContent.remove(object);
     }
+
 
     /**
      * Will look for an Object with the name given as an argument, remove it and put it back on top of the stack
@@ -341,133 +436,32 @@ public class Stack {
      * @return true if successful, false otherwise
      */
     public boolean putOnTop(String identifier) {
-        Stack_Object obj = searchObject(identifier);
+        StackObject obj = searchObject(identifier);
         if(obj == null) return false; // Object does not exist in the stack
         // We remove the Stack_Object from the stack
         removeObject(obj);
 
         // We put the object back on top of the stack
-        stack_content.push(obj);
+        stackContent.push(obj);
         return true;
     }
 
-    /**
-     * Func to validate that a given value matches the declared DataType
-     * @param value we want to check the type of this value
-     * @param type we check that the object has this type
-     */
-    private void validateType(Object value, DataType type) {
-        if (true) {
-            return;
-        }
-        if (value == null) {
-            throw new IllegalArgumentException("Called with null value for type " + type);
-        }
-
-        switch (type) {
-            case BOOL:
-                if (!(value instanceof Boolean)) {
-                    throw new IllegalArgumentException("Called with BOOL DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case INT:
-                if (!(value instanceof Integer)) {
-                    throw new IllegalArgumentException("Called with INT DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case FLOAT:
-                if (!(value instanceof Float)) {
-                    throw new IllegalArgumentException("Called with FLOAT DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case DOUBLE:
-                if (!(value instanceof Double)) {
-                    throw new IllegalArgumentException("Called with DOUBLE DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case STRING:
-                if (!(value instanceof String)) {
-                    throw new IllegalArgumentException("Called with STRING DataType, but object is of type " + value.getClass());
-                }
-                break;
-            case VOID:
-            case UNKNOWN:
-            default:
-                throw new IllegalArgumentException("Called with unvalid argument : " + value.getClass());
-        }
-    }
-
-    /**
-     * // TODO : Remove
-     * Will swap Objects obj1 & obj2 in the stack
-     * @param obj1 1st object
-     * @param obj2 2nd Object
-     * @return True if swapped, false otherwise
-     */
-    public boolean swap(Stack_Object obj1, Stack_Object obj2) {
-        // Validate arguments
-        if (obj1 == null || obj2 == null) {
-            throw new IllegalArgumentException("Swap requires non-null Stack_Object arguments");
-        }
-
-        String id1 = obj1.getName();
-        String id2 = obj2.getName();
-
-        if (id1 == null || id2 == null) {
-            throw new IllegalArgumentException("Swap requires Stack_Object instances with non-null names");
-        }
-
-        // If identifiers are equal, nothing to do
-        if (id1.equals(id2)) return true;
-
-        // Convert deque to list to find indices and swap
-        List<Stack_Object> list = new ArrayList<>(stack_content);
-        int idx1 = -1, idx2 = -1;
-        for (int i = 0; i < list.size(); i++) {
-            Stack_Object so = list.get(i);
-            if (idx1 == -1 && Objects.equals(so.getName(), id1)) {
-                idx1 = i;
-            }
-            if (idx2 == -1 && Objects.equals(so.getName(), id2)) {
-                idx2 = i;
-            }
-            if (idx1 != -1 && idx2 != -1) break;
-        }
-
-        if (idx1 == -1 || idx2 == -1) {
-            // One or both objects not found
-            return false;
-        }
-
-        // Swap in list
-        Stack_Object tmp = list.get(idx1);
-        list.set(idx1, list.get(idx2));
-        list.set(idx2, tmp);
-
-        // Rebuild deque preserving the new order
-        stack_content.clear();
-        for (Stack_Object so : list) {
-            stack_content.addLast(so);
-        }
-
-        return true;
-    }
 
     /**
      * Will swap the 2 top values of the stack
      */
     public void swap() {
-        // private Deque<Stack_Object> stack_content;
-        if(stack_content.size() < 2) {
-            throw new IllegalStateException("Not enough elements to swap (need at least 2)");
+        if(stackContent.size() < 2) {
+            throw new Memory.MemoryIllegalOperationException("Stack", "swap", "swap operation requires at least 2 elements in the stack, current size is"+stackContent.size());
         }
 
         // Pop top two elements and push them back in reversed order
-        Stack_Object first = stack_content.pop();
-        Stack_Object second = stack_content.pop();
-        stack_content.push(first);
-        stack_content.push(second);
+        StackObject first = stackContent.pop();
+        StackObject second = stackContent.pop();
+        stackContent.push(first);
+        stackContent.push(second);
     }
+
 
     /**
      * Returns the DataType for any given Object
@@ -491,37 +485,36 @@ public class Stack {
             return DataType.DOUBLE;
         }
 
-        /* TODO : How to handle null objects ??
-        if (obj == null) {
-            return DataType.VOID;
-        }
-         */
-
         return DataType.UNKNOWN;
     }
 
+
     /**
-     * Puts a value on a const that has no affected value yet
-     * @param obj const object
-     * @param value value to assign the object
-     * @return true if value affected, false otherwise
+     * Returns the depth of the current scope.
      */
-    public boolean initializeConst(Stack_Object obj, Object value) {
-        if(obj == null || value == null) return false;
-        if(obj.getEntryKind() != EntryKind.CONSTANT) {
-            throw new IllegalArgumentException("initializeConst must be called with a const !");
+    public int getCurrentScope() {
+        return scopeDepth;
+    }
+
+
+    /**
+     * Sets a method
+     * @param identifier id of the method
+     * @param params params of the method
+     * @param returnType return type of the method
+     */
+    public void setMethod(String identifier, Object params, DataType returnType) {
+        if (identifier == null || identifier.isEmpty()) {
+            throw new IllegalArgumentException("Cannot define method with null or empty identifier");
         }
 
-        DataType dt = getDataTypeFromGenericObject(obj);
-        if(dt != obj.getDataType()) {
-            throw new IllegalArgumentException("Called intializeConst with incorrect data type");
-        }
-
-        if(obj.getValue() != null) {
-            throw new IllegalStateException("Called intializeConst with a const that is already affected");
-        }
-
-        obj.setValue(value);
-        return true;
+        StackObject obj = new StackObject(
+                identifier,
+                params,
+                this.getCurrentScope(),
+                EntryKind.METHOD,
+                DataType.UNKNOWN
+        );
+        stackContent.push(obj);
     }
 }

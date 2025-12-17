@@ -1,0 +1,426 @@
+{
+  "ClassNode" : {
+    "line" : 1,
+    "IdentNode" : {
+      "line" : 1,
+      "identifier" : "C"
+    },
+    "DeclarationsNode" : {
+      "line" : 2,
+      "VariableNode" : {
+        "line" : 2,
+        "type" : "INT",
+        "IdentNode" : {
+          "line" : 2,
+          "identifier" : "x"
+        }
+      },
+      "DeclarationsNode" : {
+        "line" : 3,
+        "VariableNode" : {
+          "line" : 3,
+          "type" : "INT",
+          "IdentNode" : {
+            "line" : 3,
+            "identifier" : "y"
+          },
+          "NumberNode" : {
+            "line" : 3,
+            "value" : "10"
+          }
+        },
+        "DeclarationsNode" : {
+          "line" : 4,
+          "FinalNode" : {
+            "line" : 4,
+            "type" : "INT",
+            "IdentNode" : {
+              "line" : 4,
+              "identifier" : "VAL"
+            },
+            "NumberNode" : {
+              "line" : 4,
+              "value" : "5"
+            }
+          },
+          "DeclarationsNode" : {
+            "line" : 5,
+            "VariableNode" : {
+              "line" : 5,
+              "type" : "BOOL",
+              "IdentNode" : {
+                "line" : 5,
+                "identifier" : "b1"
+              },
+              "BooleanNode" : {
+                "line" : 5,
+                "value" : "true"
+              }
+            },
+            "DeclarationsNode" : {
+              "line" : 6,
+              "VariableNode" : {
+                "line" : 6,
+                "type" : "BOOL",
+                "IdentNode" : {
+                  "line" : 6,
+                  "identifier" : "b2"
+                },
+                "BooleanNode" : {
+                  "line" : 6,
+                  "value" : "false"
+                }
+              },
+              "DeclarationsNode" : {
+                "line" : 8,
+                "MethodeNode" : {
+                  "line" : 8,
+                  "type" : "INT",
+                  "IdentNode" : {
+                    "line" : 8,
+                    "identifier" : "somme"
+                  },
+                  "ParamListNode" : {
+                    "line" : 8,
+                    "ParamNode" : {
+                      "line" : 8,
+                      "type" : "INT",
+                      "IdentNode" : {
+                        "line" : 8,
+                        "identifier" : "max"
+                      }
+                    }
+                  },
+                  "VariablesNode" : {
+                    "line" : 9,
+                    "VariableNode" : {
+                      "line" : 9,
+                      "type" : "INT",
+                      "IdentNode" : {
+                        "line" : 9,
+                        "identifier" : "t"
+                      },
+                      "IdentNode" : {
+                        "line" : 9,
+                        "identifier" : "VAL"
+                      }
+                    }
+                  },
+                  "InstructionsNode" : {
+                    "line" : 11,
+                    "WhileNode" : {
+                      "line" : 11,
+                      "SupNode" : {
+                        "line" : 11,
+                        "IdentNode" : {
+                          "line" : 11,
+                          "identifier" : "max"
+                        },
+                        "NumberNode" : {
+                          "line" : 11,
+                          "value" : "0"
+                        }
+                      },
+                      "InstructionsNode" : {
+                        "line" : 12,
+                        "SumNode" : {
+                          "line" : 12,
+                          "IdentNode" : {
+                            "line" : 12,
+                            "identifier" : "t"
+                          },
+                          "IdentNode" : {
+                            "line" : 12,
+                            "identifier" : "max"
+                          }
+                        },
+                        "InstructionsNode" : {
+                          "line" : 13,
+                          "AffectationNode" : {
+                            "line" : 13,
+                            "IdentNode" : {
+                              "line" : 13,
+                              "identifier" : "max"
+                            },
+                            "BinMinusNode" : {
+                              "line" : 13,
+                              "IdentNode" : {
+                                "line" : 13,
+                                "identifier" : "max"
+                              },
+                              "NumberNode" : {
+                                "line" : 13,
+                                "value" : "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "InstructionsNode" : {
+                      "line" : 15,
+                      "ReturnNode" : {
+                        "line" : 15,
+                        "IdentNode" : {
+                          "line" : 15,
+                          "identifier" : "t"
+                        }
+                      }
+                    }
+                  }
+                },
+                "DeclarationsNode" : {
+                  "line" : 18,
+                  "MethodeNode" : {
+                    "line" : 18,
+                    "type" : "BOOL",
+                    "IdentNode" : {
+                      "line" : 18,
+                      "identifier" : "test"
+                    },
+                    "ParamListNode" : {
+                      "line" : 18,
+                      "ParamNode" : {
+                        "line" : 18,
+                        "type" : "INT",
+                        "IdentNode" : {
+                          "line" : 18,
+                          "identifier" : "a"
+                        }
+                      },
+                      "ParamListNode" : {
+                        "line" : 18,
+                        "ParamNode" : {
+                          "line" : 18,
+                          "type" : "INT",
+                          "IdentNode" : {
+                            "line" : 18,
+                            "identifier" : "b"
+                          }
+                        }
+                      }
+                    },
+                    "InstructionsNode" : {
+                      "line" : 19,
+                      "ReturnNode" : {
+                        "line" : 19,
+                        "SupNode" : {
+                          "line" : 19,
+                          "IdentNode" : {
+                            "line" : 19,
+                            "identifier" : "a"
+                          },
+                          "IdentNode" : {
+                            "line" : 19,
+                            "identifier" : "b"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "DeclarationsNode" : {
+                    "line" : 22,
+                    "MethodeNode" : {
+                      "line" : 22,
+                      "type" : "VOID",
+                      "IdentNode" : {
+                        "line" : 22,
+                        "identifier" : "f"
+                      },
+                      "ParamListNode" : {
+                        "line" : 22,
+                        "ParamNode" : {
+                          "line" : 22,
+                          "type" : "INT",
+                          "IdentNode" : {
+                            "line" : 22,
+                            "identifier" : "z"
+                          }
+                        }
+                      },
+                      "InstructionsNode" : {
+                        "line" : 23,
+                        "AffectationNode" : {
+                          "line" : 23,
+                          "IdentNode" : {
+                            "line" : 23,
+                            "identifier" : "x"
+                          },
+                          "MulNode" : {
+                            "line" : 23,
+                            "IdentNode" : {
+                              "line" : 23,
+                              "identifier" : "y"
+                            },
+                            "IdentNode" : {
+                              "line" : 23,
+                              "identifier" : "z"
+                            }
+                          }
+                        },
+                        "InstructionsNode" : {
+                          "line" : 24,
+                          "AffectationNode" : {
+                            "line" : 24,
+                            "IdentNode" : {
+                              "line" : 24,
+                              "identifier" : "x"
+                            },
+                            "DivNode" : {
+                              "line" : 24,
+                              "IdentNode" : {
+                                "line" : 24,
+                                "identifier" : "x"
+                              },
+                              "IdentNode" : {
+                                "line" : 24,
+                                "identifier" : "z"
+                              }
+                            }
+                          },
+                          "InstructionsNode" : {
+                            "line" : 25,
+                            "IncNode" : {
+                              "line" : 25,
+                              "IdentNode" : {
+                                "line" : 25,
+                                "identifier" : "x"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "MainNode" : {
+      "line" : 28,
+      "InstructionsNode" : {
+        "line" : 29,
+        "IfNode" : {
+          "line" : 29,
+          "AndNode" : {
+            "line" : 29,
+            "AppelENode" : {
+              "line" : 29,
+              "IdentNode" : {
+                "line" : 29,
+                "identifier" : "test"
+              },
+              "ExpListNode" : {
+                "line" : 29,
+                "IdentNode" : {
+                  "line" : 29,
+                  "identifier" : "y"
+                },
+                "NumberNode" : {
+                  "line" : 29,
+                  "value" : "9"
+                }
+              }
+            },
+            "OrNode" : {
+              "line" : 29,
+              "IdentNode" : {
+                "line" : 29,
+                "identifier" : "b1"
+              },
+              "NotNode" : {
+                "line" : 29,
+                "IdentNode" : {
+                  "line" : 29,
+                  "identifier" : "b2"
+                }
+              }
+            }
+          },
+          "InstructionsNode" : {
+            "line" : 30,
+            "AffectationNode" : {
+              "line" : 30,
+              "IdentNode" : {
+                "line" : 30,
+                "identifier" : "x"
+              },
+              "AppelENode" : {
+                "line" : 30,
+                "IdentNode" : {
+                  "line" : 30,
+                  "identifier" : "somme"
+                },
+                "NumberNode" : {
+                  "line" : 30,
+                  "value" : "2"
+                }
+              }
+            },
+            "InstructionsNode" : {
+              "line" : 31,
+              "WriteNode" : {
+                "line" : 31,
+                "text" : "x (8) = "
+              },
+              "InstructionsNode" : {
+                "line" : 32,
+                "WriteLineNode" : {
+                  "line" : 32,
+                  "IdentNode" : {
+                    "line" : 32,
+                    "identifier" : "x"
+                  }
+                }
+              }
+            }
+          },
+          "InstructionsNode" : {
+            "line" : 34,
+            "IncNode" : {
+              "line" : 34,
+              "IdentNode" : {
+                "line" : 34,
+                "identifier" : "x"
+              }
+            }
+          }
+        },
+        "InstructionsNode" : {
+          "line" : 36,
+          "AppelINode" : {
+            "line" : 36,
+            "IdentNode" : {
+              "line" : 36,
+              "identifier" : "f"
+            },
+            "NumberNode" : {
+              "line" : 36,
+              "value" : "10"
+            }
+          },
+          "InstructionsNode" : {
+            "line" : 37,
+            "WriteNode" : {
+              "line" : 37,
+              "text" : "x (11) = "
+            },
+            "InstructionsNode" : {
+              "line" : 38,
+              "WriteLineNode" : {
+                "line" : 38,
+                "IdentNode" : {
+                  "line" : 38,
+                  "identifier" : "x"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

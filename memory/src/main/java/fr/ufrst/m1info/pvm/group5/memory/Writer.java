@@ -5,10 +5,10 @@ package fr.ufrst.m1info.pvm.group5.memory;
  * The class takes the role of publisher in a publish-subscribe like pattern.
  */
 public class Writer {
-    private String _innerText;
-    public final Event<TextData> TextChangedEvent = new Event<>();
-    public final Event<TextAddedData> TextAddedEvent = new Event<>();
-    public final Event<TextRemovedData> TextRemovedEvent = new Event<>();
+    private String innerText;
+    public final Event<TextData> textChangedEvent = new Event<>();
+    public final Event<TextAddedData> textAddedEvent = new Event<>();
+    public final Event<TextRemovedData> textRemovedEvent = new Event<>();
 
     /**
      * Types of events that can be triggered from this class
@@ -53,7 +53,7 @@ public class Writer {
     public  record TextRemovedData(String oldText, String newText, String diff, int nbRemoved) {}
 
     public Writer(){
-        _innerText = "";
+        innerText = "";
     }
 
 
@@ -63,14 +63,14 @@ public class Writer {
      * @param data data of the added text
      */
     private void onTextAdded(TextAddedData data){
-        TextChangedEvent.Trigger(new TextData(
+        textChangedEvent.trigger(new TextData(
                 data.oldText,
                 data.newText,
                 data.diff,
                 data.nbAdded,
                 TextChangeEvent.TEXT_ADDED
                 ));
-        TextAddedEvent.Trigger(data);
+        textAddedEvent.trigger(data);
     }
 
     /**
@@ -79,14 +79,14 @@ public class Writer {
      * @param data data of the removed text
      */
     private void onTextRemoved(TextRemovedData data){
-        TextChangedEvent.Trigger(new TextData(
+        textChangedEvent.trigger(new TextData(
                 data.oldText,
                 data.newText,
                 data.diff,
                 -data.nbRemoved,
                 TextChangeEvent.TEXT_REMOVED
         ));
-        TextRemovedEvent.Trigger(data);
+        textRemovedEvent.trigger(data);
     }
 
     /**
@@ -95,11 +95,11 @@ public class Writer {
      * @param text text to append
      */
     public void write(String text){
-        String oldText = _innerText;
-        _innerText += text;
+        String oldText = innerText;
+        innerText += text;
         onTextAdded(new TextAddedData(
                 oldText,
-                _innerText,
+                innerText,
                 text,
                 text.length()
         ));
@@ -120,22 +120,22 @@ public class Writer {
      * @param nbChars number of characters to erase
      */
     public void erase(int nbChars){
-        String oldText = _innerText;
+        String oldText = innerText;
         int erased;
         String removedText;
-        if(nbChars>=_innerText.length()){ // Special case
-            removedText = _innerText;
-            _innerText = "";
+        if(nbChars>= innerText.length()){ // Special case
+            removedText = innerText;
+            innerText = "";
             erased = oldText.length();
         }
         else {
-            _innerText = _innerText.substring(0, oldText.length() - nbChars);
+            innerText = innerText.substring(0, oldText.length() - nbChars);
             erased = nbChars;
             removedText = oldText.substring(erased+1);
         }
         onTextRemoved(new TextRemovedData(
                 oldText,
-                _innerText,
+                innerText,
                 removedText,
                 erased
         ));
@@ -146,23 +146,23 @@ public class Writer {
      *
      */
     public void eraseLineAsync(){
-        String oldText = _innerText;
-        int lineIndex = _innerText.lastIndexOf("\n");
+        String oldText = innerText;
+        int lineIndex = innerText.lastIndexOf("\n");
         int removed = 0;
         String removedText;
         if(lineIndex == -1){
-            removedText = _innerText;
-            _innerText = "";
+            removedText = innerText;
+            innerText = "";
             removed = oldText.length();
         }
         else{
-            _innerText = _innerText.substring(0, lineIndex);
+            innerText = innerText.substring(0, lineIndex);
             removed = oldText.length() - lineIndex;
             removedText = oldText.substring(lineIndex);
         }
         onTextRemoved(new TextRemovedData(
                 oldText,
-                _innerText,
+                innerText,
                 removedText,
                 removed
         ));
@@ -172,8 +172,8 @@ public class Writer {
      * Removes all the text of the writer
      */
     public void clear(){
-        String oldText = _innerText;
-        _innerText = "";
+        String oldText = innerText;
+        innerText = "";
         onTextRemoved(new TextRemovedData(
                 oldText,
                 "",
@@ -186,6 +186,6 @@ public class Writer {
      * Clears the inner text of the writer without triggering any events.
      */
     public void reset(){
-        _innerText = "";
+        innerText = "";
     }
 }

@@ -1,0 +1,44 @@
+init
+push(4)
+new(x,INT,var,0)
+push("x : ")
+write
+load(x)
+writeln
+push(3)
+new(y,INT,var,0)
+push("y : ")
+write
+load(y)
+writeln
+push(6)
+new(z,INT,var,0)
+push("z : ")
+write
+load(z)
+writeln
+load(z)
+load(y)
+div
+push(2)
+add
+inc(x)
+push("x : ")
+write
+load(x)
+writeln
+push(1)
+inc(x)
+push("x : ")
+write
+load(x)
+writeln
+push(0)
+swap
+pop
+swap
+pop
+swap
+pop
+pop
+jcstop

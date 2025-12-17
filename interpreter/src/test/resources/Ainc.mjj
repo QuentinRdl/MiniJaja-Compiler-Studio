@@ -1,0 +1,12 @@
+class ainc {
+    int t[1];
+
+    main{
+        t[0]=80;
+        writeln(t[0]);
+        t[0]++;
+        writeln(t[0]);
+        t[0]+=8;
+        writeln(t[0]);
+    }
+}
