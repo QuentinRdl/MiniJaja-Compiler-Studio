@@ -1436,7 +1436,7 @@ class InterpreterMiniJajaTest {
         String errMessage=imj.interpretCode("class C { final int C=5; main{ writeln(C);}}");
         Assertions.assertNull(errMessage);
         writer.textChangedEvent.subscribe(e -> {
-            assertEquals("5\n9\n", e.oldText());
+            assertEquals("5\n", e.oldText());
         });
         writer.write("");
     }

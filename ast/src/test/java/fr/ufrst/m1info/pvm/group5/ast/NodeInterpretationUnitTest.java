@@ -161,7 +161,7 @@ class NodeInterpretationUnitTest {
         }, null);
         ClassNode c = new ClassNode(ident, null, main);
         c.interpret(memory);
-        assertTrue(memoryStorage.containsKey("C"));
+        assertTrue(memoryStorage.containsKey("C.class"));
     }
 
     @Test
