@@ -59,8 +59,7 @@ public class WriteNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        if(this.ident != null) {
-            IdentNode ident = (IdentNode)this.ident;
+        if(this.ident instanceof IdentNode ident) {
             if (MemoryCallUtil.safeCall(()-> m.isArray(ident.identifier), this))
                 throw new InterpretationInvalidTypeException("Array type cannot be used with instruction " + "write", this.getLine());
             ident.checkType(m);
