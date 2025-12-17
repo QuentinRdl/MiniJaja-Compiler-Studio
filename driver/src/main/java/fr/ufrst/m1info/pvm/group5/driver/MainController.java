@@ -1320,7 +1320,6 @@ public class MainController {
                 } catch (Exception _){
                     // ignore errors
                 }
-                // TODO : Check if needed -> Ensure the interpreter thread has fully stopped before clearing reference
                 try {
                     if(debugInterpreterMjj != null) debugInterpreterMjj.waitInterpretation();
                 } catch (Exception _){
