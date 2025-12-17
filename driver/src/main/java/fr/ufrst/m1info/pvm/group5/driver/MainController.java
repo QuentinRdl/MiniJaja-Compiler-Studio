@@ -160,7 +160,6 @@ public class MainController {
         });
 
         editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            //TODO: disable buttons when viewing memory tabs
             if(isCompiledTab()){
                 btnCompile.setDisable(true);
                 btnRunCompile.setDisable(true);
@@ -1057,8 +1056,6 @@ public class MainController {
             compiledCodeLines.add(new CodeLine(lineNumber++, line));
         }
     }
-
-    //TODO: replace the functions with showTab and hideTab (more generic functions)
 
     /**
      * Hides the compiled code tab from the editor tab pane

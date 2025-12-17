@@ -100,22 +100,6 @@ public class MemoryVisualisation extends GridPane {
             String heap = memory[0];
             String stack = memory[1];
 
-            //TODO: replace with actual values (step-by-step implementation)
-
-            /*
-            String stackExample = "Stack{scopeDepth=0, size=1, contents=\n" +
-                    "  [0] arr_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                    "  [1] alias_0\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
-                    "  [2] arr_1 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                    "  [1] alias_1\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
-                    "}";
-
-            String heapExample = "Heap(total=16, available=11)\n" +
-                    "  ext@1 int@0 size=5 Allocated(INT) refs=1\n" +
-                    "    bytes: [0, 0, 0, 0, 0]\n" +
-                    "* ext@0 int@5 size=11 Free refs=0\n" +
-                    "    bytes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-             */
             updateStack(stack);
             updateHeap(heap);
 
@@ -148,7 +132,6 @@ public class MemoryVisualisation extends GridPane {
         }
 
         // If "contents=" line is missing, the format is invalid
-        //TODO: modify to display in the console ?
         if(contentsIndex == -1){
             stackContainer.getChildren().add(new Label("Stack format error"));
             return;
