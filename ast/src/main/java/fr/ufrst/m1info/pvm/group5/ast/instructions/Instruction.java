@@ -2,13 +2,14 @@ package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.LocatedElement;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 
 import java.util.List;
 
-public abstract class Instruction {
+public abstract class Instruction implements LocatedElement {
     private int line;
 
     public void setLine(int line) {
@@ -35,7 +36,7 @@ public abstract class Instruction {
      */
     public void compatibleType(ValueType expected, ValueType actual) {
         if(actual != expected){
-            throw new InterpretationInvalidTypeException(this.getLine(), "int", actual.name(), this.toString());
+            throw new InterpretationInvalidTypeException(this.getLine(), "int", actual.name(), this);
         }
     }
 
@@ -47,7 +48,7 @@ public abstract class Instruction {
      */
     public void compatibleType(List<ValueType> expected, ValueType actual) {
         if(!expected.contains(actual)){
-            throw new InterpretationInvalidTypeException(this.getLine(), expected.toString(), actual.name(), this.toString());
+            throw new InterpretationInvalidTypeException(this.getLine(), expected.toString(), actual.name(), this);
         }
     }
 }

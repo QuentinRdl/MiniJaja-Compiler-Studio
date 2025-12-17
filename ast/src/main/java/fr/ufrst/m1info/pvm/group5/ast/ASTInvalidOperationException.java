@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
+import fr.ufrst.m1info.pvm.group5.ast.instructions.Instruction;
 import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 
 /**
@@ -9,7 +10,8 @@ import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
  * This exception mostly exists for debugging purposes and shouldn't occur during production, besides for the division by 0.
  */
 public class ASTInvalidOperationException extends RuntimeException {
-    public ASTInvalidOperationException(String operation, ASTNode node, int line) {
-        super(String.format("Line %d : Trying to use invalid operation %s on %s node", line, operation, node.toString()));
+    public ASTInvalidOperationException(String operation, LocatedElement element) {
+        super(String.format("Trying to use invalid operation %s (at line %d in %s)", operation, element.getLine(), element));
     }
+
 }
