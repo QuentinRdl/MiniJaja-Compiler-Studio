@@ -383,6 +383,16 @@ public class MainController {
      */
     public Tab getSourceTab() { return sourceTab; }
 
+    public TabPane getOutputTabPane() { return outputTabPane; }
+
+    public Tab getMemoryTabMinijaja() { return memoryTabMinijaja; }
+
+    public Tab getMemoryTabJajacode() { return memoryTabJajacode; }
+
+    public MemoryVisualisation getMemoryVisualisationMiniJaja() { return memoryVisualisationMiniJaja; }
+
+    public MemoryVisualisation getMemoryVisualisationJajaCode() { return memoryVisualisationJajaCode; }
+
     /**
      * Returns the ListView component used to display compiled code lines
      *
