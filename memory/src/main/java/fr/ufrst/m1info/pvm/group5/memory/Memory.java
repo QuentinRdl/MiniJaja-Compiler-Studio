@@ -558,7 +558,7 @@ public class Memory {
     @Override
     public String toString() {
         String res = heap.toString();
-        res += stack.toString();
+        res += stack.toString(symbolTable);
         return res;
     }
 
@@ -570,7 +570,7 @@ public class Memory {
         String[] res = {null, null};
 
         res[0] = heap.toString();
-        res[1] = stack.toString();
+        res[1] = stack.toString(symbolTable);
 
         return res;
     }

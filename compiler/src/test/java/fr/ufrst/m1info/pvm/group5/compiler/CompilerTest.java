@@ -373,6 +373,51 @@ class CompilerTest {
         Assertions.assertEquals(expected,res);
     }
 
+    @Test
+    @DisplayName("Compile File Constant")
+    void CompileConstant()  {
+        String res= comp.compileFile("src/test/resources/Constant.mjj");
+        String expected = "init\n" +
+                "push(5)\n" +
+                "new(VAL,INT,cst,0)\n" +
+                "new(X,INT,cst,0)\n" +
+                "new(X2,INT,cst,0)\n" +
+                "push(jcfaux)\n" +
+                "new(B,BOOL,cst,0)\n" +
+                "new(T,BOOL,cst,0)\n" +
+                "new(T2,BOOL,cst,0)\n" +
+                "load(VAL)\n" +
+                "writeln\n" +
+                "load(B)\n" +
+                "writeln\n" +
+                "push(8)\n" +
+                "load(VAL)\n" +
+                "mul\n" +
+                "store(X)\n" +
+                "load(B)\n" +
+                "not\n" +
+                "store(T)\n" +
+                "load(X)\n" +
+                "writeln\n" +
+                "load(T)\n" +
+                "writeln\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        Assertions.assertEquals(expected,res);
+    }
 
     @Test
     @DisplayName("Compile File LocalVariables")

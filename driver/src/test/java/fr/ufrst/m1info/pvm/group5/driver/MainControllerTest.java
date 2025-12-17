@@ -1,6 +1,8 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -46,11 +48,11 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-class MainControllerTest extends ApplicationTest {
+public class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
-    static Path tempDir;
+    public static Path tempDir;
 
     private MainController controller;
 
@@ -1255,6 +1257,9 @@ class MainControllerTest extends ApplicationTest {
         interact(() -> controller.onCompileClicked());
         WaitForAsyncUtils.waitForFxEvents();
 
+        // Wait for tab selection to complete
+        WaitForAsyncUtils.waitForFxEvents();
+
         assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
         verifyThat("#btnCompile", isDisabled());
         verifyThat("#btnRunCompile", isDisabled());
@@ -1375,7 +1380,7 @@ class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveShortcutCtrlS() throws Exception {
+    void testSaveShortcutCtrlS() throws Exception {
         File testFile = createTestFile("shortcut_save.mjj", "int x = 10;", "x++");
 
         interact(() -> {
@@ -2375,4 +2380,215 @@ class MainControllerTest extends ApplicationTest {
         String output = controller.output.getText();
         assertTrue(output.contains("[INFO] Debugging stopped"));
     }
+
+    @Test
+    void testMemoryTabsHiddenInitially(){
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testMemoryTabShownAfterMiniJajaRun() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testMemoryTabShownAfterJajaCodeRun() throws Exception {
+        File testFile = createTestFile("test.mjj","class C {", "main {", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.isCompiledTab());
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()), "MiniJaja memory tab should not be visible");
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()), "JajaCode memory tab should be visible");
+    }
+
+    @Test
+    void testStackBlocksAreDisplayed() throws Exception {
+        File testFile = createTestFile("test.mjj","class C {", "int x = 10;", "int y = 20;", "main {", " int z = x + y;", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        long stackBlockCount = controller.getMemoryVisualisationMiniJaja().lookupAll(".stack-block").size();
+        assertEquals(4, stackBlockCount);
+    }
+
+    @Test
+    void testHeapBlocksAreDisplayed() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int arr[3];", "main {", "arr[0] = 10;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        long heapBlockCount = controller.getMemoryVisualisationMiniJaja().lookupAll(".heap-block").size();
+        assertEquals(2, heapBlockCount);
+    }
+
+    @Test
+    void testMemoryVisualisationClearedOnLoadFile() throws Exception {
+        File testFile1 = createTestFile("first.mjj","class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile1));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        File testFile2 = createTestFile("second.mjj","class C {", "main {", "}", "}");
+        interact(() -> controller.loadFile(testFile2));
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+    }
+
+    @Test
+    void testMemoryVisualisationClearedOnCreateFile() throws Exception {
+        File testFile1 = createTestFile("test.mjj","class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile1));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+    }
+
+    @Test
+    void testMemoryVisualisationForCompileAndRun() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onCompileAndRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testStackBlockContainsVariableInfo() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Node firstStackBlock = controller.getMemoryVisualisationMiniJaja().lookup(".stack-block");
+        if(firstStackBlock instanceof StackBlockView){
+            boolean foundNameLabel = false;
+            boolean foundKindLabel = false;
+            boolean foundTypeLabel = false;
+            boolean foundValueLabel = false;
+
+            for(Object node : firstStackBlock.lookupAll(".label")){
+                if(node instanceof Label label){
+                    String text = label.getText();
+                    if(text.startsWith("Name :")) foundNameLabel = true;
+                    if(text.startsWith("Kind :")) foundKindLabel = true;
+                    if(text.startsWith("Type :")) foundTypeLabel = true;
+                    if(text.startsWith("Value :")) foundValueLabel = true;
+                }
+            }
+            assertTrue(foundNameLabel);
+            assertTrue(foundKindLabel);
+            assertTrue(foundTypeLabel);
+            assertTrue(foundValueLabel);
+        } else {
+            fail("No stack-block found");
+        }
+
+    }
+
+    @Test
+    void testHeapBlockContainsVariableInfo() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Node firstHeapBlock = controller.getMemoryVisualisationMiniJaja().lookup(".heap-block");
+        if(firstHeapBlock instanceof HeapBlockView){
+            boolean foundBlockLabel = false;
+            boolean foundSizeLabel = false;
+            boolean foundRefsLabel = false;
+
+            for(Object node : firstHeapBlock.lookupAll(".label")){
+                if(node instanceof Label label){
+                    String text = label.getText();
+                    if(text.startsWith("Block @")) foundBlockLabel = true;
+                    if(text.startsWith("Size :")) foundSizeLabel = true;
+                    if(text.startsWith("Refs :")) foundRefsLabel = true;
+                }
+            }
+            assertTrue(foundBlockLabel);
+            assertTrue(foundSizeLabel);
+            assertTrue(foundRefsLabel);
+        } else {
+            fail("No heap-block found");
+        }
+
+    }
+
 }

@@ -1,5 +1,7 @@
-package fr.ufrst.m1info.pvm.group5.driver;
+package fr.ufrst.m1info.pvm.group5.integration_tests;
 
+import fr.ufrst.m1info.pvm.group5.driver.MainController;
+import fr.ufrst.m1info.pvm.group5.driver.MainControllerTest;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

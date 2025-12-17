@@ -52,7 +52,7 @@ public class MainController {
     private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
-    ColoredTextFlow output;
+    public ColoredTextFlow output;
 
     private Console console;
 
@@ -382,6 +382,35 @@ public class MainController {
      * @return the Tab that shows the source code
      */
     public Tab getSourceTab() { return sourceTab; }
+
+    /**
+     * Returns the TabPane used to display output-related tabs.
+     *
+     * @return the output TabPane
+     */
+    public TabPane getOutputTabPane() { return outputTabPane; }
+
+    /**
+     * Returns the memory tab for MiniJaja execution
+     *
+     * @return the MiniJaja memory Tab
+     */
+    public Tab getMemoryTabMinijaja() { return memoryTabMinijaja; }
+
+    /**
+     * Returns the memory tab for JajaCode execution
+     *
+     * @return the JajaCode memory Tab
+     */
+    public Tab getMemoryTabJajacode() { return memoryTabJajacode; }
+
+    /**
+     * Returns the memory viusalisation for MiniJaja
+     *
+     * @return the MiniJaja MemoryVisualisation
+     */
+    public MemoryVisualisation getMemoryVisualisationMiniJaja() { return memoryVisualisationMiniJaja; }
+
 
     /**
      * Returns the ListView component used to display compiled code lines
@@ -915,6 +944,8 @@ public class MainController {
                 err = interpreterJajaCode.interpretCode(compiledCode);
 
                 if(err == null){
+                    showMemoryTab(memoryTabJajacode);
+                    Platform.runLater(() -> memoryVisualisationJajaCode.updateMemory(interpreterJajaCode.getMemory().toStringTab()));
                     console.getWriter().writeLine("[INFO] Compilation and interpretation successfully completed");
                 } else {
                     console.getWriter().writeLine("[ERROR] " + err);
@@ -1246,11 +1277,13 @@ public class MainController {
                     String[] currMemoryState = null;
                     try {
                         if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
-                            // TODO : Get memory
+                            currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
                         }
                     } catch(Exception _ex) {
                         // ignore errors
                     }
+
+                    final String[] finalMemoryState = currMemoryState;
 
                     Platform.runLater(() -> {
                         highlightDebugLine(lineIdx, codeLines, codeListView);
@@ -1258,8 +1291,10 @@ public class MainController {
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
-                        if(memoryVisualisationMiniJaja != null) {
-                            // TODO : Show memory
+                        showMemoryTab(memoryTabMinijaja);
+
+                        if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                            memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
                         }
                     });
 
@@ -1270,11 +1305,14 @@ public class MainController {
                 String[] currMemoryState = null;
                 try {
                     if(debugInterpreterMjj != null && debugInterpreterMjj.getMemory() != null) {
-                        // TODO : Update memory
+                        currMemoryState = debugInterpreterMjj.getMemory().toStringTab();
+
                     }
                 } catch (Exception _ex) {
                     // ignore errors
                 }
+
+                final String[] finalMemoryState = currMemoryState;
 
                 // Stop the interpreter and clear reference
                 try {
@@ -1295,8 +1333,10 @@ public class MainController {
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
-                    if(memoryVisualisationMiniJaja != null) {
-                        // TODO : Show memory
+                    showMemoryTab(memoryTabMinijaja);
+
+                    if(memoryVisualisationMiniJaja != null && finalMemoryState != null) {
+                        memoryVisualisationMiniJaja.updateMemory(finalMemoryState);
                     }
                 });
 
@@ -1365,35 +1405,41 @@ public class MainController {
                     }
                     console.getWriter().writeLine("[DEBUG] Line " + debugCurrentLine + ": " + lineText);
 
+                    String[] currMemoryState = null;
                     try {
                         if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
-                            // Get memory
+                            currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
                         }
                     } catch (Exception _ex) {
                         // ignore errors
                     }
 
+                    final String[] finalMemoryState = currMemoryState;
                     Platform.runLater(() -> {
                         highlightDebugLine(lineIdx, compiledCodeLines, compiledCodeListView);
                         if(btnDebugNext != null) btnDebugNext.setDisable(false);
                         if(btnDebugStop != null) btnDebugStop.setDisable(false);
 
-                        if(memoryVisualisationJajaCode != null) {
-                            // TODO : Show and update memory
+                        showMemoryTab(memoryTabJajacode);
+
+                        if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                            memoryVisualisationJajaCode.updateMemory(finalMemoryState);
                         }
                     });
 
                     return;
                 }
 
-                // Final halt : get memory state
+                String[] currMemoryState = null;
                 try {
                     if(debugInterpreterJjc != null && debugInterpreterJjc.getMemory() != null) {
-                        // TODO : Get memory
+                        currMemoryState = debugInterpreterJjc.getMemory().toStringTab();
                     }
                 } catch (Exception _ex) {
                     // ignore errors
                 }
+
+                final String[] finalMemoryState = currMemoryState;
 
                 // Stop the interpreter and clear reference
                 try {
@@ -1414,11 +1460,14 @@ public class MainController {
                     if(btnDebugNext != null) btnDebugNext.setDisable(true);
                     if(btnDebugStop != null) btnDebugStop.setDisable(true);
 
-                    if(memoryVisualisationJajaCode != null) {
-                        // TODO : Show memory and update it
+                    showMemoryTab(memoryTabJajacode);
+
+                    if(memoryVisualisationJajaCode != null && finalMemoryState != null) {
+                        memoryVisualisationJajaCode.updateMemory(finalMemoryState);
                     }
                 });
 
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
                 console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
 
                 // Clean everything -> Stop threads
@@ -1586,11 +1635,11 @@ public class MainController {
             line.setCurrentDebugLine(false);
         }
 
-        if(lineIndex >= 0 && lineIndex < codeLines.size()){
+        if(lineIndex >= 0 && lineIndex < lines.size()){
             lines.get(lineIndex).setCurrentDebugLine(true);
         }
 
-        listView.refresh();
+        Platform.runLater(listView::refresh);
     }
 
     /**
@@ -1603,6 +1652,6 @@ public class MainController {
         for(CodeLine line : lines){
             line.setCurrentDebugLine(false);
         }
-        listView.refresh();
+        Platform.runLater(listView::refresh);
     }
 }

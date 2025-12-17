@@ -380,7 +380,7 @@ class MemoryTest {
 
     @Test
     void toStringTest() {
-        when(stackMocked.toString()).thenReturn("STACK-STR");
+        when(stackMocked.toString(symbolTableMocked)).thenReturn("STACK-STR");
         when(heapMocked.toString()).thenReturn("HEAP-STR");
 
         String res = memory.toString();
@@ -392,7 +392,7 @@ class MemoryTest {
 
     @Test
     void toStringTabTest() {
-        when(stackMocked.toString()).thenReturn("STACK-STR");
+        when(stackMocked.toString(symbolTableMocked)).thenReturn("STACK-STR");
         when(heapMocked.toString()).thenReturn("HEAP-STR");
 
         String[] res = {null, null};

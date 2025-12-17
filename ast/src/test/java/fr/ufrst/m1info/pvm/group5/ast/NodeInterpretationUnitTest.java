@@ -1709,14 +1709,14 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("AppelENode.interpret() - throws ASTInvalidOperationException")
-    public void testAppelENode_Interpret_ThrowsException() {
+    void testAppelENode_Interpret_ThrowsException() {
         IdentNode ident = new IdentNode("anyFunc");
         AppelENode node = new AppelENode(ident, null);
         assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
     }
     @Test
     @DisplayName("ArrayNode.interpret() - declares int array with correct size")
-    public void testArrayNode_Interpret_IntArray() throws Exception {
+    void testArrayNode_Interpret_IntArray() throws Exception {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("arr");
         NumberNode sizeExpr = new NumberNode(5);
@@ -1729,7 +1729,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ArrayNode.interpret() - declares bool array with correct size")
-    public void testArrayNode_Interpret_BoolArray() throws Exception {
+    void testArrayNode_Interpret_BoolArray() throws Exception {
         TypeNode typeNode = new TypeNode(ValueType.BOOL);
         IdentNode ident = new IdentNode("flags");
         NumberNode sizeExpr = new NumberNode(10);
@@ -1742,7 +1742,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ArrayNode.interpret() - evaluates size expression correctly")
-    public void testArrayNode_Interpret_ExpressionSize() throws Exception {
+    void testArrayNode_Interpret_ExpressionSize() throws Exception {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("matrix");
         NumberNode left = new NumberNode(5);
@@ -1758,7 +1758,7 @@ class NodeInterpretationUnitTest {
     @Disabled // Type check test
     @Test
     @DisplayName("ArrayNode.interpret() - throws exception for non-int size")
-    public void testArrayNode_Interpret_NonIntSize() {
+    void testArrayNode_Interpret_NonIntSize() {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("arr");
         BooleanNode sizeExpr = new BooleanNode(true);
@@ -1770,7 +1770,7 @@ class NodeInterpretationUnitTest {
     @Disabled // This test is an integration test (Negative size exception is handled by memory)
     @Test
     @DisplayName("ArrayNode.interpret() - throws exception for negative size")
-    public void testArrayNode_Interpret_NegativeSize() {
+    void testArrayNode_Interpret_NegativeSize() {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("arr");
         NumberNode sizeExpr = new NumberNode(-5);
@@ -1782,7 +1782,7 @@ class NodeInterpretationUnitTest {
     @Disabled
     @Test
     @DisplayName("ArrayNode.interpret() - throws exception for zero size")
-    public void testArrayNode_Interpret_ZeroSize() {
+    void testArrayNode_Interpret_ZeroSize() {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("arr");
         NumberNode sizeExpr = new NumberNode(0);
@@ -1793,7 +1793,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ArrayNode.withdrawInterpret() - withdraws array declaration")
-    public void testArrayNode_WithdrawInterpret() {
+    void testArrayNode_WithdrawInterpret() {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("arr");
         NumberNode sizeExpr = new NumberNode(5);
@@ -1806,7 +1806,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("ArrayNode.withdrawInterpret() - works for bool array")
-    public void testArrayNode_WithdrawInterpret_BoolArray() {
+    void testArrayNode_WithdrawInterpret_BoolArray() {
         TypeNode typeNode = new TypeNode(ValueType.BOOL);
         IdentNode ident = new IdentNode("flags");
         NumberNode sizeExpr = new NumberNode(10);
@@ -1819,7 +1819,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.interpret() - throws exception (not interpretable)")
-    public void testTabNode_Interpret_ThrowsException() {
+    void testTabNode_Interpret_ThrowsException() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(0);
 
@@ -1829,7 +1829,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - returns value at valid index")
-    public void testTabNode_Eval_ValidIndex() {
+    void testTabNode_Eval_ValidIndex() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(2);
 
@@ -1846,7 +1846,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - returns bool value at valid index")
-    public void testTabNode_Eval_ValidBoolIndex() {
+    void testTabNode_Eval_ValidBoolIndex() {
         IdentNode ident = new IdentNode("flags");
         NumberNode indexExpr = new NumberNode(0);
 
@@ -1863,7 +1863,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - works with expression as index")
-    public void testTabNode_Eval_ExpressionIndex() {
+    void testTabNode_Eval_ExpressionIndex() {
         IdentNode arrayIdent = new IdentNode("arr");
         NumberNode left = new NumberNode(2);
         NumberNode right = new NumberNode(3);
@@ -1883,7 +1883,7 @@ class NodeInterpretationUnitTest {
     @Disabled // Integration test, bound checking is done by memory
     @Test
     @DisplayName("TabNode.eval() - throws exception for negative index")
-    public void testTabNode_Eval_NegativeIndex() {
+    void testTabNode_Eval_NegativeIndex() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(-1);
 
@@ -1896,7 +1896,7 @@ class NodeInterpretationUnitTest {
     @Disabled // Integration test, bound checking is done by memory
     @Test
     @DisplayName("TabNode.eval() - throws exception for index out of bounds")
-    public void testTabNode_Eval_IndexOutOfBounds() {
+    void testTabNode_Eval_IndexOutOfBounds() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(10);
 
@@ -1909,7 +1909,7 @@ class NodeInterpretationUnitTest {
     @Disabled // Integration test (array index is handled by memory)
     @Test
     @DisplayName("TabNode.eval() - throws exception for index equal to array length")
-    public void testTabNode_Eval_IndexEqualToLength() {
+    void testTabNode_Eval_IndexEqualToLength() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(5);
 
@@ -1922,7 +1922,7 @@ class NodeInterpretationUnitTest {
     @Disabled // Type check test
     @Test
     @DisplayName("TabNode.eval() - throws exception for non-int index")
-    public void testTabNode_Eval_NonIntIndex() {
+    void testTabNode_Eval_NonIntIndex() {
         IdentNode ident = new IdentNode("arr");
         BooleanNode indexExpr = new BooleanNode(true);
 
@@ -1934,7 +1934,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - throws exception for non-evaluable index")
-    public void testTabNode_Eval_NonEvaluableIndex() {
+    void testTabNode_Eval_NonEvaluableIndex() {
         IdentNode ident = new IdentNode("arr");
         ASTNode indexExpr = mock(ASTNode.class);
 
@@ -1943,7 +1943,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - accesses first element (index 0)")
-    public void testTabNode_Eval_FirstElement() {
+    void testTabNode_Eval_FirstElement() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(0);
 
@@ -1959,7 +1959,7 @@ class NodeInterpretationUnitTest {
 
     @Test
     @DisplayName("TabNode.eval() - accesses last element")
-    public void testTabNode_Eval_LastElement() {
+    void testTabNode_Eval_LastElement() {
         IdentNode ident = new IdentNode("arr");
         NumberNode indexExpr = new NumberNode(4);
 

@@ -4,19 +4,15 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 /**
  * Component to visually display the memory state (stack and heap) in the UI
  * Provides methods to update and clear the visualisation
  */
-public class MemoryVisualisation extends HBox {
+public class MemoryVisualisation extends GridPane {
 
     private VBox stackContainer;
     private VBox heapContainer;
@@ -28,8 +24,21 @@ public class MemoryVisualisation extends HBox {
      * Initializes the memory visualisation UI with separate sections for stack and heap
      */
     public MemoryVisualisation() {
-        super(20);
+        super();
         setPadding(new Insets(15));
+        setHgap(20);
+
+        ColumnConstraints colStack = new ColumnConstraints();
+        colStack.setHgrow(Priority.ALWAYS);
+        colStack.setFillWidth(true);
+        colStack.setPercentWidth(50);
+
+        ColumnConstraints colHeap = new ColumnConstraints();
+        colHeap.setHgrow(Priority.ALWAYS);
+        colHeap.setFillWidth(true);
+        colHeap.setPercentWidth(50);
+
+        getColumnConstraints().addAll(colStack, colHeap);
 
         // Stack
         VBox stackSection = new VBox(10);
@@ -74,12 +83,9 @@ public class MemoryVisualisation extends HBox {
         VBox.setVgrow(stackScrollPane, Priority.ALWAYS);
         VBox.setVgrow(heapScrollPane, Priority.ALWAYS);
 
-        getChildren().addAll(stackSection, heapSection);
-        HBox.setHgrow(stackSection, Priority.ALWAYS);
-        HBox.setHgrow(heapSection, Priority.ALWAYS);
+        add(stackSection, 0, 0);
+        add(heapSection, 1, 0);
 
-        stackSection.setMaxWidth(Double.MAX_VALUE);
-        heapSection.setMaxWidth(Double.MAX_VALUE);
     }
 
     /**
@@ -96,6 +102,7 @@ public class MemoryVisualisation extends HBox {
 
             //TODO: replace with actual values (step-by-step implementation)
 
+            /*
             String stackExample = "Stack{scopeDepth=0, size=1, contents=\n" +
                     "  [0] arr_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
                     "  [1] alias_0\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
@@ -108,8 +115,9 @@ public class MemoryVisualisation extends HBox {
                     "    bytes: [0, 0, 0, 0, 0]\n" +
                     "* ext@0 int@5 size=11 Free refs=0\n" +
                     "    bytes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-            updateStack(stackExample);
-            updateHeap(heapExample);
+             */
+            updateStack(stack);
+            updateHeap(heap);
 
         });
     }
@@ -154,13 +162,15 @@ public class MemoryVisualisation extends HBox {
         // Parse each line containing a variable and create a visual block
         for(String line : lines){
             if(line.contains("kind=")){ // Only process lines with variable information
-                String name = extract(line, "]", "kind=");
+                String name = extract(line, "]", "scope=");
+                int scope = extractInt(line, "scope=", "dataType=");
                 String kind = extract(line, "kind=", "dataType=");
                 String type = extract(line, "dataType=", "value=");
                 String value = extract(line, "value=", "");
+                String valueContent = extractValueContent(value);
 
                 // Add a StackBlockView at the top of the stack container
-                stackContainer.getChildren().addFirst(new StackBlockView(name, kind, type, value));
+                stackContainer.getChildren().add(new StackBlockView(name, kind, scope, type, valueContent));
             }
         }
     }
@@ -184,19 +194,21 @@ public class MemoryVisualisation extends HBox {
         // Ignore the first line (general heap info like total/available memory)
         for(int i = 1; i < lines.length; i++){
             String line = lines[i].trim();
+
             if(line.isEmpty()) continue; // Skip empty lines
 
-            if(line.contains("bytes:")){
-                String bytes = line.replace("bytes:", "").trim();
+            if(line.contains("data:")){
+                String data = line.replace("data:", "").trim();
                 HeapBlockView lastBlock = (HeapBlockView) heapContainer.getChildren().getLast();
-                lastBlock.setBytesLabel(bytes); // Update the bytes label of the last block
+                lastBlock.setDataLabel(data); // Update the data label of the last block
             } else {
                 int address = extractInt(line, "ext@", "int@");
                 int size = extractInt(line, "size=", (line.contains("Allocated") ? "Allocated" : "Free"));
-                boolean allocated = line.contains("Allocated");
+                String allocated = extract(line, Integer.toString(size), "refs=");
                 int refs = extractInt(line, "refs=", "");
 
-                heapContainer.getChildren().add(new HeapBlockView(address, size, allocated, refs, ""));
+                HeapBlockView block = new HeapBlockView(address, size, allocated, refs, "");
+                heapContainer.getChildren().add(block);
             }
         }
     }
@@ -237,6 +249,21 @@ public class MemoryVisualisation extends HBox {
         }catch (Exception e){
             return 0;
         }
+    }
+
+    private String extractValueContent(String text){
+        if(text.equals("null")){
+            return "null";
+        }
+
+        int start = text.indexOf('{');
+        int end = text.indexOf('}');
+
+        if(start != -1 && end != -1 && end > start){
+            return text.substring(start + 1, end).trim();
+        }
+
+        return "";
     }
 
     /**

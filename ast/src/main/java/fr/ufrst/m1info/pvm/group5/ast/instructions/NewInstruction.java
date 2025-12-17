@@ -51,26 +51,28 @@ public class NewInstruction extends Instruction{
             if(name.equals(".")) {
                 v = ((Value) m.pop());
             }else{
-                v=new Value();
+                v=null;
             }
         }catch (Exception e){
-            v = new Value();
+            v=null;
         }
         compatibleType(List.of(ValueType.INT, ValueType.BOOL, ValueType.VOID), DataType.toValueType(type));
         if (kind==EntryKind.VARIABLE){
-            if (v.type!=ValueType.EMPTY){
+            if (v != null && v.type!=ValueType.EMPTY){
                 compatibleType(DataType.toValueType(type), v.type);
             }
             final var u = v;
-            MemoryCallUtil.safeCall(() -> m.declVar(identifier,u,type), this);
+            MemoryCallUtil.safeCall(() -> m.declVar(identifier,(u==null)?new Value():v,type), this);
         }
         else if (kind==EntryKind.CONSTANT){
-            if (v.type!=ValueType.EMPTY){
+            if (v!=null && v.type!=ValueType.EMPTY){
                 compatibleType(DataType.toValueType(type), v.type);
             }
             final var u = v;
-            MemoryCallUtil.safeCall(() -> m.declCst(identifier,u,type), this);
+            MemoryCallUtil.safeCall(() -> m.declCst(identifier,(u==null)?new Value():u,type), this);
         }else{
+            if(v==null)
+                throw new InterpretationInvalidTypeException(this, "int", "null");
             compatibleType(ValueType.INT , v.type);
             final var u = v;
             MemoryCallUtil.safeCall(() -> m.push(identifier,u,type,EntryKind.METHOD), this);

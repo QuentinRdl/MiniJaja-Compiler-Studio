@@ -1,5 +1,7 @@
-package fr.ufrst.m1info.pvm.group5.driver;
+package fr.ufrst.m1info.pvm.group5.integration_tests;
 
+import fr.ufrst.m1info.pvm.group5.driver.MainController;
+import fr.ufrst.m1info.pvm.group5.driver.MainControllerTest;
 import org.junit.jupiter.api.Test;
 import org.testfx.util.WaitForAsyncUtils;
 import org.junit.jupiter.api.BeforeAll;

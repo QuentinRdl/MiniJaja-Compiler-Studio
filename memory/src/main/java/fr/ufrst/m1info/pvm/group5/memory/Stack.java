@@ -302,9 +302,53 @@ public class Stack {
         scopeDepth = 0;
     }
 
-
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Stack{scopeDepth=").append(scopeDepth)
+                .append(", size=").append(stackContent.size())
+                .append(", contents=\n");
+
+        int idx = 0;
+        for (StackObject obj : stackContent) {
+            sb.append("  [").append(idx++).append("] ");
+
+            // Basic identity
+            String name = obj.getName();
+            sb.append(name == null ? "<anon>" : name);
+
+            // Entry kind and declared DataType
+            sb.append("   scope=").append(obj.getScope())
+                    .append("   kind=").append(obj.getEntryKind())
+                    .append("   dataType=").append(obj.getDataType());
+
+            // Value description
+            Object val = obj.getValue();
+            sb.append("   value=");
+            if (val == null) {
+                sb.append("null");
+            } else if (val instanceof Value v) {
+                sb.append("Value(type=").append(v.type).append("){").append(v).append("}");
+            } else {
+                // For other objects, show runtime class and toString()
+                String cls = val.getClass().getSimpleName();
+                sb.append(cls).append("(").append(val).append(")");
+            }
+
+            // If the object is a constant and currently uninitialized, mark it
+            if (obj.getEntryKind() == fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind.CONSTANT && obj.getValue() == null) {
+                sb.append(" [const:uninitialized]");
+            }
+
+            sb.append('\n');
+        }
+
+        sb.append('}');
+        return sb.toString();
+    }
+
+
+    public String toString(SymbolTable symbolTable) {
         StringBuilder sb = new StringBuilder();
         sb.append("Stack{scopeDepth=").append(scopeDepth)
           .append(", size=").append(stackContent.size())
@@ -316,23 +360,37 @@ public class Stack {
 
             // Basic identity
             String name = obj.getName();
-            sb.append(name == null ? "<anon>" : name).append("_").append(obj.getScope());
+            sb.append(name == null ? "<anon>" : name);
 
             // Entry kind and declared DataType
-            sb.append(" \tkind=").append(obj.getEntryKind())
-              .append(" \tdataType=").append(obj.getDataType());
+            sb.append("   scope=").append(obj.getScope())
+                    .append("   kind=").append(obj.getEntryKind())
+                    .append("   dataType=").append(obj.getDataType());
 
             // Value description
             Object val = obj.getValue();
-            sb.append(" \tvalue=");
+            sb.append("   value=");
             if (val == null) {
                 sb.append("null");
             } else if (val instanceof Value v) {
-                sb.append("Value(type=").append(v.type).append("){").append(v.toString()).append("}");
+                sb.append("Value(type=").append(v.type).append("){");
+
+                if (name != null && symbolTable != null && symbolTable.contains(name)) {
+                    try {
+                        SymbolTableEntry entry = symbolTable.lookup(name);
+                        if (entry.getKind() == EntryKind.ARRAY) {
+                            sb.append("@");
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // ignore error
+                    }
+                }
+
+                sb.append(v).append("}");
             } else {
                 // For other objects, show runtime class and toString()
                 String cls = val.getClass().getSimpleName();
-                sb.append(cls).append("(").append(val.toString()).append(")");
+                sb.append(cls).append("(").append(val).append(")");
             }
 
             // If the object is a constant and currently uninitialized, mark it
