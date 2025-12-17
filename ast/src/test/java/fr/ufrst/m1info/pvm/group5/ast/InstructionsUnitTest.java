@@ -412,8 +412,8 @@ class InstructionsUnitTest {
         storage.add(new ASTMocks.Pair<>("test",new Value(1)));
         storage.add(new ASTMocks.Pair<>(".",new Value(5)));
         doAnswer(invocationOnMock -> {
-            return DataType.INT;
-        }).when(memory).dataTypeOf("test");
+            return ValueType.INT;
+        }).when(memory).valueTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);
@@ -429,8 +429,8 @@ class InstructionsUnitTest {
         storage.add(new ASTMocks.Pair<>("test",new Value(true)));
         storage.add(new ASTMocks.Pair<>(".",new Value(false)));
         doAnswer(invocationOnMock -> {
-            return DataType.BOOL;
-        }).when(memory).dataTypeOf("test");
+            return ValueType.BOOL;
+        }).when(memory).valueTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);

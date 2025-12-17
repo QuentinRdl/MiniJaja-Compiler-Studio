@@ -21,6 +21,6 @@ public class ASTInvalidMemoryException extends RuntimeException {
     }
 
     public static ASTInvalidMemoryException InvalidMemoryOperation(LocatedElement element, String message) {
-        return new ASTInvalidMemoryException(message + "(at line " + element.getLine() + ", " + element +")");
+        return new ASTInvalidMemoryException(message + " (at line " + element.getLine() + ", " + element +")");
     }
 }

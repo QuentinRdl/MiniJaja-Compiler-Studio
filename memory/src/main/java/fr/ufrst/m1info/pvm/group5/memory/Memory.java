@@ -324,9 +324,14 @@ public class Memory {
         // Lookup the symbol table entry
         SymbolTableEntry entry = symbolTable.lookup(identifier);
         if (entry == null) {
-            return null;
+            throw new MemoryIllegalArgException("Memory", "read", "symbol not declared, "+identifier);
         }
-        return entry.getDataType();
+        String ref = entry.getName();
+        StackObject stackobj = stack.getObject(ref);
+        if (stackobj == null) {
+            throw new MemoryIllegalArgException("Memory", "read", "no object found in the stack for given identifier, "+identifier);
+        }
+        return stackobj.getDataType();
     }
 
     public String identVarClass() {

@@ -36,7 +36,7 @@ public abstract class Instruction implements LocatedElement {
      */
     public void compatibleType(ValueType expected, ValueType actual) {
         if(actual != expected){
-            throw new InterpretationInvalidTypeException(this, "int", actual.name());
+            throw new InterpretationInvalidTypeException(this, expected.toString(), actual.name());
         }
     }
 
