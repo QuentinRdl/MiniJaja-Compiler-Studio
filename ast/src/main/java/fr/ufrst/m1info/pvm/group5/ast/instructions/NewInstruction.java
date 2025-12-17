@@ -55,12 +55,18 @@ public class NewInstruction extends Instruction{
             throw new ASTInvalidDynamicTypeException("new line ("+address+") : Invalid type.");
         }
         if (kind==EntryKind.VARIABLE){
+            if (type==DataType.VOID){
+                throw new ASTInvalidDynamicTypeException("new line ("+address+") : variable cannot be void.");
+            }
             if (v!=null && v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
                 throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" variable cannot be declared with "+ValueType.toDataType(v.type)+" value.");
             }
             m.declVar(identifier,v==null ? new Value() : v,type);
         }
         else if (kind==EntryKind.CONSTANT){
+            if (type==DataType.VOID){
+                throw new ASTInvalidDynamicTypeException("new line ("+address+") : constant cannot be void.");
+            }
             if (v!=null && v.type!=ValueType.EMPTY && ValueType.toDataType(v.type)!=type){
                 throw new ASTInvalidDynamicTypeException("new line ("+address+") : "+type+" constant cannot be declared with "+ValueType.toDataType(v.type)+" value.");
             }

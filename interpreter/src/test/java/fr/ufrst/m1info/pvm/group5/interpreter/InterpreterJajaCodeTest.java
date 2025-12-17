@@ -718,6 +718,169 @@ class InterpreterJajaCodeTest {
         Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Test
+    @DisplayName("Interpret Final Int Var Bool 1")
+    void FinalIntVarBool1() {
+        String code = "init\n" +
+                "push(jcfaux)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Var Bool 2")
+    void FinalIntVarBool2() {
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(jcfaux)\n" +
+                "load(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 1")
+    void FinalBoolVarInt1() {
+        String code = "init\n" +
+                "push(1)\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 2")
+    void FinalBoolVarInt2() {
+        String code = "init\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(1)\n" +
+                "load(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 1")
+    void FinalString1() {
+        String code = "init\n" +
+                "push(\"Error\")\n" +
+                "new(x,STRING,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 2")
+    void FinalString2() {
+        String code = "init\n" +
+                "new(x,STRING,cst,0)\n" +
+                "push(\"Error\")\n" +
+                "load(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Void")
+    void FinalVoid() {
+        String code = "init\n" +
+                "new(x,VOID,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Affectation After Initialization 1")
+    void FinalIntAffectationAfterInitialization1() {
+        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x=157;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Affectation After Initialization 2")
+    void FinalIntAffectationAfterInitialization2() {
+        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x=157; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Affectation After Initialization 1")
+    void FinalBoolAffectationAfterInitialization1() {
+        String errMessage=ijc.interpretCode("class C { final boolean x=false; main{ x=true;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Affectation After Initialization 2")
+    void FinalBoolAffectationAfterInitialization2() {
+        String errMessage=ijc.interpretCode("class C { final boolean x; main{ x=false; x=true; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Increment After Initialization 1")
+    void FinalIntIncrementAfterInitialization1() {
+        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x++;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Increment After Initialization 2")
+    void FinalIntIncrementAfterInitialization2() {
+        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x++; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Sum After Initialization 1")
+    void FinalIntSumAfterInitialization1() {
+        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x+=157;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Sum After Initialization 2")
+    void FinalIntSumAfterInitialization2() {
+        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x+=157; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
     @Disabled
     /* Step by step // Breakpoints */
     @Test
