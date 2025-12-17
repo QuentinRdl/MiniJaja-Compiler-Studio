@@ -63,7 +63,6 @@ public class WriteNode extends ASTNode{
         }
     }
 
-    // TODO : create abstract class for Write nodes to avoid code duplication
     @Override
     public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
         if(ident instanceof IdentNode iNode){
