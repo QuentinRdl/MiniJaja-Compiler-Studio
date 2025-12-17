@@ -1,0 +1,21 @@
+init
+push(3)
+newarray(t, INT)
+push(0)
+push(5)
+astore(t)
+push(0)
+aload(t)
+neg
+push(0)
+astore(t)
+push(0)
+push(2)
+ainc(t)
+push(0)
+aload(t)
+write
+length(t)
+writeln
+pop
+jcstop

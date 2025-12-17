@@ -137,7 +137,6 @@ class ConsoleTest extends ApplicationTest {
             console.getWriter().write("From writer");
         });
 
-        Thread.sleep(100);
         WaitForAsyncUtils.waitForFxEvents();
 
         interact(() -> {
@@ -302,7 +301,6 @@ class ConsoleTest extends ApplicationTest {
             console.getWriter().write("From writer");
         });
 
-        Thread.sleep(100);
         WaitForAsyncUtils.waitForFxEvents();
 
         interact(() -> {
@@ -384,7 +382,6 @@ class ConsoleTest extends ApplicationTest {
             console.getWriter().write("Test");
         });
 
-        Thread.sleep(100);
         WaitForAsyncUtils.waitForFxEvents();
 
         interact(() -> {
@@ -399,7 +396,6 @@ class ConsoleTest extends ApplicationTest {
             console.getWriter().write("After clear");
         });
 
-        Thread.sleep(100);
         WaitForAsyncUtils.waitForFxEvents();
 
         interact(() -> {

@@ -1467,6 +1467,7 @@ public class MainController {
                     }
                 });
 
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
                 console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
 
                 // Clean everything -> Stop threads
@@ -1634,11 +1635,11 @@ public class MainController {
             line.setCurrentDebugLine(false);
         }
 
-        if(lineIndex >= 0 && lineIndex < codeLines.size()){
+        if(lineIndex >= 0 && lineIndex < lines.size()){
             lines.get(lineIndex).setCurrentDebugLine(true);
         }
 
-        listView.refresh();
+        Platform.runLater(listView::refresh);
     }
 
     /**
@@ -1651,6 +1652,6 @@ public class MainController {
         for(CodeLine line : lines){
             line.setCurrentDebugLine(false);
         }
-        listView.refresh();
+        Platform.runLater(listView::refresh);
     }
 }
