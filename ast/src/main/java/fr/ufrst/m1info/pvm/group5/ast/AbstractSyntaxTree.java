@@ -145,20 +145,21 @@ public class AbstractSyntaxTree {
     }
 
     /**
-     * Compiles the tree into JaJaCode and prints the result to a file.
-     * @param filePath path to the output file. The file must exist and have sufficient permission to write in it.
-     */
-    public void compileToFile(String filePath){
-        compileToFile(filePath, 1);
-    }
-
-    /**
      * Compiles the tree into JaJaCode and prints the result into a file, starting from a given address (line)
      * @param filePath path to the output file. The file must exist and have sufficient permission to write in it.
-     * @param startingAddress address to start to write the code from
      */
-    public void compileToFile(String filePath, int startingAddress){
-        // TODO
+    public void compileToFile(String filePath) throws IOException{
+        BufferedWriter out = null;
+        try {
+            FileWriter fstream = new FileWriter(filePath+".jjc", false);
+            out = new BufferedWriter(fstream);
+            out.write(compileAsString());
+            out.close();
+        }
+        catch (IOException e) {
+            if(out != null) out.close();
+            throw e;
+        }
     }
 
     /**
