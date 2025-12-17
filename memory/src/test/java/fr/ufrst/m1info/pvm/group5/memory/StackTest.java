@@ -560,7 +560,7 @@ class StackTest {
 
 
     @Test
-    public void setVar_nullName_throwsInvalidNameException() {
+    void setVar_nullName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
 
@@ -571,7 +571,7 @@ class StackTest {
 
 
     @Test
-    public void setVar_emptyName_throwsInvalidNameException() {
+    void setVar_emptyName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
         assertThrows(Stack.InvalidNameException.class, () -> {

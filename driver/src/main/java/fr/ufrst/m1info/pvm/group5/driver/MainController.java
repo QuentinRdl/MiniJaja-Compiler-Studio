@@ -1419,6 +1419,7 @@ public class MainController {
                     }
                 });
 
+                if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
                 console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
 
                 // Clean everything -> Stop threads

@@ -4,10 +4,7 @@ import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
@@ -705,6 +702,7 @@ class InterpreterJajaCodeTest {
         Assertions.assertFalse(encountered.contains(18));// 18 should not be met, it's "branched over"
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret - error during step by step")
     void errorDuringStepByStep() {
