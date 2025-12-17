@@ -1010,26 +1010,6 @@ public class MainControllerTest extends ApplicationTest {
         verifyThat("#btnRunCompile", isEnabled());
     }
 
-    @Disabled
-    @Test
-    void testButtonsActivatedAfterLoadedFile() throws Exception {
-        File testFile = createTestFile("test.mjj", "line 1", "line 2");
-
-        verifyThat("#btnSave", isDisabled());
-        verifyThat("#btnSaveAs", isDisabled());
-        verifyThat("#btnRun", isDisabled());
-        verifyThat("#btnCompile", isDisabled());
-        verifyThat("#btnRunCompile", isDisabled());
-
-        interact(() -> controller.loadFile(testFile));
-
-        verifyThat("#btnSave", isEnabled());
-        verifyThat("#btnSaveAs", isEnabled());
-        verifyThat("#btnRun", isEnabled());
-        verifyThat("#btnCompile", isEnabled());
-        verifyThat("#btnRunCompile", isEnabled());
-    }
-
     @Test
     void testIsMinijajaFileWithNullFile(){
         assertNull(controller.getCurrentFile());
@@ -2474,7 +2454,6 @@ public class MainControllerTest extends ApplicationTest {
         File testFile2 = createTestFile("second.mjj","class C {", "main {", "}", "}");
         interact(() -> controller.loadFile(testFile2));
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
 
         assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
     }
@@ -2492,7 +2471,6 @@ public class MainControllerTest extends ApplicationTest {
 
         interact(() -> controller.createNewFile());
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
 
         assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
     }
@@ -2508,7 +2486,6 @@ public class MainControllerTest extends ApplicationTest {
 
         interact(() -> controller.onCompileAndRunClicked());
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(100);
 
         assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
         assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
@@ -2617,7 +2594,6 @@ public class MainControllerTest extends ApplicationTest {
 
         // Step through each instruction
         for (int i = 0; i < 4; i++) {
-            Thread.sleep(300);
             interact(() -> controller.onClickNextDebug());
             WaitForAsyncUtils.waitForFxEvents();
             Thread.sleep(300);
@@ -3027,7 +3003,6 @@ public class MainControllerTest extends ApplicationTest {
 
         interact(() -> controller.loadFile(testFile2));
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(500);
 
         // Verify debug was stopped
         verifyThat("#btnDebugRun", isEnabled());
@@ -3067,7 +3042,6 @@ public class MainControllerTest extends ApplicationTest {
         // Create new file
         interact(() -> controller.createNewFile());
         WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(500);
 
         // Verify debug was stopped
         verifyThat("#btnDebugRun", isEnabled());

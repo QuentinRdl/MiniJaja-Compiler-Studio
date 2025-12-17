@@ -1,15 +1,12 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -168,7 +165,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
                 }
                 case KeyCode.UP -> listener.onUpPressed(getIndex());
                 case KeyCode.DOWN -> listener.onDownPressed(getIndex());
-                default -> {}
             }
         });
 
@@ -200,9 +196,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
 
-        debugLineListener = (obs, oldVal, newVal) -> {
-            updateDebugLineStyle(newVal);
-        };
+        debugLineListener = (obs, oldVal, newVal) -> updateDebugLineStyle(newVal);
     }
 
     /**
