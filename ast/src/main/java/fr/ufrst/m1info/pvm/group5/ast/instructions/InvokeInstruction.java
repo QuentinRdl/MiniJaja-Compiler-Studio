@@ -27,6 +27,8 @@ public class InvokeInstruction extends Instruction {
                 throw ASTInvalidMemoryException.UndefinedVariable(ident, this);
             throw ASTInvalidMemoryException.InvalidVariable(ident, this, "method", m.dataTypeOf(ident).name());
         }
+        MemoryCallUtil.safeCall(()->m.push(".address", new Value(address+1), DataType.INT, EntryKind.CONSTANT), this);
+        MemoryCallUtil.safeCall(m::pushScope, this);
         int newAdr=vMeth.valueInt;
         return newAdr;
     }

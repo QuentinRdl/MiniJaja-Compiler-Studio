@@ -63,43 +63,35 @@ public class AffectationNode extends ASTNode{
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
-        try {
-            if (identifier instanceof TabNode) {
-                TabNode tabNode = (TabNode) identifier;
-                IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
-                ASTNode indexExp = tabNode.getChildren().get(1);
-                String indexType = indexExp.checkType(m);
-                if (!"int".equals(indexType)) {
-                    throw new InterpretationInvalidTypeException(this, "int", indexType);
-                }
-                DataType arrayDataType = MemoryCallUtil.safeCall(() -> m.tabType(arrayIdent.identifier), this);
-                String arrayTypeStr;
-                if (arrayDataType == DataType.INT) arrayTypeStr = "int";
-                else if (arrayDataType == DataType.BOOL) arrayTypeStr = "bool";
-                else throw new InterpretationInvalidTypeException(this, "[int,bool]", (arrayDataType==null)?"null":arrayDataType.toString());
-                if (!exprType.equals(arrayTypeStr)) {
-                    throw new InterpretationInvalidTypeException(this, arrayTypeStr, exprType);
-                }
-            } else {
-                DataType varDataType = m.dataTypeOf(((IdentNode) identifier).identifier);
-                String varTypeStr;
-                if (varDataType == DataType.INT) varTypeStr = "int";
-                else if (varDataType == DataType.BOOL) varTypeStr = "bool";
-                else throw new InterpretationInvalidTypeException(this, "[[int, bool]]", varDataType.toString());
-                if(m.isArray(((IdentNode) identifier).identifier)){
-                    varTypeStr = "Array<"+varTypeStr+">";
-                }
-                if (!exprType.equals(varTypeStr)) {
-                    throw new InterpretationInvalidTypeException(this, varTypeStr, exprType);
-                }
+        if (identifier instanceof TabNode) {
+            TabNode tabNode = (TabNode) identifier;
+            IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
+            ASTNode indexExp = tabNode.getChildren().get(1);
+            String indexType = indexExp.checkType(m);
+            if (!"int".equals(indexType)) {
+                throw new InterpretationInvalidTypeException(this, "int", indexType);
             }
-        } catch (Memory.MemoryIllegalArgException e) {
-            String identName = identifier instanceof TabNode
-                    ? ((IdentNode) ((TabNode) identifier).getChildren().get(0)).identifier
-                    : ((IdentNode) identifier).identifier;
-            throw ASTInvalidMemoryException.UndefinedVariable(identName, this);
+            DataType arrayDataType = MemoryCallUtil.safeCall(() -> m.tabType(arrayIdent.identifier), this);
+            String arrayTypeStr;
+            if (arrayDataType == DataType.INT) arrayTypeStr = "int";
+            else if (arrayDataType == DataType.BOOL) arrayTypeStr = "bool";
+            else throw new InterpretationInvalidTypeException(this, "[int,bool]", (arrayDataType==null)?"null":arrayDataType.toString());
+            if (!exprType.equals(arrayTypeStr)) {
+                throw new InterpretationInvalidTypeException(this, arrayTypeStr, exprType);
+            }
+        } else {
+            DataType varDataType = MemoryCallUtil.safeCall(() -> m.dataTypeOf(((IdentNode) identifier).identifier), this);
+            String varTypeStr;
+            if (varDataType == DataType.INT) varTypeStr = "int";
+            else if (varDataType == DataType.BOOL) varTypeStr = "bool";
+            else throw new InterpretationInvalidTypeException(this, "[[int, bool]]", varDataType.toString());
+            if(MemoryCallUtil.safeCall(() -> m.isArray(((IdentNode) identifier).identifier), this)){
+                varTypeStr = "Array<"+varTypeStr+">";
+            }
+            if (!exprType.equals(varTypeStr)) {
+                throw new InterpretationInvalidTypeException(this, varTypeStr, exprType);
+            }
         }
-
         return "void";
     }
 

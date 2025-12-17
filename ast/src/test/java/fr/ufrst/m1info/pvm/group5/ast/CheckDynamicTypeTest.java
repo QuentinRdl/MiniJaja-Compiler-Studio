@@ -1954,12 +1954,11 @@ class CheckDynamicTypeTest {
     @DisplayName("TabNode - checkType() valid with int array and int index")
     void testTabNode_CheckType_ValidIntArrayIntIndex() throws Exception {
         IdentNode ident = new IdentNode("arr");
+        memoryStorage.put("arr", new Value(5));
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         when(memoryMock.contains("arr")).thenReturn(true);
-        when(memoryMock.valueTypeOf("arr")).thenReturn(ValueType.INT);
         when(memoryMock.isArray("arr")).thenReturn(true);
-        doCallRealMethod().when(memoryMock).dataTypeOf("arr");
 
         TabNode node = new TabNode(ident, indexExpr);
         String result = node.checkType(memoryMock);
@@ -1967,7 +1966,6 @@ class CheckDynamicTypeTest {
         assertEquals("int", result);
         verify(indexExpr).checkType(memoryMock);
         verify(memoryMock).contains("arr");
-        verify(memoryMock).valueTypeOf("arr");
     }
 
 

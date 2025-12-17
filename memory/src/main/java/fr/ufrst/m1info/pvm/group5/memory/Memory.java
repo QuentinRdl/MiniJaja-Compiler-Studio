@@ -309,11 +309,7 @@ public class Memory {
      * @return ValueType
      */
     public ValueType valueTypeOf(String identifier){
-        Value v = (Value) val(identifier);
-        if (v == null) {
-            return null;
-        }
-        return v.type;
+        return DataType.toValueType(dataTypeOf(identifier));
     }
 
     /**
@@ -322,7 +318,15 @@ public class Memory {
      * @return DataType
      */
     public DataType dataTypeOf(String identifier){
-        return ValueType.toDataType(valueTypeOf(identifier));
+        if(identifier == null || identifier.isEmpty()) {
+            throw new MemoryIllegalArgException("Memory", "read","memory reading requires a non-null identifier");
+        }
+        // Lookup the symbol table entry
+        SymbolTableEntry entry = symbolTable.lookup(identifier);
+        if (entry == null) {
+            return null;
+        }
+        return entry.getDataType();
     }
 
     public String identVarClass() {

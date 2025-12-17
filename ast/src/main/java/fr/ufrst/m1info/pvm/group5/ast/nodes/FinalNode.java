@@ -53,6 +53,10 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        if(expression == null){
+            MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, null, ValueType.toDataType(type.valueType)), this);
+            return "void";
+        }
         String exprType = expression.checkType(m);
 
         String declaredType;
