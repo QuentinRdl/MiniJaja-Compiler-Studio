@@ -1586,7 +1586,7 @@ public class MainController {
             line.setCurrentDebugLine(false);
         }
 
-        if(lineIndex >= 0 && lineIndex < codeLines.size()){
+        if(lineIndex >= 0 && lineIndex < lines.size()){
             lines.get(lineIndex).setCurrentDebugLine(true);
         }
 
