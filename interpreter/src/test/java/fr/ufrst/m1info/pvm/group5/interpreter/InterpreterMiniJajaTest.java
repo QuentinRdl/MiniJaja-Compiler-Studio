@@ -1618,6 +1618,27 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Method Name Same As Method Name")
+    void MethodNameSameAsMethodName() {
+        String errMessage=imj.interpretCode("class C { void x(){ }; void x(){ }; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Name Same As Arguments Name")
+    void VariableNameSameAsArgumentsName() {
+        String errMessage=imj.interpretCode("class C { void x(int n){ int n;};  main{ x(4);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Method")
+    void FinalMethod() {
+        String errMessage=imj.interpretCode("class C { final void x(){};  main{ x();}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
