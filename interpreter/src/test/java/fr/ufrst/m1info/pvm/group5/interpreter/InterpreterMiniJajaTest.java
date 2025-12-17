@@ -1430,6 +1430,55 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Final Int Var Bool 1")
+    void FinalIntVarBool1() {
+        String errMessage=imj.interpretCode("class C { final int x=false; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Var Bool 2")
+    void FinalIntVarBool2() {
+        String errMessage=imj.interpretCode("class C { final int x; main{ x=false; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 1")
+    void FinalBoolVarInt1() {
+        String errMessage=imj.interpretCode("class C { final boolean x=1; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 2")
+    void FinalBoolVarInt2() {
+        String errMessage=imj.interpretCode("class C { final boolean x; main{ x=1; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 1")
+    void FinalString1() {
+        String errMessage=imj.interpretCode("class C { final string x=\"Error\"; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 2")
+    void FinalString2() {
+        String errMessage=imj.interpretCode("class C { final string x; main{ x=\"Error\"; }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Void")
+    void FinalVoid() {
+        String errMessage=imj.interpretCode("class C { final void x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
