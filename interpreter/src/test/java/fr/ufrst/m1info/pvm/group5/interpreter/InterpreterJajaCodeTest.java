@@ -739,7 +739,7 @@ class InterpreterJajaCodeTest {
         String code = "init\n" +
                 "new(x,INT,cst,0)\n" +
                 "push(jcfaux)\n" +
-                "load(x)\n" +
+                "store(x)\n" +
                 "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
@@ -770,7 +770,7 @@ class InterpreterJajaCodeTest {
         String code = "init\n" +
                 "new(x,BOOL,cst,0)\n" +
                 "push(1)\n" +
-                "load(x)\n" +
+                "store(x)\n" +
                 "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
@@ -801,7 +801,7 @@ class InterpreterJajaCodeTest {
         String code = "init\n" +
                 "new(x,STRING,cst,0)\n" +
                 "push(\"Error\")\n" +
-                "load(x)\n" +
+                "store(x)\n" +
                 "push(0)\n" +
                 "swap\n" +
                 "pop\n" +
@@ -828,56 +828,140 @@ class InterpreterJajaCodeTest {
     @Test
     @DisplayName("Interpret Final Int Affectation After Initialization 1")
     void FinalIntAffectationAfterInitialization1() {
-        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x=157;}}");
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(157)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Int Affectation After Initialization 2")
     void FinalIntAffectationAfterInitialization2() {
-        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x=157; }}");
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(157)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Bool Affectation After Initialization 1")
     void FinalBoolAffectationAfterInitialization1() {
-        String errMessage=ijc.interpretCode("class C { final boolean x=false; main{ x=true;}}");
+        String code = "init\n" +
+                "push(jcfaux)\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(jcvrai)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Bool Affectation After Initialization 2")
     void FinalBoolAffectationAfterInitialization2() {
-        String errMessage=ijc.interpretCode("class C { final boolean x; main{ x=false; x=true; }}");
+        String code = "init\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(jcfaux)\n" +
+                "store(x)\n" +
+                "push(jcvrai)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Int Increment After Initialization 1")
     void FinalIntIncrementAfterInitialization1() {
-        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x++;}}");
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Int Increment After Initialization 2")
     void FinalIntIncrementAfterInitialization2() {
-        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x++; }}");
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Int Sum After Initialization 1")
     void FinalIntSumAfterInitialization1() {
-        String errMessage=ijc.interpretCode("class C { final int x=15; main{ x+=157;}}");
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(157)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 
     @Test
     @DisplayName("Interpret Final Int Sum After Initialization 2")
     void FinalIntSumAfterInitialization2() {
-        String errMessage=ijc.interpretCode("class C { final int x; main{ x=15; x+=157; }}");
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(157)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
         Assertions.assertNotEquals(null,errMessage);
     }
 

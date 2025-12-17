@@ -1951,8 +1951,7 @@ class CheckDynamicTypeTest {
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         when(memoryMock.contains("arr")).thenReturn(true);
-        when(memoryMock.valueTypeOf("arr")).thenReturn(ValueType.INT);
-        doCallRealMethod().when(memoryMock).dataTypeOf("arr");
+        when(memoryMock.dataTypeOf("arr")).thenReturn(DataType.INT);
 
         TabNode node = new TabNode(ident, indexExpr);
         String result = node.checkType(memoryMock);
@@ -1960,7 +1959,7 @@ class CheckDynamicTypeTest {
         assertEquals("int", result);
         verify(indexExpr).checkType(memoryMock);
         verify(memoryMock).contains("arr");
-        verify(memoryMock).valueTypeOf("arr");
+        verify(memoryMock).dataTypeOf("arr");
     }
 
 

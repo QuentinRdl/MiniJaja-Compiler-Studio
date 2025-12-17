@@ -322,7 +322,19 @@ public class Memory {
      * @return DataType
      */
     public DataType dataTypeOf(String identifier){
-        return ValueType.toDataType(valueTypeOf(identifier));
+
+        if(identifier == null || identifier.isEmpty()) {
+            throw new MemoryIllegalArgException("dataTypeOf cannot be called with an empty/null identifier");
+        }
+        // Lookup the symbol table entry
+        SymbolTableEntry entry = symbolTable.lookup(identifier);
+        String ref = entry.getName();
+
+        StackObject stackobj = stack.getObject(ref);
+        if (stackobj == null) {
+            throw new MemoryIllegalArgException("Identifier '" + identifier + "' exists in the symbol table but no corresponding object was found in the stack");
+        }
+        return stackobj.getDataType();
     }
 
     public String identVarClass() {
