@@ -17,7 +17,7 @@ public class AppelENode extends ASTNode implements EvaluableNode {
 
     public AppelENode(IdentNode ident, ASTNode args) {
         if (ident == null) {
-            throw new ASTBuildException("AppelENode cannot have null ident");
+            throw new ASTBuildException("AppelE", "identifier", "AppelE node must have a non-null identifier");
         }
         this.ident = ident;
         this.args = args;
@@ -38,15 +38,8 @@ public class AppelENode extends ASTNode implements EvaluableNode {
         AppelINode appelInstruction = new AppelINode(ident, args);
         appelInstruction.interpret(m);
 
-        try {
-            Object result = m.val(m.identVarClass());
-            if (result instanceof Value value) {
-                return value;
-            }
-            throw new ASTInvalidOperationException(METHOD_PREFIX + ident.identifier + " returned an invalid type.");
-        } catch (Exception e) {
-            throw new ASTInvalidOperationException(METHOD_PREFIX + ident.identifier + " did not return a value.");
-        }
+        Object result = MemoryCallUtil.safeCall(() -> m.val(m.identVarClass()), this);
+        return (Value)result;
     }
 
 
@@ -72,32 +65,29 @@ public class AppelENode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException("Cannot interpret AppelEnode");
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException  {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        SymbolTableEntry methodEntry = MemoryCallUtil.safeCall(() -> m.getMethod(ident.identifier), this);
         if (methodEntry == null) {
-            throw new ASTInvalidDynamicTypeException("Unknown method " + ident.identifier);
+            throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this);
         }
         if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidDynamicTypeException(ident.identifier + " is not a method");
+            throw new InterpretationInvalidTypeException(this, "method", methodEntry.getKind().toString());
         }
 
         if (args != null) {
             args.checkType(m);
         }
         DataType dt = methodEntry.getDataType();
-        switch (dt) {
-            case INT:
-                return "int";
-            case BOOL:
-                return "bool";
-            case VOID:
-                throw new ASTInvalidDynamicTypeException(METHOD_PREFIX + ident.identifier + " is of type void and cannot be used as an expression.");
-            default:
-                throw new ASTInvalidDynamicTypeException(METHOD_PREFIX + ident.identifier + " has unsupported return type: " + dt);
-        }
+        return switch (dt) {
+            case INT -> "int";
+            case BOOL -> "bool";
+            default -> throw new InterpretationInvalidTypeException(this, "[int, bool]", dt.toString());
+        };
     }
+
+    public String toString(){return "AppelE";}
 }

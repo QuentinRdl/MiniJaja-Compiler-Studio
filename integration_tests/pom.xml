@@ -87,6 +87,46 @@
             <version>2-SNAPSHOT</version>
         </dependency>
 
+        <!-- Driver module dependency for integration tests -->
+        <dependency>
+            <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+            <artifactId>driver</artifactId>
+            <version>2-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Driver test-jar dependency to access test utilities -->
+        <dependency>
+            <groupId>fr.ufrst.m1info.pvm.group5</groupId>
+            <artifactId>driver</artifactId>
+            <version>2-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JavaFX dependencies -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>22.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>22.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TestFX dependency for GUI testing -->
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <version>4.0.16-alpha</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

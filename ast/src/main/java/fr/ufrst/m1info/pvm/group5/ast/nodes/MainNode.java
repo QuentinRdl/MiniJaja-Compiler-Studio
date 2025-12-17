@@ -14,7 +14,7 @@ public class MainNode extends ASTNode {
         this.vars = vars;
         this.instrs = instrs;
         if(vars != null && !(vars instanceof WithdrawalNode)){
-            throw  new ASTBuildException("Declarations of a main method must be withdrawable");
+            throw  new ASTBuildException("Main", "declarations", "Main node declarations must be withdrawable");
         }
     }
 
@@ -42,7 +42,7 @@ public class MainNode extends ASTNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (vars != null) {
             vars.checkType(m);
         }
@@ -62,4 +62,5 @@ public class MainNode extends ASTNode {
         return children;
     }
 
+    public String toString(){return "main";}
 }

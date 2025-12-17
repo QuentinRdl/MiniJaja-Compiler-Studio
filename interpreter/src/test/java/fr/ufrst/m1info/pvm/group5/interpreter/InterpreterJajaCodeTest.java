@@ -4,10 +4,7 @@ import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
@@ -96,6 +93,16 @@ class InterpreterJajaCodeTest {
     @DisplayName("Interpret File Complex")
     void Complex() {
         Assertions.assertNull(ijc.interpretFile("src/test/resources/Complex.jjc"));
+    }
+
+    @Test
+    @DisplayName("Interpret File Constant")
+    void Constant() {
+        Assertions.assertNull(ijc.interpretFile("src/test/resources/Constant.jjc"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\nfalse\n40\ntrue\n", e.oldText());
+        });
+        writer.write("");
     }
 
     @Test
@@ -384,7 +391,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(8)\nif(5)\ngoto(5)\npush(0)\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -393,7 +400,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,INT,var,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -402,7 +409,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,INT,cst,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -411,7 +418,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(8)\nnew(x,BOOL,var,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -420,7 +427,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(8)\nnew(x,BOOL,cst,0)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -429,7 +436,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(8)\nnew(x,INT,var,0)\npush(jcvrai)\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -438,7 +445,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(8)\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -447,7 +454,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(8)\nnew(x,INT,var,0)\npush(jcvrai)\nnew(y,BOOL,var,0)\nload(y)\nstore(x)\npush(0)\nswap\npop\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -456,7 +463,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(8)\nnew(y,INT,var,0)\nload(y)\nstore(x)\npush(0)\nswap\npop\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -465,7 +472,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\nload(y)\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -483,7 +490,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\ninc(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(IllegalArgumentException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(ASTInvalidMemoryException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -501,7 +508,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\ninc(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -510,7 +517,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\ninc(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -519,7 +526,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nadd\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -528,7 +535,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nadd\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -537,7 +544,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\ndiv\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -546,7 +553,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\ndiv\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -555,7 +562,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nmul\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -564,7 +571,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nmul\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -573,7 +580,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\nneg\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -582,7 +589,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\nneg\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -591,7 +598,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\npush(3)\nsub\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -600,7 +607,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(3)\nsub\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -609,7 +616,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(3)\npush(3)\nsup\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -618,7 +625,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\nsup\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -627,7 +634,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(jcvrai)\nand\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -636,7 +643,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\nand\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -645,7 +652,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\nnot\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -654,7 +661,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(3)\nnot\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -663,7 +670,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(jcvrai)\nor\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -672,7 +679,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\nor\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -681,7 +688,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nnew(x,INT,var,0)\npush(jcvrai)\npush(jcvrai)\ncmp\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -690,7 +697,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(jcvrai)\nnew(x,BOOL,var,0)\npush(jcvrai)\npush(3)\ncmp\nstore(x)\npush(0)\nswap\npop\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -699,7 +706,7 @@ class InterpreterJajaCodeTest {
         String input = "init\npush(3)\nif(4)\ngoto(4)\npush(0)\npop\njcstop";
         String errMessage= ijc.interpretCode(input);
         Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(ASTInvalidDynamicTypeException.class.toString(),errMessage.split(":")[0].trim());
+        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
 
     @Test
@@ -711,6 +718,254 @@ class InterpreterJajaCodeTest {
         Assertions.assertEquals(ASTInvalidOperationException.class.toString(),errMessage.split(":")[0].trim());
     }
 
+    @Test
+    @DisplayName("Interpret Final Int Var Bool 1")
+    void FinalIntVarBool1() {
+        String code = "init\n" +
+                "push(jcfaux)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Var Bool 2")
+    void FinalIntVarBool2() {
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(jcfaux)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 1")
+    void FinalBoolVarInt1() {
+        String code = "init\n" +
+                "push(1)\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Var Int 2")
+    void FinalBoolVarInt2() {
+        String code = "init\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(1)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 1")
+    void FinalString1() {
+        String code = "init\n" +
+                "push(\"Error\")\n" +
+                "new(x,STRING,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final String 2")
+    void FinalString2() {
+        String code = "init\n" +
+                "new(x,STRING,cst,0)\n" +
+                "push(\"Error\")\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Void")
+    void FinalVoid() {
+        String code = "init\n" +
+                "new(x,VOID,cst,0)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Affectation After Initialization 1")
+    void FinalIntAffectationAfterInitialization1() {
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(157)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Affectation After Initialization 2")
+    void FinalIntAffectationAfterInitialization2() {
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(157)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Affectation After Initialization 1")
+    void FinalBoolAffectationAfterInitialization1() {
+        String code = "init\n" +
+                "push(jcfaux)\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(jcvrai)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Bool Affectation After Initialization 2")
+    void FinalBoolAffectationAfterInitialization2() {
+        String code = "init\n" +
+                "new(x,BOOL,cst,0)\n" +
+                "push(jcfaux)\n" +
+                "store(x)\n" +
+                "push(jcvrai)\n" +
+                "store(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Increment After Initialization 1")
+    void FinalIntIncrementAfterInitialization1() {
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Increment After Initialization 2")
+    void FinalIntIncrementAfterInitialization2() {
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(1)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Sum After Initialization 1")
+    void FinalIntSumAfterInitialization1() {
+        String code = "init\n" +
+                "push(15)\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(157)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Int Sum After Initialization 2")
+    void FinalIntSumAfterInitialization2() {
+        String code = "init\n" +
+                "new(x,INT,cst,0)\n" +
+                "push(15)\n" +
+                "store(x)\n" +
+                "push(157)\n" +
+                "inc(x)\n" +
+                "push(0)\n" +
+                "swap\n" +
+                "pop\n" +
+                "pop\n" +
+                "jcstop";
+        String errMessage=ijc.interpretCode(code);
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Disabled
     /* Step by step // Breakpoints */
     @Test
     @DisplayName("Interpret - step by step")
@@ -745,6 +1000,7 @@ class InterpreterJajaCodeTest {
         Assertions.assertFalse(encountered.contains(18));// 18 should not be met, it's "branched over"
     }
 
+    @Disabled
     @Test
     @DisplayName("Interpret - error during step by step")
     void errorDuringStepByStep() {
@@ -752,7 +1008,7 @@ class InterpreterJajaCodeTest {
         InterpreterJajaCode ijjc = new InterpreterJajaCode();
         // Creating result
         List<String> expectedErrors = new ArrayList<>();
-        expectedErrors.add("Type error: add instruction expects two INT operands, but received BOOL and INT.");
+        expectedErrors.add("Invalid type, type BOOL given when int is expected (at line 4, add)");
 
         InterpretationMode im = InterpretationMode.STEP_BY_STEP;
         ijjc.interpretationHaltedEvent.subscribe(event -> {

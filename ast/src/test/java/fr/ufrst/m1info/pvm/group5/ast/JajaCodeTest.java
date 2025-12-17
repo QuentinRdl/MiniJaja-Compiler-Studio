@@ -256,6 +256,51 @@ class JajaCodeTest {
         }
     }
 
+    @Test
+    void fromFile_nop() throws IOException {
+        List<Instruction> instrs = Jajacode.fromFile("src/test/resources/Nop.jjc");
+        assertEquals(3, instrs.size());
+
+        assertTrue(instrs.get(0) instanceof InitInstruction);
+        assertTrue(instrs.get(1) instanceof NopInstruction);
+        assertTrue(instrs.get(2) instanceof JcstopInstruction);
+
+        for (int i = 0; i < instrs.size(); i++) {
+            assertEquals(i + 1, instrs.get(i).getLine());
+        }
+    }
+
+    @Test
+    void fromFile_array() throws IOException {
+        List<Instruction> instrs = Jajacode.fromFile("src/test/resources/Array.jjc");
+        assertEquals(21, instrs.size());
+
+        assertTrue(instrs.get(0) instanceof InitInstruction);
+        assertTrue(instrs.get(1) instanceof PushInstruction);
+        assertTrue(instrs.get(2) instanceof NewarrayInstruction);
+        assertTrue(instrs.get(3) instanceof PushInstruction);
+        assertTrue(instrs.get(4) instanceof PushInstruction);
+        assertTrue(instrs.get(5) instanceof AstoreInstruction);
+        assertTrue(instrs.get(6) instanceof PushInstruction);
+        assertTrue(instrs.get(7) instanceof AloadInstruction);
+        assertTrue(instrs.get(8) instanceof NegInstruction);
+        assertTrue(instrs.get(9) instanceof PushInstruction);
+        assertTrue(instrs.get(10) instanceof AstoreInstruction);
+        assertTrue(instrs.get(11) instanceof PushInstruction);
+        assertTrue(instrs.get(12) instanceof PushInstruction);
+        assertTrue(instrs.get(13) instanceof AincInstruction);
+        assertTrue(instrs.get(14) instanceof PushInstruction);
+        assertTrue(instrs.get(15) instanceof AloadInstruction);
+        assertTrue(instrs.get(16) instanceof WriteInstruction);
+        assertTrue(instrs.get(17) instanceof LengthInstruction);
+        assertTrue(instrs.get(18) instanceof WritelnInstruction);
+        assertTrue(instrs.get(19) instanceof PopInstruction);
+        assertTrue(instrs.get(20) instanceof JcstopInstruction);
+
+        for (int i = 0; i < instrs.size(); i++) {
+            assertEquals(i + 1, instrs.get(i).getLine());
+        }
+    }
 
 
 

@@ -16,10 +16,10 @@ public class IfNode extends ASTNode{
         this.instrThen = instrThen;
         this.instrElse = instrElse;
         if(condition == null){
-            throw new ASTBuildException("If node must have a condition");
+            throw new ASTBuildException("If", "condition", "If node condition must not be null");
         }
         if(!(condition instanceof EvaluableNode)){
-            throw new ASTBuildException("If node must have an evaluable condition");
+            throw new ASTBuildException("If", "condition", "If node condition must be evaluable");
         }
     }
 
@@ -47,9 +47,6 @@ public class IfNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
-        if (condition instanceof IdentNode && m.isArray(((IdentNode) condition).identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Condition in If structure cannot be an array.");
-        }
         boolean exp = ((EvaluableNode)condition).eval(m).valueBool;
         if(exp){
             if(instrThen != null) {
@@ -62,10 +59,10 @@ public class IfNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException("The condition of an if must be of type bool");
+            throw new InterpretationInvalidTypeException(this, "bool", condType);
         }
         if (instrThen != null) {
             instrThen.checkType(m);
@@ -87,4 +84,5 @@ public class IfNode extends ASTNode{
         return children;
     }
 
+    public String toString(){return "if";}
 }

@@ -7,4 +7,6 @@ public class NopInstruction extends Instruction {
     public int execute(int address, Memory m) {
         return address + 1;
     }
+
+    public String toString() {return "nop";}
 }

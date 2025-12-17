@@ -20,13 +20,13 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
         this.ident = ident;
         this.expression = expression;
         if(this.type == null){
-            throw new ASTBuildException("Final nodes must have a type");
+            throw new ASTBuildException("Final", "type", "type of final node cannot be null");
         }
         if(this.ident == null){
-            throw new ASTBuildException("Final nodes must have a identifier");
+            throw new ASTBuildException("Final", "identifier", "identifier of final node cannot be null");
         }
         if (expression != null && !(expression instanceof EvaluableNode)) {
-            throw new ASTBuildException("Final nodes expression must be evaluable");
+            throw new ASTBuildException("Final", "expression", "expression of final node must be evaluable");
         }
     }
 
@@ -48,36 +48,32 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
             return;
         }
         Value v = ((EvaluableNode)expression).eval(m);
-        m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType));
+        MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, v, ValueType.toDataType(type.valueType)), this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        if(expression == null){
+            MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, null, ValueType.toDataType(type.valueType)), this);
+            return "void";
+        }
+        String exprType = expression.checkType(m);
 
         String declaredType;
         switch (type.valueType) {
             case INT :
                 declaredType = "int";
-                m.declCst(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+                MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
                 break;
             case BOOL :
                 declaredType = "bool";
-                m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType));
+                MemoryCallUtil.safeCall(() -> m.declCst(ident.identifier, new Value(false), ValueType.toDataType(type.valueType)), this);
                 break;
             default :
-                throw new ASTInvalidDynamicTypeException(
-                    "Unsupported type for constant " + ident.identifier
-                );
+                throw new InterpretationInvalidTypeException(this, "[int, bool]", type.valueType.toString());
         }
-        if (expression != null){
-            String exprType = expression.checkType(m);
-            if (!exprType.equals(declaredType)) {
-                throw new ASTInvalidDynamicTypeException(
-                        "Type of expression (" + exprType +
-                                ") does not match the declared type (" + declaredType +
-                                ") for the variable " + ident.identifier
-                );
-            }
+        if (!exprType.equals(declaredType)) {
+            throw new InterpretationInvalidTypeException(this, "[int, bool]", declaredType);
         }
 
         return "void";
@@ -110,4 +106,6 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
         jajacodes.add("pop");
         return jajacodes;
     }
+
+    public String toString(){return "final";}
 }

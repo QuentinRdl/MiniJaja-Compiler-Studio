@@ -230,7 +230,7 @@ class HeapTest {
     @DisplayName("SetValue - InvalidAddress")
     void SetValueInvalidAddressTest(){
         Heap heap = new Heap(512);
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(1,0, new Value(5)));
+        assertThrows(InvalidMemoryAddressException.class, ()->heap.setValue(1,0, new Value(5)));
     }
 
     @Test
@@ -239,8 +239,8 @@ class HeapTest {
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.setValue(address, 11, new Value(5)); // 11 is still in bounds
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address,12, new Value(5)));
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.setValue(address,13, new Value(5)));
+        assertThrows(IndexOutOfBounds.class, ()->heap.setValue(address,12, new Value(5)));
+        assertThrows(IndexOutOfBounds.class, ()->heap.setValue(address,13, new Value(5)));
     }
 
     @Test
@@ -284,7 +284,7 @@ class HeapTest {
     @DisplayName("GetValue - InvalidAddress")
     void GetValueInvalidAddressTest(){
         Heap heap = new Heap(512);
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(1,0));
+        assertThrows(InvalidMemoryAddressException.class, ()->heap.getValue(1,0));
     }
 
     @Test
@@ -293,8 +293,8 @@ class HeapTest {
         Heap heap = new Heap(512);
         var address = heap.allocate(12,DataType.INT);
         heap.getValue(address, 11); // 11 is still in bounds
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(address,12));
-        assertThrows(UnmappedMemoryAddressException.class, ()->heap.getValue(address,13));
+        assertThrows(IndexOutOfBounds.class, ()->heap.getValue(address,12));
+        assertThrows(IndexOutOfBounds.class, ()->heap.getValue(address,13));
     }
 
     // Heap Defragmentation
@@ -409,7 +409,7 @@ class HeapTest {
     void SizeofInvalidAddressTest(){
         Heap heap = new Heap(512);
         int address = heap.allocate(12,DataType.INT);
-        assertThrows(UnmappedMemoryAddressException.class, () -> heap.sizeOf(address + 1));
+        assertThrows(InvalidMemoryAddressException.class, () -> heap.sizeOf(address + 1));
     }
 
     @Test

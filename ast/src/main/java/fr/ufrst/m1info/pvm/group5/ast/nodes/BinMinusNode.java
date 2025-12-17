@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 public class BinMinusNode extends BinaryOperator {
@@ -19,12 +19,12 @@ public class BinMinusNode extends BinaryOperator {
     }
 
     @Override
-    protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
+    protected String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException {
         if (!leftType.equals("int") || !rightType.equals("int")){
-            throw new ASTInvalidDynamicTypeException(
-                    "Minus operator must be used with 2 operand of type int"
-            );
+            throw new InterpretationInvalidTypeException(this, "int", (!leftType.equals("int"))?leftType:rightType);
         }
         return "int";
     }
+
+    public String toString(){return "-";}
 }

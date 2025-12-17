@@ -1,8 +1,9 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
@@ -44,14 +45,10 @@ public class WriteLineNode extends ASTNode{
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         if(ident instanceof IdentNode iNode){
             Value v = iNode.eval(m);
-            if(v == null)
-                throw new ASTInvalidMemoryException("Unknown variable : " + iNode.identifier);
             m.writeLine(v.toString());
         }
         else if(ident instanceof TabNode tab){
             Value v = tab.eval(m);
-            if(v == null)
-                throw new ASTInvalidMemoryException("Unknown array : " + tab.ident.identifier);
             m.writeLine(v.toString());
         }
         else{
@@ -60,29 +57,11 @@ public class WriteLineNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        if(ident instanceof IdentNode iNode){
-            try {
-                if (m.isArray(iNode.identifier)){
-                    throw new ASTInvalidOperationException("Line "+ getLine() +" : Writeln operation cannot be used with an array.");
-                }
-                Value v = (Value) m.val(iNode.identifier);
-                if(v == null)
-                    throw new ASTInvalidMemoryException("Variable " + iNode.identifier +" is not defined");
-            }
-            catch (Exception e) {
-                throw new ASTInvalidMemoryException("Variable " + iNode.identifier +" is not defined");
-            }
-        }
-        else if(ident instanceof TabNode tab){
-            try {
-                Value v = (Value) m.val(tab.ident.identifier);
-                if(v == null)
-                    throw new ASTInvalidMemoryException("Array " + tab.ident.identifier +" is not defined");
-            }
-            catch (Exception e) {
-                throw new ASTInvalidMemoryException("Array " + tab.ident.identifier +" is not defined");
-            }
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        if(ident instanceof IdentNode ident) {
+            if (MemoryCallUtil.safeCall(() -> m.isArray(ident.identifier), this))
+                throw new InterpretationInvalidTypeException("Array type cannot be used with instruction " + "write", this);
+            ident.checkType(m);
         }
         return "void";
     }
@@ -100,4 +79,6 @@ public class WriteLineNode extends ASTNode{
             return List.of(ident);
         return List.of();
     }
+
+    public String toString(){return "writeln";}
 }

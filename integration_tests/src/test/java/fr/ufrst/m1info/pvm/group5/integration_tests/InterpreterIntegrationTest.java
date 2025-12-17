@@ -1,5 +1,7 @@
-package fr.ufrst.m1info.pvm.group5.driver;
+package fr.ufrst.m1info.pvm.group5.integration_tests;
 
+import fr.ufrst.m1info.pvm.group5.driver.MainController;
+import fr.ufrst.m1info.pvm.group5.driver.MainControllerTest;
 import org.junit.jupiter.api.Test;
 import org.testfx.util.WaitForAsyncUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -92,7 +94,7 @@ class InterpreterIntegrationTest extends ApplicationTest {
 
         String consoleText = createFileLoadRunAndGetConsole("test.mjj", content);
         assertTrue(consoleText.contains("[ERROR]"));
-        assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
+        assertTrue(consoleText.contains("missing '}' at '<EOF>' (at line 6:5)"));
     }
 
 
@@ -109,7 +111,7 @@ class InterpreterIntegrationTest extends ApplicationTest {
 
         String consoleText = createFileLoadRunAndGetConsoleByButton("test.mjj", content);
         assertTrue(consoleText.contains("[ERROR]"));
-        assertTrue(consoleText.contains("line 6:5 missing '}' at '<EOF>'"));
+        assertTrue(consoleText.contains("missing '}' at '<EOF>' (at line 6:5)"));
     }
 
 

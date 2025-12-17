@@ -1,6 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 public class AndNode extends BinaryOperator{
@@ -20,12 +20,13 @@ public class AndNode extends BinaryOperator{
     }
 
     @Override
-    protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
+    protected String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException {
         if (!leftType.equals("bool") || !rightType.equals("bool")){
-            throw new ASTInvalidDynamicTypeException(
-                    "And operator must be used with 2 operand of type bool"
-            );
+            throw new InterpretationInvalidTypeException(this, "bool", (leftType.equals("bool"))?leftType:rightType);
         }
         return "bool";
     }
+
+    public String toString(){return "&&";}
+
 }

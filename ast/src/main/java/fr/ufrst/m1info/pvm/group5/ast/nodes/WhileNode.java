@@ -15,10 +15,10 @@ public class WhileNode extends ASTNode{
         this.condition = condition;
         this.iss = iss;
         if(this.condition == null){
-            throw new ASTBuildException("While node must have a condition");
+            throw new ASTBuildException("While", "condition", "While node must have a non-null condition");
         }
         if(!(condition instanceof EvaluableNode)){
-            throw new ASTBuildException("While node condition must be evaluable");
+            throw new ASTBuildException("While", "condition", "While node must have an evaluable condition");
         }
     }
 
@@ -39,9 +39,6 @@ public class WhileNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
-        if (condition instanceof IdentNode && m.isArray(((IdentNode) condition).identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Condition in While structure cannot be an array.");
-        }
         Value e = ((EvaluableNode)condition).eval(m);
         while(e.valueBool){ // Rule [tantquevrai]
             if(iss != null)
@@ -51,12 +48,10 @@ public class WhileNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String condType = condition.checkType(m);
         if (!condType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "While loop condition must be bool, found : " + condType
-            );
+            throw new InterpretationInvalidTypeException(this, "bool", condType);
         }
         if (iss != null) {
             iss.checkType(m);
@@ -73,4 +68,5 @@ public class WhileNode extends ASTNode{
         return children;
     }
 
+    public String toString(){return "while";}
 }

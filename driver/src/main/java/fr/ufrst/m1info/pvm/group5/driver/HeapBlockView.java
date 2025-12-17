@@ -2,6 +2,9 @@ package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 /**
@@ -9,22 +12,24 @@ import javafx.scene.layout.VBox;
  * Each block shows its address, allocation status, size, reference count, and content bytes
  */
 public class HeapBlockView extends VBox {
-    private Label bytesLabel;
+    private TextArea dataLabel;
 
     /**
      * Constructs a visual block for a heap memory segment
      *
      * @param address the memory address of the block
      * @param size the size of the block
-     * @param allocated true if the block is allocated, false if free
+     * @param allocatedString a string describing the allocation state ("Allocated" or "Free")
      * @param refs the number of references pointing to this block
      * @param bytes the content of the block (can be empty initially)
      */
-    public HeapBlockView(int address, int size, boolean allocated, int refs, String bytes){
+    public HeapBlockView(int address, int size, String allocatedString, int refs, String bytes){
         super();
         setPadding(new Insets(8));
         setSpacing(4);
         getStyleClass().add("heap-block");
+
+        boolean allocated = allocatedString.contains("Allocated");
 
         if (allocated){
             setStyle(" -fx-border-color: #FFD270;");
@@ -32,26 +37,32 @@ public class HeapBlockView extends VBox {
             setStyle(" -fx-border-color: #CC8B00;");
         }
 
-        Label addressLabel = new Label("Block @" + address + (allocated ? " - ALLOCATED" : " - FREE"));
+        Label addressLabel = new Label("Block @" + address + "  -  " + allocatedString.toUpperCase());
         addressLabel.setStyle("-fx-font-weight: bold;");
 
         Label sizeLabel = new Label("Size : " + size);
 
         Label refsLabel = new Label("Refs : " + refs);
 
-        bytesLabel = new Label();
-        bytesLabel.setWrapText(true);
-        bytesLabel.setMaxWidth(260);
+        dataLabel = new TextArea();
+        dataLabel.getStyleClass().add("data-area");
+        dataLabel.setEditable(false);
+        dataLabel.setWrapText(true);
 
-        getChildren().addAll(addressLabel, sizeLabel, refsLabel, bytesLabel);
+        dataLabel.setPrefRowCount(3);
+        dataLabel.setMinHeight(Region.USE_PREF_SIZE);
+        VBox.setVgrow(dataLabel, Priority.NEVER);
+
+        getChildren().addAll(addressLabel, sizeLabel, refsLabel, dataLabel);
     }
 
     /**
-     * Updates the bytes content displayed in this heap block
+     * Updates the data content displayed in this heap block
      *
-     * @param bytes the string representating the block's bytes
+     * @param data the string representating the block's bytes
      */
-    public void setBytesLabel(String bytes){
-        bytesLabel.setText("Bytes : " + bytes);
+    public void setDataLabel(String data){
+        dataLabel.setText("Data : " + data );
+
     }
 }

@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class MainApplication extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("icon.png")));
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());

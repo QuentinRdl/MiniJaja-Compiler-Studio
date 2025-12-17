@@ -2,6 +2,7 @@ package fr.ufrst.m1info.pvm.group5.memory.symbol_table;
 
 
 import fr.ufrst.m1info.pvm.group5.memory.HashMap;
+import fr.ufrst.m1info.pvm.group5.memory.Memory;
 
 /**
  * Represents a simple symbol table without scope management.
@@ -81,7 +82,7 @@ public class SymbolTable {
         if (parentScope != null) {
             return parentScope.lookup(name);
         }
-        throw new IllegalArgumentException("Symbol not found: " + name);
+        throw new Memory.MemoryIllegalArgException("Symbol table", "lookup","Symbol not found: " + name);
     }
 
 

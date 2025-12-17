@@ -17,7 +17,7 @@ public class AppelINode extends ASTNode {
 
     public AppelINode(IdentNode ident, ASTNode args) {
         if (ident == null) {
-            throw new ASTBuildException("AppelINode cannot have null ident");
+            throw new ASTBuildException("AppelI", "identifier", "AppelI node must have a non-null identifier");
         }
         this.ident = ident;
         this.args = args;
@@ -51,16 +51,16 @@ public class AppelINode extends ASTNode {
 
     @Override
     public void interpret(Memory m)
-            throws ASTInvalidMemoryException, ASTInvalidOperationException, ASTInvalidDynamicTypeException {
+            throws ASTInvalidMemoryException, ASTInvalidOperationException, InterpretationInvalidTypeException {
         SymbolTableEntry methodEntry = validateMethodEntry(m);
         List<Value> evaluatedArgs = evaluateArguments(m);
         MethodeNode methodNode = getMethodNode(methodEntry);
 
-        m.pushScope();
+        MemoryCallUtil.safeCall(m::pushScope, this);
         bindParameters(m, methodNode, evaluatedArgs);
         executeMethodBody(m, methodNode);
         cleanupParameters(m, methodNode);
-        m.popScope();
+        MemoryCallUtil.safeCall(m::popScope, this);
     }
 
     /**
@@ -72,12 +72,12 @@ public class AppelINode extends ASTNode {
      * @throws ASTInvalidOperationException if the identifier is not a method
      */
     private SymbolTableEntry validateMethodEntry(Memory m) {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
+        SymbolTableEntry methodEntry = MemoryCallUtil.safeCall(() -> m.getMethod(ident.identifier), this);
         if (methodEntry == null) {
-            throw new ASTInvalidMemoryException("Method " + ident.identifier + " not found.");
+            throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this);
         }
         if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidOperationException(ident.identifier + " is not a method!");
+            throw ASTInvalidMemoryException.InvalidVariable(ident.identifier, this, "method", methodEntry.getKind().toString());
         }
         return methodEntry;
     }
@@ -97,12 +97,10 @@ public class AppelINode extends ASTNode {
 
         if (args instanceof ExpListNode expListNode) {
             evaluatedArgs.addAll(expListNode.evalList(m));
-        }else if (args instanceof IdentNode iNode && m.isArray(iNode.identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {
-            throw new ASTInvalidOperationException("Arguments node is not an ExpListNode/evaluable.");
+            throw new ASTBuildException("AppelI", "arguments", "AppelI call must have evaluable arguments");
         }
         return evaluatedArgs;
     }
@@ -115,9 +113,9 @@ public class AppelINode extends ASTNode {
      * @throws ASTInvalidOperationException if the reference is not a MethodeNode
      */
     private MethodeNode getMethodNode(SymbolTableEntry methodEntry) {
-        Object ref = methodEntry.getReference();
+        Object ref = MemoryCallUtil.safeCall(methodEntry::getReference, this);
         if (!(ref instanceof MethodeNode methodNode)) {
-            throw new ASTInvalidOperationException("Method reference for " + ident.identifier + " is not a MethodeNode");
+            throw ASTInvalidMemoryException.InvalidVariable(ident.identifier, this, "MethodNode", ref.getClass().getSimpleName());
         }
         return methodNode;
     }
@@ -136,7 +134,7 @@ public class AppelINode extends ASTNode {
         }
 
         if (!(methodNode.params instanceof ParamListNode paramList)) {
-            throw new ASTInvalidOperationException("Method parameters are not a ParamListNode");
+            throw ASTInvalidMemoryException.InvalidVariable(ident.identifier,  this, "method", methodNode.params.getClass().getSimpleName());
         }
 
         List<ParamNode> formals = paramList.toList();
@@ -146,7 +144,7 @@ public class AppelINode extends ASTNode {
             ParamNode p = formals.get(i);
             Value argVal = evaluatedArgs.get(i);
             if (p.type.valueType!=argVal.type){
-                throw new ASTInvalidDynamicTypeException("Line "+getLine()+" Arguments types doesn't match parameters types");
+                throw new InterpretationInvalidTypeException(this, p.type.valueType.toString(), argVal.type.toString());
             }
             m.declVar(p.ident.identifier, argVal, ValueType.toDataType(p.type.valueType));
         }
@@ -161,9 +159,7 @@ public class AppelINode extends ASTNode {
      */
     private void validateArity(int expected, int actual) {
         if (expected != actual) {
-            throw new ASTInvalidOperationException(
-                    "Arity mismatch when calling " + ident.identifier + ": expected " + expected + " got " + actual
-            );
+            throw new RuntimeException(String.format("Line %d : Arity mismatch, expected %d arguments, got %d", this, expected, actual));
         }
     }
 
@@ -198,20 +194,14 @@ public class AppelINode extends ASTNode {
         } else if (methodNode.params instanceof ParamListNode paramListNode) {
             List<ParamNode> formals = paramListNode.toList();
             for (ParamNode p : formals) {
-                m.withdrawDecl(p.ident.identifier);
+                MemoryCallUtil.safeCall(() -> m.withdrawDecl(p.ident.identifier), this);
             }
         }
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        SymbolTableEntry methodEntry = m.getMethod(ident.identifier);
-        if (methodEntry == null) {
-            throw new ASTInvalidDynamicTypeException("Unknown method " + ident.identifier);
-        }
-        if (methodEntry.getKind() != EntryKind.METHOD) {
-            throw new ASTInvalidDynamicTypeException(ident.identifier + " is not a method");
-        }
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        SymbolTableEntry methodEntry = validateMethodEntry(m);
 
         if (args != null) {
             args.checkType(m);
@@ -225,7 +215,9 @@ public class AppelINode extends ASTNode {
             case VOID:
                 return "void";
             default:
-                throw new ASTInvalidDynamicTypeException("Method " + ident.identifier + " has unsupported return type: " + dt);
+                throw new InterpretationInvalidTypeException(this, "int, bool or void", dt.toString());
         }
     }
+
+    public String toString(){return "AppelI";}
 }

@@ -111,14 +111,7 @@ class AbstractSyntaxTreeTest {
     @DisplayName("Evaluation - Undefined Variable / Inc")
     void UndefinedVariableInc() throws Exception {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromString("class C {int y = 10;main {x++;}}");
-        boolean success = false;
-        try {
-            AST.interpret(memory);
-        }
-        catch (ASTInvalidMemoryException e) {
-            success = true;
-        }
-        assertTrue(success);
+        assertThrows(ASTInvalidMemoryException.class, () -> AST.interpret(memory));
     }
 
     @Test

@@ -139,7 +139,7 @@ class SymbolTableTest {
         try {
             childScope.lookup("ghost");
             fail("Expected IllegalArgumentException for missing symbol");
-        } catch (IllegalArgumentException e) {
+        } catch (Memory.MemoryIllegalArgException e) {
             assertTrue(e.getMessage().contains("Symbol not found"));
         }
     }

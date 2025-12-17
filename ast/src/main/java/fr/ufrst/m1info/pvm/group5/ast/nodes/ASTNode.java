@@ -7,7 +7,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ASTNode {
+public abstract class ASTNode implements LocatedElement {
     /**
      * Line of the token in the file
      */
@@ -49,7 +49,7 @@ public abstract class ASTNode {
     public Event<InterpretationStoppedData> interpretationStoppedEvent(){
         if(this.InterpretationStoppedEvent == null){
             if(this.root == null){
-                throw new ASTBuildException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
+                throw new RuntimeException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
             }
             return root.interpretationStoppedEvent();
         }
@@ -91,9 +91,9 @@ public abstract class ASTNode {
     /**
      * Dynamically checks the type of this node and returns its type.
      * @return the evaluated type of the node (e.g., int, bool, string, void, etc.)
-     * @throws ASTInvalidDynamicTypeException if the type is invalid
+     * @throws InterpretationInvalidTypeException if the type is invalid
      */
-    public abstract String checkType(Memory m) throws ASTInvalidDynamicTypeException;
+    public abstract String checkType(Memory m) throws InterpretationInvalidTypeException;
 
     /**
      * Get the children of the node within a list

@@ -14,10 +14,10 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
         this.variable=variable;
         this.variables=variables;
         if(this.variable==null){
-            throw new ASTBuildException("Invalid variable declaration");
+            throw new ASTBuildException("Variables", "variable", "Variables node variable must not be null");
         }
         if(!(this.variable instanceof WithdrawalNode)){
-            throw new ASTBuildException("Variable declarations must be withdrawable");
+            throw new ASTBuildException("Variables", "variable", "Variables node variable must be evaluable");
         }
     }
 
@@ -40,7 +40,7 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         variable.checkType(m);
         if (variables != null) {
             variables.checkType(m);
@@ -73,4 +73,6 @@ public class VariablesNode extends ASTNode implements WithdrawalNode {
         jajacodes.addAll(((WithdrawalNode)variable).withdrawCompile(address + jajacodes.size()));
         return jajacodes;
     }
+
+    public String toString(){return "variables";}
 }

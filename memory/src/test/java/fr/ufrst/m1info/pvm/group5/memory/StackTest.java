@@ -393,8 +393,8 @@ class StackTest {
         dq.addLast(b);
 
         String expected = "Stack{scopeDepth=0, size=2, contents=\n" +
-                "  [0] x_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                "  [1] y_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(2)\n" +
+                "  [0] x   scope=0   kind=VARIABLE   dataType=INT   value=Integer(1)\n" +
+                "  [1] y   scope=0   kind=VARIABLE   dataType=INT   value=Integer(2)\n" +
                 "}";
         assertEquals(expected, s.toString());
     }
@@ -404,7 +404,7 @@ class StackTest {
         String msg = "Invalid variable name";
         Stack.InvalidNameException ex = new Stack.InvalidNameException(msg);
 
-        assertEquals(msg, ex.getMessage());
+        assertEquals("[WARNING] This is a critical internal error that shouldn't be displayed ! - Stack : "+msg+" is an invalid identifier", ex.getMessage());
     }
 
 
@@ -480,7 +480,7 @@ class StackTest {
     @Test
     void swapTop_notEnoughElements() {
         Stack s = new Stack();
-        assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
+        assertThrows(Memory.MemoryIllegalOperationException.class, s::swap);
 
         // Calling w/ 1 element should throw exception
         StackObject only = mock(StackObject.class);
@@ -497,7 +497,7 @@ class StackTest {
             fail("Reflection setup failed: " + ex.getMessage());
         }
 
-        assertThrows(Memory.MemoryIllegalArgException.class, s::swap);
+        assertThrows(Memory.MemoryIllegalOperationException.class, s::swap);
     }
 
     @Test
@@ -560,7 +560,7 @@ class StackTest {
 
 
     @Test
-    public void setVar_nullName_throwsInvalidNameException() {
+    void setVar_nullName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
 
@@ -571,7 +571,7 @@ class StackTest {
 
 
     @Test
-    public void setVar_emptyName_throwsInvalidNameException() {
+    void setVar_emptyName_throwsInvalidNameException() {
         Stack s = new Stack();
         s.pushScope();
         assertThrows(Stack.InvalidNameException.class, () -> {

@@ -13,9 +13,9 @@ public class ReturnNode extends ASTNode{
     public ReturnNode(ASTNode expr){
         this.expr = expr;
         if(expr == null)
-            throw new ASTBuildException("Return node must have a expression");
+            throw new ASTBuildException("Return", "expression", "Return node must have a return value");
         else if (!(expr instanceof EvaluableNode))
-            throw new ASTBuildException("Return node must have an evaluable expression");
+            throw new ASTBuildException("Return", "expression","Return node must have an evaluable return value");
     }
 
     @Override
@@ -28,11 +28,11 @@ public class ReturnNode extends ASTNode{
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
         Value v = ((EvaluableNode)expr).eval(m);
-        m.affectValue(m.identVarClass(), v);
+        MemoryCallUtil.safeCall(() -> m.affectValue(m.identVarClass(), v), this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expr.checkType(m);
         return exprType;
     }
@@ -42,4 +42,5 @@ public class ReturnNode extends ASTNode{
         return List.of(expr);
     }
 
+    public String toString(){return "return";}
 }

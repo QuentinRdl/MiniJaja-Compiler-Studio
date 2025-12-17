@@ -13,7 +13,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
 
     public ParamListNode(ParamNode param, ParamListNode next) {
         if (param == null) {
-            throw new ASTBuildException("ParamListNode cannot have a null parameter");
+            throw new ASTBuildException("ParamList", "param", "ParamList cannot have a null parameter");
         }
         this.param = param;
         this.next = next;
@@ -55,7 +55,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
 
     @Override
     public String checkType(Memory m)
-            throws ASTInvalidDynamicTypeException {
+            throws InterpretationInvalidTypeException {
         param.checkType(m);
         if (next != null) {
             next.checkType(m);
@@ -85,7 +85,7 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
     public void withdrawInterpret(Memory m) {
         if (next instanceof WithdrawalNode wNext)
             wNext.withdrawInterpret(m);
-        m.withdrawDecl(param.ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(param.ident.identifier), this);
     }
 
     @Override
@@ -97,4 +97,6 @@ public class ParamListNode extends ASTNode  implements WithdrawalNode {
         code.add("pop");
         return code;
     }
+    public String toString(){return "parameters";}
+
 }

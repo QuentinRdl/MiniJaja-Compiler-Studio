@@ -227,7 +227,7 @@ public class Heap {
     private HeapElement checkAddress(int externalAddress) throws InvalidMemoryAddressException{
         HeapElement target = externalAddresses.get(externalAddress);
         if(target == null)
-            throw new UnmappedMemoryAddressException(externalAddress);
+            throw new InvalidMemoryAddressException(externalAddress);
         return target;
     }
 
@@ -275,7 +275,7 @@ public class Heap {
     public void addReference(int address) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
         if(target.isFree())
-            throw new InvalidMemoryAddressException("Invalid free, no block allocated at : " + address, address);
+            throw new InvalidMemoryAddressException(address);
         target.references++;
     }
 
@@ -288,7 +288,7 @@ public class Heap {
     public void removeReference(int address) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
         if(target.isFree())
-            throw new InvalidMemoryAddressException("Invalid free, no block allocated at : " + address, address);
+            throw new InvalidMemoryAddressException(address);
         target.references--;
         if(target.references == 0)
             free(target);
@@ -317,10 +317,10 @@ public class Heap {
      */
     public Value getValue(int address, int offset) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
-        if(offset >= target.size())
-            throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
+        if(offset >= target.size() || offset < 0)
+            throw new IndexOutOfBounds(address, offset, target.size());
         if(target.isFree())
-            throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
+            throw new InvalidMemoryAddressException(address);
         int val = storage[target.internalAddress + offset];
         return translate(val, target.getStorageType());
     }
@@ -334,10 +334,10 @@ public class Heap {
      */
     public void setValue(int address, int offset, Value value) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
-        if(offset >= target.size())
-            throw new UnmappedMemoryAddressException("Offset " + offset + " is beyond the allocated block for address " + address, address + offset);
+        if(offset >= target.size() || offset < 0)
+            throw new IndexOutOfBounds(address, offset, target.size());
         if(target.isFree())
-            throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
+            throw new InvalidMemoryAddressException(address);
         storage[target.internalAddress + offset] = switch (target.getStorageType()){
             case INT -> value.valueInt;
             case BOOL -> ((value.valueBool)? 1 : 0);
@@ -354,7 +354,7 @@ public class Heap {
     public int sizeOf(int address) throws InvalidMemoryAddressException{
         HeapElement target = checkAddress(address);
         if(target.isFree())
-            throw new InvalidMemoryAddressException("Invalid address, no block allocated at : " + address, address);
+            throw new InvalidMemoryAddressException(address);
         return target.size();
     }
 

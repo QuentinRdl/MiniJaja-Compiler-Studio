@@ -17,4 +17,6 @@ public class GotoInstruction extends Instruction {
     public int execute(int address, Memory m) {
         return this.address;
     }
+
+    public String toString() { return "goto";}
 }

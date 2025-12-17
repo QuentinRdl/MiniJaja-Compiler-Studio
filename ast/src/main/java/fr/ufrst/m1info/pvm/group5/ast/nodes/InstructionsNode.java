@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
@@ -17,7 +17,7 @@ public class InstructionsNode extends ASTNode{
         this.instruction = instruction;
         this.otherInstructions = otherInstructions;
         if(instruction == null){
-            throw new ASTBuildException("Invalid instruction definition");
+            throw new ASTBuildException("Instructions", "instruction", "Instructions node's instruction must not be null");
         }
     }
 
@@ -39,7 +39,7 @@ public class InstructionsNode extends ASTNode{
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (instruction instanceof ReturnNode){
             return instruction.checkType(m);
         }
@@ -59,4 +59,5 @@ public class InstructionsNode extends ASTNode{
         return children;
     }
 
+    public String toString(){return "instructions";}
 }

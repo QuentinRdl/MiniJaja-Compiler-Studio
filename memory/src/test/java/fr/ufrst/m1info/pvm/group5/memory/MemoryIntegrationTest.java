@@ -1,11 +1,11 @@
 package fr.ufrst.m1info.pvm.group5.memory;
 
 import fr.ufrst.m1info.pvm.group5.memory.heap.Heap;
-import fr.ufrst.m1info.pvm.group5.memory.heap.UnmappedMemoryAddressException;
+import fr.ufrst.m1info.pvm.group5.memory.heap.IndexOutOfBounds;
+import fr.ufrst.m1info.pvm.group5.memory.heap.InvalidMemoryAddressException;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 
-import fr.ufrst.m1info.pvm.group5.memory.symbol_table.SymbolTableEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 
@@ -120,7 +115,7 @@ class MemoryIntegrationTest {
     @MethodSource("typeOfVars")
     void popEmptySymbolTable(String id, Object value, DataType type) {
         mem.stack.setVar("var", value, type);
-        assertThrows(java.lang.IllegalArgumentException.class, () -> mem.pop());
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.pop());
     }
 
     @ParameterizedTest
@@ -254,7 +249,7 @@ class MemoryIntegrationTest {
     @ParameterizedTest
     @MethodSource("typeOfVarsAffect")
     void affectValueNotDeclared(String id, Object value, DataType type, Object newValue) {
-        assertThrows(java.lang.IllegalArgumentException.class, () -> {
+        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
             mem.affectValue(id, newValue);
         });
     }
@@ -302,7 +297,7 @@ class MemoryIntegrationTest {
         Value val = (Value) ret;
         StackObject stack_ret = StackObject.valueToStackObj(val);
         assertEquals(value, stack_ret.getValue());
-        assertThrows(Memory.MemoryIllegalArgException.class, () -> {
+        assertThrows(Stack.ConstantModificationException.class, () -> {
             mem.affectValue(id, newValue);
         });
     }
@@ -384,7 +379,7 @@ class MemoryIntegrationTest {
         // First declaration should succeed
         mem.declVarClass("classVar");
         // Second declaration (any identifier) should fail because a class var already exists
-        assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("another"));
+        assertThrows(Memory.MemoryIllegalOperationException.class, () -> mem.declVarClass("another"));
     }
 
     @Test
@@ -393,8 +388,9 @@ class MemoryIntegrationTest {
         mem.declVar("idInTable", 1, DataType.INT);
 
         // Attempting to declare a class var with the same identifier must fail (symbolTable.contains branch)
-        Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idInTable"));
-        assertTrue(ex.getMessage().contains("Symbol Table") || ex.getMessage().contains("Symbol"));
+        Memory.MemoryIllegalOperationException ex = assertThrows(Memory.MemoryIllegalOperationException.class, () -> mem.declVarClass("idInTable"));
+        System.out.println(ex.getMessage());
+        assertTrue(ex.getMessage().contains("a class variable has already been defined"));
     }
 
     @Test
@@ -406,8 +402,8 @@ class MemoryIntegrationTest {
         assertFalse(mem.symbolTable.contains("idOnStackOnly"));
 
         // Now declVarClass should throw because stack.hasObj(identifier) is true
-        Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.declVarClass("idOnStackOnly"));
-        assertTrue(ex.getMessage().contains("Stack"));
+        Memory.MemoryIllegalOperationException ex = assertThrows(Memory.MemoryIllegalOperationException.class, () -> mem.declVarClass("idOnStackOnly"));
+        assertTrue(ex.getMessage().contains("a class variable has already been defined"));
     }
 
     @Test
@@ -443,7 +439,7 @@ class MemoryIntegrationTest {
     @Test
     void valueTypeOfUndefinedVariable() {
         Memory mem = new Memory();
-        assertThrows(IllegalArgumentException.class,() -> mem.valueTypeOf("x"));
+        assertThrows(Memory.MemoryIllegalArgException.class,() -> mem.valueTypeOf("x"));
     }
 
     @Test
@@ -471,7 +467,7 @@ class MemoryIntegrationTest {
     @Test
     void dataTypeOfUndefinedVariable() {
         Memory mem = new Memory();
-        assertThrows(IllegalArgumentException.class,() -> mem.dataTypeOf("x"));
+        assertThrows(Memory.MemoryIllegalArgException.class,() -> mem.dataTypeOf("x"));
     }
 
     @Test
@@ -527,7 +523,7 @@ class MemoryIntegrationTest {
 
         mem.withdrawDecl("arr");
 
-        java.lang.IllegalArgumentException ex = assertThrows(java.lang.IllegalArgumentException.class, () -> mem.val("arr"));
+        Memory.MemoryIllegalArgException ex = assertThrows(Memory.MemoryIllegalArgException.class, () -> mem.val("arr"));
         assertTrue(ex.getMessage().contains("Symbol not found"));
 
         // After freeing the block, the available size of the heap should return to the total space
@@ -568,8 +564,8 @@ class MemoryIntegrationTest {
 
         mem.declTab("arr", 5, DataType.BOOL);
 
-        assertThrows(java.lang.ArrayIndexOutOfBoundsException.class, () -> mem.affectValT("arr", -1, val));
-        assertThrows(UnmappedMemoryAddressException.class, () -> mem.affectValT("arr", 6, val));
+        assertThrows(IndexOutOfBounds.class, () -> mem.affectValT("arr", -1, val));
+        assertThrows(IndexOutOfBounds.class, () -> mem.affectValT("arr", 6, val));
     }
 
     static Stream<Arguments> tabLengthTestProvider() {

@@ -17,7 +17,7 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
         this.identifier = identifier;
         if(this.identifier == null){
-            throw new ASTBuildException("Ident node cannot have null identifier");
+            throw new ASTBuildException("ident", "identifier", "ident identifier must not be null");
         }
     }
 
@@ -30,33 +30,31 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException{
-        throw new ASTInvalidOperationException("Ident node cannot be interpreted");
+        throw new ASTInvalidOperationException("interpret", this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         DataType dataType;
         try{
             dataType = m.dataTypeOf(identifier);
         } catch (Exception e) {
-            throw new ASTInvalidMemoryException(e.getMessage());
+            throw ASTInvalidMemoryException.UndefinedVariable(identifier, this);
         }
 
-        switch (dataType) {
-            case INT:
-                return "int";
-            case BOOL:
-                return "bool";
-            case VOID:
-                throw new ASTInvalidDynamicTypeException(
-                        "Variable " + identifier + " cannot be of type void"
-                );
-            default:
-                throw new ASTInvalidDynamicTypeException(
-                        "Invalid type for variable " + identifier
-                );
-        }
+        String stringDataType = switch (dataType) {
+            case INT -> "int";
+            case BOOL -> "bool";
+            default ->
+                    throw new InterpretationInvalidTypeException(this, "[int, bool]", dataType.toString());
+        };
 
+        if(MemoryCallUtil.safeCall(() -> m.isArray(this.identifier), this)){
+            return "Array<"+stringDataType+">";
+        }
+        else {
+            return stringDataType;
+        }
     }
 
     @Override
@@ -72,11 +70,12 @@ public class IdentNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) throws ASTInvalidMemoryException{
-        Value v = (Value) m.val(identifier);
+        Value v = (Value) MemoryCallUtil.safeCall(() -> m.val(identifier), this);
         if(v == null || v.type == ValueType.EMPTY){
-            throw new ASTInvalidMemoryException("Variable " + identifier + " is undefined");
+            throw ASTInvalidMemoryException.UndefinedVariable(identifier, this);
         }
         return v;
     }
 
+    public String toString(){return "variable:"+identifier;}
 }

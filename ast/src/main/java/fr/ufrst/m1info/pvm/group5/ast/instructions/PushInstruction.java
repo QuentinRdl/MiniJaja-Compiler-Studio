@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.EntryKind;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
@@ -18,7 +19,9 @@ public class PushInstruction extends Instruction {
 
     @Override
     public int execute(int address, Memory m) {
-        m.push(".", this.v, ValueType.toDataType(v.type), EntryKind.CONSTANT);
+        MemoryCallUtil.safeCall(() -> m.push(".", this.v, ValueType.toDataType(v.type), EntryKind.CONSTANT), this);
         return address+1;
     }
+
+    public String toString() { return "push"; }
 }

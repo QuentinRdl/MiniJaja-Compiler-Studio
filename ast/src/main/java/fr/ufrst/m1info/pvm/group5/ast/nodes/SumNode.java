@@ -7,6 +7,7 @@ import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SumNode extends ASTNode {
     ASTNode identifier;
@@ -16,15 +17,15 @@ public class SumNode extends ASTNode {
         this.identifier = identifier;
         this.expression = expression;
         if (this.identifier == null) {
-            throw new ASTBuildException("Sum identifier cannot be null");
+            throw new ASTBuildException("Sum", "identifier", "Sum node must have a non-null identifier");
         }
         if (!(this.identifier instanceof IdentNode) && !(this.identifier instanceof TabNode)) {
-            throw new ASTBuildException("Sum identifier must be IdentNode or TabNode");
+            throw new ASTBuildException("Sum", "identifier", "Sum node identifier must be either an array or a variable");
         }
         if (this.expression == null) {
-            throw new ASTBuildException("Sum operand cannot be null");
+            throw new ASTBuildException("Sum", "expression","Sum operand cannot be null");
         } else if (!(this.expression instanceof EvaluableNode)) {
-            throw new ASTBuildException("Sum operand must be evaluable");
+            throw new ASTBuildException("Sum", "expression","Sum operand must be evaluable");
         }
     }
 
@@ -54,97 +55,47 @@ public class SumNode extends ASTNode {
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
-            if (indexVal.type != fr.ufrst.m1info.pvm.group5.memory.ValueType.INT) {
-                throw new ASTInvalidDynamicTypeException("Array index must be an integer");
-            }
             int index = indexVal.valueInt;
             Value v = ((EvaluableNode) expression).eval(m);
-            if (v.type != fr.ufrst.m1info.pvm.group5.memory.ValueType.INT) {
-                throw new ASTInvalidDynamicTypeException("Sum operand must be an integer");
-            }
-            Value currentVal = m.valT(arrayIdent.identifier, index);
-            if (currentVal == null) {
-                throw new ASTInvalidMemoryException("Array " + arrayIdent.identifier + " at index " + index + " not found in memory");
-            }
+            Value currentVal = ((TabNode) identifier).eval(m);
             int res = currentVal.valueInt + v.valueInt;
-            m.affectValT(arrayIdent.identifier, index, new Value(res));
+            MemoryCallUtil.safeCall(() -> m.affectValT(arrayIdent.identifier, index, new Value(res)), this);
         } else {
             IdentNode identNode = (IdentNode) identifier;
-            if (m.isArray(identNode.identifier)){
-                throw new ASTInvalidOperationException("Line "+ getLine() +" : Sum operation cannot be used on array.");
-            }
-            if (expression instanceof IdentNode iNode && m.isArray(iNode.identifier)){
-                throw new ASTInvalidOperationException("Line "+ getLine() +" : Sum operation cannot be used with an array.");
-            }
             Value v = ((EvaluableNode) expression).eval(m);
-            Value u = (Value) m.val(identNode.identifier);
-            if (u == null) {
-                throw new ASTInvalidMemoryException("Variable " + identNode.identifier + " not found in memory");
-            }
+            Value u = ((IdentNode) identifier).eval(m);
             int res = u.valueInt + v.valueInt;
-            m.affectValue(identNode.identifier, new Value(res));
+            MemoryCallUtil.safeCall(() -> m.affectValue(identNode.identifier, new Value(res)), this);
         }
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        try {
-            String exprType = expression.checkType(m);
-            if (!exprType.equals("int")) {
-                throw new ASTInvalidDynamicTypeException(
-                        "The operand of SumNode must be of type int, found: " + exprType
-                );
-            }
-
-            if (identifier instanceof TabNode) {
-                TabNode tabNode = (TabNode) identifier;
-                IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
-                ASTNode indexExp = tabNode.getChildren().get(1);
-                if (!m.contains(arrayIdent.identifier)) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot sum: " + arrayIdent.identifier + " is not declared"
-                    );
-                }
-                int tabLen = m.tabLength(arrayIdent.identifier);
-                if (tabLen < 0) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot sum: " + arrayIdent.identifier + " is not an array"
-                    );
-                }
-                String indexType = indexExp.checkType(m);
-                if (!"int".equals(indexType)) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "Cannot sum: array index must be of type int, got " + indexType
-                    );
-                }
-            } else {
-                IdentNode identNode = (IdentNode) identifier;
-                DataType dataType = m.dataTypeOf(identNode.identifier);
-
-                if (dataType != DataType.INT) {
-                    throw new ASTInvalidDynamicTypeException(
-                            "SumNode impossible : variable " + identNode.identifier + " is not an int"
-                    );
-                }
-            }
-
-            return "int";
-
-        } catch (ASTInvalidMemoryException e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
-            throw new ASTInvalidMemoryException(
-                    "Memory error while checking type: " + e.getMessage()
-            );
-        } catch (Exception e) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Unknown error while checking type: " + e.getMessage()
-            );
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        String exprType = expression.checkType(m);
+        if (!exprType.equals("int")) {
+            throw new InterpretationInvalidTypeException(this, "int", exprType);
         }
+
+        if (identifier instanceof TabNode) {
+            String identType = identifier.checkType(m);
+            if(!identType.equals("int")){
+                throw new InterpretationInvalidTypeException(this, "int", exprType);
+            };
+        } else {
+            IdentNode identNode = (IdentNode) identifier;
+            String identType = identNode.checkType(m);
+            if (!Objects.equals(identType, "int")) {
+                throw new InterpretationInvalidTypeException(this, "int", identType);
+            }
+        }
+
+        return "int";
     }
 
     @Override
     public List<ASTNode> getChildren() {
         return List.of(identifier, expression);
     }
+
+    public String toString(){return "+=";}
 }

@@ -15,9 +15,10 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     private final ASTNode sizeExp;
 
     public ArrayNode(TypeNode type, IdentNode ident, ASTNode sizeExp) {
-        if (type == null || ident == null || sizeExp == null) {
-            throw new ASTBuildException("ArrayNode requires non-null type, identifier, and size expression");
-        }
+        if(type == null) throw new ASTBuildException("Array", "type", "type must not be null");
+        if(ident==null) throw new ASTBuildException("Array", "ident", "ident must not be null");
+        if(sizeExp==null) throw new ASTBuildException("Array", "sizeExp", "size must not be null");
+        if(!(sizeExp instanceof EvaluableNode))  throw new ASTBuildException("Array", "sizeExp", "size must be evaluable");
         this.type = type;
         this.ident = ident;
         this.sizeExp = sizeExp;
@@ -27,35 +28,25 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     public List<String> compile(int address) {
         java.util.List<String> code = new java.util.ArrayList<>();
         code.addAll(sizeExp.compile(address));
-        String typeStr = type.valueType.name().toUpperCase();
+        String typeStr = type.valueType.toString().toUpperCase();
         code.add("newarray(" + ident.identifier + "," + typeStr + ")");
 
         return code;
     }
 
     @Override
-    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException, ASTInvalidDynamicTypeException {
-        if (!(sizeExp instanceof EvaluableNode)) {
-            throw new ASTInvalidOperationException("Array size expression is not evaluable");
-        }
+    public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException, InterpretationInvalidTypeException {
         Value sizeVal = ((EvaluableNode) sizeExp).eval(m);
-
-        if (sizeVal.type != ValueType.INT) {
-            throw new ASTInvalidDynamicTypeException("Array size must be an integer");
-        }
         int size = sizeVal.valueInt;
 
-        if (size <= 0) {
-            throw new ASTInvalidOperationException("Array size must be positive (greater than 0)");
-        }
         DataType dt = ValueType.toDataType(type.valueType);
 
-        m.declTab(ident.identifier, size, dt);
+        MemoryCallUtil.safeCall(() -> m.declTab(ident.identifier, size, dt), this);
     }
 
     @Override
     public void withdrawInterpret(Memory m) throws ASTInvalidMemoryException {
-        m.withdrawDecl(ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
     }
 
     @Override
@@ -64,17 +55,13 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
-        if (!(sizeExp instanceof EvaluableNode)) {
-            throw new ASTInvalidDynamicTypeException("Array size expression is not evaluable");
-        }
-
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String sizeType = sizeExp.checkType(m);
         if (!sizeType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException("Array size must be of type int, but got: " + sizeType);
+            throw new InterpretationInvalidTypeException(this, "int", sizeType);
         }
         DataType dt = ValueType.toDataType(type.valueType);
-        m.declTab(ident.identifier, 1, dt);
+        MemoryCallUtil.safeCall(() -> m.declTab(ident.identifier, 1, dt), this);
 
         return "void";
     }
@@ -86,6 +73,8 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
 
     @Override
     protected Map<String, String> getProperties() {
-        return Map.of("identifier", ident.identifier, "type", type.valueType.name());
+        return Map.of("identifier", ident.identifier, "type", type.valueType.toString());
     }
+
+    public String toString(){return "array<"+type+">:"+ident.identifier;}
 }

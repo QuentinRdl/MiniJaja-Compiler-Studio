@@ -15,10 +15,10 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
 
     public ParamNode(TypeNode type, IdentNode ident) {
         if (type == null) {
-            throw new ASTBuildException("Param must have a valid type");
+            throw new ASTBuildException("Param", "type", "ParamNode cannot have a null type");
         }
         if (ident == null) {
-            throw new ASTBuildException("param must have a valid identifier");
+            throw new ASTBuildException("Param", "identifier", "ParamNode cannot have a null identifier");
         }
         this.type = type;
         this.ident = ident;
@@ -49,26 +49,26 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
             case INT -> val = new Value(0);
             default -> val = new Value();
         }
-        m.declVar(ident.identifier, val, ValueType.toDataType(type.valueType));
+        MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, val, ValueType.toDataType(type.valueType)), this);
     }
 
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (type.valueType.equals(ValueType.VOID)) {
-            throw new ASTInvalidDynamicTypeException("Parameter cannot be of type void");
+            throw new InterpretationInvalidTypeException(this, "[int, bool]", type.valueType.toString());
         }else if (type.valueType.equals(ValueType.INT)) {
-            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
         }
         else if (type.valueType.equals(ValueType.BOOL)) {
-            m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType));
+            MemoryCallUtil.safeCall(() -> m.declVar(ident.identifier, new Value(1), ValueType.toDataType(type.valueType)), this);
         }
         return "void";
     }
 
     @Override
     public void withdrawInterpret(Memory m) {
-        m.withdrawDecl(ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
     }
 
     @Override
@@ -79,4 +79,5 @@ public class ParamNode extends ASTNode implements WithdrawalNode {
         return code;
     }
 
+    public String toString(){return "parameter:{"+ident+"}";}
 }

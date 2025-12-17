@@ -3,7 +3,6 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
-import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,10 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     public TabNode(IdentNode ident, ASTNode indexExp) {
         if (ident == null || indexExp == null) {
-            throw new ASTBuildException("TabNode requires non-null identifier and index expression");
+            throw new ASTBuildException("Tab", (ident == null)?"identifier":"index", "Tab must have a non-null"+((ident == null)?"identifier":"index"));
+        }
+        if (!(indexExp instanceof EvaluableNode)) {
+            throw new ASTBuildException("Tab", indexExp.getClass().getName() ,"TabNode index must be evaluable");
         }
         this.ident = ident;
         this.indexExp = indexExp;
@@ -23,44 +25,31 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) {
-        if (!(indexExp instanceof EvaluableNode)) {
-            throw new ASTInvalidOperationException("TabNode index expression is not evaluable");
-        }
 
         Value indexVal = ((EvaluableNode) indexExp).eval(m);
-        if (indexVal.type != ValueType.INT) {
-            throw new ASTInvalidDynamicTypeException("TabNode index must be an integer");
-        }
 
         int index = indexVal.valueInt;
-        if (index < 0) {
-            throw new ASTInvalidOperationException("TabNode index cannot be negative: " + index);
-        }
-
-        int arrayLength = m.tabLength(ident.identifier);
-        if (index >= arrayLength) {
-            throw new ASTInvalidOperationException("TabNode index out of bounds: " + index + " >= " + arrayLength);
-        }
-
-        return m.valT(ident.identifier, index);
+        return MemoryCallUtil.safeCall(() -> m.valT(ident.identifier, index), this);
     }
 
     @Override
     public void interpret(Memory m) {
-        throw new ASTInvalidOperationException("TabNode cannot be interpreted directly");
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     @Override
     public String checkType(Memory m) {
-        if (!m.contains(ident.identifier)) {
-            throw new ASTInvalidDynamicTypeException("TabNode identifier '" + ident.identifier + "' is not declared");
+        if (!MemoryCallUtil.safeCall(() -> m.contains(ident.identifier), this)) {
+            throw ASTInvalidMemoryException.UndefinedVariable(ident.identifier, this);
         }
-
+        if(!MemoryCallUtil.safeCall(() -> m.isArray(ident.identifier), this)){
+            throw new InterpretationInvalidTypeException("Expected "+ident.identifier+" to be an array", this);
+        }
         String indexType = indexExp.checkType(m);
         if (!"int".equals(indexType)) {
-            throw new ASTInvalidDynamicTypeException("TabNode index must be of type int, got: " + indexType);
+            throw new InterpretationInvalidTypeException(this, "int", indexType);
         }
-        return m.dataTypeOf(ident.identifier).toString().toLowerCase();
+        return MemoryCallUtil.safeCall(() -> m.dataTypeOf(ident.identifier).toString().toLowerCase(), this);
     }
 
     @Override
@@ -80,4 +69,6 @@ public class TabNode extends ASTNode implements EvaluableNode {
     protected Map<String, String> getProperties() {
         return Map.of("identifier", ident.identifier);
     }
+
+    public String toString(){return "array reference:{"+ident+"}";}
 }

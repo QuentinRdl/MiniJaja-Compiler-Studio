@@ -16,13 +16,13 @@ public class ClassNode extends ASTNode {
         this.decls = decls;
         this.main = main;
         if(ident == null){
-            throw new ASTBuildException("Class node cannot have null identifier");
+            throw new ASTBuildException("Class", "identifier", "Class node cannot have a null identifier");
         }
         if(main == null){
-            throw new ASTBuildException("Class must contain a main method");
+            throw new ASTBuildException("Class", "main", "Class node cannot have a null main method");
         }
         if(decls != null && !(decls instanceof WithdrawalNode)){
-            throw new ASTBuildException("Class node declaration must be withradawable");
+            throw new ASTBuildException("Class", "declaration", "Class node declarations must be withdrawable");
         }
     }
 
@@ -52,12 +52,12 @@ public class ClassNode extends ASTNode {
         // Only withdraw the class declaration if we don't want to preserve the items of memory
         // This is so we can test
         if (!m.isPreserveAfterInterpret()) {
-            m.withdrawDecl(ident.identifier+ ".class");
+            MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier+ ".class"), this);
         }
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if (decls != null) {
             decls.checkType(m);
         }
@@ -76,5 +76,6 @@ public class ClassNode extends ASTNode {
         return children;
     }
 
+    public String toString(){return "class";}
 
 }

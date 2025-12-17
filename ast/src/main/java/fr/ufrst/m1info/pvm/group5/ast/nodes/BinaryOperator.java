@@ -25,21 +25,18 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
         this.left = left;
         this.right = right;
         if (this.left == null || this.right == null) {
-            throw new ASTBuildException("Binary operator cannot have a null operand");
+            throw new ASTBuildException(this.toString(), (this.left == null) ? "left operand" : "right operand", "binary operator operation cannot be null");
         }
         if (!(left instanceof EvaluableNode) || !(right instanceof EvaluableNode)) {
-            throw new ASTBuildException("Binary operator cannot have a non-evaluable operand");
+            throw new ASTBuildException(this.toString(), (!(left instanceof EvaluableNode)) ? "left operand" : "right operand", "binary operator operation cannot be null");
         }
     }
 
     public void interpret(Memory m) {
-        throw new ASTInvalidOperationException("Cannot interpret BinaryOperator");
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     public Value eval(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
-        if ((left instanceof IdentNode && m.isArray(((IdentNode) left).identifier)) || (right instanceof IdentNode && m.isArray(((IdentNode) right).identifier))){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Binary Operation cannot be used with an array.");
-        }
         Value l = ((EvaluableNode) left).eval(m);
         Value r = ((EvaluableNode) right).eval(m);
         return mainOperation(l, r);
@@ -77,7 +74,7 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
 
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String leftType = left.checkType(m);
         String rightType = right.checkType(m);
         return controlType(leftType,rightType);
@@ -91,5 +88,5 @@ public abstract class BinaryOperator extends ASTNode implements EvaluableNode {
      * @return The type of the operation
      * @throws Exception
      */
-    protected abstract String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException ;
+    protected abstract String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException;
 }

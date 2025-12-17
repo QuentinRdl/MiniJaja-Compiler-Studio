@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.driver;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.KeyCode;
@@ -43,6 +44,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
     private boolean isUpdating = false; //indicates that the cell is being updated
 
     private boolean isMiniJaja = true; // Track whether this is MiniJaja or JajaCode for syntax highlighting
+
+    // Listener used to react when the debug state of a line changes
+    private ChangeListener<Boolean> debugLineListener;
+    private CodeLine currentItem; // Currently displayed / associated code line
 
     /**
      * Creates a new CodeLineCell and initializes its layout.
@@ -194,6 +199,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
         container.getChildren().addAll(lineNumberContainer, codeFieldContainer);
 
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
+
+        debugLineListener = (obs, oldVal, newVal) -> {
+            updateDebugLineStyle(newVal);
+        };
     }
 
     /**
@@ -272,10 +281,17 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         isUpdating = true;
 
+        if(currentItem != null && currentItem != item){
+            currentItem.currentDebugLineProperty().removeListener(debugLineListener);
+        }
+
         if (empty || item == null){
             getStyleClass().remove("debug-current-line");
             setGraphic(null);
+            currentItem = null;
         } else {
+            currentItem = item;
+
             codeField.replaceText(item.getCode());
 
             // Update indentation canvas
@@ -283,13 +299,8 @@ public class CodeLineCell extends ListCell<CodeLine> {
                 indentationCanvas.setText(item.getCode());
             }
 
-            if(item.isCurrentDebugLine()){
-                if(!getStyleClass().contains("debug-current-line")){
-                    getStyleClass().add("debug-current-line");
-                }
-            } else {
-                getStyleClass().remove("debug-current-line");
-            }
+            updateDebugLineStyle(item.isCurrentDebugLine());
+            item.currentDebugLineProperty().addListener(debugLineListener);
 
             // Display breakpoint
             if (item.isBreakpoint()){
@@ -353,5 +364,20 @@ public class CodeLineCell extends ListCell<CodeLine> {
         }
 
         SyntaxHighlighter.applySyntaxHighlighting(codeField, text, isMiniJaja);
+    }
+
+    /**
+     * Applies or removes the debug highlight style on this line
+     *
+     * @param isDebugLine true if this line is the current debug line
+     */
+    private void updateDebugLineStyle(boolean isDebugLine){
+        if(isDebugLine){
+            if(!getStyleClass().contains("debug-current-line")){
+                getStyleClass().add("debug-current-line");
+            }
+        } else {
+            getStyleClass().remove("debug-current-line");
+        }
     }
 }

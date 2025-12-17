@@ -62,6 +62,7 @@ public class InterpreterMiniJaja extends Interpreter{
              this.ast = AbstractSyntaxTree.fromString(code);
         } catch (Exception e){
             errMessage=e.getClass()+" : "+e.getMessage();
+            return errMessage;
         }
 
         // Subscribing to the event of the ast

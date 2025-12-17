@@ -8,4 +8,6 @@ public class JcstopInstruction extends Instruction{
     public int execute(int address, Memory m) {
         return -1;
     }
+
+    public String toString() { return "jcstop";}
 }

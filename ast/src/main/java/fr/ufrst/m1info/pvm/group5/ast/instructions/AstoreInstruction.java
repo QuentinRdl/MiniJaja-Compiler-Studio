@@ -1,6 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
@@ -15,19 +16,19 @@ public class AstoreInstruction extends Instruction{
 
     @Override
     public int execute(int address, Memory m) {
-        if (!m.isArray(ident)){
-            throw new ASTInvalidTypeException("Type error: astore instruction expects array" );
+        if (!MemoryCallUtil.safeCall(() -> m.isArray(ident), this)){
+            throw new InterpretationInvalidTypeException("Expected " + ident + " to be an array", this);
         }
-        Value v = (Value) m.pop();
-        Value index = (Value) m.pop();
-        DataType arrayType = m.tabType(ident);
-        if (ValueType.toDataType(v.type) != arrayType ){
-            throw new ASTInvalidTypeException("Type error: The type of the value to be added is different from the type of the array.");
-        }
-        if (index.type != ValueType.INT ){
-            throw new ASTInvalidTypeException("Type error: The type of the index must be a int.");
-        }
-        m.affectValT(ident, index.valueInt, v);
+        Value v = (Value) MemoryCallUtil.safeCall(m::pop, this);
+        Value index = (Value) MemoryCallUtil.safeCall(m::pop, this);
+        DataType arrayType = MemoryCallUtil.safeCall(()->m.tabType(ident), this);
+        compatibleType(DataType.toValueType(arrayType), v.type);
+        compatibleType(ValueType.INT, index.type);
+        MemoryCallUtil.safeCall(()->m.affectValT(ident, index.valueInt, v), this);
         return address+1;
+    }
+
+    public String toString(){
+        return "astore";
     }
 }

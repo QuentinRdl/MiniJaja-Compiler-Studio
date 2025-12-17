@@ -14,10 +14,10 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
 
         this.exp = exp;
         if(exp == null){
-            throw new ASTBuildException("Unary minus must hava an operand");
+            throw new ASTBuildException("Unary Minus", "expression", "Unary minus must have a non-null operand");
         }
         if(!(exp instanceof EvaluableNode)){
-            throw new ASTBuildException("Unary minus must have an evaluable operand");
+            throw new ASTBuildException("Unary Minus", "expression", "Unary minus must have an evaluable operand");
         }
     }
 
@@ -31,16 +31,14 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException("Cannot interpret unary minus operator");
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = exp.checkType(m);
         if (!exprType.equals("int")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "Minus operator applied to a non-int type : " + exprType
-            );
+            throw new InterpretationInvalidTypeException(this, "int", exprType);
         }
         return "int";
     }
@@ -53,10 +51,9 @@ public class UnMinusNode extends ASTNode implements EvaluableNode {
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        if (exp instanceof IdentNode && m.isArray(((IdentNode) exp).identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Negative operator cannot be used with an array.");
-        }
         Value v = ((EvaluableNode)exp).eval(m);
         return new Value(-v.valueInt);
     }
+
+    public String toString(){return "-";}
 }

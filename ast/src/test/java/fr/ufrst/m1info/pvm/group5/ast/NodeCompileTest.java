@@ -150,7 +150,7 @@ class NodeCompileTest {
     @DisplayName("AffectationNode - compile() with nested array access index")
     void testAffectationNode_CompileArrayAccess_NestedIndex() {
         IdentNode arrayIdent = new IdentNode("arr");
-        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(0)", "aload(indices)"));
+        ASTNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, i -> List.of("push(0)", "aload(indices)"), null);
         TabNode tabNode = new TabNode(arrayIdent, indexExpr);
 
         ASTNode valueExpr = ASTMocks.createNode(NumberNode.class, null, i -> List.of("push(99)"));
@@ -974,7 +974,7 @@ class NodeCompileTest {
     void testArrayNode_Compile_ComplexSizeExpression() {
         TypeNode typeNode = new TypeNode(ValueType.INT);
         IdentNode ident = new IdentNode("matrix");
-        ASTNode sizeExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(5)", "push(3)", "add"));
+        ASTNode sizeExpr = ASTMocks.createEvalNode(NumberNode.class, null, i -> List.of("push(5)", "push(3)", "add"), null);
 
         ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
         List<String> code = node.compile(0);
@@ -1043,7 +1043,6 @@ class NodeCompileTest {
     @DisplayName("TabNode - compile() with variable index")
     void testTabNode_Compile_VariableIndex() {
         IdentNode arrayIdent = new IdentNode("data");
-        IdentNode indexIdent = new IdentNode("i");
         ASTNode indexExpr = ASTMocks.createNode(IdentNode.class, null, addr -> List.of("load(i)"));
 
         TabNode node = new TabNode(arrayIdent, indexExpr);
@@ -1056,7 +1055,7 @@ class NodeCompileTest {
     @DisplayName("TabNode - compile() with complex index expression")
     void testTabNode_Compile_ComplexIndexExpression() {
         IdentNode arrayIdent = new IdentNode("matrix");
-        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("push(2)", "push(3)", "add"));
+        ASTNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, i -> List.of("push(2)", "push(3)", "add"), null);
 
         TabNode node = new TabNode(arrayIdent, indexExpr);
         List<String> code = node.compile(0);
@@ -1084,7 +1083,7 @@ class NodeCompileTest {
     @DisplayName("TabNode - compile() with nested array access")
     void testTabNode_Compile_NestedArrayAccess() {
         IdentNode arrayIdent = new IdentNode("nestedArr");
-        ASTNode indexExpr = ASTMocks.createNode(ASTNode.class, null, i -> List.of("load(i)", "push(1)", "add"));
+        ASTNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, i -> List.of("load(i)", "push(1)", "add"), null);
 
         TabNode node = new TabNode(arrayIdent, indexExpr);
         List<String> code = node.compile(5);

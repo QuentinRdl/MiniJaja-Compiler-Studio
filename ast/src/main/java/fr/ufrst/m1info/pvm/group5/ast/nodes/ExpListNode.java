@@ -13,7 +13,7 @@ public class ExpListNode extends ASTNode {
 
     public ExpListNode(ASTNode head, ASTNode tail) {
         if (head == null) {
-            throw new ASTBuildException("ExpListNode cannot have a null head expression");
+            throw new ASTBuildException("ExpList", "head", "head of an expression list cannot be null");
         }
         this.head = head;
         this.tail = tail;
@@ -31,13 +31,11 @@ public class ExpListNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException(
-                "ExpListNode cannot be interpreted directly — only used within AppelINode or similar."
-        );
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         head.checkType(m);
         if (tail != null) {
             tail.checkType(m);
@@ -62,26 +60,22 @@ public class ExpListNode extends ASTNode {
      * @return the list of evaluated values
      * @throws ASTInvalidOperationException
      * @throws ASTInvalidMemoryException
-     * @throws ASTInvalidDynamicTypeException
+     * @throws InterpretationInvalidTypeException
      */
     public List<Value> evalList(Memory m)
-            throws ASTInvalidOperationException, ASTInvalidMemoryException, ASTInvalidDynamicTypeException {
+            throws ASTInvalidOperationException, ASTInvalidMemoryException, InterpretationInvalidTypeException {
         List<Value> values = new ArrayList<>();
 
         if (head instanceof ExpListNode expListNode) {
             values.addAll(expListNode.evalList(m));
-        } else if (head instanceof IdentNode iNode && m.isArray(iNode.identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         }else if (head instanceof EvaluableNode evaluableHead) {
             values.add(evaluableHead.eval(m));
         } else {
-            throw new ASTInvalidOperationException("Head of ExpListNode is not evaluable.");
+            throw new ASTInvalidOperationException("evaluation", this);
         }
 
         if (tail instanceof ExpListNode expListNode) {
             values.addAll(expListNode.evalList(m));
-        }else if (tail instanceof IdentNode iNode && m.isArray(iNode.identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Arguments in method call can't be array.");
         } else if (tail instanceof EvaluableNode evaluableTail) {
             values.add(evaluableTail.eval(m));
         }
@@ -110,4 +104,6 @@ public class ExpListNode extends ASTNode {
             }
         }
     }
+
+    public String toString(){return "listExp";}
 }

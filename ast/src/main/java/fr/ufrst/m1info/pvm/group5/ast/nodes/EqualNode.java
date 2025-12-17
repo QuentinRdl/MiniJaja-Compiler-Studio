@@ -1,7 +1,7 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
 
@@ -24,17 +24,15 @@ public class EqualNode extends BinaryOperator{
     }
 
     @Override
-    protected String controlType(String leftType, String rightType) throws ASTInvalidDynamicTypeException {
+    protected String controlType(String leftType, String rightType) throws InterpretationInvalidTypeException {
         if (!leftType.equals(rightType)){
-            throw new ASTInvalidDynamicTypeException(
-                    "Equal operator must be used with 2 operand of the same type"
-            );
+            throw new InterpretationInvalidTypeException(this, rightType, leftType);
         }
         if (!leftType.equals("int") && !leftType.equals("bool")){
-            throw new ASTInvalidDynamicTypeException(
-                    "Equal operator must be used with 2 operand of type int or bool"
-            );
+            throw new InterpretationInvalidTypeException(this, "[int, bool]", leftType);
         }
         return "bool";
     }
+
+    public String toString(){return "==";}
 }

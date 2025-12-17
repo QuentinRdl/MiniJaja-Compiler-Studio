@@ -14,17 +14,14 @@ public class NotNode extends ASTNode implements EvaluableNode {
 
         this.expr = expr;
         if(expr==null){
-            throw new ASTBuildException("Not operator must have an operand");
+            throw new ASTBuildException("Not", "expr", "Not operator must have a non-null operand");
         }
         else if(!(expr instanceof EvaluableNode))
-            throw new ASTBuildException("Not operator must have an evaluable operand");
+            throw new ASTBuildException("Not", "expr", "Not operator must have an evaluable operand");
     }
 
     @Override
     public Value eval(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
-        if (expr instanceof IdentNode && m.isArray(((IdentNode) expr).identifier)){
-            throw new ASTInvalidOperationException("Line "+ getLine() +" : Not operator cannot be used with an array.");
-        }
         Value v = ((EvaluableNode)expr).eval(m);
         return new Value(!v.valueBool);
     }
@@ -39,16 +36,17 @@ public class NotNode extends ASTNode implements EvaluableNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException {
-        throw new ASTInvalidOperationException("Not node cannot be interpreted");
+        throw new ASTInvalidOperationException("interpretation", this);
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expr.checkType(m);
         if (!exprType.equals("bool")) {
-            throw new ASTInvalidDynamicTypeException(
-                    "'not' operator applied to a non-bool type : " + exprType
-            );
+            throw new InterpretationInvalidTypeException(this, "bool", exprType);
+        }
+        if (expr instanceof IdentNode && MemoryCallUtil.safeCall(()->m.isArray(((IdentNode) expr).identifier), this)){
+            throw new InterpretationInvalidTypeException(this, "bool", "array");
         }
         return "bool";
     }
@@ -58,4 +56,5 @@ public class NotNode extends ASTNode implements EvaluableNode {
         return List.of(expr);
     }
 
+    public String toString(){return "noy";}
 }

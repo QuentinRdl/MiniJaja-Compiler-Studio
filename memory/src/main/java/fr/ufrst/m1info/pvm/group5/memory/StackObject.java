@@ -93,9 +93,7 @@ public class StackObject {
      */
     public void setValue(Object value) {
         if (this.entryKind == EntryKind.CONSTANT && this.value != null) {
-            throw new Stack.ConstantModificationException(
-                "Cannot modify value of constant Stack_Object '" + this.name + "' (scope=" + this.scope + ") if it already has a declared value"
-            );
+            throw new Stack.ConstantModificationException("Stack", this.entryKind.name());
         }
         this.value = value;
     }

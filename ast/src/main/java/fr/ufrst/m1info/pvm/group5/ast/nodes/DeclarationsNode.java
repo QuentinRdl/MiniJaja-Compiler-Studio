@@ -13,10 +13,10 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
         this.declaration=declaration;
         this.declarations=declarations;
         if(declaration == null){
-            throw new ASTBuildException("Invalid declaration");
+            throw new ASTBuildException("Declarations", "declaration", "declarations must not have a null declaration");
         }
         if(!(declaration instanceof WithdrawalNode)){
-            throw new ASTBuildException("Declarations must be withdrawable");
+            throw new ASTBuildException("Declarations", "declaration", "declaration must be withdrawable");
         }
     }
 
@@ -38,7 +38,7 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
     }
 
     @Override
-    public String checkType(Memory m) throws ASTInvalidDynamicTypeException {
+    public String checkType(Memory m) throws InterpretationInvalidTypeException {
         declaration.checkType(m);
 
         if (declarations != null) {
@@ -71,4 +71,6 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
         jajacodes.addAll(((WithdrawalNode)declaration).withdrawCompile(address + jajacodes.size()));
         return jajacodes;
     }
+
+    public String toString(){return "declarations";}
 }

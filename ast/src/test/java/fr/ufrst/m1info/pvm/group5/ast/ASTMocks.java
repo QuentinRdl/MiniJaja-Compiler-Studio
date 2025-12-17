@@ -46,7 +46,7 @@ class ASTMocks {
                     String arg =  invocation.getArgument(0);
                     Value value = invocation.getArgument(1);
                     if(!storage.containsKey(arg)){
-                        throw new ASTInvalidMemoryException("Unknown variable "+arg);
+                        throw ASTInvalidMemoryException.UndefinedVariable(arg, () -> 0);
                     }
                     storage.put(arg, value);
                     return null;
@@ -281,7 +281,7 @@ class ASTMocks {
 
         doAnswer(invocationOnMock -> {
             if(storage.size() < 2){
-                throw new MemoryIllegalArgException("Not enough elements to swap");
+                throw new MemoryIllegalArgException("Stack", "swap", "not enough elements to swap");
             }
             var v1 = storage.pop();
             var v2 = storage.pop();

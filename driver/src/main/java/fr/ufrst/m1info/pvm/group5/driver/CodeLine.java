@@ -1,6 +1,9 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 /**
  * The CodeLine class represents a single line of code in the program.
  * It stores both the line number and the actual code written on that line.
@@ -10,8 +13,7 @@ public class CodeLine {
     private int lineNumber;
     private String code;
     private boolean breakpoint;
-
-    private boolean isCurrentDebugLine = false;
+    private BooleanProperty currentDebugLine; //observable property that detects changes
 
     /**
      * Creates a new CodeLine with a specific line number and code content.
@@ -23,6 +25,7 @@ public class CodeLine {
         this.lineNumber = lineNumber;
         this.code = code;
         breakpoint = false;
+        this.currentDebugLine = new SimpleBooleanProperty(false);
     }
 
     /**
@@ -58,7 +61,7 @@ public class CodeLine {
      * @return true if this line is the current debug line, false otherwise
      */
     public boolean isCurrentDebugLine() {
-        return isCurrentDebugLine;
+        return currentDebugLine.get();
     }
 
     /**
@@ -93,5 +96,15 @@ public class CodeLine {
      *
      * @param currentDebugLine true to highlight this line during debugging, false to clear the highlight
      */
-    public void setCurrentDebugLine(boolean currentDebugLine) { this.isCurrentDebugLine = currentDebugLine; }
+    public void setCurrentDebugLine(boolean currentDebugLine) { this.currentDebugLine.set(currentDebugLine); }
+
+    /**
+     * Returns the BooleanProperty indicating whether this line is the current line being executed in debug mode
+     * This property can be observed to update the UI when the current debug line changes
+     *
+     * @return the currentDebugLine BooleanProperty
+     */
+    public BooleanProperty currentDebugLineProperty(){
+        return currentDebugLine;
+    }
 }

@@ -1,7 +1,8 @@
 package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.ASTBuildException;
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidDynamicTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
+import fr.ufrst.m1info.pvm.group5.ast.MemoryCallUtil;
 import fr.ufrst.m1info.pvm.group5.ast.WithdrawalNode;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
@@ -20,7 +21,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     public MethodeNode(TypeNode returnType, IdentNode ident, ASTNode params, ASTNode vars, ASTNode instrs) {
         if (returnType == null || ident == null) {
-            throw new ASTBuildException("MethodeNode requires non-null returnType and ident");
+            throw new ASTBuildException("Methode", (ident == null)?"identifier":"return Type", "Main node" + ((ident == null)?"identifier":"return Type") + "must not be null");
         }
         this.returnType = returnType;
         this.ident = ident;
@@ -78,15 +79,15 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     @Override
     public void interpret(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
-        m.declMethod(ident.identifier, dataType, this);
+        MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
     }
 
     @Override
     public String checkType(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
-        m.declMethod(ident.identifier, dataType, this);
+        MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
         String typeReturn = "void";
-        m.pushScope();
+        MemoryCallUtil.safeCall(m::pushScope, this);
         if (params != null) params.checkType(m);
         if (vars != null) vars.checkType(m);
         if (instrs != null) typeReturn=instrs.checkType(m);
@@ -100,10 +101,10 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
                 }
             }
         }
-        m.popScope();
-        String typeMethod = returnType.getValueType().name().toLowerCase();
+        MemoryCallUtil.safeCall(m::popScope, this);
+        String typeMethod = returnType.getValueType().toString().toLowerCase();
         if (!typeMethod.equals(typeReturn)){
-            throw new ASTInvalidDynamicTypeException("Line "+getLine()+" : Method and return must be of the same type");
+            throw new InterpretationInvalidTypeException(this, typeMethod, typeReturn);
         }
         return typeMethod;
     }
@@ -114,11 +115,13 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public void withdrawInterpret(Memory m) {
-        m.withdrawDecl(ident.identifier);
+        MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
     }
 
     @Override
     public List<String> withdrawCompile(int address) {
         return List.of("swap","pop");
     }
+
+    public String toString(){return "method:"+ident;}
 }

@@ -1,6 +1,8 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -46,11 +48,11 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-class MainControllerTest extends ApplicationTest {
+public class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
-    static Path tempDir;
+    public static Path tempDir;
 
     private MainController controller;
 
@@ -1255,6 +1257,9 @@ class MainControllerTest extends ApplicationTest {
         interact(() -> controller.onCompileClicked());
         WaitForAsyncUtils.waitForFxEvents();
 
+        // Wait for tab selection to complete
+        WaitForAsyncUtils.waitForFxEvents();
+
         assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());
         verifyThat("#btnCompile", isDisabled());
         verifyThat("#btnRunCompile", isDisabled());
@@ -1375,7 +1380,7 @@ class MainControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testSaveShortcutCtrlS() throws Exception {
+    void testSaveShortcutCtrlS() throws Exception {
         File testFile = createTestFile("shortcut_save.mjj", "int x = 10;", "x++");
 
         interact(() -> {
@@ -2374,5 +2379,591 @@ class MainControllerTest extends ApplicationTest {
 
         String output = controller.output.getText();
         assertTrue(output.contains("[INFO] Debugging stopped"));
+    }
+
+    @Test
+    void testMemoryTabsHiddenInitially(){
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testMemoryTabShownAfterMiniJajaRun() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testMemoryTabShownAfterJajaCodeRun() throws Exception {
+        File testFile = createTestFile("test.mjj","class C {", "main {", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.isCompiledTab());
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()), "MiniJaja memory tab should not be visible");
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()), "JajaCode memory tab should be visible");
+    }
+
+    @Test
+    void testStackBlocksAreDisplayed() throws Exception {
+        File testFile = createTestFile("test.mjj","class C {", "int x = 10;", "int y = 20;", "main {", " int z = x + y;", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        long stackBlockCount = controller.getMemoryVisualisationMiniJaja().lookupAll(".stack-block").size();
+        assertEquals(4, stackBlockCount);
+    }
+
+    @Test
+    void testHeapBlocksAreDisplayed() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int arr[3];", "main {", "arr[0] = 10;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        long heapBlockCount = controller.getMemoryVisualisationMiniJaja().lookupAll(".heap-block").size();
+        assertEquals(2, heapBlockCount);
+    }
+
+    @Test
+    void testMemoryVisualisationClearedOnLoadFile() throws Exception {
+        File testFile1 = createTestFile("first.mjj","class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile1));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        File testFile2 = createTestFile("second.mjj","class C {", "main {", "}", "}");
+        interact(() -> controller.loadFile(testFile2));
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+    }
+
+    @Test
+    void testMemoryVisualisationClearedOnCreateFile() throws Exception {
+        File testFile1 = createTestFile("test.mjj","class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile1));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.createNewFile());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+    }
+
+    @Test
+    void testMemoryVisualisationForCompileAndRun() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+
+        interact(() -> controller.onCompileAndRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(100);
+
+        assertFalse(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabJajacode()));
+    }
+
+    @Test
+    void testStackBlockContainsVariableInfo() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Node firstStackBlock = controller.getMemoryVisualisationMiniJaja().lookup(".stack-block");
+        if(firstStackBlock instanceof StackBlockView){
+            boolean foundNameLabel = false;
+            boolean foundKindLabel = false;
+            boolean foundTypeLabel = false;
+            boolean foundValueLabel = false;
+
+            for(Object node : firstStackBlock.lookupAll(".label")){
+                if(node instanceof Label label){
+                    String text = label.getText();
+                    if(text.startsWith("Name :")) foundNameLabel = true;
+                    if(text.startsWith("Kind :")) foundKindLabel = true;
+                    if(text.startsWith("Type :")) foundTypeLabel = true;
+                    if(text.startsWith("Value :")) foundValueLabel = true;
+                }
+            }
+            assertTrue(foundNameLabel);
+            assertTrue(foundKindLabel);
+            assertTrue(foundTypeLabel);
+            assertTrue(foundValueLabel);
+        } else {
+            fail("No stack-block found");
+        }
+
+    }
+
+    @Test
+    void testHeapBlockContainsVariableInfo() throws Exception {
+        File testFile = createTestFile("test.mjj", "class C {", "int x = 10;", "main {", "x++;", "}", "}");
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onRunClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.getOutputTabPane().getTabs().contains(controller.getMemoryTabMinijaja()));
+
+        interact(() -> controller.getOutputTabPane().getSelectionModel().select(controller.getMemoryTabMinijaja()));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Node firstHeapBlock = controller.getMemoryVisualisationMiniJaja().lookup(".heap-block");
+        if(firstHeapBlock instanceof HeapBlockView){
+            boolean foundBlockLabel = false;
+            boolean foundSizeLabel = false;
+            boolean foundRefsLabel = false;
+
+            for(Object node : firstHeapBlock.lookupAll(".label")){
+                if(node instanceof Label label){
+                    String text = label.getText();
+                    if(text.startsWith("Block @")) foundBlockLabel = true;
+                    if(text.startsWith("Size :")) foundSizeLabel = true;
+                    if(text.startsWith("Refs :")) foundRefsLabel = true;
+                }
+            }
+            assertTrue(foundBlockLabel);
+            assertTrue(foundSizeLabel);
+            assertTrue(foundRefsLabel);
+        } else {
+            fail("No heap-block found");
+        }
+    }
+
+    // Debug Step-by-Step for Mjj
+
+    @Test
+    void testDebugStepByStepSimpleAssignment() throws Exception {
+        File testFile = createTestFile("debug_step.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 5;",
+                "        x = 10;",
+                "        x = 15;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Should be at first instruction
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+
+        // Step through each instruction
+        for (int i = 0; i < 4; i++) {
+            Thread.sleep(300);
+            interact(() -> controller.onClickNextDebug());
+            WaitForAsyncUtils.waitForFxEvents();
+            Thread.sleep(300);
+        }
+
+        output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    void testDebugStepByStepWithConditional() throws Exception {
+        File testFile = createTestFile("debug_conditional.mjj",
+                "class C {",
+                "    int x = 5;",
+                "    main {",
+                "        if (x > 3) {",
+                "            x = 10;",
+                "        } else {",
+                "            x = 0;",
+                "        };",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Step through the conditional
+        for (int i = 0; i < 3; i++) {
+            Thread.sleep(300);
+            interact(() -> controller.onClickNextDebug());
+            WaitForAsyncUtils.waitForFxEvents();
+            Thread.sleep(300);
+        }
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    @Disabled
+    void testDebugStepByStepWithWhileLoop() throws Exception {
+        File testFile = createTestFile("debug_while.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        while(x < 3){",
+                "            x++;",
+                "        };",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        Thread.sleep(200);
+        interact(() -> controller.onClickNextDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(200);
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    // Debug Breakpoint for MiniJaja
+
+    @Test
+    void testDebugStopsAtSingleBreakpoint() throws Exception {
+        File testFile = createTestFile("breakpoint_stop.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 5;",
+                "        x = 10;",
+                "        x = 15;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set a breakpoint on line 5 (x = 10;)
+        interact(() -> controller.toggleBreakpointAt(5));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.hasBreakpointAt(5));
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for execution to potentially stop at breakpoint
+        await()
+                .atMost(3, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+        verifyThat("#btnDebugNext", isEnabled());
+    }
+
+    @Test
+    void testDebugStopsAtMultipleBreakpoints() throws Exception {
+        File testFile = createTestFile("multiple_breakpoints.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 5;",
+                "        x = 10;",
+                "        x = 15;",
+                "        x = 20;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set breakpoints on lines 4 and 6
+        interact(() -> {
+            controller.toggleBreakpointAt(4);
+            controller.toggleBreakpointAt(6);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.hasBreakpointAt(4));
+        assertTrue(controller.hasBreakpointAt(6));
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for first breakpoint
+        await()
+                .atMost(3, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+        verifyThat("#btnDebugNext", isEnabled());
+
+        // Continue to next breakpoint
+        Thread.sleep(300);
+        interact(() -> controller.onClickNextDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    @Disabled
+    void testDebugBreakpointInLoop() throws Exception {
+        File testFile = createTestFile("breakpoint_loop.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        while(x < 5){",
+                "            x++;",
+                "        };",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set breakpoint inside the loop (line 5: x++;)
+        interact(() -> controller.toggleBreakpointAt(5));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.hasBreakpointAt(5));
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for execution to stop at breakpoint
+        await()
+                .atMost(3, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+
+        // Step through a few iterations
+        for (int i = 0; i < 3; i++) {
+            Thread.sleep(300);
+            interact(() -> controller.onClickNextDebug());
+            WaitForAsyncUtils.waitForFxEvents();
+            Thread.sleep(300);
+        }
+
+        output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    void testDebugResumeAfterBreakpoint() throws Exception {
+        File testFile = createTestFile("resume_after_breakpoint.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 5;",
+                "        x = 10;",
+                "        x = 15;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set breakpoint on line 4
+        interact(() -> controller.toggleBreakpointAt(4));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for breakpoint
+        await()
+                .atMost(3, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
+
+        // Resume execution by clicking next multiple times
+        for (int i = 0; i < 5; i++) {
+            Thread.sleep(300);
+            interact(() -> controller.onClickNextDebug());
+            WaitForAsyncUtils.waitForFxEvents();
+            Thread.sleep(200);
+        }
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    void testDebugBreakpointOnFirstLine() throws Exception {
+        File testFile = createTestFile("breakpoint_first.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        x = 5;",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set breakpoint on first executable line (line 4)
+        interact(() -> controller.toggleBreakpointAt(4));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.hasBreakpointAt(4));
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        await().atMost(3, SECONDS).until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+        );
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+        verifyThat("#btnDebugNext", isEnabled());
+    }
+
+    @Test
+    void testDebugBreakpointWithNestedBlocks() throws Exception {
+        File testFile = createTestFile("breakpoint_nested.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    main {",
+                "        if (1 > 0) {",
+                "            x = 5;",
+                "            if (x > 3) {",
+                "                x = 10;",
+                "            };",
+                "        };",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Set breakpoint in nested block (line 7: x = 10;)
+        interact(() -> controller.toggleBreakpointAt(7));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertTrue(controller.hasBreakpointAt(7));
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        await()
+                .atMost(3, SECONDS)
+                .until(() ->
+                        controller.output.getText().contains("[DEBUG]")
+                );
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
+    }
+
+    @Test
+    @Disabled
+    void testDebugStepThroughMethodCalls() throws Exception {
+        File testFile = createTestFile("debug_methods.mjj",
+                "class C {",
+                "    int x = 0;",
+                "    void increment() {",
+                "        x++;",
+                "    }",
+                "    main {",
+                "        increment();",
+                "        increment();",
+                "    }",
+                "}");
+
+        interact(() -> controller.loadFile(testFile));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        interact(() -> controller.onClickRunDebug());
+        WaitForAsyncUtils.waitForFxEvents();
+        Thread.sleep(500);
+
+        // Step through method calls
+        for (int i = 0; i < 2; i++) {
+            Thread.sleep(300);
+            interact(() -> controller.onClickNextDebug());
+            WaitForAsyncUtils.waitForFxEvents();
+            Thread.sleep(200);
+        }
+
+        String output = controller.output.getText();
+        assertTrue(output.contains("[DEBUG]"));
     }
 }
