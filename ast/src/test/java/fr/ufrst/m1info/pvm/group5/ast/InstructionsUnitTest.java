@@ -141,7 +141,7 @@ class InstructionsUnitTest {
         }).when(memory).pop();
         Instruction newInstr = new NewInstruction("x", DataType.BOOL, EntryKind.CONSTANT,0);
         assertEquals(3,newInstr.execute(2,memory));
-        assertNotEquals(null,memory.val("x"));
+        assertNull(memory.val("x"));
     }
 
     @Test
@@ -411,8 +411,8 @@ class InstructionsUnitTest {
         storage.add(new ASTMocks.Pair<>("test",new Value(1)));
         storage.add(new ASTMocks.Pair<>(".",new Value(5)));
         doAnswer(invocationOnMock -> {
-            return ValueType.INT;
-        }).when(memory).valueTypeOf("test");
+            return DataType.INT;
+        }).when(memory).dataTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);
@@ -428,8 +428,8 @@ class InstructionsUnitTest {
         storage.add(new ASTMocks.Pair<>("test",new Value(true)));
         storage.add(new ASTMocks.Pair<>(".",new Value(false)));
         doAnswer(invocationOnMock -> {
-            return ValueType.BOOL;
-        }).when(memory).valueTypeOf("test");
+            return DataType.BOOL;
+        }).when(memory).dataTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
         var res = s.execute(0,memory);
@@ -445,8 +445,8 @@ class InstructionsUnitTest {
         storage.add(new ASTMocks.Pair<>("test",new Value("t1")));
         storage.add(new ASTMocks.Pair<>(".",new Value("t2")));
         doAnswer(invocationOnMock -> {
-            return ValueType.STRING;
-        }).when(memory).valueTypeOf("test");
+            return DataType.STRING;
+        }).when(memory).dataTypeOf("test");
 
         StoreInstruction s = new StoreInstruction("test");
 
