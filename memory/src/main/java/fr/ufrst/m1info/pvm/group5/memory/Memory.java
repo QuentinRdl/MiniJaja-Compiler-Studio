@@ -114,7 +114,7 @@ public class Memory {
     public Object pop() throws Stack.StackIsEmptyException {
         StackObject top = stack.pop();
         if(top == null) return null;
-        if (!top.getName().equals(".")) {
+        if (!top.getName().startsWith(".")) {
             SymbolTableEntry ste = symbolTable.lookup(top.getName());
             if (ste!=null && ste.getKind()==EntryKind.ARRAY){
                 heap.removeReference(((Value) top.getValue()).valueInt);

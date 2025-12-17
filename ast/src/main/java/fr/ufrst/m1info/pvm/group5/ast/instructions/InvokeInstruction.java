@@ -30,7 +30,7 @@ public class InvokeInstruction extends Instruction {
         if (newAdr<1){
             throw new IndexOutOfBoundsException("invoke line ("+address+" : Value must be positive.");
         }
-        m.push(".", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
+        m.push(".address", new Value(address+1), DataType.INT, EntryKind.CONSTANT);
         m.pushScope();
         return newAdr;
     }
