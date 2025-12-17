@@ -1951,7 +1951,10 @@ class CheckDynamicTypeTest {
         ASTNode indexExpr = mock(ASTNode.class, withSettings().extraInterfaces(EvaluableNode.class));
         when(indexExpr.checkType(memoryMock)).thenReturn("int");
         when(memoryMock.contains("arr")).thenReturn(true);
-        when(memoryMock.dataTypeOf("arr")).thenReturn(DataType.INT);
+        doAnswer(invocation -> {
+                    return DataType.INT;
+                }
+        ).when(memoryMock).dataTypeOf(any(String.class));
 
         TabNode node = new TabNode(ident, indexExpr);
         String result = node.checkType(memoryMock);
