@@ -42,7 +42,7 @@ public class ClassNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
-        m.declVarClass(ident.identifier);
+        m.declVarClass(ident.identifier + ".class");
         if(decls!=null)
             decls.interpret(m);
         main.interpret(m);
@@ -52,7 +52,7 @@ public class ClassNode extends ASTNode {
         // Only withdraw the class declaration if we don't want to preserve the items of memory
         // This is so we can test
         if (!m.isPreserveAfterInterpret()) {
-            MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier), this);
+            MemoryCallUtil.safeCall(() -> m.withdrawDecl(ident.identifier+ ".class"), this);
         }
     }
 

@@ -1532,6 +1532,225 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret Declare Var Name Same As Class Name")
+    void DeclareVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { int C=5; main{ writeln(C); C+=4; writeln(C);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n9\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Declare Final Name Same As Class Name")
+    void DeclareFinalNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { final int C=5; main{ writeln(C);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Declare Array Name Same As Class Name")
+    void DeclareArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { int C[1]; main{ C[0]=5; writeln(C[0]); C[0]+=4; writeln(C[0]);}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n9\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Declare Method Name Same As Class Name")
+    void DeclareMethodNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { void C(){ writeln(\"5\"); writeln(\"9\");}; main{ C();}}");
+        Assertions.assertNull(errMessage);
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("5\n9\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
+    @DisplayName("Interpret Affectation Var Name Same As Class Name")
+    void AffectationVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C=5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Increment Var Name Same As Class Name")
+    void IncrementVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C++;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Var Name Same As Class Name")
+    void SumVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C+=5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Write Var Name Same As Class Name")
+    void WriteVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ write(C);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Writeln Var Name Same As Class Name")
+    void WritelnVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ writeln(C);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Expr Var Name Same As Class Name")
+    void ExprVarNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ int x=C;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Affectation Array Name Same As Class Name")
+    void AffectationArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C[0]=5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Increment Array Name Same As Class Name")
+    void IncrementArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C[0]++;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Sum Array Name Same As Class Name")
+    void SumArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C[0]+=5;}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Write Array Name Same As Class Name")
+    void WriteArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ write(C[0]);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Writeln Array Name Same As Class Name")
+    void WritelnArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ writeln(C[0]);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Expr Array Name Same As Class Name")
+    void ExprArrayNameSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ int x=C[0];}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Same As Class Name")
+    void MethodSameAsClassName() {
+        String errMessage=imj.interpretCode("class C { main{ C();}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Name Same As Variable Name")
+    void VariableNameSameAsVariableName() {
+        String errMessage=imj.interpretCode("class C { int x; boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Name Same As Constant Name")
+    void VariableNameSameAsConstantName() {
+        String errMessage=imj.interpretCode("class C { final int x; boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Name Same As Array Name")
+    void VariableNameSameAsArrayName() {
+        String errMessage=imj.interpretCode("class C { int x[5]; boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Constant Name Same As Variable Name")
+    void ConstantNameSameAsVariableName() {
+        String errMessage=imj.interpretCode("class C { int x; final boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Constant Name Same As Constant Name")
+    void ConstantNameSameAsConstantName() {
+        String errMessage=imj.interpretCode("class C { final int x; final boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Constant Name Same As Array Name")
+    void ConstantNameSameAsArrayName() {
+        String errMessage=imj.interpretCode("class C { int x[5]; final boolean x; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Array Name Same As Variable Name")
+    void ArrayNameSameAsVariableName() {
+        String errMessage=imj.interpretCode("class C { int x; boolean x[5]; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Array Name Same As Constant Name")
+    void ArrayNameSameAsConstantName() {
+        String errMessage=imj.interpretCode("class C { final int x; boolean x[5]; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Array Name Same As Array Name")
+    void ArrayNameSameAsArrayName() {
+        String errMessage=imj.interpretCode("class C { int x[5]; boolean x[5]; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Method Name Same As Method Name")
+    void MethodNameSameAsMethodName() {
+        String errMessage=imj.interpretCode("class C { void x(){ }; void x(){ }; main{ }}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Variable Name Same As Arguments Name")
+    void VariableNameSameAsArgumentsName() {
+        String errMessage=imj.interpretCode("class C { void x(int n){ int n;};  main{ x(4);}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
+    @DisplayName("Interpret Final Method")
+    void FinalMethod() {
+        String errMessage=imj.interpretCode("class C { final void x(){};  main{ x();}}");
+        Assertions.assertNotEquals(null,errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Random String")
     void randomString() {
         String errMessage=imj.interpretCode("ezudzedezezbclassdezdoncCdzedo{dezodjintezpodjy;podkezdmain{ydpocke=dozejd10;}}");
