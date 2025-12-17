@@ -48,11 +48,11 @@ import java.util.stream.Stream;
  * Unit tests for the MainController class
  */
 @ExtendWith(ApplicationExtension.class)
-class MainControllerTest extends ApplicationTest {
+public class MainControllerTest extends ApplicationTest {
 
     //Temporary directory for test files
     @TempDir
-    static Path tempDir;
+    public static Path tempDir;
 
     private MainController controller;
 
@@ -1255,6 +1255,9 @@ class MainControllerTest extends ApplicationTest {
         verifyThat("#btnRunCompile", isEnabled());
 
         interact(() -> controller.onCompileClicked());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Wait for tab selection to complete
         WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(controller.getCompiledTab(), controller.getEditorTabPane().getSelectionModel().getSelectedItem());

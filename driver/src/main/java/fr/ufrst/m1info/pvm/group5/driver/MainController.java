@@ -52,7 +52,7 @@ public class MainController {
     private ObservableList<CodeLine> compiledCodeLines;
 
     @FXML
-    ColoredTextFlow output;
+    public ColoredTextFlow output;
 
     private Console console;
 
