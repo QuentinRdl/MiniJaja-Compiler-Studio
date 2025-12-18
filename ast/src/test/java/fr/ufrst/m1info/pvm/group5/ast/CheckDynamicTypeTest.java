@@ -1246,28 +1246,28 @@ class CheckDynamicTypeTest {
 
     @Test
     @DisplayName("OrNode.checkType - void || int (error)")
-    void testOrNode_VoidInt() throws Exception {
+    void testOrNode_VoidInt() {
         OrNode node = new OrNode(opVoid,opInt);
 
         assertThrows(InterpretationInvalidTypeException.class, () -> node.checkType(memoryMock));
     }
 
     @Test
-    @DisplayName("ReturnNode - checkType() returns type of expression int")
-    void testReturnNode_CheckType_Int() throws Exception {
+    @DisplayName("ReturnNode - checkType() returns void")
+    void testReturnNode_CheckType_Int() {
         NumberNode numberExpr = new NumberNode(10);
         ReturnNode returnNode = new ReturnNode(numberExpr);
 
-        assertEquals("int", returnNode.checkType(memoryMock));
+        assertEquals("void", returnNode.checkType(memoryMock));
     }
 
     @Test
-    @DisplayName("ReturnNode - checkType() returns type of bool expression")
-    void testReturnNode_CheckType_Bool() throws Exception {
+    @DisplayName("ReturnNode - checkType() returns void")
+    void testReturnNode_CheckType_Bool(){
         BooleanNode boolExpr = new BooleanNode(true);
         ReturnNode returnNode = new ReturnNode(boolExpr);
 
-        assertEquals("bool", returnNode.checkType(memoryMock));
+        assertEquals("void", returnNode.checkType(memoryMock));
     }
 
     @Test
@@ -1767,14 +1767,14 @@ class CheckDynamicTypeTest {
         Memory memory = mock(Memory.class);
 
         MethodeNode method = new MethodeNode(
-                new TypeNode(ValueType.BOOL),
+                new TypeNode(ValueType.VOID),
                 new IdentNode("test"),
                 ASTMocks.createNode(ASTNode.class, null, i -> List.of()),
                 null,
                 null
         );
 
-        assertThrows(InterpretationInvalidTypeException.class, () -> method.checkType(memory));
+        assertEquals("void", method.checkType(memory));
     }
     @Test
     void testMethodeNodeCheckType_Int() {

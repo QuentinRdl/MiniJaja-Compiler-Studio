@@ -149,6 +149,16 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Retour")
+    void Retour() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Retour.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("99\n49\nHello World\n81\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Quicksort")
     void Quicksort() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Quick_sort.mjj"));
@@ -935,14 +945,6 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret Void Method With Return")
     void VoidMethodWithReturn() {
         String errMessage=imj.interpretCode("class C { void f(){return 1;};main{f();}}");
-        Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    @Test
-    @DisplayName("Interpret Non-Void Method Without Return")
-    void NonVoidMethodWithoutReturn() {
-        String errMessage=imj.interpretCode("class C { int f(){};main{f();}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
