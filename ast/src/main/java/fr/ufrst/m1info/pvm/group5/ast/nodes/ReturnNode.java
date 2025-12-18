@@ -33,7 +33,18 @@ public class ReturnNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        return expr.checkType(m);
+        String expType=expr.checkType(m);
+        ASTNode root=getRoot();
+        while (root!=null){
+            if (root instanceof MethodeNode methNode){
+                String methType=methNode.returnType.getValueType().toString().toLowerCase();
+                if (!expType.equals(methType)){
+                    throw new InterpretationInvalidTypeException(this, methType, expType);
+                }
+            }
+            root=root.getRoot();
+        }
+        return "void";
     }
 
     @Override

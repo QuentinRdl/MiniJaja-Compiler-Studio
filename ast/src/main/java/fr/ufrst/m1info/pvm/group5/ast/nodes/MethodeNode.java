@@ -28,6 +28,9 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         this.params = params;
         this.vars = vars;
         this.instrs = instrs;
+        if (this.instrs!=null){
+            this.instrs.setAsRoot();
+        }
     }
 
     @Override
@@ -86,11 +89,10 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
     public String checkType(Memory m) {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
         MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
-        String typeReturn = "void";
         MemoryCallUtil.safeCall(m::pushScope, this);
         if (params != null) params.checkType(m);
         if (vars != null) vars.checkType(m);
-        if (instrs != null) typeReturn=instrs.checkType(m);
+        if (instrs != null) instrs.checkType(m);
         if (params != null) {
             if (params instanceof WithdrawalNode withdrawalNode) {
                 withdrawalNode.withdrawInterpret(m);
@@ -103,9 +105,6 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         }
         MemoryCallUtil.safeCall(m::popScope, this);
         String typeMethod = returnType.getValueType().toString().toLowerCase();
-        if (!typeMethod.equals(typeReturn)){
-            throw new InterpretationInvalidTypeException(this, typeMethod, typeReturn);
-        }
         return typeMethod;
     }
     @Override

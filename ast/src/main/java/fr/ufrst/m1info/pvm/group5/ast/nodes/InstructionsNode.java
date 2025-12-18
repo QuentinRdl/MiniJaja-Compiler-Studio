@@ -19,6 +19,10 @@ public class InstructionsNode extends ASTNode{
         if(instruction == null){
             throw new ASTBuildException("Instructions", "instruction", "Instructions node's instruction must not be null");
         }
+        this.instruction.setAsRoot();
+        if (this.otherInstructions!=null){
+            this.otherInstructions.setAsRoot();
+        }
     }
 
     @Override
@@ -40,12 +44,9 @@ public class InstructionsNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        if (instruction instanceof ReturnNode){
-            return instruction.checkType(m);
-        }
         instruction.checkType(m);
         if (otherInstructions != null) {
-            return otherInstructions.checkType(m);
+            otherInstructions.checkType(m);
         }
         return "void";
     }

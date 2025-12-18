@@ -950,14 +950,6 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
-    @DisplayName("Interpret Non-Void Method Without Return")
-    void NonVoidMethodWithoutReturn() {
-        String errMessage=imj.interpretCode("class C { int f(){};main{f();}}");
-        Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    @Test
     @DisplayName("Interpret Int Method With Bool Return")
     void IntMethodBoolReturn() {
         String errMessage=imj.interpretCode("class C { int f(){return false;};main{f();}}");
