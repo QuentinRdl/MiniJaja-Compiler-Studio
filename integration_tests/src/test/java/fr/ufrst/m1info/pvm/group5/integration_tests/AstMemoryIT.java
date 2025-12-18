@@ -1,5 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.integration_tests;
 
+import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidOperationException;
 import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
 
@@ -160,7 +161,7 @@ class AstMemoryIT {
         IdentNode lop = new IdentNode("x");
         NumberNode rop = new NumberNode(5);
         AffectationNode tested = new AffectationNode(lop, rop);
-        assertThrows(IllegalArgumentException.class, () -> tested.interpret(memory));
+        assertThrows(ASTInvalidMemoryException.class, () -> tested.interpret(memory));
     }
 
     @Test
@@ -177,7 +178,7 @@ class AstMemoryIT {
         MainNode main = new MainNode(null, null);
         ClassNode c = new ClassNode(ident, null, main);
         c.interpret(memory);
-        Object val = memory.val("C");
+        Object val = memory.val("C.class");
         assertInstanceOf(Value.class, val);
     }
 
