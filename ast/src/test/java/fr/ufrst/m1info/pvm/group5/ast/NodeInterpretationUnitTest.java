@@ -690,18 +690,6 @@ class NodeInterpretationUnitTest {
         verify(memory).affectValT(eq("data"), eq(4), any(Value.class));
     }
 
-    @Disabled // Type checking test
-    @Test
-    @DisplayName("IncNode - interpret() fails with non-integer index")
-    void IncNode_ArrayAccess_NonIntegerIndex() {
-        IdentNode arrayIdent = new IdentNode("arr");
-        BooleanNode indexExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
-        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
-
-        IncNode inc = new IncNode(tabNode);
-        assertThrows(InterpretationInvalidTypeException.class, () -> inc.interpret(memory));
-    }
-
     @Test
     @DisplayName("IncNode - interpret() with array access at index 0")
     void IncNode_ArrayAccess_IndexZero() {
