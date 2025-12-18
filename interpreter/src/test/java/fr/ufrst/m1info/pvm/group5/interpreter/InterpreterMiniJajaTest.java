@@ -153,7 +153,7 @@ class InterpreterMiniJajaTest {
     void Retour() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Retour.mjj"));
         writer.textChangedEvent.subscribe(e -> {
-            assertEquals("99\n49\n", e.oldText());
+            assertEquals("99\n49\nHello World\n81\n", e.oldText());
         });
         writer.write("");
     }
