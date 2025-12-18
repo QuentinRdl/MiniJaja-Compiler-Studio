@@ -29,8 +29,7 @@ public class InvokeInstruction extends Instruction {
         }
         MemoryCallUtil.safeCall(()->m.push(".address", new Value(address+1), DataType.INT, EntryKind.CONSTANT), this);
         MemoryCallUtil.safeCall(m::pushScope, this);
-        int newAdr=vMeth.valueInt;
-        return newAdr;
+        return vMeth.valueInt;
     }
 
     public String toString() {return "invoke";}

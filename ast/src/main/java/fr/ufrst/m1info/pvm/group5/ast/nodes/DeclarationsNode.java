@@ -65,7 +65,7 @@ public class DeclarationsNode extends ASTNode implements WithdrawalNode {
 
     @Override
     public List<String> withdrawCompile(int address) {
-        List<String> jajacodes = new ArrayList<String>();
+        List<String> jajacodes = new ArrayList<>();
         if(declarations != null)
             jajacodes.addAll(((WithdrawalNode)declarations).withdrawCompile(address));
         jajacodes.addAll(((WithdrawalNode)declaration).withdrawCompile(address + jajacodes.size()));

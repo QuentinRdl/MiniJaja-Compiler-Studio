@@ -2,7 +2,6 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
-import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.ArrayList;
@@ -80,7 +79,7 @@ public class SumNode extends ASTNode {
             String identType = identifier.checkType(m);
             if(!identType.equals("int")){
                 throw new InterpretationInvalidTypeException(this, "int", exprType);
-            };
+            }
         } else {
             IdentNode identNode = (IdentNode) identifier;
             String identType = identNode.checkType(m);

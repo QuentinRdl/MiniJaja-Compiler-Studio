@@ -1,6 +1,5 @@
 package fr.ufrst.m1info.pvm.group5.ast;
 
-import fr.ufrst.m1info.pvm.group5.ast.nodes.ASTNode;
 import fr.ufrst.m1info.pvm.group5.memory.Event;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.MiniJaJaLexer;

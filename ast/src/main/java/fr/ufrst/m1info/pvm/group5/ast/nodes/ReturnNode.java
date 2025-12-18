@@ -33,8 +33,7 @@ public class ReturnNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        String exprType = expr.checkType(m);
-        return exprType;
+        return expr.checkType(m);
     }
 
     @Override

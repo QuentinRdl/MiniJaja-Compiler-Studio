@@ -17,7 +17,7 @@ public class WriteLineNode extends ASTNode{
 
     public WriteLineNode(String text){
         this.text = text;
-        this.ident = null;;
+        this.ident = null;
     }
 
     public WriteLineNode(ASTNode ident){

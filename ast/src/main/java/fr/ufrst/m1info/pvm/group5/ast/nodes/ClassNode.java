@@ -28,7 +28,7 @@ public class ClassNode extends ASTNode {
 
     @Override
     public List<String> compile(int  address) {
-        List<String> jjcodes = new ArrayList<String>();
+        List<String> jjcodes = new ArrayList<>();
         jjcodes.add("init");
         if(decls!=null)
             jjcodes.addAll(decls.compile(address + jjcodes.size()));

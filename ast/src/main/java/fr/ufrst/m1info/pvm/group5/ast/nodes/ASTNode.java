@@ -17,7 +17,7 @@ public abstract class ASTNode implements LocatedElement {
 
     private static InterpretationMode interpretationMode = InterpretationMode.DIRECT;
 
-    private Event<InterpretationStoppedData> InterpretationStoppedEvent = null;
+    private Event<InterpretationStoppedData> interpretationStoppedEvent = null;
 
     // Root relative methods
 
@@ -27,7 +27,7 @@ public abstract class ASTNode implements LocatedElement {
 
     public void setAsRoot(){
         this.root = null;
-        this.InterpretationStoppedEvent = new Event<>();
+        this.interpretationStoppedEvent = new Event<>();
         for(ASTNode child : getChildren()){
             child.setRoot(this);
         }
@@ -35,7 +35,7 @@ public abstract class ASTNode implements LocatedElement {
 
     private void setRoot(ASTNode root){
         this.root = root;
-        this.InterpretationStoppedEvent = null;
+        this.interpretationStoppedEvent = null;
         for(ASTNode child : getChildren()){
             child.setRoot(root);
         }
@@ -47,13 +47,13 @@ public abstract class ASTNode implements LocatedElement {
      * @return current tree interpretation stopped event
      */
     public Event<InterpretationStoppedData> interpretationStoppedEvent(){
-        if(this.InterpretationStoppedEvent == null){
+        if(this.interpretationStoppedEvent == null){
             if(this.root == null){
                 throw new RuntimeException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
             }
             return root.interpretationStoppedEvent();
         }
-        return this.InterpretationStoppedEvent;
+        return this.interpretationStoppedEvent;
     }
 
     // Interpretation

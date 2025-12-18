@@ -1,11 +1,9 @@
 package fr.ufrst.m1info.pvm.group5.ast.instructions;
 
-import fr.ufrst.m1info.pvm.group5.ast.ASTInvalidMemoryException;
 import fr.ufrst.m1info.pvm.group5.ast.InterpretationInvalidTypeException;
 import fr.ufrst.m1info.pvm.group5.ast.LocatedElement;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
-import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 
 import java.util.List;
 
