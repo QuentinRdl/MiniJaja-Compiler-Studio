@@ -176,6 +176,9 @@ public class AppelINode extends ASTNode {
         if (methodNode.instrs != null) {
             methodNode.instrs.interpret(m);
         }
+        if(methodNode.vars != null){
+            ((WithdrawalNode)methodNode.vars).withdrawInterpret(m);
+        }
     }
 
     /**

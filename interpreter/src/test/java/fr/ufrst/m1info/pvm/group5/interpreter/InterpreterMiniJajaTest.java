@@ -175,6 +175,13 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Array Bouquet Test")
+    void arraysOfBouquet(){
+        String errMessage = imj.interpretFile("src/test/resources/Arrays.mjj");
+        Assertions.assertNull(errMessage);
+    }
+
+    @Test
     @DisplayName("Interpret Undefined Variable / sum")
     void UndefinedVariableSum() {
         String errMessage=imj.interpretCode("class C {int y = 10;main {x += y;}}");
