@@ -212,15 +212,11 @@ public abstract class ASTNode implements LocatedElement {
      * @param m Memory the program is being executed on
      */
     protected synchronized void halt(Memory m){
-        switch (interpretationMode){
-            case DIRECT:
-                return;
-            case BREAKPOINTS:
-                if(!m.isBreakpoint(this.line))
-                    return;
-            case STEP_BY_STEP:
-                interpretationStoppedEvent().triggerAsync(new InterpretationStoppedData(line, false, this));
-                doWait();
+        if (interpretationMode == InterpretationMode.DIRECT ||
+                (interpretationMode == InterpretationMode.BREAKPOINTS && !m.isBreakpoint(this.line))){
+            return;
         }
+        interpretationStoppedEvent().triggerAsync(new InterpretationStoppedData(line, false, this));
+        doWait();
     }
 }
