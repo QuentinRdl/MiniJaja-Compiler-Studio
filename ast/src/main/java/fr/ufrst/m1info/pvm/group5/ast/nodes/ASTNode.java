@@ -62,7 +62,7 @@ public abstract class ASTNode implements LocatedElement {
      * Defines the way the interpretation of the program should be done
      * @param interpretationMode interpretation mode of the program
      */
-    public void setInterpretationMode(InterpretationMode interpretationMode) {
+    public static void setInterpretationMode(InterpretationMode interpretationMode) {
         ASTNode.interpretationMode = interpretationMode;
     }
 
