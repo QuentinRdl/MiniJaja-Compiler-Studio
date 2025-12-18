@@ -1102,34 +1102,6 @@ class NodeInterpretationUnitTest {
         verify(memory).affectValT(eq("data"), eq(4), any(Value.class));
     }
 
-    @Disabled // This test is a type checking test
-    @Test
-    @DisplayName("SumNode - interpret() fails with non-integer index")
-    void SumNode_ArrayAccess_NonIntegerIndex() {
-        IdentNode arrayIdent = new IdentNode("arr");
-        BooleanNode indexExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
-        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
-
-        NumberNode valueExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(5));
-
-        SumNode sumNode = new SumNode(tabNode, valueExpr);
-        assertThrows(InterpretationInvalidTypeException.class, () -> sumNode.interpret(memory));
-    }
-
-    @Disabled // This test is a type checking test
-    @Test
-    @DisplayName("SumNode - interpret() fails with non-integer value")
-    void SumNode_ArrayAccess_NonIntegerValue() {
-        IdentNode arrayIdent = new IdentNode("arr");
-        NumberNode indexExpr = ASTMocks.createEvalNode(NumberNode.class, null, null, m -> new Value(2));
-        TabNode tabNode = new TabNode(arrayIdent, indexExpr);
-
-        BooleanNode valueExpr = ASTMocks.createEvalNode(BooleanNode.class, null, null, m -> new Value(true));
-
-        SumNode sumNode = new SumNode(tabNode, valueExpr);
-        assertThrows(InterpretationInvalidTypeException.class, () -> sumNode.interpret(memory));
-    }
-
     @Test
     @DisplayName("SumNode - interpret() with array access at index 0")
     void SumNode_ArrayAccess_IndexZero() {
@@ -1743,42 +1715,6 @@ class NodeInterpretationUnitTest {
         verify(memory).declTab(eq("matrix"), eq(8), eq(DataType.INT));
     }
 
-    @Disabled // Type check test
-    @Test
-    @DisplayName("ArrayNode.interpret() - throws exception for non-int size")
-    void testArrayNode_Interpret_NonIntSize() {
-        TypeNode typeNode = new TypeNode(ValueType.INT);
-        IdentNode ident = new IdentNode("arr");
-        BooleanNode sizeExpr = new BooleanNode(true);
-
-        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
-        assertThrows(InterpretationInvalidTypeException.class, () -> node.interpret(memory));
-    }
-
-    @Disabled // This test is an integration test (Negative size exception is handled by memory)
-    @Test
-    @DisplayName("ArrayNode.interpret() - throws exception for negative size")
-    void testArrayNode_Interpret_NegativeSize() {
-        TypeNode typeNode = new TypeNode(ValueType.INT);
-        IdentNode ident = new IdentNode("arr");
-        NumberNode sizeExpr = new NumberNode(-5);
-
-        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
-        assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("ArrayNode.interpret() - throws exception for zero size")
-    void testArrayNode_Interpret_ZeroSize() {
-        TypeNode typeNode = new TypeNode(ValueType.INT);
-        IdentNode ident = new IdentNode("arr");
-        NumberNode sizeExpr = new NumberNode(0);
-
-        ArrayNode node = new ArrayNode(typeNode, ident, sizeExpr);
-        assertThrows(ASTInvalidOperationException.class, () -> node.interpret(memory));
-    }
-
     @Test
     @DisplayName("ArrayNode.withdrawInterpret() - withdraws array declaration")
     void testArrayNode_WithdrawInterpret() {
@@ -1866,58 +1802,6 @@ class NodeInterpretationUnitTest {
         assertEquals(ValueType.INT, result.type);
         assertEquals(123, result.valueInt);
         verify(memory).valT(eq("arr"), eq(5));
-    }
-
-    @Disabled // Integration test, bound checking is done by memory
-    @Test
-    @DisplayName("TabNode.eval() - throws exception for negative index")
-    void testTabNode_Eval_NegativeIndex() {
-        IdentNode ident = new IdentNode("arr");
-        NumberNode indexExpr = new NumberNode(-1);
-
-        when(memory.tabLength("arr")).thenReturn(5);
-
-        TabNode node = new TabNode(ident, indexExpr);
-        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
-    }
-
-    @Disabled // Integration test, bound checking is done by memory
-    @Test
-    @DisplayName("TabNode.eval() - throws exception for index out of bounds")
-    void testTabNode_Eval_IndexOutOfBounds() {
-        IdentNode ident = new IdentNode("arr");
-        NumberNode indexExpr = new NumberNode(10);
-
-        when(memory.tabLength("arr")).thenReturn(5);
-
-        TabNode node = new TabNode(ident, indexExpr);
-        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
-    }
-
-    @Disabled // Integration test (array index is handled by memory)
-    @Test
-    @DisplayName("TabNode.eval() - throws exception for index equal to array length")
-    void testTabNode_Eval_IndexEqualToLength() {
-        IdentNode ident = new IdentNode("arr");
-        NumberNode indexExpr = new NumberNode(5);
-
-        when(memory.tabLength("arr")).thenReturn(5);
-
-        TabNode node = new TabNode(ident, indexExpr);
-        assertThrows(ASTInvalidOperationException.class, () -> node.eval(memory));
-    }
-
-    @Disabled // Type check test
-    @Test
-    @DisplayName("TabNode.eval() - throws exception for non-int index")
-    void testTabNode_Eval_NonIntIndex() {
-        IdentNode ident = new IdentNode("arr");
-        BooleanNode indexExpr = new BooleanNode(true);
-
-        when(memory.tabLength("arr")).thenReturn(5);
-
-        TabNode node = new TabNode(ident, indexExpr);
-        assertThrows(InterpretationInvalidTypeException.class, () -> node.eval(memory));
     }
 
     @Test
