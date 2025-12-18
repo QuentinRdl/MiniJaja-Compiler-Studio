@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * Visual representation of a stack variable block in the memory visualisation
- * Each block shows the variable's name, kind, type and current value
+ * Each block shows the variable's name, scope, kind, type and current value
  */
 public class StackBlockView extends VBox {
 
