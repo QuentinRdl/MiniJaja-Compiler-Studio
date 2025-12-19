@@ -1358,7 +1358,10 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt)");
+                if(event.error() == null)
+                    console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                else
+                    console.getWriter().writeLine("[ERROR] "+event.error());
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
@@ -1494,7 +1497,10 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                if(event.error() == null)
+                    console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                else
+                    console.getWriter().writeLine("[ERROR] "+event.error());
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterJjc != null) {
