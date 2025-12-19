@@ -111,7 +111,7 @@ public class AbstractSyntaxTree {
      * @param mode interpretation mode to use for the interpretation
      * @return memory after the interpretation
      */
-    public Memory interpret(Memory m, InterpretationMode mode) throws Exception{
+    public Memory interpret(Memory m, InterpretationMode mode) {
         root.setInterpretationMode(mode);
         root.checkType(new Memory());
         root.interpret(m);

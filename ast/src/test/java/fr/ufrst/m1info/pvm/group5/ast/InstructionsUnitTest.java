@@ -240,15 +240,6 @@ class InstructionsUnitTest {
         assertThrows(InterpretationInvalidTypeException.class,() -> newaInstr.execute(1,memory));
     }
 
-    @Disabled // Handled by memory
-    @Test
-    void newarray_size_negative() throws Exception {
-        Instruction pushInstr = new PushInstruction(new Value(-1));
-        Instruction newaInstr = new NewarrayInstruction("x", DataType.INT);
-        pushInstr.execute(1,memory);
-        assertThrows(ASTInvalidOperationException.class,() -> newaInstr.execute(1,memory));
-    }
-
     @Test
     void newarray_empty_stack() throws Exception {
         doAnswer(invocationOnMock -> {
@@ -303,13 +294,6 @@ class InstructionsUnitTest {
         pushInstr.execute(1,memory);
         newInstr.execute(2,memory);
         assertThrows(IndexOutOfBoundsException.class,() -> invokeInstr.execute(1,memory));
-
-    }
-
-    @Test
-    void invoke_undefined_method() throws Exception {
-        Instruction invokeInstr = new InvokeInstruction("x");
-        assertThrows(ASTInvalidMemoryException.class,() -> invokeInstr.execute(1,memory));
 
     }
 

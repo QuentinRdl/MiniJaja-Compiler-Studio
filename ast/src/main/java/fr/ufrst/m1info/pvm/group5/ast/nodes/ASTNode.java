@@ -49,7 +49,7 @@ public abstract class ASTNode implements LocatedElement {
     public Event<InterpretationStoppedData> interpretationStoppedEvent(){
         if(this.interpretationStoppedEvent == null){
             if(this.root == null){
-                throw new RuntimeException("line "+this.line + " - " + this.getClass().getSimpleName() + " : No root node has been set for the current tree");
+                throw new ASTBuildException(this.toString(), "root", "no root has been set for the current tree");
             }
             return root.interpretationStoppedEvent();
         }
@@ -62,7 +62,7 @@ public abstract class ASTNode implements LocatedElement {
      * Defines the way the interpretation of the program should be done
      * @param interpretationMode interpretation mode of the program
      */
-    public void setInterpretationMode(InterpretationMode interpretationMode) {
+    public static void setInterpretationMode(InterpretationMode interpretationMode) {
         ASTNode.interpretationMode = interpretationMode;
     }
 
@@ -111,8 +111,8 @@ public abstract class ASTNode implements LocatedElement {
         StringBuilder sb = new StringBuilder();
         addTabDepth(sb,depth);
         sb.append("\"line\" : ").append(getLine());
-        if(props!=null)sb.append(",\n");
-        if(props==null) return sb.toString();
+        if(props!=null && !props.isEmpty())sb.append(",\n");
+        else return sb.toString();
         var iterator = props.entrySet().iterator();
         while(iterator.hasNext()){
             var e = iterator.next();
@@ -129,7 +129,7 @@ public abstract class ASTNode implements LocatedElement {
      * @return non-children properties of the node
      */
     protected Map<String, String> getProperties(){
-        return null;
+        return Map.of();
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class ASTNode implements LocatedElement {
         sb.append("\n}");
         return sb.toString();
     }
-
+    
     /**
      * Creates a version of the node in the JSON format starting at a certain depth
      * @param depth depth to start at
@@ -166,7 +166,9 @@ public abstract class ASTNode implements LocatedElement {
         var prop = dumpProperties(depth+1);
         if(!prop.isEmpty()) {
             sb.append(prop);
-            if(children != null && !children.isEmpty()) sb.append(",");
+            if(!children.isEmpty()) {
+                sb.append(",");
+            }
             sb.append("\n");
         }
         if(children != null) {
@@ -212,15 +214,11 @@ public abstract class ASTNode implements LocatedElement {
      * @param m Memory the program is being executed on
      */
     protected synchronized void halt(Memory m){
-        switch (interpretationMode){
-            case DIRECT:
-                return;
-            case BREAKPOINTS:
-                if(!m.isBreakpoint(this.line))
-                    return;
-            case STEP_BY_STEP:
-                interpretationStoppedEvent().triggerAsync(new InterpretationStoppedData(line, false, this));
-                doWait();
+        if (interpretationMode == InterpretationMode.DIRECT ||
+                (interpretationMode == InterpretationMode.BREAKPOINTS && !m.isBreakpoint(this.line))){
+            return;
         }
+        interpretationStoppedEvent().triggerAsync(new InterpretationStoppedData(line, false, this));
+        doWait();
     }
 }

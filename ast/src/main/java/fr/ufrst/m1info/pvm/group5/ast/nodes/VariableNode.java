@@ -18,14 +18,15 @@ public class VariableNode extends ASTNode implements WithdrawalNode {
         this.typemeth=typemeth;
         this.ident=ident;
         this.vexp=vexp;
+        final String name = "Variable";
         if(typemeth == null){
-            throw new ASTBuildException("Variable", "type", "Variable node must have a valid type");
+            throw new ASTBuildException(name, "type", "Variable node must have a valid type");
         }
         if(ident == null){
-            throw new ASTBuildException("Variable", "identifier", "Variable node must have a non-null identifier");
+            throw new ASTBuildException(name, "identifier", "Variable node must have a non-null identifier");
         }
         if(vexp != null && !(vexp instanceof EvaluableNode)){
-            throw new ASTBuildException("Variable", "vexp", "Variable node assignation must have an evaluable operand");
+            throw new ASTBuildException(name, "vexp", "Variable node assignation must have an evaluable operand");
         }
     }
 

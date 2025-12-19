@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppelENode extends ASTNode implements EvaluableNode {
-    private static final String METHOD_PREFIX = "Method ";
     private final IdentNode ident;
     private final ASTNode args;
 

@@ -14,10 +14,11 @@ import java.util.List;
 public class AppelINode extends ASTNode {
     public final IdentNode ident;
     public final ASTNode args;
+    private final String innerName = "AppelI";
 
     public AppelINode(IdentNode ident, ASTNode args) {
         if (ident == null) {
-            throw new ASTBuildException("AppelI", "identifier", "AppelI node must have a non-null identifier");
+            throw new ASTBuildException(innerName, "identifier", "AppelI node must have a non-null identifier");
         }
         this.ident = ident;
         this.args = args;
@@ -100,7 +101,7 @@ public class AppelINode extends ASTNode {
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {
-            throw new ASTBuildException("AppelI", "arguments", "AppelI call must have evaluable arguments");
+            throw new ASTBuildException(innerName, "arguments", "AppelI call must have evaluable arguments");
         }
         return evaluatedArgs;
     }
@@ -222,5 +223,5 @@ public class AppelINode extends ASTNode {
         }
     }
 
-    public String toString(){return "AppelI";}
+    public String toString(){return innerName;}
 }
