@@ -153,7 +153,6 @@ public abstract class ASTNode implements LocatedElement {
         sb.append("\n}");
         return sb.toString();
     }
-
     
     /**
      * Creates a version of the node in the JSON format starting at a certain depth
