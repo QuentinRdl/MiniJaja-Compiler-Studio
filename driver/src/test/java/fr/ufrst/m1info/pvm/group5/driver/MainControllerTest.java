@@ -989,27 +989,6 @@ public class MainControllerTest extends ApplicationTest {
         assertEquals(2, controller.getCodeListView().getSelectionModel().getSelectedIndex());
     }
 
-    @Disabled
-    @Test
-    void testButtonsActivatedAfterClickNew(){
-        interact(() ->  controller.deactiveButtons());
-
-        verifyThat("#btnSave", isDisabled());
-        verifyThat("#btnSaveAs", isDisabled());
-        verifyThat("#btnRun", isDisabled());
-        verifyThat("#btnCompile", isDisabled());
-        verifyThat("#btnRunCompile", isDisabled());
-
-        clickOn("#btnNew");
-        WaitForAsyncUtils.waitForFxEvents();
-
-        verifyThat("#btnSave", isEnabled());
-        verifyThat("#btnSaveAs", isEnabled());
-        verifyThat("#btnRun", isEnabled());
-        verifyThat("#btnCompile", isEnabled());
-        verifyThat("#btnRunCompile", isEnabled());
-    }
-
     @Test
     void testIsMinijajaFileWithNullFile(){
         assertNull(controller.getCurrentFile());
@@ -2611,35 +2590,6 @@ public class MainControllerTest extends ApplicationTest {
         assertTrue(output.contains("[DEBUG]"));
     }
 
-    @Test
-    @Disabled
-    void testDebugStepByStepWithWhileLoop() throws Exception {
-        File testFile = createTestFile("debug_while.mjj",
-                "class C {",
-                "    int x = 0;",
-                "    main {",
-                "        while(x < 3){",
-                "            x++;",
-                "        };",
-                "    }",
-                "}");
-
-        interact(() -> controller.loadFile(testFile));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        interact(() -> controller.onClickRunDebug());
-        WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(500);
-
-        Thread.sleep(200);
-        interact(() -> controller.onClickNextDebug());
-        WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(200);
-
-        String output = controller.output.getText();
-        assertTrue(output.contains("[DEBUG]"));
-    }
-
     // Debug Breakpoint for MiniJaja
 
     @Test
@@ -2721,53 +2671,6 @@ public class MainControllerTest extends ApplicationTest {
         // Continue to next breakpoint
         interact(() -> controller.onClickNextDebug());
         WaitForAsyncUtils.waitForFxEvents();
-
-        output = controller.output.getText();
-        assertTrue(output.contains("[DEBUG]"));
-    }
-
-    @Test
-    @Disabled
-    void testDebugBreakpointInLoop() throws Exception {
-        File testFile = createTestFile("breakpoint_loop.mjj",
-                "class C {",
-                "    int x = 0;",
-                "    main {",
-                "        while(x < 5){",
-                "            x++;",
-                "        };",
-                "    }",
-                "}");
-
-        interact(() -> controller.loadFile(testFile));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        // Set breakpoint inside the loop (line 5: x++;)
-        interact(() -> controller.toggleBreakpointAt(5));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertTrue(controller.hasBreakpointAt(5));
-
-        interact(() -> controller.onClickRunDebug());
-        WaitForAsyncUtils.waitForFxEvents();
-
-        // Wait for execution to stop at breakpoint
-        await()
-                .atMost(3, SECONDS)
-                .until(() ->
-                        controller.output.getText().contains("[DEBUG]")
-                );
-
-        String output = controller.output.getText();
-        assertTrue(output.contains("[DEBUG]"));
-
-        // Step through a few iterations
-        for (int i = 0; i < 3; i++) {
-            Thread.sleep(300);
-            interact(() -> controller.onClickNextDebug());
-            WaitForAsyncUtils.waitForFxEvents();
-            Thread.sleep(300);
-        }
 
         output = controller.output.getText();
         assertTrue(output.contains("[DEBUG]"));
@@ -2875,40 +2778,6 @@ public class MainControllerTest extends ApplicationTest {
                 .until(() ->
                         controller.output.getText().contains("[DEBUG]")
                 );
-
-        String output = controller.output.getText();
-        assertTrue(output.contains("[DEBUG]"));
-    }
-
-    @Test
-    @Disabled
-    void testDebugStepThroughMethodCalls() throws Exception {
-        File testFile = createTestFile("debug_methods.mjj",
-                "class C {",
-                "    int x = 0;",
-                "    void increment() {",
-                "        x++;",
-                "    }",
-                "    main {",
-                "        increment();",
-                "        increment();",
-                "    }",
-                "}");
-
-        interact(() -> controller.loadFile(testFile));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        interact(() -> controller.onClickRunDebug());
-        WaitForAsyncUtils.waitForFxEvents();
-        Thread.sleep(500);
-
-        // Step through method calls
-        for (int i = 0; i < 2; i++) {
-            Thread.sleep(300);
-            interact(() -> controller.onClickNextDebug());
-            WaitForAsyncUtils.waitForFxEvents();
-            Thread.sleep(200);
-        }
 
         String output = controller.output.getText();
         assertTrue(output.contains("[DEBUG]"));
