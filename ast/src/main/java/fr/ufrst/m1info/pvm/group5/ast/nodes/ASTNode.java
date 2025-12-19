@@ -19,6 +19,27 @@ public abstract class ASTNode implements LocatedElement {
 
     private Event<InterpretationStoppedData> interpretationStoppedEvent = null;
 
+    private MethodeNode referent = null;
+
+    protected void setAsReferent(){
+        if(!(this instanceof MethodeNode))
+            throw new ASTBuildException(this.getClass().getSimpleName(), "none", "Trying to set non-method node as referent");
+        for(ASTNode child : getChildren()){
+            child.setReferent((MethodeNode) this);
+        }
+    }
+
+    private void setReferent(MethodeNode referent){
+        this.referent = referent;
+        for(ASTNode child : getChildren()){
+            child.setReferent(referent);
+        }
+    }
+
+    protected MethodeNode getReferent(){
+        return this.referent;
+    }
+
     // Root relative methods
 
     public ASTNode getRoot(){
