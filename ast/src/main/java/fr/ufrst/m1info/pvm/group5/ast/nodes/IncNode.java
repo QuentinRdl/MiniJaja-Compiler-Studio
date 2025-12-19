@@ -3,6 +3,7 @@ package fr.ufrst.m1info.pvm.group5.ast.nodes;
 import fr.ufrst.m1info.pvm.group5.ast.*;
 import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.ValueType;
+import fr.ufrst.m1info.pvm.group5.memory.symbol_table.DataType;
 import fr.ufrst.m1info.pvm.group5.memory.Value;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class IncNode extends ASTNode{
     public List<String> compile(int address) {
         List<String> jjcodes = new ArrayList<>();
 
-        if (ident instanceof TabNode tabNode) {
+        if (ident instanceof TabNode) {
+            TabNode tabNode = (TabNode) ident;
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             jjcodes.addAll(indexExp.compile(address));
@@ -41,7 +43,8 @@ public class IncNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException {
-        if (ident instanceof TabNode tabNode) {
+        if (ident instanceof TabNode) {
+            TabNode tabNode = (TabNode) ident;
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
@@ -65,7 +68,8 @@ public class IncNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        if (ident instanceof TabNode tabNode) {
+        if (ident instanceof TabNode) {
+            TabNode tabNode = (TabNode) ident;
             tabNode.checkType(m);
         } else {
             IdentNode identNode = (IdentNode) ident;

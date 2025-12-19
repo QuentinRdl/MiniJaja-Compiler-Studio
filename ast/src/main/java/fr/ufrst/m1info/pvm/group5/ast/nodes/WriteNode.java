@@ -38,7 +38,7 @@ public class WriteNode extends ASTNode{
         else {
             jjcodes.add("push(\""+text+"\")");
         }
-        jjcodes.add(this.toString());
+        jjcodes.add("write");
         return jjcodes;
     }
 
@@ -61,7 +61,7 @@ public class WriteNode extends ASTNode{
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
         if(this.ident instanceof IdentNode ident) {
             if (MemoryCallUtil.safeCall(()-> m.isArray(ident.identifier), this))
-                throw new InterpretationInvalidTypeException("Array type cannot be used with instruction " + this, this);
+                throw new InterpretationInvalidTypeException("Array type cannot be used with instruction " + "write", this);
             ident.checkType(m);
         }
         return "void";

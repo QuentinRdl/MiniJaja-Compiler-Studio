@@ -32,7 +32,8 @@ public class SumNode extends ASTNode {
     public List<String> compile(int address) {
         List<String> jjcodes = new ArrayList<>();
 
-        if (identifier instanceof TabNode tabNode) {
+        if (identifier instanceof TabNode) {
+            TabNode tabNode = (TabNode) identifier;
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             jjcodes.addAll(indexExp.compile(address));
@@ -48,13 +49,14 @@ public class SumNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException {
-        if (identifier instanceof TabNode tabNode) {
+        if (identifier instanceof TabNode) {
+            TabNode tabNode = (TabNode) identifier;
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
             int index = indexVal.valueInt;
             Value v = ((EvaluableNode) expression).eval(m);
-            Value currentVal = tabNode.eval(m);
+            Value currentVal = ((TabNode) identifier).eval(m);
             int res = currentVal.valueInt + v.valueInt;
             MemoryCallUtil.safeCall(() -> m.affectValT(arrayIdent.identifier, index, new Value(res)), this);
         } else {

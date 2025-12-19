@@ -11,11 +11,10 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     IdentNode ident;
     private final ASTNode indexExp;
-    private final String nameIdent = "identifier";
 
     public TabNode(IdentNode ident, ASTNode indexExp) {
         if (ident == null || indexExp == null) {
-            throw new ASTBuildException("Tab", (ident == null)?nameIdent:"index", "Tab must have a non-null"+((ident == null)?nameIdent:"index"));
+            throw new ASTBuildException("Tab", (ident == null)?"identifier":"index", "Tab must have a non-null"+((ident == null)?"identifier":"index"));
         }
         if (!(indexExp instanceof EvaluableNode)) {
             throw new ASTBuildException("Tab", indexExp.getClass().getName() ,"TabNode index must be evaluable");
@@ -68,7 +67,7 @@ public class TabNode extends ASTNode implements EvaluableNode {
 
     @Override
     protected Map<String, String> getProperties() {
-        return Map.of(nameIdent, ident.identifier);
+        return Map.of("identifier", ident.identifier);
     }
 
     public String toString(){return "array reference:{"+ident+"}";}

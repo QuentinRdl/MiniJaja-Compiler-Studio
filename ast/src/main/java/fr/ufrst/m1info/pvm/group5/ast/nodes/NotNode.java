@@ -45,7 +45,7 @@ public class NotNode extends ASTNode implements EvaluableNode {
         if (!exprType.equals("bool")) {
             throw new InterpretationInvalidTypeException(this, "bool", exprType);
         }
-        if (expr instanceof IdentNode identNode && MemoryCallUtil.safeCall(()->m.isArray(identNode.identifier), this)){
+        if (expr instanceof IdentNode && MemoryCallUtil.safeCall(()->m.isArray(((IdentNode) expr).identifier), this)){
             throw new InterpretationInvalidTypeException(this, "bool", "array");
         }
         return "bool";
