@@ -17,7 +17,7 @@ public class AppelINode extends ASTNode {
 
     public AppelINode(IdentNode ident, ASTNode args) {
         if (ident == null) {
-            throw new ASTBuildException(this.toString(), "identifier", "AppelI node must have a non-null identifier");
+            throw new ASTBuildException("AppelI", "identifier", "AppelI node must have a non-null identifier");
         }
         this.ident = ident;
         this.args = args;
@@ -100,7 +100,7 @@ public class AppelINode extends ASTNode {
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {
-            throw new ASTBuildException(this.toString(), "arguments", "AppelI call must have evaluable arguments");
+            throw new ASTBuildException("AppelI", "arguments", "AppelI call must have evaluable arguments");
         }
         return evaluatedArgs;
     }

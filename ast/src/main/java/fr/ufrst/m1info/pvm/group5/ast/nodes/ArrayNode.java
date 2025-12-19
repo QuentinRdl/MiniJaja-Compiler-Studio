@@ -15,11 +15,10 @@ public class ArrayNode extends ASTNode implements WithdrawalNode {
     private final ASTNode sizeExp;
 
     public ArrayNode(TypeNode type, IdentNode ident, ASTNode sizeExp) {
-        final String nameNode = "Array";
-        if(type == null) throw new ASTBuildException(nameNode, "type", "type must not be null");
-        if(ident==null) throw new ASTBuildException(nameNode, "ident", "ident must not be null");
-        if(sizeExp==null) throw new ASTBuildException(nameNode, "sizeExp", "size must not be null");
-        if(!(sizeExp instanceof EvaluableNode))  throw new ASTBuildException(nameNode, "sizeExp", "size must be evaluable");
+        if(type == null) throw new ASTBuildException("Array", "type", "type must not be null");
+        if(ident==null) throw new ASTBuildException("Array", "ident", "ident must not be null");
+        if(sizeExp==null) throw new ASTBuildException("Array", "sizeExp", "size must not be null");
+        if(!(sizeExp instanceof EvaluableNode))  throw new ASTBuildException("Array", "sizeExp", "size must be evaluable");
         this.type = type;
         this.ident = ident;
         this.sizeExp = sizeExp;
