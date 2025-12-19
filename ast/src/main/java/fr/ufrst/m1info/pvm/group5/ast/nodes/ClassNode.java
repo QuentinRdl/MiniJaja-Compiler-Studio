@@ -15,20 +15,21 @@ public class ClassNode extends ASTNode {
         this.ident = ident;
         this.decls = decls;
         this.main = main;
+        final String name = "Class";
         if(ident == null){
-            throw new ASTBuildException("Class", "identifier", "Class node cannot have a null identifier");
+            throw new ASTBuildException(name, "identifier", "Class node cannot have a null identifier");
         }
         if(main == null){
-            throw new ASTBuildException("Class", "main", "Class node cannot have a null main method");
+            throw new ASTBuildException(name, "main", "Class node cannot have a null main method");
         }
         if(decls != null && !(decls instanceof WithdrawalNode)){
-            throw new ASTBuildException("Class", "declaration", "Class node declarations must be withdrawable");
+            throw new ASTBuildException(name, "declaration", "Class node declarations must be withdrawable");
         }
     }
 
     @Override
     public List<String> compile(int  address) {
-        List<String> jjcodes = new ArrayList<String>();
+        List<String> jjcodes = new ArrayList<>();
         jjcodes.add("init");
         if(decls!=null)
             jjcodes.addAll(decls.compile(address + jjcodes.size()));

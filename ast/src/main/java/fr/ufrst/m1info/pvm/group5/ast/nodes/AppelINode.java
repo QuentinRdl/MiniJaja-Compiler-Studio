@@ -14,10 +14,11 @@ import java.util.List;
 public class AppelINode extends ASTNode {
     public final IdentNode ident;
     public final ASTNode args;
+    private final String innerName = "AppelI";
 
     public AppelINode(IdentNode ident, ASTNode args) {
         if (ident == null) {
-            throw new ASTBuildException("AppelI", "identifier", "AppelI node must have a non-null identifier");
+            throw new ASTBuildException(innerName, "identifier", "AppelI node must have a non-null identifier");
         }
         this.ident = ident;
         this.args = args;
@@ -100,7 +101,7 @@ public class AppelINode extends ASTNode {
         } else if (args instanceof EvaluableNode evaluableNode) {
             evaluatedArgs.add(evaluableNode.eval(m));
         } else {
-            throw new ASTBuildException("AppelI", "arguments", "AppelI call must have evaluable arguments");
+            throw new ASTBuildException(innerName, "arguments", "AppelI call must have evaluable arguments");
         }
         return evaluatedArgs;
     }
@@ -159,7 +160,7 @@ public class AppelINode extends ASTNode {
      */
     private void validateArity(int expected, int actual) {
         if (expected != actual) {
-            throw new RuntimeException(String.format("Line %d : Arity mismatch, expected %d arguments, got %d", this, expected, actual));
+            throw new RuntimeException(String.format("Arity mismatch, expected %d arguments, got %d (at line %d, %s)", expected, actual, this.getLine(), this.toString()));
         }
     }
 
@@ -175,6 +176,9 @@ public class AppelINode extends ASTNode {
         }
         if (methodNode.instrs != null) {
             methodNode.instrs.interpret(m);
+        }
+        if(methodNode.vars != null){
+            ((WithdrawalNode)methodNode.vars).withdrawInterpret(m);
         }
     }
 
@@ -219,5 +223,5 @@ public class AppelINode extends ASTNode {
         }
     }
 
-    public String toString(){return "AppelI";}
+    public String toString(){return innerName;}
 }

@@ -40,12 +40,9 @@ public class InstructionsNode extends ASTNode{
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
-        if (instruction instanceof ReturnNode){
-            return instruction.checkType(m);
-        }
         instruction.checkType(m);
         if (otherInstructions != null) {
-            return otherInstructions.checkType(m);
+            otherInstructions.checkType(m);
         }
         return "void";
     }

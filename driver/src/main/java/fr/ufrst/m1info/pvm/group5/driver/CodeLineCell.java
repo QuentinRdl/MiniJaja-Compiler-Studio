@@ -1,15 +1,12 @@
 package fr.ufrst.m1info.pvm.group5.driver;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -23,7 +20,7 @@ import org.fxmisc.richtext.InlineCssTextArea;
  * Each cell allows the user to view and edit the code for a specific line in the program.
  *
  * This class also manages user input, such as adding or deleting lines using keyboard shortcuts,
- * and toggling breakpoints by clicking on the line number area
+ * toggling breakpoints by clicking on the line number area ans applying syntax highlighting and debug-related styles.
  */
 public class CodeLineCell extends ListCell<CodeLine> {
     private HBox container;
@@ -39,9 +36,10 @@ public class CodeLineCell extends ListCell<CodeLine> {
     // Flag indicating whether the line was empty before the last Backspace press
     private boolean wasEmptyOnLastBackspace = false;
 
+    // Indicates whether the code line is editable
     private boolean editable = true;
 
-    private boolean isUpdating = false; //indicates that the cell is being updated
+    private boolean isUpdating = false; // Indicates that the cell is being updated
 
     private boolean isMiniJaja = true; // Track whether this is MiniJaja or JajaCode for syntax highlighting
 
@@ -81,7 +79,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
         HBox.setHgrow(codeField, Priority.ALWAYS);
 
 
-        // focus listener on the text field
+        // Track focus changes to detect Backspace on empty lines
         codeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Platform.runLater(() -> {
@@ -92,7 +90,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
             }
         });
 
-        // listens for changes in the text field to synchronise the changes and apply syntax highlighting
+        // Listens for changes in the text field to synchronise the changes and apply syntax highlighting
         codeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (isUpdating) return; // prevent reacting to programmatic updates
 
@@ -168,7 +166,6 @@ public class CodeLineCell extends ListCell<CodeLine> {
                 }
                 case KeyCode.UP -> listener.onUpPressed(getIndex());
                 case KeyCode.DOWN -> listener.onDownPressed(getIndex());
-                default -> {}
             }
         });
 
@@ -200,9 +197,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
 
         lineNumberContainer.setOnMouseClicked(event -> handleBreakpointClick());
 
-        debugLineListener = (obs, oldVal, newVal) -> {
-            updateDebugLineStyle(newVal);
-        };
+        debugLineListener = (obs, oldVal, newVal) -> updateDebugLineStyle(newVal);
     }
 
     /**
@@ -272,7 +267,7 @@ public class CodeLineCell extends ListCell<CodeLine> {
      * If the cell is empty or the provided item is null, the cell content is cleared.
      * Otherwise, it displays the line number or breakpoint icon and the corresponding code text.
      *
-     * @param  item  the CodeLine object to display in this cell
+     * @param item  the CodeLine object to display in this cell
      * @param empty true if the cell should be empty, false otherwise
      */
     @Override

@@ -19,14 +19,15 @@ public class FinalNode extends ASTNode implements WithdrawalNode {
         this.type = type;
         this.ident = ident;
         this.expression = expression;
+        final String name = "Final";
         if(this.type == null){
-            throw new ASTBuildException("Final", "type", "type of final node cannot be null");
+            throw new ASTBuildException(name, "type", "type of final node cannot be null");
         }
         if(this.ident == null){
-            throw new ASTBuildException("Final", "identifier", "identifier of final node cannot be null");
+            throw new ASTBuildException(name, "identifier", "identifier of final node cannot be null");
         }
         if (expression != null && !(expression instanceof EvaluableNode)) {
-            throw new ASTBuildException("Final", "expression", "expression of final node must be evaluable");
+            throw new ASTBuildException(name, "expression", "expression of final node must be evaluable");
         }
     }
 

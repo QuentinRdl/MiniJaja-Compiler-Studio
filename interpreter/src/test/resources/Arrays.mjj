@@ -1,0 +1,24 @@
+class C{
+	int s = 2048;
+
+	void pause(){
+		writeln("paused");
+	};
+
+	void g(){
+		int s = 2048/5;
+		int t1[s];
+		int t2[s];
+		int t3[s];
+		int t4[s];
+		int t5[s];
+		pause();
+	};
+
+	main{
+		g();
+		pause();
+		g();
+		g();
+	}
+}

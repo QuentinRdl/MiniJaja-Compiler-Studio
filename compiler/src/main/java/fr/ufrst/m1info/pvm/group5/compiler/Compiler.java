@@ -1,7 +1,6 @@
 package fr.ufrst.m1info.pvm.group5.compiler;
 
 import fr.ufrst.m1info.pvm.group5.ast.AbstractSyntaxTree;
-import fr.ufrst.m1info.pvm.group5.memory.Memory;
 import fr.ufrst.m1info.pvm.group5.memory.Writer;
 
 public class Compiler {

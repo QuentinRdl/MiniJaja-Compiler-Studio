@@ -38,9 +38,14 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 
 /**
- * Controller class for managing interactions in the main application interface
- * It handles file loading, displaying and editing code lines in a ListView,
- * and saving modifications back to a file
+ * Main controller of the application interface
+ *
+ * This class manages :
+ * - source and compiled code editing (MiniJaja / JajaCode)
+ * - file loading and saving
+ * - compilation et interpretation
+ * - step-by-step and breakpoint-based debugging
+ * - memory visualisation during execution
  */
 public class MainController {
     @FXML
@@ -160,7 +165,6 @@ public class MainController {
         });
 
         editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            //TODO: disable buttons when viewing memory tabs
             if(isCompiledTab()){
                 btnCompile.setDisable(true);
                 btnRunCompile.setDisable(true);
@@ -210,8 +214,8 @@ public class MainController {
 
 
     /**
-     * Register keyboard shortcuts with the Scene so we can use
-     * shortcuts like Ctrl + S (save)
+     * Register global keyboard shortcuts on the scene
+     * (Save, Save As, Run, Compile)
      */
     private void setupKeyboardShortcuts() {
         Platform.runLater(() -> {
@@ -700,7 +704,7 @@ public class MainController {
     /**
      * Interprets the current MiniJaja code
      * Retrieves edited code, checks validity, runs the MiniJaja interpreter,
-     * and prints either a success or an error message
+     * updates the memory visualisation and prints either a success or an error message
      */
     public void interpretationMinijaja(){
         String code = getModifiedCode();
@@ -727,7 +731,7 @@ public class MainController {
     /**
      * Interprets the current JajaCode code
      * Retrieves compiled code, checks validity, runs the JajaCode interpreter,
-     * and prints either a success or an error message
+     * updates the memory visualisation and prints either a success or an error message
      */
     public void interpretationJajacode(){
         String compiledCode = getCompiledCode();
@@ -1058,8 +1062,6 @@ public class MainController {
         }
     }
 
-    //TODO: replace the functions with showTab and hideTab (more generic functions)
-
     /**
      * Hides the compiled code tab from the editor tab pane
      */
@@ -1197,7 +1199,13 @@ public class MainController {
 
 
     /**
-     * Runs the adequat interpreter on debug mode (InterpreterMiniJaja / InterpreterJajaCode)
+     * Starts a debugging session for the given interpreter
+     * This method :
+     * - configures breakpoints or step-by-step mode,
+     * - subscribes to interpretation halt events,
+     * - updates the current debug line and memory visualisation,
+     * - manages debug controls (Run / Next / Stop)
+     *
      * @param interpreter interpreter to run the debug func
      */
     public void globalRunDebugFunc(Object interpreter) {
@@ -1350,7 +1358,10 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt)");
+                if(event.error() == null)
+                    console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                else
+                    console.getWriter().writeLine("[ERROR] "+event.error());
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterMjj != null) {
@@ -1486,7 +1497,10 @@ public class MainController {
                 });
 
                 if(btnDebugRun != null) btnDebugRun.setDisable(false); // Re-enable start button
-                console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                if(event.error() == null)
+                    console.getWriter().writeLine("[INFO] Debugging stopped (final halt).");
+                else
+                    console.getWriter().writeLine("[ERROR] "+event.error());
 
                 // Clean everything -> Stop threads
                 if(debugInterpreterJjc != null) {
@@ -1651,7 +1665,8 @@ public class MainController {
     }
 
     /**
-     * Highlights the specified line in a ListView during debugging
+     * Highlights the currently executed line during debugging
+     * and clears previous debug highlights
      *
      * @param lineIndex index of the line to highlight
      * @param lines the list of CodeLine objects

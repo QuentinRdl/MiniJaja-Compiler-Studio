@@ -21,7 +21,9 @@ public class MemoryVisualisation extends GridPane {
 
 
     /**
-     * Initializes the memory visualisation UI with separate sections for stack and heap
+     * Builds the memory visualisation layout
+     *
+     * Creates two scrollable sections placed side by side : one for the stack and one for the heap
      */
     public MemoryVisualisation() {
         super();
@@ -89,7 +91,7 @@ public class MemoryVisualisation extends GridPane {
     }
 
     /**
-     * Updates the memory visualization with current stack and heap content
+     * Updates the memory visualisation with current stack and heap content
      *
      * @param memory array with heap at index 0 and stack at index 1
      */
@@ -100,22 +102,6 @@ public class MemoryVisualisation extends GridPane {
             String heap = memory[0];
             String stack = memory[1];
 
-            //TODO: replace with actual values (step-by-step implementation)
-
-            /*
-            String stackExample = "Stack{scopeDepth=0, size=1, contents=\n" +
-                    "  [0] arr_0 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                    "  [1] alias_0\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
-                    "  [2] arr_1 \tkind=VARIABLE \tdataType=INT \tvalue=Integer(1)\n" +
-                    "  [1] alias_1\tkind=VARIABLE \tdataType=INT\tvalue=Integer(10)\n" +
-                    "}";
-
-            String heapExample = "Heap(total=16, available=11)\n" +
-                    "  ext@1 int@0 size=5 Allocated(INT) refs=1\n" +
-                    "    bytes: [0, 0, 0, 0, 0]\n" +
-                    "* ext@0 int@5 size=11 Free refs=0\n" +
-                    "    bytes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-             */
             updateStack(stack);
             updateHeap(heap);
 
@@ -123,9 +109,11 @@ public class MemoryVisualisation extends GridPane {
     }
 
     /**
-     * Updates the stack section of the memory visualisation
+     * Updates the stack visualisation from its textual representation
+     * Parses stack variables and creates corresponding visual blocks.
+     * Displays appropriate messages when the stack is empty or malformed
      *
-     * @param stack string representation of the stack
+     * @param stack textual representation of the stack
      */
     private void updateStack(String stack){
         stackContainer.getChildren().clear();
@@ -148,7 +136,6 @@ public class MemoryVisualisation extends GridPane {
         }
 
         // If "contents=" line is missing, the format is invalid
-        //TODO: modify to display in the console ?
         if(contentsIndex == -1){
             stackContainer.getChildren().add(new Label("Stack format error"));
             return;
@@ -176,7 +163,9 @@ public class MemoryVisualisation extends GridPane {
     }
 
     /**
-     * Updates the heap section of the memory visualisation
+     * Updates the heap visualisation from its textual representation.
+     * Parses heap blocks, their allocation state, size, references,
+     * and associated data, and displays them as visual blocks
      *
      * @param heap string representation of the heap
      */
@@ -251,6 +240,14 @@ public class MemoryVisualisation extends GridPane {
         }
     }
 
+    /**
+     * Extracts the inner content of a value representation
+     * For structured  values ({...}), returns the content inside braces
+     * Returns "null" or an empty string when appropriate
+     *
+     * @param text raw value string
+     * @return extracted value content
+     */
     private String extractValueContent(String text){
         if(text.equals("null")){
             return "null";

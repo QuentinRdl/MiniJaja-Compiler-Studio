@@ -13,6 +13,9 @@ import java.util.List;
 
 public class Jajacode {
 
+    private Jajacode() {}
+
+
 
     /**
      * Parse a JajaCode input stream and generate a list of instructions.

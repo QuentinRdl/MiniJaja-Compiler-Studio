@@ -454,5 +454,6 @@ class HeapTest {
         heap.setValue(1, 149, new Value(2));
         heap.setValue(3, 0, new Value(3));
         heap.setValue(3, 149, new Value(4));
+        assertNotNull(heap.toString());
     }
 }

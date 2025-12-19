@@ -7,6 +7,8 @@ import java.lang.reflect.Executable;
 import java.util.function.Supplier;
 
 public class MemoryCallUtil {
+    private MemoryCallUtil() {}
+
     public static void safeCall(Runnable call, Instruction caller){
         try{
             call.run();

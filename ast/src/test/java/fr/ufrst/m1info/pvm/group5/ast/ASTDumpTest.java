@@ -15,18 +15,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ASTDumpTest {
 
-    @Disabled
-    @Test
-    void dumpToConsole() throws IOException {
-        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/1.mjj");
-        System.out.println(AST.dump());
-    }
-
     @Test
     void Mjj0() throws IOException {
         AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/0.mjj");
         assertEquals(
                 FileUtils.readFileToString(new File("src/test/resources/Oracles/0.json"), Charset.defaultCharset()).replaceAll("\\s+",""),
+                AST.dump().replaceAll("\\s+","")
+        );
+    }
+
+    @Test
+    void Mjj1() throws IOException {
+        AbstractSyntaxTree AST = AbstractSyntaxTree.fromFile("src/test/resources/1.mjj");
+        assertEquals(
+                FileUtils.readFileToString(new File("src/test/resources/Oracles/1.json"), Charset.defaultCharset()).replaceAll("\\s+",""),
                 AST.dump().replaceAll("\\s+","")
         );
     }

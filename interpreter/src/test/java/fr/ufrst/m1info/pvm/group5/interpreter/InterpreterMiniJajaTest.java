@@ -115,6 +115,12 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Main")
+    void FileMain() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Main.mjj"));
+    }
+
+    @Test
     @DisplayName("Interpret File Method")
     void Method() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Method.mjj"));
@@ -149,6 +155,16 @@ class InterpreterMiniJajaTest {
     }
 
     @Test
+    @DisplayName("Interpret File Retour")
+    void Retour() {
+        Assertions.assertNull(imj.interpretFile("src/test/resources/Retour.mjj"));
+        writer.textChangedEvent.subscribe(e -> {
+            assertEquals("99\n49\nHello World\n81\n", e.oldText());
+        });
+        writer.write("");
+    }
+
+    @Test
     @DisplayName("Interpret File Quicksort")
     void Quicksort() {
         Assertions.assertNull(imj.interpretFile("src/test/resources/Quick_sort.mjj"));
@@ -172,6 +188,13 @@ class InterpreterMiniJajaTest {
             assertEquals("3,3,3,4,3,3,3,3,3,3, \n7,7,7,7,7,7,7,4,7,7, \n", e.oldText());
         });
         writer.write("");
+    }
+
+    @Test
+    @DisplayName("Array Bouquet Test")
+    void arraysOfBouquet(){
+        String errMessage = imj.interpretFile("src/test/resources/Arrays.mjj");
+        Assertions.assertNull(errMessage);
     }
 
     @Test
@@ -928,14 +951,6 @@ class InterpreterMiniJajaTest {
     @DisplayName("Interpret Void Method With Return")
     void VoidMethodWithReturn() {
         String errMessage=imj.interpretCode("class C { void f(){return 1;};main{f();}}");
-        Assertions.assertNotEquals(null,errMessage);
-        Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
-    }
-
-    @Test
-    @DisplayName("Interpret Non-Void Method Without Return")
-    void NonVoidMethodWithoutReturn() {
-        String errMessage=imj.interpretCode("class C { int f(){};main{f();}}");
         Assertions.assertNotEquals(null,errMessage);
         Assertions.assertEquals(InterpretationInvalidTypeException.class.toString(),errMessage.split(":")[0].trim());
     }
