@@ -86,8 +86,7 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
         DataType dataType = ValueType.toDataType(this.returnType.valueType);
         MemoryCallUtil.safeCall(() -> m.declMethod(ident.identifier, dataType, this), this);
         MemoryCallUtil.safeCall(m::pushScope, this);
-        ASTNode root=getRoot();
-        setAsRoot();
+        setAsReferent();
         if (params != null) params.checkType(m);
         if (vars != null) vars.checkType(m);
         if (instrs != null) instrs.checkType(m);
@@ -100,9 +99,6 @@ public class MethodeNode extends ASTNode implements WithdrawalNode {
                     m.withdrawDecl(p.ident.identifier);
                 }
             }
-        }
-        if (root!= null){
-            root.setAsRoot();
         }
         MemoryCallUtil.safeCall(m::popScope, this);
         return returnType.getValueType().toString().toLowerCase();
