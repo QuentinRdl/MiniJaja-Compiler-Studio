@@ -33,22 +33,26 @@ public class MainNode extends ASTNode {
 
     @Override
     public void interpret(Memory m) throws ASTInvalidOperationException, ASTInvalidMemoryException {
+        MemoryCallUtil.safeCall(m::pushScope, this);
         if(vars != null)
             vars.interpret(m);
         if(instrs != null)
             instrs.interpret(m);
         if(vars != null)
             ((WithdrawalNode)vars).withdrawInterpret(m);
+        MemoryCallUtil.safeCall(m::popScope, this);
     }
 
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
+        MemoryCallUtil.safeCall(m::pushScope, this);
         if (vars != null) {
             vars.checkType(m);
         }
         if (instrs != null) {
             instrs.checkType(m);
         }
+        MemoryCallUtil.safeCall(m::popScope, this);
         return "void";
     }
 

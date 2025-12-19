@@ -1,0 +1,11 @@
+class C {
+    int x = 1;
+
+    void f(){
+        int x = 99;
+    };
+
+    main{
+        int x = 81;
+    }
+}

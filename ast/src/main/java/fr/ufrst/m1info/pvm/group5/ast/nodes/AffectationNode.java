@@ -29,8 +29,7 @@ public class AffectationNode extends ASTNode{
     public List<String> compile(int address) {
         List<String> jjcodes = new ArrayList<>();
 
-        if (identifier instanceof TabNode) {
-            TabNode tabNode = (TabNode) identifier;
+        if (identifier instanceof TabNode tabNode) {
             jjcodes.addAll(tabNode.getChildren().get(1).compile(address));
             jjcodes.addAll(expression.compile(address));
             jjcodes.add("astore(" + ((IdentNode)tabNode.getChildren().get(0)).identifier + ")");
@@ -45,8 +44,7 @@ public class AffectationNode extends ASTNode{
 
     @Override
     public void interpret(Memory m) throws ASTInvalidMemoryException, ASTInvalidOperationException {
-        if (identifier instanceof TabNode) {
-            TabNode tabNode = (TabNode) identifier;
+        if (identifier instanceof TabNode tabNode) {
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             Value indexVal = ((EvaluableNode) indexExp).eval(m);
@@ -63,8 +61,7 @@ public class AffectationNode extends ASTNode{
     @Override
     public String checkType(Memory m) throws InterpretationInvalidTypeException {
         String exprType = expression.checkType(m);
-        if (identifier instanceof TabNode) {
-            TabNode tabNode = (TabNode) identifier;
+        if (identifier instanceof TabNode tabNode) {
             IdentNode arrayIdent = (IdentNode) tabNode.getChildren().get(0);
             ASTNode indexExp = tabNode.getChildren().get(1);
             String indexType = indexExp.checkType(m);

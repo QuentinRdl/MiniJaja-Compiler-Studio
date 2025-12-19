@@ -1212,7 +1212,7 @@ class CompilerTest {
 
     @Test
     @DisplayName("Compile File That Doesn't Exist")
-    public void InterpretNotExistingFile() {
+    void InterpretNotExistingFile() {
         String res=comp.compileFile("src/test/resources/FileThatDoesntExist.mjj");
         Assertions.assertNull(res);
     }

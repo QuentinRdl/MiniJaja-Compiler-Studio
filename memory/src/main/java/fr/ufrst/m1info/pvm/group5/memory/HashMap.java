@@ -176,14 +176,12 @@ public class HashMap<K,V>
             if (key==null && buckets[index].get(i).getKey()==null){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
-                i--;
                 sizeHashMap--;
                 return value;
             }
             if ((key!=null && buckets[index].get(i).getKey()!=null) && key.equals(buckets[index].get(i).getKey())){
                 V value = buckets[index].get(i).getValue();
                 buckets[index].remove(i);
-                i--;
                 sizeHashMap--;
                 return value;
             }

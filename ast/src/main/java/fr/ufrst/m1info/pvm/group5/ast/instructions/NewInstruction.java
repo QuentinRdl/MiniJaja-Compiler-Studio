@@ -33,7 +33,7 @@ public class NewInstruction extends Instruction{
     @Override
     public int execute(int address, Memory m) {
         Value v;
-        ArrayList<StackObject> listSO= new ArrayList<StackObject>();
+        ArrayList<StackObject> listSO= new ArrayList<>();
         try{
             for (int i=0; i<scope; i++){
                 listSO.add(MemoryCallUtil.safeCall(m::top, this));
