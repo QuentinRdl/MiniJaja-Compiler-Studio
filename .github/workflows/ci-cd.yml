@@ -81,13 +81,13 @@ jobs:
             **/target/site/jacoco/
             **/target/jacoco.exec
 
-      - name: Publish test report
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Maven Tests
-          path: '**/target/surefire-reports/TEST-*.xml'
-          reporter: java-junit
+      #- name: Publish test report
+      #  uses: dorny/test-reporter@v1
+      #  if: always()
+      #  with:
+      #    name: Maven Tests
+      #    path: '**/target/surefire-reports/TEST-*.xml'
+      #    reporter: java-junit
 
   # TEMPORARILY DISABLED - Sonar login issues
   # sonarqube:
