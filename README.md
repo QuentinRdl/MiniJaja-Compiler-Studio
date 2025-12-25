@@ -1,4 +1,4 @@
-![CI/CD](https://github.com/QuentinRdl/MiniJaja-Compiler-Studio/workflows/CI/CD/badge.svg)
+![CI/CD](https://github.com/QuentinRdl/MiniJaja-Compiler-Studio/actions/workflows/ci-cd.yml/badge.svg)
 
 # MiniJaja Compiler Studio
 
